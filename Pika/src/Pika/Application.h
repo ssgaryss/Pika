@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core.h"
+#include "Pika/Events/Event.h"
 
 namespace Pika {
 

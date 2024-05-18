@@ -18,6 +18,7 @@ int main(int argc, char** argv)
 	PK_WARN("warn");
 	PK_ERROR("error");
 	PK_FATAL("fatal");
+
 	auto app{ Pika::createApplication() };
 	app->run();
 	delete app;
