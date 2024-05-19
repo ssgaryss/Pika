@@ -1,9 +1,6 @@
 #pragma once
-
+#include "pkpch.h"
 #include "Pika/Core.h"
-
-#include <string>
-#include <functional>
 
 namespace Pika {
 
@@ -50,7 +47,7 @@ namespace Pika {
 		EventDispatcher(Event& vEvent) :
 			m_Event{ vEvent } {}
 
-		template<typename T, typename F> //T是对应类型，F是处理T的function
+		template<typename T, typename F> //T:Event，F:function
 		bool dispatch(const F& func) {
 			if (m_Event.getEventType == T::getStaticType()) {
 				m_Event.m_Handled |= func(static_cast<T&>(m_Event));

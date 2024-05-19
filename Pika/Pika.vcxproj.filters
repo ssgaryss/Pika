@@ -4,6 +4,9 @@
     <Filter Include="Pika">
       <UniqueIdentifier>{AABA8A7C-96F1-8B0D-3FDE-71102BF4070F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pika\Events">
+      <UniqueIdentifier>{4E832241-BA38-9B36-432D-950DAFE1913A}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pika.h" />
@@ -16,9 +19,22 @@
     <ClInclude Include="src\Pika\EntryPoint.h">
       <Filter>Pika</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Events\ApplicationEvent.h">
+      <Filter>Pika\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Events\Event.h">
+      <Filter>Pika\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Events\KeyboardEvent.h">
+      <Filter>Pika\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Events\MouseEvent.h">
+      <Filter>Pika\Events</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Log.h">
       <Filter>Pika</Filter>
     </ClInclude>
+    <ClInclude Include="src\pkpch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Application.cpp">
@@ -27,5 +43,6 @@
     <ClCompile Include="src\Pika\Log.cpp">
       <Filter>Pika</Filter>
     </ClCompile>
+    <ClCompile Include="src\pkpch.cpp" />
   </ItemGroup>
 </Project>

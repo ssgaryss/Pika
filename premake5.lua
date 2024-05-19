@@ -19,6 +19,9 @@ project "Pika"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+	pchheader("pkpch.h")
+	pchsource("Pika/src/pkpch.cpp")
+
 	files
 	{
 		"%{prj.name}/src/**.h",

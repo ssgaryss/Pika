@@ -1,7 +1,7 @@
 #pragma once
 
+#include "pkpch.h"
 #include "Pika/Events/Event.h"
-#include <sstream>
 
 namespace Pika {
 
