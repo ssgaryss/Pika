@@ -1,12 +1,10 @@
 #include "pkpch.h"
 #include "Application.h"
 
-#include "Pika/Events/ApplicationEvent.h"
-#include "Pika/Log.h"
-
 namespace Pika {
 	Application::Application()
 	{
+		m_Window = std::unique_ptr<Window>(Window::create());
 	}
 	Application::~Application()
 	{
@@ -14,11 +12,10 @@ namespace Pika {
 	void Application::run()
 	{
 		WindowResizeEvent w(1920, 1080);
-		//std::cout << w;
 		PK_TRACE(w.toString());
 		while (true)
 		{
-
+			m_Window->onUpdate();
 		}
 	}
 }

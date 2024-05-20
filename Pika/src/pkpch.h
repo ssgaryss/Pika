@@ -11,3 +11,6 @@
 
 //windows api
 #include <Windows.h>
+
+//Pika engine
+#include "Pika/Log.h"

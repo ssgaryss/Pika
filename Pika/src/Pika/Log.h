@@ -9,12 +9,12 @@ namespace Pika {
 	class PIKA_API Log
 	{
 	public:
-		static void init(); // 初始化Logger
-		inline static std::shared_ptr<spdlog::logger>& getCoreLogger() { return m_pCoreLogger; };
-		inline static std::shared_ptr<spdlog::logger>& getClientLogger() { return m_pClientLogger; }; 
+		static void init(); // initialize Logger
+		inline static std::shared_ptr<spdlog::logger>& getCoreLogger() { return s_pCoreLogger; };
+		inline static std::shared_ptr<spdlog::logger>& getClientLogger() { return s_pClientLogger; }; 
 	private:
-		static std::shared_ptr<spdlog::logger> m_pCoreLogger;	// 引擎端日志
-		static std::shared_ptr<spdlog::logger> m_pClientLogger; // 客户端日志
+		static std::shared_ptr<spdlog::logger> s_pCoreLogger;	// engine log
+		static std::shared_ptr<spdlog::logger> s_pClientLogger; // clienet log
 	};
 }
 

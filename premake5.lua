@@ -10,6 +10,12 @@ workspace "Pika"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Include diretories to relative root folder
+includeDir = {}
+includeDir["GLFW"] = "Pika/vendor/GLFW/include"
+
+include "Pika/vendor/GLFW"
+
 -- Pika
 project "Pika"
 	location "Pika"
@@ -32,6 +38,13 @@ project "Pika"
 	{
 		"%{prj.name}/vendor/spdlog/include",
 		"%{prj.name}/src",
+		"%{includeDir.GLFW}"
+	}
+
+	links
+	{
+		"GLFW",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -52,14 +65,17 @@ project "Pika"
 
 	filter "configurations:Debug"
 		defines "PIKA_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "PIKA_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "PIKA_DIST"
+		buildoptions "/MD"
 		optimize "On"
 
 -- Sandbox
@@ -100,13 +116,16 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "PIKA_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "PIKA_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "PIKA_DIST"
+		buildoptions "/MD"
 		optimize "On"
 	
