@@ -12,10 +12,14 @@ namespace Pika {
 	public:
 		Application();
 		virtual ~Application();
+		void onEvent(Event& vEvent);
 		void run();
 	private:
+		bool onWindowClose(WindowCloseEvent& vEvent);
+		bool onWinodwResize(WindowResizeEvent& vEvent);
+
 		std::unique_ptr<Window> m_Window;
-		bool m_Running = false;
+		bool m_Running = true;
 	};
 
 	// To be defined in CLIENT

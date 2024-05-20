@@ -31,13 +31,14 @@ namespace Pika {
 	{
 	public:
 		virtual ~Event() = default;
+
+		bool m_Handled = false;
+
 		virtual EventType getEventType() const = 0;
 		virtual const char* getName() const = 0;
 		virtual int getCategoryFlags() const = 0;
 		inline virtual std::string toString() const { return getName(); }
 		inline bool isInCategory(EventCategory vCategory) const { return getCategoryFlags() & static_cast<int>(vCategory); }
-	protected:
-		bool m_Handled = false;
 	};
 
 	class PIKA_API EventDispatcher //dispatch event to corresponding function 
@@ -49,8 +50,8 @@ namespace Pika {
 
 		template<typename T, typename F> //T:Event£¬F:function
 		bool dispatch(const F& func) {
-			if (m_Event.getEventType == T::getStaticType()) {
-				m_Event.m_Handled |= func(static_cast<T&>(m_Event));
+			if (m_Event.getEventType() == T::getStaticType()) {
+				m_Event.m_Handled |= func(*(T*)&m_Event);
 				return true;
 			}
 			return false;
