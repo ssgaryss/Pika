@@ -1,0 +1,6 @@
+[submodule "Pika/vendor/spdlog"]
+	path = Pika/vendor/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "Pika/vendor/GLFW"]
+	path = Pika/vendor/GLFW
+	url = https://github.com/TheCherno/glfw.git
