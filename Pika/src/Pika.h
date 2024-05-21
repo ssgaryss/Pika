@@ -1,11 +1,9 @@
 #pragma once
 
 //For use by Pika applications
-
-#include <iostream>
-
-#include "Pika/Application.h"
-#include "Pika/Log.h"
+#include "Pika/Core/Application.h"
+#include "Pika/Core/Layer.h"
+#include "Pika/Core/Log.h"
 //---------------EntryPoint---------------
-#include "Pika/EntryPoint.h"
+#include "Pika/Core/EntryPoint.h"
 //----------------------------------------

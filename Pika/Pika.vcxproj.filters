@@ -4,6 +4,9 @@
     <Filter Include="Pika">
       <UniqueIdentifier>{AABA8A7C-96F1-8B0D-3FDE-71102BF4070F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pika\Core">
+      <UniqueIdentifier>{42195552-AE83-09C9-F7C1-BA6E636BE71D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Pika\Events">
       <UniqueIdentifier>{4E832241-BA38-9B36-432D-950DAFE1913A}</UniqueIdentifier>
     </Filter>
@@ -16,14 +19,26 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pika.h" />
-    <ClInclude Include="src\Pika\Application.h">
-      <Filter>Pika</Filter>
+    <ClInclude Include="src\Pika\Core\Application.h">
+      <Filter>Pika\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Core.h">
-      <Filter>Pika</Filter>
+    <ClInclude Include="src\Pika\Core\Core.h">
+      <Filter>Pika\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\EntryPoint.h">
-      <Filter>Pika</Filter>
+    <ClInclude Include="src\Pika\Core\EntryPoint.h">
+      <Filter>Pika\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Core\Layer.h">
+      <Filter>Pika\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Core\LayerStack.h">
+      <Filter>Pika\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Core\Log.h">
+      <Filter>Pika\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Core\Window.h">
+      <Filter>Pika\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Events\ApplicationEvent.h">
       <Filter>Pika\Events</Filter>
@@ -37,23 +52,23 @@
     <ClInclude Include="src\Pika\Events\MouseEvent.h">
       <Filter>Pika\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Log.h">
-      <Filter>Pika</Filter>
-    </ClInclude>
     <ClInclude Include="src\Pika\Platform\Windows\WindowsWindow.h">
       <Filter>Pika\Platform\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Pika\Window.h">
-      <Filter>Pika</Filter>
     </ClInclude>
     <ClInclude Include="src\pkpch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Pika\Application.cpp">
-      <Filter>Pika</Filter>
+    <ClCompile Include="src\Pika\Core\Application.cpp">
+      <Filter>Pika\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Log.cpp">
-      <Filter>Pika</Filter>
+    <ClCompile Include="src\Pika\Core\Layer.cpp">
+      <Filter>Pika\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Core\LayerStack.cpp">
+      <Filter>Pika\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Core\Log.cpp">
+      <Filter>Pika\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Platform\Windows\WindowsWindow.cpp">
       <Filter>Pika\Platform\Windows</Filter>

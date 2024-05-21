@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
-#include "Pika/Window.h"
+#include "Pika/Core/Window.h"
 
 namespace Pika {
 
