@@ -16,7 +16,7 @@
 #else
 	#define PK_ASSERT(x, ...)
 	#define PK_CORE_ASSERT(x, ...)
-#endif // PK_ENABLE_ASSERTS
+#endif
 
 
 #define BIT(x) (1 << x)

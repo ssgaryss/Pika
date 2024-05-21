@@ -4,6 +4,8 @@
 #include "Pika/Events/KeyboardEvent.h"
 #include "Pika/Events/MouseEvent.h"
 
+#include <glad/glad.h>
+
 namespace Pika {
 
 	Window* Window::create(const WindowProps& vWindowProps) {
@@ -63,13 +65,15 @@ namespace Pika {
 		PK_CORE_INFO("Creating Window {0} ({1}, {2})", m_Data.m_Title, m_Data.m_Width, m_Data.m_Height);
 		if (s_GLFWWindowCount == 0) {
 			int Success = glfwInit();
-			PK_CORE_ASSERT(Success, "Could not initialze GLFW!");
+			PK_CORE_ASSERT(Success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallBack);
 		}
 
 		m_Window = glfwCreateWindow(static_cast<int>(vWindowProps.m_Width), static_cast<int>(vWindowProps.m_Height),
 			vWindowProps.m_Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		int Status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		PK_CORE_ASSERT(Status, "Could not initialize gald!");
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		setVSync(true);
 

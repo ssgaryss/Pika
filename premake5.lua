@@ -13,8 +13,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include diretories to relative root folder
 includeDir = {}
 includeDir["GLFW"] = "Pika/vendor/GLFW/include"
+includeDir["glad"] = "Pika/vendor/glad/include"
 
 include "Pika/vendor/GLFW"
+include "Pika/vendor/glad"
 
 -- Pika
 project "Pika"
@@ -38,12 +40,14 @@ project "Pika"
 	{
 		"%{prj.name}/vendor/spdlog/include",
 		"%{prj.name}/src",
-		"%{includeDir.GLFW}"
+		"%{includeDir.GLFW}",
+		"%{includeDir.glad}"
 	}
 
 	links
 	{
 		"GLFW",
+		"glad",
 		"opengl32.lib"
 	}
 
@@ -55,7 +59,10 @@ project "Pika"
 		defines
 		{
 			"PK_PLATFORM_WINDOWS",
-			"PK_BUILD_DLL"
+			"PK_BUILD_DLL",
+			"PK_ENABLE_ASSERTS",
+			-- we don not want GLFW include OpenGL function, glad got all of it!
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands
