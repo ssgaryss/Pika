@@ -23,7 +23,7 @@ namespace Pika {
 		Application(); //Singleton pattern, can not use ctor
 	private:
 		bool onWindowCloseEvent(WindowCloseEvent& vEvent);
-
+	private:
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
