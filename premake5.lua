@@ -1,6 +1,7 @@
 workspace "Pika"
 	architecture "x64"
-
+	startproject "Sandbox"
+	
 	configurations
 	{
 		"Debug",
@@ -16,9 +17,11 @@ includeDir["GLFW"] = "Pika/vendor/GLFW/include"
 includeDir["glad"] = "Pika/vendor/glad/include"
 includeDir["ImGui"] = "Pika/vendor/imgui"
 
-include "Pika/vendor/GLFW"
-include "Pika/vendor/glad" 
-include "Pika/vendor/imgui"
+group "Dependencies"
+	include "Pika/vendor/GLFW"
+	include "Pika/vendor/glad"
+	include "Pika/vendor/imgui"
+group ""
 
 -- Pika
 project "Pika"

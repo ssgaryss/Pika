@@ -47,6 +47,7 @@ namespace Pika {
 
 		static bool Show = true;
 		ImGui::ShowDemoWindow(&Show);
+		ImGui::LogText("hello!");
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}

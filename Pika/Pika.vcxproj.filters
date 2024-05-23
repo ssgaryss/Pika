@@ -16,6 +16,9 @@
     <Filter Include="Pika\Platform">
       <UniqueIdentifier>{3E96EE2F-AA56-6A66-7391-B3E3DF10AF42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pika\Platform\OpenGL">
+      <UniqueIdentifier>{B20D38E5-9E9C-C1AE-47BB-D5A93329D254}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Pika\Platform\Windows">
       <UniqueIdentifier>{789E55E4-E40A-11DF-ADFE-A83C192A3347}</UniqueIdentifier>
     </Filter>
@@ -58,13 +61,19 @@
     <ClInclude Include="src\Pika\ImGui\ImGuiLayer.h">
       <Filter>Pika\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_glfw.h">
+      <Filter>Pika\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3.h">
+      <Filter>Pika\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3_loader.h">
+      <Filter>Pika\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Platform\Windows\WindowsWindow.h">
       <Filter>Pika\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\pkpch.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_glfw.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -82,11 +91,15 @@
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp">
       <Filter>Pika\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Platform\OpenGL\imgui_impl_glfw.cpp">
+      <Filter>Pika\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3.cpp">
+      <Filter>Pika\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\Platform\Windows\WindowsWindow.cpp">
       <Filter>Pika\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\pkpch.cpp" />
-    <ClCompile Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="src\Pika\Platform\OpenGL\imgui_impl_glfw.cpp" />
   </ItemGroup>
 </Project>
