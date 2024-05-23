@@ -47,6 +47,10 @@ namespace Pika {
 	public:
 		MouseMovedEvent(float vMouseX, float vMouseY) :
 			m_MouseX{ vMouseX }, m_MouseY{ vMouseY } {}
+
+		inline float getMouseX() const { return m_MouseX; }
+		inline float getMouseY() const { return m_MouseY; }
+
 		inline std::string toString() const override {
 			std::stringstream ss;
 			ss << "MouseMovedEvent: " << m_MouseX << ", " << m_MouseY;
@@ -63,6 +67,10 @@ namespace Pika {
 	public:
 		MouseScrolledEvent(float vXOffset, float vYOffset) :
 			m_XOffset{ vXOffset }, m_YOffset{ vYOffset } {}
+
+		inline float getXOffet() const { return m_XOffset; }
+		inline float getYOffet() const { return m_YOffset; }
+
 		inline std::string toString() const override {
 			std::stringstream ss;
 			ss << "MouseScrolledEvent: " << m_XOffset << ", " << m_YOffset;

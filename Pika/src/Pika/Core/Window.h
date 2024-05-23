@@ -25,6 +25,7 @@ namespace Pika {
 
 		virtual unsigned int getWidth() const = 0;
 		virtual unsigned int getHeight() const = 0;
+		virtual void* getNativeWindow() const = 0;
 
 		//window attributes
 		virtual void setEventCallback(const EventCallbackFn& vEventCallback) = 0;

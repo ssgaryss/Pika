@@ -14,15 +14,18 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 includeDir = {}
 includeDir["GLFW"] = "Pika/vendor/GLFW/include"
 includeDir["glad"] = "Pika/vendor/glad/include"
+includeDir["ImGui"] = "Pika/vendor/imgui"
 
 include "Pika/vendor/GLFW"
-include "Pika/vendor/glad"
+include "Pika/vendor/glad" 
+include "Pika/vendor/imgui"
 
 -- Pika
 project "Pika"
 	location "Pika"
 	kind "SharedLib"
 	language "C++"
+	staticruntime "off" -- buildoptions "/MDd" --> [staticruntime("On") == "MD"  staticruntime("Off") == "MT"] + [runtime "Debug/Release"] == "MDd"/"MTd"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -41,26 +44,26 @@ project "Pika"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{prj.name}/src",
 		"%{includeDir.GLFW}",
-		"%{includeDir.glad}"
+		"%{includeDir.glad}",
+		"%{includeDir.ImGui}"
 	}
 
 	links
 	{
 		"GLFW",
 		"glad",
+		"ImGui",
 		"opengl32.lib"
 	}
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines
 		{
 			"PK_PLATFORM_WINDOWS",
 			"PK_BUILD_DLL",
-			"PK_ENABLE_ASSERTS",
 			-- we don not want GLFW include OpenGL function, glad got all of it!
 			"GLFW_INCLUDE_NONE"
 		}
@@ -72,17 +75,17 @@ project "Pika"
 
 	filter "configurations:Debug"
 		defines "PIKA_DEBUG"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "PIKA_RELEASE"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "PIKA_DIST"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 
 -- Sandbox
@@ -90,6 +93,7 @@ project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -113,7 +117,6 @@ project "Sandbox"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 		
 		defines
@@ -123,16 +126,16 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "PIKA_DEBUG"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "PIKA_RELEASE"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "PIKA_DIST"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 	

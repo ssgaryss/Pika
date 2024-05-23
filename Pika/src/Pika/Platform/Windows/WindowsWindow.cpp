@@ -41,6 +41,11 @@ namespace Pika {
 		return m_Data.m_Height;
 	}
 
+	void* WindowsWindow::getNativeWindow() const
+	{
+		return m_Window;
+	}
+
 	void WindowsWindow::setVSync(bool vEnable)
 	{
 		if (vEnable) {
@@ -117,6 +122,13 @@ namespace Pika {
 					break;
 				}
 				}
+			});
+
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int codepoint)
+			{
+				WindowData& Data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+				KeyTypedEvent Event(codepoint); //codepoint is keycode
+				Data.eventCallBack(Event);
 			});
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)

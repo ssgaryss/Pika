@@ -11,18 +11,23 @@ namespace Pika {
 	class PIKA_API Application
 	{
 	public:
-		Application();
 		virtual ~Application() = default;
 		void onEvent(Event& vEvent);
 		void pushLayer(Layer* vLayer);
 		void pushOverlay(Layer* vLayer);
 		void run();
+
+		static Application& getInstance();
+		inline Window& getWindow() { return *m_Window; }
+	protected:
+		Application(); //Singleton pattern, can not use ctor
 	private:
-		bool onWindowClose(WindowCloseEvent& vEvent);
+		bool onWindowCloseEvent(WindowCloseEvent& vEvent);
 
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+		static Application* s_pSingletonInstance;
 	};
 
 	// To be defined in CLIENT

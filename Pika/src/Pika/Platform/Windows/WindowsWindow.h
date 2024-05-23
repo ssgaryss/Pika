@@ -13,6 +13,7 @@ namespace Pika {
 		void onUpdate() override;
 		unsigned int getWidth() const override;
 		unsigned int getHeight() const override;
+		void* getNativeWindow() const override;
 
 		inline void setEventCallback(const EventCallbackFn& vEventCallback) override { m_Data.eventCallBack = vEventCallback; };
 		void setVSync(bool vEnable) override;

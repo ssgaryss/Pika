@@ -10,6 +10,9 @@
     <Filter Include="Pika\Events">
       <UniqueIdentifier>{4E832241-BA38-9B36-432D-950DAFE1913A}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pika\ImGui">
+      <UniqueIdentifier>{5407639D-40BF-A4EA-A9C6-7D46959D3FDB}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Pika\Platform">
       <UniqueIdentifier>{3E96EE2F-AA56-6A66-7391-B3E3DF10AF42}</UniqueIdentifier>
     </Filter>
@@ -52,10 +55,16 @@
     <ClInclude Include="src\Pika\Events\MouseEvent.h">
       <Filter>Pika\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\ImGui\ImGuiLayer.h">
+      <Filter>Pika\ImGui</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Platform\Windows\WindowsWindow.h">
       <Filter>Pika\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\pkpch.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_glfw.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -70,9 +79,14 @@
     <ClCompile Include="src\Pika\Core\Log.cpp">
       <Filter>Pika\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp">
+      <Filter>Pika\ImGui</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\Platform\Windows\WindowsWindow.cpp">
       <Filter>Pika\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\pkpch.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\imgui_impl_glfw.cpp" />
   </ItemGroup>
 </Project>

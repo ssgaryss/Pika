@@ -45,4 +45,16 @@ namespace Pika {
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
+	class PIKA_API KeyTypedEvent : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(int vKeycode) :
+			KeyEvent{ vKeycode } {}
+		inline std::string toString() const override {
+			std::stringstream ss;
+			ss << "KeyTypedEvent: " << m_KeyCode;
+			return ss.str();
+		}
+		EVENT_CLASS_TYPE(KeyTyped)
+	};
 }

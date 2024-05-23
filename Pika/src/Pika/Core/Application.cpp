@@ -3,9 +3,12 @@
 #include <glad/glad.h>
 
 namespace Pika {
+	Application* Application::s_pSingletonInstance = nullptr;
 
 	Application::Application()
 	{
+		PK_ASSERT(!s_pSingletonInstance, "Application already exists!")
+		s_pSingletonInstance = this;
 		m_Window = std::unique_ptr<Window>(Window::create());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 	}
@@ -13,7 +16,7 @@ namespace Pika {
 	void Application::onEvent(Event& vEvent)
 	{
 		EventDispatcher Dispatcher(vEvent);
-		Dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::onWindowClose, this, std::placeholders::_1));
+		Dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::onWindowCloseEvent, this, std::placeholders::_1));
 		PK_CORE_TRACE(vEvent.toString());
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it) {
@@ -36,13 +39,17 @@ namespace Pika {
 		{
 			glClearColor(1, 1, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
-			m_Window->onUpdate();
 			for (auto it : m_LayerStack) {
 				it->onUpdate();
 			}
+			m_Window->onUpdate();
 		}
 	}
-	bool Application::onWindowClose(WindowCloseEvent& vEvent)
+	Application& Application::getInstance()
+	{
+		return *s_pSingletonInstance;
+	}
+	bool Application::onWindowCloseEvent(WindowCloseEvent& vEvent)
 	{
 		m_Running = false;
 		return true;

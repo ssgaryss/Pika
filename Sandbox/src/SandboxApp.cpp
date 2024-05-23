@@ -11,8 +11,10 @@ public:
 class Sandbox : public Pika::Application
 {
 public:
-	Sandbox() {
+	Sandbox() :Application{}
+	{
 		pushLayer(new ExampleLayer());
+		pushOverlay(new Pika::ImGuiLayer());
 	};
 	~Sandbox() {};
 };
