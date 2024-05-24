@@ -1,4 +1,4 @@
-#include "pkpch.h"
+ #include "pkpch.h"
 #include "ImGuiLayer.h"
 
 #include <imgui.h>
@@ -34,7 +34,6 @@ namespace Pika {
 
 	void ImGuiLayer::onUpdate()
 	{
-		PK_INFO("ImGui Layer update!");
 		ImGuiIO& io = ImGui::GetIO();
 		Application& App{ Application::getInstance() };
 		io.DisplaySize = ImVec2(App.getWindow().getWidth(), App.getWindow().getHeight());

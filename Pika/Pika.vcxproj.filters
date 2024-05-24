@@ -1353,6 +1353,8 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Core\KeyCodes.h" />
+    <ClInclude Include="src\Pika\Core\MouseCodes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1382,5 +1384,6 @@
     <ClCompile Include="src\pkpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Platform\Windows\WindowsInput.cpp" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,9 @@
 #include "pkpch.h"
 #include "Application.h"
+#include "Pika/Core/Input.h"
 #include <glad/glad.h>
+
+#include <glm/glm.hpp>
 
 namespace Pika {
 	Application* Application::s_pSingletonInstance = nullptr;
@@ -43,6 +46,7 @@ namespace Pika {
 				it->onUpdate();
 			}
 			m_Window->onUpdate();
+
 		}
 	}
 	Application& Application::getInstance()

@@ -17,7 +17,7 @@ namespace Pika {
 		void pushOverlay(Layer* vLayer);
 		void run();
 
-		static Application& getInstance();
+		static Application& getInstance(); //s_pSingletonInstance
 		inline Window& getWindow() { return *m_Window; }
 	protected:
 		Application(); //Singleton pattern, can not use ctor

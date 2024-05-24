@@ -157,9 +157,11 @@
     <ClInclude Include="src\Pika\Core\Core.h" />
     <ClInclude Include="src\Pika\Core\EntryPoint.h" />
     <ClInclude Include="src\Pika\Core\Input.h" />
+    <ClInclude Include="src\Pika\Core\KeyCodes.h" />
     <ClInclude Include="src\Pika\Core\Layer.h" />
     <ClInclude Include="src\Pika\Core\LayerStack.h" />
     <ClInclude Include="src\Pika\Core\Log.h" />
+    <ClInclude Include="src\Pika\Core\MouseCodes.h" />
     <ClInclude Include="src\Pika\Core\Window.h" />
     <ClInclude Include="src\Pika\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Pika\Events\Event.h" />
@@ -596,6 +598,7 @@
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\imgui_impl_glfw.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\Pika\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Pika\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\pkpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

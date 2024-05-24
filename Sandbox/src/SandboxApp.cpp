@@ -4,8 +4,18 @@ class ExampleLayer : public Pika::Layer
 {
 public:
 	ExampleLayer() :Layer{ "Example Layer" } {};
-	void onUpdate() { PK_INFO("Example Layer update!"); }
-	void onEvent(const Pika::Event& vEvent) { PK_TRACE(vEvent.toString()); }
+	void onUpdate() override{ 
+		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::Tab)) {
+			PK_TRACE("Tab is pressed!");
+		}
+	}
+	void onEvent(Pika::Event& vEvent) override{ 
+		PK_TRACE(vEvent.toString()); 
+		if (vEvent.getEventType() == Pika::EventType::KeyPressed) {
+			Pika::KeyPressedEvent& Event = static_cast<Pika::KeyPressedEvent&>(vEvent);
+			PK_TRACE("Event Layer:Key {0} is pressed!", (char)Event.getKeyCode());
+		}
+	}
 };
 
 class Sandbox : public Pika::Application
