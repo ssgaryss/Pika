@@ -4,9 +4,10 @@
 [submodule "Pika/vendor/GLFW"]
 	path = Pika/vendor/GLFW
 	url = https://github.com/TheCherno/glfw.git
-[submodule "imgui"]
-	path = imgui
-	url = https://github.com/TheCherno/imgui.git
 [submodule "Pika/vendor/glm"]
 	path = Pika/vendor/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "Pika/vendor/imgui"]
+	path = Pika/vendor/imgui
+	url = git@github.com:ssgaryss/imgui.git
+	branch = docking

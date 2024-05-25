@@ -63,6 +63,9 @@
     <ClInclude Include="src\Pika\Core\Input.h">
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Core\KeyCodes.h">
+      <Filter>src\Pika\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Core\Layer.h">
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
@@ -70,6 +73,9 @@
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Core\Log.h">
+      <Filter>src\Pika\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Core\MouseCodes.h">
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Core\Window.h">
@@ -1353,8 +1359,6 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Core\KeyCodes.h" />
-    <ClInclude Include="src\Pika\Core\MouseCodes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1378,12 +1382,14 @@
     <ClCompile Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3.cpp">
       <Filter>src\Pika\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Platform\Windows\WindowsInput.cpp">
+      <Filter>src\Pika\Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Pika\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\pkpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Platform\Windows\WindowsInput.cpp" />
   </ItemGroup>
 </Project>
