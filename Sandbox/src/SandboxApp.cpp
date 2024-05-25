@@ -1,4 +1,5 @@
 #include "Pika.h"
+#include "imgui/imgui.h"
 
 class ExampleLayer : public Pika::Layer
 {
@@ -9,13 +10,20 @@ public:
 			PK_TRACE("Tab is pressed!");
 		}
 	}
-	void onEvent(Pika::Event& vEvent) override{ 
-		PK_TRACE(vEvent.toString()); 
+	void onEvent(Pika::Event& vEvent) override {
+		PK_TRACE(vEvent.toString());
 		if (vEvent.getEventType() == Pika::EventType::KeyPressed) {
 			Pika::KeyPressedEvent& Event = static_cast<Pika::KeyPressedEvent&>(vEvent);
 			PK_TRACE("Event Layer:Key {0} is pressed!", (char)Event.getKeyCode());
 		}
 	}
+	void onImGuiRender() override {
+		ImGui::Begin("Settings");
+		ImGui::Text("Hello world!");
+		ImGui::End();
+	}
+
+
 };
 
 class Sandbox : public Pika::Application

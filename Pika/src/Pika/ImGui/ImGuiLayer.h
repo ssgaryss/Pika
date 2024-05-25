@@ -16,19 +16,14 @@ namespace Pika {
 		~ImGuiLayer();
 		void onAttach() override;
 		void onDetach() override;
-		void onUpdate() override;
 		void onEvent(Event& vEvent) override;
+		
+		void begin();//begin()---- content ------end()
+		void end();
+
+		inline void setBlockEvents(bool vIsBlock) { m_BlockEvents = vIsBlock; }
 	private:
-		bool onMouseButtonPressedEvent(MouseButtonPressedEvent& vEvent);
-		bool onMouseButtonRleasedEvent(MouseButtonRleasedEvent& vEvent);
-		bool onMouseMovedEvent(MouseMovedEvent& vEvent);
-		bool onMouseScrolledEvent(MouseScrolledEvent& vEvent);
-		bool onKeyPressedEvent(KeyPressedEvent& vEvent);
-		bool onKeyReleasedEvent(KeyReleasedEvent& vEvent);
-		bool onKeyTypedEvent(KeyTypedEvent& vEvent);
-		bool onWindowResizeEvent(WindowResizeEvent& vEvent);
-	private:
-		float m_Time = 0.0f;
+		bool m_BlockEvents = true; // if false, can not handle event
 	};
 
 }

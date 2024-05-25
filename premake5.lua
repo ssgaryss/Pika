@@ -115,6 +115,7 @@ project "Sandbox"
 	{
 		"Pika/vendor/spdlog/include",
 		"Pika/src",
+		"%{wks.location}/Pika/vendor",
 		"%{includeDir.glm}"
 	}
 

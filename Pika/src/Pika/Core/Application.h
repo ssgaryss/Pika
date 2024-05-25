@@ -5,6 +5,7 @@
 #include "Pika/Events/ApplicationEvent.h"
 #include "Pika/Core/Window.h"
 #include "Pika/Core/LayerStack.h"
+#include "Pika/ImGui/ImGuiLayer.h"
 
 namespace Pika {
 
@@ -27,6 +28,7 @@ namespace Pika {
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+		ImGuiLayer* m_ImGuiLayer; //only one ImGuiLayer instance, but each Layer can use ImGuiRender()
 		static Application* s_pSingletonInstance;
 	};
 

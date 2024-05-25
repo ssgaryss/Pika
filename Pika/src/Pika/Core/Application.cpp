@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 
 #include <glm/glm.hpp>
+#include <imgui.h>
 
 namespace Pika {
 	Application* Application::s_pSingletonInstance = nullptr;
@@ -45,6 +46,15 @@ namespace Pika {
 			for (auto it : m_LayerStack) {
 				it->onUpdate();
 			}
+
+			m_ImGuiLayer->begin();
+			for (auto it : m_LayerStack)
+			{
+				it->onImGuiRender();
+			}
+			static bool Show = true;
+			ImGui::ShowDemoWindow(&Show);
+			m_ImGuiLayer->end();
 			m_Window->onUpdate();
 
 		}

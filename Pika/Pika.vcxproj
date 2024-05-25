@@ -168,10 +168,7 @@
     <ClInclude Include="src\Pika\Events\KeyboardEvent.h" />
     <ClInclude Include="src\Pika\Events\MouseEvent.h" />
     <ClInclude Include="src\Pika\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_glfw.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="src\Pika\Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.h" />
     <ClInclude Include="src\pkpch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -595,11 +592,10 @@
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
     <ClCompile Include="src\Pika\Core\Log.cpp" />
+    <ClCompile Include="src\Pika\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\Pika\Platform\OpenGL\imgui_impl_glfw.cpp" />
-    <ClCompile Include="src\Pika\Platform\OpenGL\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="src\Pika\Platform\Windows\WindowsInput.cpp" />
-    <ClCompile Include="src\Pika\Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsInput.cpp" />
+    <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.cpp" />
     <ClCompile Include="src\pkpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
