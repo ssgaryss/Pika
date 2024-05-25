@@ -1,4 +1,4 @@
- #include "pkpch.h"
+#include "pkpch.h"
 #include "ImGuiLayer.h"
 
 #include <imgui.h>
@@ -36,7 +36,7 @@ namespace Pika {
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		Application& App{ Application::getInstance() };
-		io.DisplaySize = ImVec2(App.getWindow().getWidth(), App.getWindow().getHeight());
+		io.DisplaySize = ImVec2(static_cast<float>(App.getWindow().getWidth()), static_cast<float>(App.getWindow().getHeight()));
 
 		float time = static_cast<float>(glfwGetTime());
 		io.DeltaTime = m_Time > 0.0f ? (m_Time - time) : (1.0f, 60.0f);
@@ -131,7 +131,7 @@ namespace Pika {
 	bool ImGuiLayer::onWindowResizeEvent(WindowResizeEvent& vEvent)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.DisplaySize = ImVec2(vEvent.getWidth(), vEvent.getHeight());
+		io.DisplaySize = ImVec2(static_cast<float>(vEvent.getWidth()), static_cast<float>(vEvent.getHeight()));
 		io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
 		glViewport(0, 0, vEvent.getWidth(), vEvent.getHeight());
 		PK_INFO("ImGui Layer handling event: {0}", vEvent.toString());
