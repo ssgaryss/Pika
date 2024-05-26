@@ -11,7 +11,7 @@ public:
 		}
 	}
 	void onEvent(Pika::Event& vEvent) override {
-		PK_TRACE(vEvent.toString());
+		//PK_TRACE(vEvent.toString());
 		if (vEvent.getEventType() == Pika::EventType::KeyPressed) {
 			Pika::KeyPressedEvent& Event = static_cast<Pika::KeyPressedEvent&>(vEvent);
 			PK_TRACE("Event Layer:Key {0} is pressed!", (char)Event.getKeyCode());

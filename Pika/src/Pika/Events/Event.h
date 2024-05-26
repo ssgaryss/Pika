@@ -27,7 +27,7 @@ namespace Pika {
 								inline const char* getName() const override { return #type; }
 #define EVENT_CLASS_CATEGORY(category) inline int getCategoryFlags() const override { return category; }
 
-	class PIKA_API Event
+	class Event
 	{
 	public:
 		virtual ~Event() = default;
@@ -41,7 +41,7 @@ namespace Pika {
 		inline bool isInCategory(EventCategory vCategory) const { return getCategoryFlags() & static_cast<int>(vCategory); }
 	};
 
-	class PIKA_API EventDispatcher //dispatch event to corresponding function 
+	class EventDispatcher //dispatch event to corresponding function 
 	{
 	public:
 		EventDispatcher() = delete;

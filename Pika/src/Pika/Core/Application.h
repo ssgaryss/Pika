@@ -9,7 +9,7 @@
 
 namespace Pika {
 
-	class PIKA_API Application
+	class Application
 	{
 	public:
 		virtual ~Application() = default;

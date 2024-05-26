@@ -4,7 +4,7 @@
 
 namespace Pika
 {
-	class PIKA_API LayerStack
+	class LayerStack
 	{
 	public:
 		LayerStack() = default;

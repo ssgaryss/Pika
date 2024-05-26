@@ -15,7 +15,7 @@ namespace Pika {
 			m_Title{ vTitle }, m_Width{ vWidth }, m_Height{ vHeight } {}
 	};
 
-	class PIKA_API Window
+	class Window
 	{
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;

@@ -11,17 +11,23 @@ namespace Pika {
 
 	Application::Application()
 	{
-		PK_ASSERT(!s_pSingletonInstance, "Application already exists!")
+		PK_ASSERT(!s_pSingletonInstance, "Application already exists!");
 		s_pSingletonInstance = this;
 		m_Window = std::unique_ptr<Window>(Window::create());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
+
+		PK_CORE_INFO("OpenGL Info :");
+		PK_CORE_INFO("     Vendor : {0}", reinterpret_cast<const char*>(glad_glGetString(GL_VENDOR)));
+		PK_CORE_INFO("   Renderer : {0}", reinterpret_cast<const char*>(glad_glGetString(GL_RENDERER)));
+		PK_CORE_INFO("    Version : {0}", reinterpret_cast<const char*>(glad_glGetString(GL_VERSION)));
+
 	}
 
 	void Application::onEvent(Event& vEvent)
 	{
 		EventDispatcher Dispatcher(vEvent);
 		Dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::onWindowCloseEvent, this, std::placeholders::_1));
-		PK_CORE_TRACE(vEvent.toString());
+		//PK_CORE_TRACE(vEvent.toString());
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it) {
 			if (vEvent.m_Handled) break;

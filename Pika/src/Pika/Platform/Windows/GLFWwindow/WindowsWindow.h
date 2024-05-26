@@ -5,7 +5,7 @@
 
 namespace Pika {
 
-	class PIKA_API WindowsWindow : public Window
+	class WindowsWindow : public Window
 	{
 	public:
 		WindowsWindow(const WindowProps& vWindowProps);

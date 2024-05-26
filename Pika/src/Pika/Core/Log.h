@@ -6,7 +6,7 @@
 #include "spdlog/fmt/ostr.h"
 
 namespace Pika {
-	class PIKA_API Log
+	class Log
 	{
 	public:
 		static void init(); // initialize Logger

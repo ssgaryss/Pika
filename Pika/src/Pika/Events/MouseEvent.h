@@ -5,7 +5,7 @@
 
 namespace Pika {
 
-	class PIKA_API MouseButtonEvent : public Event
+	class MouseButtonEvent : public Event
 	{
 	public:
 		inline int getMouseButton() const { return m_Button; }
@@ -16,7 +16,7 @@ namespace Pika {
 		int m_Button;
 	};
 
-	class PIKA_API MouseButtonPressedEvent : public MouseButtonEvent
+	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonPressedEvent(int vButton) :
@@ -29,7 +29,7 @@ namespace Pika {
 		EVENT_CLASS_TYPE(MouseButtonPressed);
 	};
 
-	class PIKA_API MouseButtonRleasedEvent : public MouseButtonEvent
+	class MouseButtonRleasedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonRleasedEvent(int vButton) :
@@ -42,7 +42,7 @@ namespace Pika {
 		EVENT_CLASS_TYPE(MouseButtonRleased);
 	};
 
-	class PIKA_API MouseMovedEvent : public Event
+	class MouseMovedEvent : public Event
 	{
 	public:
 		MouseMovedEvent(float vMouseX, float vMouseY) :
@@ -62,7 +62,7 @@ namespace Pika {
 		float m_MouseX, m_MouseY;
 	};
 
-	class PIKA_API MouseScrolledEvent :public Event
+	class MouseScrolledEvent :public Event
 	{
 	public:
 		MouseScrolledEvent(float vXOffset, float vYOffset) :

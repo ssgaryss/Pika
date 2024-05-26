@@ -9,7 +9,7 @@
 
 namespace Pika {
 
-	class PIKA_API ImGuiLayer : public Layer
+	class ImGuiLayer : public Layer
 	{
 	public:
 		ImGuiLayer(const std::string& vLayerName = "ImGui");

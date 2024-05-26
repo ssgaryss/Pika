@@ -6,7 +6,7 @@
 
 namespace Pika {
 
-	class PIKA_API Input
+	class Input
 	{
 	public:
 		static bool isKeyPressed(const Key::KeyCode vKey);

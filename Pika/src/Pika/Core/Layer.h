@@ -4,7 +4,7 @@
 
 namespace Pika {
 
-	class PIKA_API Layer
+	class Layer
 	{
 	public:
 		Layer(const std::string& vLayerName = "Layer");
