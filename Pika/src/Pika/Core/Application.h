@@ -30,6 +30,7 @@ namespace Pika {
 		LayerStack m_LayerStack;
 		ImGuiLayer* m_ImGuiLayer; //only one ImGuiLayer instance, but each Layer can use ImGuiRender()
 		static Application* s_pSingletonInstance;
+		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer; //VAO VBO EBO
 	};
 
 	// To be defined in CLIENT

@@ -1,8 +1,8 @@
 #include "pkpch.h"
 #include "Application.h"
 #include "Pika/Core/Input.h"
-#include <glad/glad.h>
 
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <imgui.h>
 
@@ -16,10 +16,23 @@ namespace Pika {
 		m_Window = std::unique_ptr<Window>(Window::create());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 
-		PK_CORE_INFO("OpenGL Info :");
-		PK_CORE_INFO("     Vendor : {0}", reinterpret_cast<const char*>(glad_glGetString(GL_VENDOR)));
-		PK_CORE_INFO("   Renderer : {0}", reinterpret_cast<const char*>(glad_glGetString(GL_RENDERER)));
-		PK_CORE_INFO("    Version : {0}", reinterpret_cast<const char*>(glad_glGetString(GL_VERSION)));
+		glGenVertexArrays(1, &m_VertexArray);
+		glBindVertexArray(m_VertexArray);
+
+		glGenBuffers(1, &m_VertexBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+
+		float vertices[3 * 3]
+		{
+			-0.5f, -0.5f, 0.0f,
+			0.0f, 0.5f, 0.0f,
+			0.5f, -0.5f, 0.0f
+		};
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		glGenBuffers(1, &m_IndexBuffer);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+		glEnableVertexAttribArray(0);
 
 	}
 
@@ -47,8 +60,11 @@ namespace Pika {
 	{
 		while (m_Running)
 		{
-			glClearColor(1, 1, 0, 1);
+			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+
 			for (auto it : m_LayerStack) {
 				it->onUpdate();
 			}
@@ -61,6 +77,7 @@ namespace Pika {
 			static bool Show = true;
 			ImGui::ShowDemoWindow(&Show);
 			m_ImGuiLayer->end();
+
 			m_Window->onUpdate();
 
 		}

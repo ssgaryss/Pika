@@ -29,7 +29,7 @@ namespace Pika {
 	void WindowsWindow::onUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context.swapBuffer();
 	}
 	unsigned int Pika::WindowsWindow::getWidth() const
 	{
@@ -76,9 +76,10 @@ namespace Pika {
 
 		m_Window = glfwCreateWindow(static_cast<int>(vWindowProps.m_Width), static_cast<int>(vWindowProps.m_Height),
 			vWindowProps.m_Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		int Status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		PK_CORE_ASSERT(Status, "Could not initialize gald!");
+
+		m_Context = dynamic_cast<OpenGLContext&>(GraphicsContext::createContext(m_Window));
+		m_Context.init();
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		setVSync(true);
 

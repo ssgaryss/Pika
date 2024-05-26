@@ -152,6 +152,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Pika.h" />
     <ClInclude Include="src\Pika\Core\Application.h" />
     <ClInclude Include="src\Pika\Core\Core.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="src\Pika\Events\MouseEvent.h" />
     <ClInclude Include="src\Pika\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.h" />
+    <ClInclude Include="src\Pika\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\pkpch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -588,6 +590,7 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
@@ -596,6 +599,7 @@
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsInput.cpp" />
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.cpp" />
+    <ClCompile Include="src\Pika\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="src\pkpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

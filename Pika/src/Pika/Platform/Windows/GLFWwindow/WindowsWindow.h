@@ -1,7 +1,10 @@
 #pragma once
 
 #include "Pika/Core/Window.h"
+#include "Pika/Renderer/GraphicsContext.h"
 #include <GLFW/glfw3.h>
+
+#include "Pika/Platform/OpenGL/OpenGLContext.h"
 
 namespace Pika {
 
@@ -21,7 +24,7 @@ namespace Pika {
 	private:
 		void init(const WindowProps& vWindowProps);
 		void shutDown();
-
+	private:
 		struct WindowData {
 			std::string m_Title;
 			unsigned int m_Width, m_Height;
@@ -29,9 +32,10 @@ namespace Pika {
 
 			EventCallbackFn eventCallBack;
 		};
-
 		GLFWwindow* m_Window;
 		WindowData m_Data;
+		OpenGLContext m_Context;
+
 	};
 }
 
