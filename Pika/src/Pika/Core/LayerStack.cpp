@@ -3,7 +3,7 @@
 
 Pika::LayerStack::~LayerStack()
 {
-	for (auto it : m_Layers) {
+	for (auto it : m_pLayers) {
 		it->onDetach();
 		delete it;
 	}
@@ -11,32 +11,32 @@ Pika::LayerStack::~LayerStack()
 
 void Pika::LayerStack::pushLayer(Layer* vLayer)
 {
-	m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, vLayer);
+	m_pLayers.emplace(m_pLayers.begin() + m_LayerInsertIndex, vLayer);
 	vLayer->onAttach();
 	m_LayerInsertIndex++;
 }
 
 void Pika::LayerStack::popLayer(Layer* vLayer)
 {
-	auto it = std::find(m_Layers.begin(), m_Layers.begin() + m_LayerInsertIndex, vLayer);
-	if (it != m_Layers.begin() + m_LayerInsertIndex) {
+	auto it = std::find(m_pLayers.begin(), m_pLayers.begin() + m_LayerInsertIndex, vLayer);
+	if (it != m_pLayers.begin() + m_LayerInsertIndex) {
 		vLayer->onDetach();
-		m_Layers.erase(it);
+		m_pLayers.erase(it);
 		m_LayerInsertIndex--;
 	}
 }
 
 void Pika::LayerStack::pushOverlay(Layer* vLayer)
 {
-	m_Layers.emplace_back(vLayer);
+	m_pLayers.emplace_back(vLayer);
 	vLayer->onAttach();
 }
 
 void Pika::LayerStack::popOverlay(Layer* vLayer)
 {
-	auto it = std::find(m_Layers.begin() + m_LayerInsertIndex, m_Layers.end(), vLayer);
-	if (it != m_Layers.end()) {
+	auto it = std::find(m_pLayers.begin() + m_LayerInsertIndex, m_pLayers.end(), vLayer);
+	if (it != m_pLayers.end()) {
 		vLayer->onDetach();
-		m_Layers.erase(it);
+		m_pLayers.erase(it);
 	}
 }

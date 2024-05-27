@@ -28,7 +28,7 @@ namespace Pika {
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-		ImGuiLayer* m_ImGuiLayer; //only one ImGuiLayer instance, but each Layer can use ImGuiRender()
+		ImGuiLayer* m_pImGuiLayer; //only one ImGuiLayer instance, but each Layer can use ImGuiRender()
 		static Application* s_pSingletonInstance;
 		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer; //VAO VBO EBO
 	};

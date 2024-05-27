@@ -19,11 +19,17 @@
     <Filter Include="src\Pika\Platform">
       <UniqueIdentifier>{950B24A7-0122-223D-4A99-AD5EB6EEF2C4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Pika\Platform\OpenGL">
+      <UniqueIdentifier>{293B77EF-1560-C66F-3EAB-ABFF2A2FC58D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Pika\Platform\Windows">
       <UniqueIdentifier>{CF7A7A36-3B3D-AEC0-84ED-3C4DF0EE869E}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Pika\Platform\Windows\GLFWwindow">
       <UniqueIdentifier>{86A3B295-728A-748D-1BDB-DAAA07A1EDF3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Pika\Renderer">
+      <UniqueIdentifier>{E7120182-5329-FF17-9CA0-8A3908F6CF9F}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
@@ -96,8 +102,17 @@
     <ClInclude Include="src\Pika\ImGui\ImGuiLayer.h">
       <Filter>src\Pika\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.h">
       <Filter>src\Pika\Platform\Windows\GLFWwindow</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\GraphicsContext.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\RendererAPI.h">
+      <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\pkpch.h">
       <Filter>src</Filter>
@@ -1350,8 +1365,7 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Renderer\GraphicsContext.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1372,16 +1386,24 @@
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp">
       <Filter>src\Pika\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsInput.cpp">
       <Filter>src\Pika\Platform\Windows\GLFWwindow</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.cpp">
       <Filter>src\Pika\Platform\Windows\GLFWwindow</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\GraphicsContext.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\RendererAPI.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\pkpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="src\Pika\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.cpp" />
   </ItemGroup>
 </Project>

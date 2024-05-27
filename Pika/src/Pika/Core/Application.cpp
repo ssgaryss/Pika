@@ -69,14 +69,14 @@ namespace Pika {
 				it->onUpdate();
 			}
 
-			m_ImGuiLayer->begin();
+			m_pImGuiLayer->begin();
 			for (auto it : m_LayerStack)
 			{
 				it->onImGuiRender();
 			}
 			static bool Show = true;
 			ImGui::ShowDemoWindow(&Show);
-			m_ImGuiLayer->end();
+			m_pImGuiLayer->end();
 
 			m_Window->onUpdate();
 

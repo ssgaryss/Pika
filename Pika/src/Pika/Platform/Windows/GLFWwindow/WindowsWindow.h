@@ -32,9 +32,9 @@ namespace Pika {
 
 			EventCallbackFn eventCallBack;
 		};
-		GLFWwindow* m_Window;
 		WindowData m_Data;
-		OpenGLContext m_Context;
+		GLFWwindow* m_pWindow;
+		GraphicsContext* m_pContext;
 
 	};
 }

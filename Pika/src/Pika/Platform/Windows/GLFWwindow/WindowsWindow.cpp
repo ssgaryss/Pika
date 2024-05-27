@@ -29,7 +29,7 @@ namespace Pika {
 	void WindowsWindow::onUpdate()
 	{
 		glfwPollEvents();
-		m_Context.swapBuffer();
+		m_pContext->swapBuffer();
 	}
 	unsigned int Pika::WindowsWindow::getWidth() const
 	{
@@ -43,7 +43,7 @@ namespace Pika {
 
 	void* WindowsWindow::getNativeWindow() const
 	{
-		return m_Window;
+		return m_pWindow;
 	}
 
 	void WindowsWindow::setVSync(bool vEnable)
@@ -74,16 +74,17 @@ namespace Pika {
 			glfwSetErrorCallback(GLFWErrorCallBack);
 		}
 
-		m_Window = glfwCreateWindow(static_cast<int>(vWindowProps.m_Width), static_cast<int>(vWindowProps.m_Height),
+		m_pWindow = glfwCreateWindow(static_cast<int>(vWindowProps.m_Width), static_cast<int>(vWindowProps.m_Height),
 			vWindowProps.m_Title.c_str(), nullptr, nullptr);
 
-		m_Context = dynamic_cast<OpenGLContext&>(GraphicsContext::createContext(m_Window));
-		m_Context.init();
+		m_pContext = GraphicsContext::createContext(m_pWindow);
+		PK_ASSERT(m_pContext, "WindowsWindow : m_pContext is nullptr!");
+		m_pContext->init();
 
-		glfwSetWindowUserPointer(m_Window, &m_Data);
+		glfwSetWindowUserPointer(m_pWindow, &m_Data);
 		setVSync(true);
 
-		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
+		glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow* window, int width, int height)
 			{
 				WindowData& Data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 				Data.m_Width = width;
@@ -92,14 +93,14 @@ namespace Pika {
 				Data.eventCallBack(Event);
 			});
 
-		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
+		glfwSetWindowCloseCallback(m_pWindow, [](GLFWwindow* window)
 			{
 				WindowData& Data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 				WindowCloseEvent Event;
 				Data.eventCallBack(Event);
 			});
 
-		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		glfwSetKeyCallback(m_pWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				WindowData& Data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 				switch (action)
@@ -125,14 +126,14 @@ namespace Pika {
 				}
 			});
 
-		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int codepoint)
+		glfwSetCharCallback(m_pWindow, [](GLFWwindow* window, unsigned int codepoint)
 			{
 				WindowData& Data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 				KeyTypedEvent Event(codepoint); //codepoint is keycode
 				Data.eventCallBack(Event);
 			});
 
-		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
+		glfwSetMouseButtonCallback(m_pWindow, [](GLFWwindow* window, int button, int action, int mods)
 			{
 				WindowData& Data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 				switch (action)
@@ -152,14 +153,14 @@ namespace Pika {
 				}
 			});
 
-		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xoffset, double yoffset)
+		glfwSetScrollCallback(m_pWindow, [](GLFWwindow* window, double xoffset, double yoffset)
 			{
 				WindowData& Data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 				MouseScrolledEvent Event(static_cast<float>(xoffset), static_cast<float>(yoffset));
 				Data.eventCallBack(Event);
 			});
 
-		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos)
+		glfwSetCursorPosCallback(m_pWindow, [](GLFWwindow* window, double xpos, double ypos)
 			{
 				WindowData& Data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 				MouseMovedEvent Event(static_cast<float>(xpos), static_cast<float>(ypos));
@@ -169,7 +170,7 @@ namespace Pika {
 
 	void WindowsWindow::shutDown()
 	{
-		glfwDestroyWindow(m_Window);
+		glfwDestroyWindow(m_pWindow);
 		--s_GLFWWindowCount;
 		if (s_GLFWWindowCount == 0)
 		{
