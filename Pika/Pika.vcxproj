@@ -152,6 +152,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="src\Pika\Renderer\Shader.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Pika.h" />
     <ClInclude Include="src\Pika\Core\Application.h" />
@@ -592,6 +594,8 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLShader.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Shader.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />

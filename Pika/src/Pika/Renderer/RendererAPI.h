@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace Pika {
 
 	class RendererAPI
@@ -15,7 +14,7 @@ namespace Pika {
 		inline static GraphicsAPI getAPI() { return s_GraphicsAPI; }
 		inline static void setAPI(GraphicsAPI vGraphicsAPI) { s_GraphicsAPI = vGraphicsAPI; }
 
-		static RendererAPI* creat();
+		static RendererAPI* create();
 		virtual void clear() = 0;
 
 	private:

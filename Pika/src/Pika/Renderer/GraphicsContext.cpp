@@ -21,6 +21,8 @@ namespace Pika
 			return nullptr;
 #endif
 		}
+
+		PK_ASSERT(false, "GraphicsContext: Unknown renderer API!");
 		return nullptr;
 	}
 }

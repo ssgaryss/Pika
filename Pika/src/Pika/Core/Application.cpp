@@ -1,10 +1,11 @@
 #include "pkpch.h"
 #include "Application.h"
 #include "Pika/Core/Input.h"
-
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <imgui.h>
+
+#include "Pika/Platform/OpenGL/OpenGLShader.h"
 
 namespace Pika {
 	Application* Application::s_pSingletonInstance = nullptr;
@@ -16,23 +17,56 @@ namespace Pika {
 		m_Window = std::unique_ptr<Window>(Window::create());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 
+		const char* Name = R"(Test shader)";
+
+		const char* VertexShader = R"(
+		#version 460 core
+		layout (location = 0) in vec3 a_Position;
+			
+		void main(){
+			gl_Position = vec4(a_Position, 1.0f);
+		})";
+
+		const char* FragentShader = R"(
+		out vec4 FragmentColor;
+		
+		void main(){
+			FragmentColor = vec4(0.8f, 0.2f, 0.2f, 1.0f);
+		})";
+
+		OpenGLShader Shader(Name, VertexShader, FragentShader);
+		Shader.bind();
+
 		glGenVertexArrays(1, &m_VertexArray);
 		glBindVertexArray(m_VertexArray);
 
 		glGenBuffers(1, &m_VertexBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
 
-		float vertices[3 * 3]
+		float vertices[4 * 3]
 		{
-			-0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f
+			 0.5f,  0.5f, 0.0f,  // top right
+			 0.5f, -0.5f, 0.0f,  // bottom right
+			-0.5f, -0.5f, 0.0f,  // bottom left
+			-0.5f,  0.5f, 0.0f   // top left 
 		};
 
+		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-		glGenBuffers(1, &m_IndexBuffer);
+
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 		glEnableVertexAttribArray(0);
+
+		glGenBuffers(1, &m_IndexBuffer);
+		unsigned int indices[6]{ 
+			0, 1, 3,  // first Triangle
+			1, 2, 3   // second Triangle 
+		};
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 
 	}
 
@@ -63,7 +97,9 @@ namespace Pika {
 			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			glDrawArrays(GL_TRIANGLES, 0, 3);
+			glBindVertexArray(m_VertexArray);
+			//glDrawArrays(GL_TRIANGLES, 0, 6);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 
 			for (auto it : m_LayerStack) {
 				it->onUpdate();

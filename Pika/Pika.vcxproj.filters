@@ -1366,6 +1366,8 @@
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\Pika\Renderer\Shader.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1405,5 +1407,7 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLShader.cpp" />
   </ItemGroup>
 </Project>
