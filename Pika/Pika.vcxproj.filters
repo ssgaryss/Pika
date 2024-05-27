@@ -1368,6 +1368,8 @@
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Pika\Renderer\Shader.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="src\Pika\Renderer\Buffer.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1409,5 +1411,7 @@
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Pika\Renderer\Shader.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLShader.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp" />
   </ItemGroup>
 </Project>

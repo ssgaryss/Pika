@@ -1,6 +1,7 @@
 #include "pkpch.h"
 #include "Application.h"
 #include "Pika/Core/Input.h"
+#include "Pika/Renderer/Buffer.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <imgui.h>
@@ -40,7 +41,6 @@ namespace Pika {
 		glGenVertexArrays(1, &m_VertexArray);
 		glBindVertexArray(m_VertexArray);
 
-		glGenBuffers(1, &m_VertexBuffer);
 
 		float vertices[4 * 3]
 		{
@@ -50,24 +50,28 @@ namespace Pika {
 			-0.5f,  0.5f, 0.0f   // top left 
 		};
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		//glGenBuffers(1, &m_VertexBuffer);
+		//glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		std::unique_ptr<VertexBuffer> VBO = VertexBuffer::create(vertices ,sizeof(vertices));
+		PK_ASSERT(VBO, "VertexBuffer is nullptr!");
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 		glEnableVertexAttribArray(0);
 
-		glGenBuffers(1, &m_IndexBuffer);
 		unsigned int indices[6]{ 
 			0, 1, 3,  // first Triangle
 			1, 2, 3   // second Triangle 
 		};
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		//glGenBuffers(1, &m_IndexBuffer);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		auto EBO = IndexBuffer::create(indices, sizeof(indices));
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//glBindBuffer(GL_ARRAY_BUFFER, 0);
+		VBO->unbind();
 		glBindVertexArray(0);
-
 	}
 
 	void Application::onEvent(Event& vEvent)
