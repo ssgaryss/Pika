@@ -1,6 +1,6 @@
 #pragma once
 #include "pkpch.h"
-#include "Pika/Core.h"
+#include "Pika/Core/Core.h"
 
 namespace Pika {
 
@@ -8,7 +8,7 @@ namespace Pika {
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender,
-		KeyPressed, KeyReleased,
+		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonRleased, MouseMoved, MouseScrolled
 	};
 
@@ -27,7 +27,7 @@ namespace Pika {
 								inline const char* getName() const override { return #type; }
 #define EVENT_CLASS_CATEGORY(category) inline int getCategoryFlags() const override { return category; }
 
-	class PIKA_API Event
+	class Event
 	{
 	public:
 		virtual ~Event() = default;
@@ -41,7 +41,7 @@ namespace Pika {
 		inline bool isInCategory(EventCategory vCategory) const { return getCategoryFlags() & static_cast<int>(vCategory); }
 	};
 
-	class PIKA_API EventDispatcher //dispatch event to corresponding function 
+	class EventDispatcher //dispatch event to corresponding function 
 	{
 	public:
 		EventDispatcher() = delete;
@@ -51,7 +51,7 @@ namespace Pika {
 		template<typename T, typename F> //T:Event£¬F:function
 		bool dispatch(const F& func) {
 			if (m_Event.getEventType() == T::getStaticType()) {
-				m_Event.m_Handled |= func(*(T*)&m_Event);
+				m_Event.m_Handled |= func(*static_cast<T*>(& m_Event));
 				return true;
 			}
 			return false;

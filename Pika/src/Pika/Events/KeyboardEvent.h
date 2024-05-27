@@ -5,7 +5,7 @@
 
 namespace Pika {
 
-	class PIKA_API KeyEvent : public Event {
+	class KeyEvent : public Event {
 	public:
 		inline int getKeyCode() const { return m_KeyCode; }
 		EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryKeyboard)
@@ -15,7 +15,7 @@ namespace Pika {
 		int m_KeyCode;
 	};
 
-	class PIKA_API KeyPressedEvent : public KeyEvent {
+	class KeyPressedEvent : public KeyEvent {
 	public:
 		KeyPressedEvent(int vKeyCode, int vRepeatCount) :
 			KeyEvent{ vKeyCode }, m_RepeatCount{ vRepeatCount } {}
@@ -32,7 +32,7 @@ namespace Pika {
 		int m_RepeatCount;
 	};
 
-	class PIKA_API KeyReleasedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int vKeyCode) :
@@ -45,4 +45,16 @@ namespace Pika {
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
+	class KeyTypedEvent : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(int vKeycode) :
+			KeyEvent{ vKeycode } {}
+		inline std::string toString() const override {
+			std::stringstream ss;
+			ss << "KeyTypedEvent: " << m_KeyCode;
+			return ss.str();
+		}
+		EVENT_CLASS_TYPE(KeyTyped)
+	};
 }

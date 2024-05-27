@@ -5,7 +5,7 @@
 
 namespace Pika {
 
-	class PIKA_API WindowCloseEvent : public Event
+	class WindowCloseEvent : public Event
 	{
 	public:
 		WindowCloseEvent() = default;
@@ -13,7 +13,7 @@ namespace Pika {
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
 
-	class PIKA_API WindowResizeEvent : public Event
+	class WindowResizeEvent : public Event
 	{
 	public:
 		WindowResizeEvent() = delete;
@@ -32,7 +32,7 @@ namespace Pika {
 		unsigned int m_Width, m_Height;
 	};
 
-	class PIKA_API AppTickEvent : public Event
+	class AppTickEvent : public Event
 	{
 	public:
 		AppTickEvent() = default;
@@ -40,7 +40,7 @@ namespace Pika {
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
 
-	class PIKA_API AppUpdateEvent : public Event
+	class AppUpdateEvent : public Event
 	{
 	public:
 		AppUpdateEvent() = default;
@@ -48,7 +48,7 @@ namespace Pika {
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
 
-	class PIKA_API AppRenderEvent : public Event
+	class AppRenderEvent : public Event
 	{
 	public:
 		AppRenderEvent() = default;
