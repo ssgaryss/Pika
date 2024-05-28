@@ -11,6 +11,8 @@ namespace Pika
 		virtual void unbind() = 0;
 		virtual const std::string& getName() const = 0;
 
+		static std::shared_ptr<Shader> create(const std::string& vName, 
+			const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
 	};
 
 }

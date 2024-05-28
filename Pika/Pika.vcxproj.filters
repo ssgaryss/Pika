@@ -1370,6 +1370,8 @@
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Pika\Renderer\Buffer.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLBuffer.h" />
+    <ClInclude Include="src\Pika\Renderer\VertexArray.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1413,5 +1415,7 @@
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Pika\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="src\Pika\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.cpp" />
   </ItemGroup>
 </Project>

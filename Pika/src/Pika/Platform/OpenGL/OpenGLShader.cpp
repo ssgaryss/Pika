@@ -116,6 +116,7 @@ namespace Pika
 
     Pika::OpenGLShader::~OpenGLShader()
     {
+		glDeleteProgram(m_RendererID);
     }
 
     void Pika::OpenGLShader::bind()
@@ -125,7 +126,7 @@ namespace Pika
 
     void Pika::OpenGLShader::unbind()
     {
-		glDeleteProgram(m_RendererID);
+		glUseProgram(0);
     }
 
 }

@@ -63,7 +63,7 @@ namespace Pika {
 		m_pWindow = glfwCreateWindow(static_cast<int>(vWindowProps.m_Width), static_cast<int>(vWindowProps.m_Height),
 			vWindowProps.m_Title.c_str(), nullptr, nullptr);
 
-		m_pContext = GraphicsContext::createContext(m_pWindow);
+		m_pContext.reset(GraphicsContext::create(m_pWindow));
 		PK_ASSERT(m_pContext, "WindowsWindow : m_pContext is nullptr!");
 		m_pContext->init();
 

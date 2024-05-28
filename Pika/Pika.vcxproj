@@ -152,6 +152,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Pika\Renderer\Buffer.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLShader.h" />
@@ -594,8 +595,10 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
+    <ClInclude Include="src\Pika\Renderer\VertexArray.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Pika\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLShader.cpp" />
@@ -615,6 +618,7 @@
     <ClCompile Include="src\pkpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

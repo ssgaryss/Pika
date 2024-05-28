@@ -1,11 +1,11 @@
 #include "pkpch.h"
-#include "Shader.h"
+#include "VertexArray.h"
 #include "Pika/Renderer/RendererAPI.h"
-#include "Pika/Platform/OpenGL/OpenGLShader.h"
+#include "Pika/Platform/OpenGL/OpenGLVertexArray.h"
 
-namespace Pika {
-
-	std::shared_ptr<Shader> Shader::create(const std::string& vName, const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc)
+namespace Pika
+{
+	VertexArray* VertexArray::create()
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -14,7 +14,7 @@ namespace Pika {
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
-			return std::make_shared<OpenGLShader>(vName, vVertexShaderSrc, vFragmentShaderSrc);
+			return new OpenGLVertexArray();
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "Shader: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;
@@ -23,5 +23,4 @@ namespace Pika {
 		PK_ASSERT(false, "Shader: Unknown renderer API!");
 		return nullptr;
 	}
-
 }

@@ -6,7 +6,7 @@
 
 namespace Pika
 {
-	std::shared_ptr<GraphicsContext> GraphicsContext::createContext(void* vWindow)
+	GraphicsContext* GraphicsContext::create(void* vWindow)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -15,7 +15,7 @@ namespace Pika
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
-			return std::make_shared<OpenGLContext>(reinterpret_cast<GLFWwindow*>(vWindow));
+			return new OpenGLContext(reinterpret_cast<GLFWwindow*>(vWindow));
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "GraphicsContext: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;

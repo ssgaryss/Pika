@@ -7,6 +7,10 @@
 #include "Pika/Core/LayerStack.h"
 #include "Pika/ImGui/ImGuiLayer.h"
 
+#include "Pika/Renderer/VertexArray.h"
+#include "Pika/Renderer/Shader.h"
+#include "Pika/Renderer/Buffer.h"
+
 namespace Pika {
 
 	class Application
@@ -30,7 +34,13 @@ namespace Pika {
 		LayerStack m_LayerStack;
 		ImGuiLayer* m_pImGuiLayer; //only one ImGuiLayer instance, but each Layer can use ImGuiRender()
 		static Application* s_pSingletonInstance;
-		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer; //VAO VBO EBO
+
+
+		std::shared_ptr<VertexArray> VAO;
+		std::shared_ptr<VertexBuffer> VBO;
+		std::shared_ptr<IndexBuffer> EBO;
+		std::shared_ptr<Shader> shader_1;
+		std::shared_ptr<Shader> shader_2;
 	};
 
 	// To be defined in CLIENT

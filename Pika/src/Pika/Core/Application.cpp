@@ -6,7 +6,7 @@
 #include <imgui.h>
 
 #include "Pika/Renderer/Buffer.h"
-#include "Pika/Platform/OpenGL/OpenGLShader.h"
+#include "Pika/Renderer/Shader.h"
 
 namespace Pika {
 	Application* Application::s_pSingletonInstance = nullptr;
@@ -18,7 +18,7 @@ namespace Pika {
 		m_Window = std::unique_ptr<Window>(Window::create());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 
-		const char* Name = R"(Test shader)";
+		const char* Name = R"(Colored shader)";
 
 		const char* VertexShader = R"(
 		#version 460 core
@@ -41,12 +41,13 @@ namespace Pika {
 			FragmentColor = v_Color;
 		})";
 
-		OpenGLShader Shader(Name, VertexShader, FragentShader);
-		Shader.bind();
+		shader_1 = Shader::create(Name, VertexShader, FragentShader);
+		shader_1->bind();
 
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
-
+		//glGenVertexArrays(1, &m_VertexArray);
+		//glBindVertexArray(m_VertexArray);
+		VAO.reset(VertexArray::create());
+		VAO->bind();
 
 		float vertices[4 * 6]
 		{
@@ -59,7 +60,7 @@ namespace Pika {
 		//glGenBuffers(1, &m_VertexBuffer);
 		//glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
 		//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-		auto VBO = VertexBuffer::create(vertices, sizeof(vertices));
+		VBO.reset(VertexBuffer::create(vertices, sizeof(vertices)));
 		PK_ASSERT(VBO, "VertexBuffer is nullptr!");
 
 		BufferLayout Layout = {
@@ -67,7 +68,7 @@ namespace Pika {
 			{ShaderDataType::Float3, "a_Color"}
 		};
 		VBO->setLayout(Layout);
-
+		VAO->addVertexBuffer(VBO);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -81,11 +82,11 @@ namespace Pika {
 		//glGenBuffers(1, &m_IndexBuffer);
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
 		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-		auto EBO = IndexBuffer::create(indices, sizeof(indices) / sizeof(uint32_t));
-
+		EBO.reset(IndexBuffer::create(indices, sizeof(indices) / sizeof(uint32_t)));
+		VAO->setIndexBuffer(EBO);
 		//glBindBuffer(GL_ARRAY_BUFFER, 0);
 		VBO->unbind();
-		glBindVertexArray(0);
+		VAO->unbind();
 	}
 
 	void Application::onEvent(Event& vEvent)
@@ -116,7 +117,7 @@ namespace Pika {
 			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			glBindVertexArray(m_VertexArray);
+			VAO->bind();
 			//glDrawArrays(GL_TRIANGLES, 0, 6);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 
