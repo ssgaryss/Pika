@@ -11,11 +11,10 @@ namespace Pika
 	public:
 		OpenGLContext() = delete;
 		OpenGLContext(GLFWwindow* vWindow);
-		~OpenGLContext();
 		void init() override;
 		void swapBuffer() override;
 	private:
-		GLFWwindow* m_pWindowHandle;
+		GLFWwindow* m_pWindowHandle; //GLFW window, the context should not delete this in destructor
 	};
 
 }

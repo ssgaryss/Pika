@@ -14,7 +14,7 @@ namespace Pika {
 		inline static GraphicsAPI getAPI() { return s_GraphicsAPI; }
 		inline static void setAPI(GraphicsAPI vGraphicsAPI) { s_GraphicsAPI = vGraphicsAPI; }
 
-		static std::unique_ptr<RendererAPI> create();
+		static std::shared_ptr<RendererAPI> create();
 		virtual void clear() = 0;
 
 	private:

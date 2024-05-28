@@ -12,22 +12,26 @@ namespace Pika
 		~OpenGLVertexBuffer() override;
 		void bind() override;
 		void unbind() override;
+
+		const BufferLayout& getLayout() const override;
+		void setLayout(const BufferLayout vLayout) override;
 	private:
 		uint32_t m_RendererID;
-
+		BufferLayout m_Layout; //describe each part of VBO represent what type of data
 	};
 
 
 	class OpenGLIndexBuffer : public IndexBuffer
 	{
 	public:
-		OpenGLIndexBuffer(uint32_t vSize);
-		OpenGLIndexBuffer(uint32_t* vIndices, uint32_t vSize);
+		OpenGLIndexBuffer() = delete;
+		OpenGLIndexBuffer(uint32_t* vIndices, uint32_t vCount);
 		~OpenGLIndexBuffer();
 		void bind() override;
 		void unbind() override;
 	private:
 		uint32_t m_RendererID;
+		uint32_t m_Count; //nums of indices
 	};
 
 }

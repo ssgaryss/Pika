@@ -6,7 +6,7 @@ namespace Pika {
 
 	RendererAPI::GraphicsAPI RendererAPI::s_GraphicsAPI = GraphicsAPI::OpenGL; //for now
 
-	std::unique_ptr<RendererAPI> RendererAPI::create()
+	std::shared_ptr<RendererAPI> RendererAPI::create()
 	{
 		switch (s_GraphicsAPI)
 		{
@@ -15,7 +15,7 @@ namespace Pika {
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case Pika::RendererAPI::GraphicsAPI::OpenGL:
-			return std::make_unique<OpenGLRendererAPI>();
+			return std::make_shared<OpenGLRendererAPI>();
 		case Pika::RendererAPI::GraphicsAPI::DirectX:
 			PK_ASSERT(false, "RendererAPI: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;

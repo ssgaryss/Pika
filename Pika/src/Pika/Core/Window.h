@@ -23,6 +23,7 @@ namespace Pika {
 		virtual ~Window() = default;
 		virtual void onUpdate() = 0;
 
+		virtual std::string getTitle() const = 0;
 		virtual unsigned int getWidth() const = 0;
 		virtual unsigned int getHeight() const = 0;
 		virtual void* getNativeWindow() const = 0;

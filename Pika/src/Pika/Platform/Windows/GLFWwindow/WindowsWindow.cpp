@@ -31,20 +31,6 @@ namespace Pika {
 		glfwPollEvents();
 		m_pContext->swapBuffer();
 	}
-	unsigned int Pika::WindowsWindow::getWidth() const
-	{
-		return m_Data.m_Width;
-	}
-
-	unsigned int WindowsWindow::getHeight() const
-	{
-		return m_Data.m_Height;
-	}
-
-	void* WindowsWindow::getNativeWindow() const
-	{
-		return m_pWindow;
-	}
 
 	void WindowsWindow::setVSync(bool vEnable)
 	{
@@ -54,12 +40,12 @@ namespace Pika {
 		else {
 			glfwSwapInterval(0);
 		}
-		m_Data.VSync = vEnable;
+		m_Data.m_VSync = vEnable;
 	}
 
 	bool WindowsWindow::isVSync() const
 	{
-		return m_Data.VSync;
+		return m_Data.m_VSync;
 	}
 
 	void WindowsWindow::init(const WindowProps& vWindowProps)

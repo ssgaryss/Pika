@@ -34,21 +34,27 @@ namespace Pika
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	////////////////////////////IndexBuffer/////////////////////////////////
-	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t vSize)
+	const BufferLayout& OpenGLVertexBuffer::getLayout() const
 	{
-		glCreateBuffers(1, &m_RendererID);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, vSize, nullptr, GL_DYNAMIC_DRAW);
+		return m_Layout;
 	}
-	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* vIndices, uint32_t vSize)
+
+	void OpenGLVertexBuffer::setLayout(const BufferLayout vLayout)
 	{
+		m_Layout = vLayout;
+	}
+
+	////////////////////////////IndexBuffer/////////////////////////////////
+	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* vIndices, uint32_t vCount)
+	{
+		m_Count = vCount;
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, vSize, vIndices, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Count * sizeof(uint32_t), vIndices, GL_DYNAMIC_DRAW);
 	}
 	OpenGLIndexBuffer::~OpenGLIndexBuffer()
 	{
+		glDeleteBuffers(1, &m_RendererID);
 	}
 	void OpenGLIndexBuffer::bind()
 	{

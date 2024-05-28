@@ -11,7 +11,7 @@ namespace Pika {
 		virtual void init() = 0;
 		virtual void swapBuffer() = 0;
 
-		static GraphicsContext* createContext(void* vWindow); //only GLFW for now
+		static std::shared_ptr<GraphicsContext> createContext(void* vWindow); //only GLFW for now
 	private:
 
 	};
