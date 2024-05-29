@@ -14,7 +14,7 @@ namespace Pika {
 		inline static GraphicsAPI getAPI() { return s_GraphicsAPI; }
 		inline static void setAPI(GraphicsAPI vGraphicsAPI) { s_GraphicsAPI = vGraphicsAPI; }
 
-		static RendererAPI* create();
+		static RendererAPI* Create();
 		virtual void clear() = 0;
 
 	private:

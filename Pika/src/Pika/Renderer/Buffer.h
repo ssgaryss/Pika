@@ -131,25 +131,25 @@ namespace Pika
 	{
 	public:
 		virtual ~VertexBuffer() = default;
-		virtual void bind() = 0;
-		virtual void unbind() = 0;
+		virtual void bind() const = 0;
+		virtual void unbind() const = 0;
 
 		virtual const BufferLayout& getLayout() const = 0;
 		virtual void setLayout(const BufferLayout& vLayout) = 0;
 
-		static VertexBuffer* create(uint32_t vSize);
-		static VertexBuffer* create(float* vVertices, uint32_t vSize);
+		static VertexBuffer* Create(uint32_t vSize);
+		static VertexBuffer* Create(float* vVertices, uint32_t vSize);
 	};
 
 	class IndexBuffer
 	{
 	public:
 		virtual ~IndexBuffer() = default;
-		virtual void bind() = 0;
-		virtual void unbind() = 0;
+		virtual void bind() const = 0;
+		virtual void unbind() const = 0;
 
-		static IndexBuffer* create(uint32_t vCount);
-		static IndexBuffer* create(uint32_t* vIndices, uint32_t vCount);
+		static IndexBuffer* Create(uint32_t vCount);
+		static IndexBuffer* Create(uint32_t* vIndices, uint32_t vCount);
 	};
 
 }

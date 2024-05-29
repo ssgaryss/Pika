@@ -5,7 +5,7 @@
 
 namespace Pika
 {
-	VertexArray* VertexArray::create()
+	VertexArray* VertexArray::Create()
 	{
 		switch (RendererAPI::getAPI())
 		{

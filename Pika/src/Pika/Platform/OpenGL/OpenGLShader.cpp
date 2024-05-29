@@ -119,12 +119,12 @@ namespace Pika
 		glDeleteProgram(m_RendererID);
     }
 
-    void Pika::OpenGLShader::bind()
+    void Pika::OpenGLShader::bind() const
     {
 		glUseProgram(m_RendererID);
     }
 
-    void Pika::OpenGLShader::unbind()
+    void Pika::OpenGLShader::unbind() const
     {
 		glUseProgram(0);
     }

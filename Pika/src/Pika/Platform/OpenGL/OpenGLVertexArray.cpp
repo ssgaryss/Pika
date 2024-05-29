@@ -45,12 +45,12 @@ namespace Pika {
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 
-	void OpenGLVertexArray::bind()
+	void OpenGLVertexArray::bind() const
 	{
 		glBindVertexArray(m_RendererID);
 	}
 
-	void OpenGLVertexArray::unbind()
+	void OpenGLVertexArray::unbind() const
 	{
 		glBindVertexArray(0);
 	}

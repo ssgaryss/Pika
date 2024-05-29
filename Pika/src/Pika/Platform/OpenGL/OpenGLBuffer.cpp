@@ -24,12 +24,12 @@ namespace Pika
 		glDeleteBuffers(1, &m_RendererID);
 	}
 
-	void Pika::OpenGLVertexBuffer::bind()
+	void Pika::OpenGLVertexBuffer::bind() const
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 	}
 
-	void Pika::OpenGLVertexBuffer::unbind()
+	void Pika::OpenGLVertexBuffer::unbind() const
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
@@ -56,11 +56,11 @@ namespace Pika
 	{
 		glDeleteBuffers(1, &m_RendererID);
 	}
-	void OpenGLIndexBuffer::bind()
+	void OpenGLIndexBuffer::bind() const
 	{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 	}
-	void OpenGLIndexBuffer::unbind()
+	void OpenGLIndexBuffer::unbind() const
 	{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}

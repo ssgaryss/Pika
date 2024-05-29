@@ -6,7 +6,7 @@ namespace Pika {
 
 	RendererAPI::GraphicsAPI RendererAPI::s_GraphicsAPI = GraphicsAPI::OpenGL; //for now
 
-	RendererAPI* RendererAPI::create()
+	RendererAPI* RendererAPI::Create()
 	{
 		switch (s_GraphicsAPI)
 		{

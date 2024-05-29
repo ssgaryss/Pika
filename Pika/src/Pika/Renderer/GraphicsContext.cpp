@@ -6,7 +6,7 @@
 
 namespace Pika
 {
-	GraphicsContext* GraphicsContext::create(void* vWindow)
+	GraphicsContext* GraphicsContext::Create(void* vWindow)
 	{
 		switch (RendererAPI::getAPI())
 		{

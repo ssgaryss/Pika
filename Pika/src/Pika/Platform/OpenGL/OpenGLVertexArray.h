@@ -9,8 +9,8 @@ namespace Pika
 	public:
 		OpenGLVertexArray();
 		~OpenGLVertexArray();
-		void bind() override;
-		void unbind() override;
+		void bind() const override;
+		void unbind() const override;
 
 		void addVertexBuffer(const std::shared_ptr<VertexBuffer>& vVertexBuffer) override;
 		void setIndexBuffer(const std::shared_ptr<IndexBuffer>& vIndexBuffer) override;

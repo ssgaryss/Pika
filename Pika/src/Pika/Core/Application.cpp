@@ -15,7 +15,7 @@ namespace Pika {
 	{
 		PK_ASSERT(!s_pSingletonInstance, "Application already exists!");
 		s_pSingletonInstance = this;
-		m_Window = std::unique_ptr<Window>(Window::create());
+		m_Window = std::unique_ptr<Window>(Window::Ccreate());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 
 		const char* Name = R"(Colored shader)";
@@ -41,34 +41,54 @@ namespace Pika {
 			FragmentColor = v_Color;
 		})";
 
-		shader_1 = Shader::create(Name, VertexShader, FragentShader);
-		shader_1->bind();
+		const char* FragentShaderBlue = R"(
+		out vec4 FragmentColor;
+
+		in vec4 v_Color;
+		
+		void main(){
+			FragmentColor = vec4(0.1f, 0.1f, 0.9f, 1.0f);
+		})";
+
+		shader_1 = Shader::Create(Name, VertexShader, FragentShader);
+		shader_2 = Shader::Create(Name, VertexShader, FragentShaderBlue);
+
 
 		//glGenVertexArrays(1, &m_VertexArray);
 		//glBindVertexArray(m_VertexArray);
-		VAO.reset(VertexArray::create());
-		VAO->bind();
+		VAO_1.reset(VertexArray::Create());
+		VAO_1->bind();
 
-		float vertices[4 * 6]
+		float vertices_pos[4 * 3]
 		{
-			 0.5f,  0.5f, 0.0f, 0.8f, 0.2f, 0.2f, // top right
-			 0.5f, -0.5f, 0.0f, 0.2f, 0.8f, 0.2f, // bottom right
-			-0.5f, -0.5f, 0.0f, 0.2f, 0.2f, 0.8f, // bottom left
-			-0.5f,  0.5f, 0.0f, 0.5f, 0.5f, 0.5f   // top left 
+			 0.5f,  0.5f, 0.0f, // top right
+			 0.5f, -0.5f, 0.0f, // bottom right
+			-0.5f, -0.5f, 0.0f, // bottom left
+			-0.5f,  0.5f, 0.0f,  // top left 
+		};
+		float vertices_color[4 * 3]
+		{
+			0.8f, 0.2f, 0.2f,
+			0.2f, 0.8f, 0.2f,
+			0.2f, 0.2f, 0.8f,
+			0.5f, 0.5f, 0.5f
 		};
 
 		//glGenBuffers(1, &m_VertexBuffer);
 		//glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
 		//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-		VBO.reset(VertexBuffer::create(vertices, sizeof(vertices)));
-		PK_ASSERT(VBO, "VertexBuffer is nullptr!");
-
-		BufferLayout Layout = {
-			{ShaderDataType::Float3, "a_Position"},
+		VBO_1.reset(VertexBuffer::Create(vertices_pos, sizeof(vertices_pos)));
+		VBO_2.reset(VertexBuffer::Create(vertices_color, sizeof(vertices_color)));
+		BufferLayout Layout_1 = {
+			{ShaderDataType::Float3, "a_Position"}
+		};
+		BufferLayout Layout_2 = {
 			{ShaderDataType::Float3, "a_Color"}
 		};
-		VBO->setLayout(Layout);
-		VAO->addVertexBuffer(VBO);
+		VBO_1->setLayout(Layout_1);
+		VBO_2->setLayout(Layout_2);
+		VAO_1->addVertexBuffer(VBO_1);
+		VAO_1->addVertexBuffer(VBO_2);
 		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
 		//glEnableVertexAttribArray(0);
 		//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -82,11 +102,31 @@ namespace Pika {
 		//glGenBuffers(1, &m_IndexBuffer);
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
 		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-		EBO.reset(IndexBuffer::create(indices, sizeof(indices) / sizeof(uint32_t)));
-		VAO->setIndexBuffer(EBO);
+		EBO.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		VAO_1->setIndexBuffer(EBO);
 		//glBindBuffer(GL_ARRAY_BUFFER, 0);
-		VBO->unbind();
-		VAO->unbind();
+		VBO_2->unbind();
+		VBO_1->unbind();
+		VAO_1->unbind();
+		///////////////////////////////////////////////////////
+		VAO_2.reset(VertexArray::Create());
+		VAO_2->bind();
+		float vertices[4 * 3]
+		{
+			 0.2f,  0.2f, 0.0f, // top right
+			 0.2f, -0.2f, 0.0f, // bottom right
+			-0.2f, -0.2f, 0.0f, // bottom left
+			-0.2f,  0.2f, 0.0f,  // top left 
+		};
+		VBO_3.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+		BufferLayout Layout = {
+			{ShaderDataType::Float3, "a_Position"}
+		};
+		VBO_3->setLayout(Layout);
+		VAO_2->addVertexBuffer(VBO_3);
+		VAO_2->setIndexBuffer(EBO);
+		VAO_2->unbind();
+
 	}
 
 	void Application::onEvent(Event& vEvent)
@@ -117,9 +157,14 @@ namespace Pika {
 			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			VAO->bind();
+			Renderer::BeginScene();
+			Renderer::Submit(shader_1.get(), VAO_1.get());
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+			Renderer::Submit(shader_2.get(), VAO_2.get());
 			//glDrawArrays(GL_TRIANGLES, 0, 6);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+
+			Renderer::EndScene();
 
 			for (auto& it : m_LayerStack) {
 				it->onUpdate();

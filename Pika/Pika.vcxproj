@@ -152,6 +152,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Pika\Renderer\RenderCommand.h" />
+    <ClInclude Include="src\Pika\Renderer\Renderer.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Pika\Renderer\Buffer.h" />
@@ -598,6 +600,8 @@
     <ClInclude Include="src\Pika\Renderer\VertexArray.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Pika\Renderer\RenderCommand.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Pika\Renderer\Buffer.cpp" />

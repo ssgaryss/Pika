@@ -7,11 +7,11 @@ namespace Pika
 	{
 	public:
 		virtual ~Shader() = default;
-		virtual void bind() = 0;
-		virtual void unbind() = 0;
+		virtual void bind() const = 0;
+		virtual void unbind() const = 0;
 		virtual const std::string& getName() const = 0;
 
-		static std::shared_ptr<Shader> create(const std::string& vName, 
+		static std::shared_ptr<Shader> Create(const std::string& vName, 
 			const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
 	};
 

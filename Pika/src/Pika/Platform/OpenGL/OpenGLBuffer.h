@@ -12,8 +12,8 @@ namespace Pika
 		OpenGLVertexBuffer(const OpenGLVertexBuffer& vVertexBuffer) = default;
 		OpenGLVertexBuffer& operator=(const OpenGLVertexBuffer& rhs) = default;
 		~OpenGLVertexBuffer() override;
-		void bind() override;
-		void unbind() override;
+		void bind() const override;
+		void unbind() const override;
 
 		const BufferLayout& getLayout() const override;
 		void setLayout(const BufferLayout& vLayout) override;
@@ -29,8 +29,8 @@ namespace Pika
 		OpenGLIndexBuffer() = delete;
 		OpenGLIndexBuffer(uint32_t* vIndices, uint32_t vCount);
 		~OpenGLIndexBuffer();
-		void bind() override;
-		void unbind() override;
+		void bind() const override;
+		void unbind() const override;
 	private:
 		uint32_t m_RendererID;
 		uint32_t m_Count; //nums of indices
