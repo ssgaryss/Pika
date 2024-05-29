@@ -20,6 +20,7 @@ namespace Pika
 		uint32_t m_RendererID;
 		std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
 		std::shared_ptr<IndexBuffer> m_IndexBuffer;
+		uint32_t m_VertexBufferElementIndex = 0;
 	};
 
 }

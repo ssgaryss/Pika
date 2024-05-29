@@ -69,10 +69,10 @@ namespace Pika {
 		};
 		VBO->setLayout(Layout);
 		VAO->addVertexBuffer(VBO);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
+		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+		//glEnableVertexAttribArray(0);
+		//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+		//glEnableVertexAttribArray(1);
 
 		uint32_t indices[6]{
 			0, 1, 3,  // first Triangle
@@ -121,7 +121,7 @@ namespace Pika {
 			//glDrawArrays(GL_TRIANGLES, 0, 6);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 
-			for (auto it : m_LayerStack) {
+			for (auto& it : m_LayerStack) {
 				it->onUpdate();
 			}
 

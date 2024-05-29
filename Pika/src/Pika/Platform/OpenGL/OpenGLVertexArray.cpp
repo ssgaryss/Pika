@@ -1,7 +1,7 @@
 #include "pkpch.h"
 #include "OpenGLVertexArray.h"
+#include "Pika/Renderer/Buffer.h"
 #include <glad/glad.h>
-
 
 namespace Pika {
 
@@ -60,6 +60,15 @@ namespace Pika {
 		glBindVertexArray(m_RendererID);
 		vVertexBuffer->bind();
 		const auto& Layout = vVertexBuffer->getLayout();
+		for (const auto& it : Layout) {
+			glVertexAttribPointer(m_VertexBufferElementIndex,
+				it.getComponentCount(), convertShaderDataTypeToOpenGLType(it.m_Type),
+				it.m_Normalized ? GL_TRUE : GL_FALSE,
+				Layout.getStride(), (void*)it.m_Offset);
+			glEnableVertexAttribArray(m_VertexBufferElementIndex);
+			m_VertexBufferElementIndex++;
+		}
+
 
 		m_VertexBuffers.emplace_back(vVertexBuffer);
 	}

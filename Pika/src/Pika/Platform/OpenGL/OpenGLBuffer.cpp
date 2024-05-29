@@ -39,7 +39,7 @@ namespace Pika
 		return m_Layout;
 	}
 
-	void OpenGLVertexBuffer::setLayout(const BufferLayout vLayout)
+	void OpenGLVertexBuffer::setLayout(const BufferLayout& vLayout)
 	{
 		m_Layout = vLayout;
 	}

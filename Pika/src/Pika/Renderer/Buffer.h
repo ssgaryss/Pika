@@ -94,30 +94,37 @@ namespace Pika
 		BufferLayout(std::initializer_list<BufferElement> vList)
 			: m_Elements{ vList }
 		{
-			calculateStride();
+			calculateStrideAndOffset();
 		}
 		inline uint32_t getStride() const { return m_Stride; }
-		const std::vector<BufferElement>& getElements() const { return m_Elements; }
+		inline const std::vector<BufferElement>& getElements() const { return m_Elements; }
 
 		inline std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
 		inline std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
 		inline std::vector<BufferElement>::reverse_iterator rbegin() { return m_Elements.rbegin(); }
 		inline std::vector<BufferElement>::reverse_iterator rend() { return m_Elements.rend(); }
-		inline std::vector<BufferElement>::const_iterator cbegin() { return m_Elements.cbegin(); }
-		inline std::vector<BufferElement>::const_iterator cend() { return m_Elements.cend(); }
-		inline std::vector<BufferElement>::const_reverse_iterator crbegin() { return m_Elements.crbegin(); }
-		inline std::vector<BufferElement>::const_reverse_iterator crend() { return m_Elements.crend(); }
+		inline std::vector<BufferElement>::const_iterator begin() const { return m_Elements.cbegin(); }
+		inline std::vector<BufferElement>::const_iterator end() const { return m_Elements.cend(); }
+		inline std::vector<BufferElement>::const_reverse_iterator rbegin() const { return m_Elements.crbegin(); }
+		inline std::vector<BufferElement>::const_reverse_iterator rend() const { return m_Elements.crend(); }
 	private:
-		void calculateStride() {
+		void calculateStrideAndOffset() {
 			uint32_t Stride = 0;
-			for (const auto& element : m_Elements) {
-				Stride += element.getComponentCount();
+			uint32_t Count = 0;
+			size_t Offset = 0;
+			for (auto& element : m_Elements) {
+				Count += element.getComponentCount();
+				Stride += element.m_Size;
+				element.m_Offset = Offset;
+				Offset += element.m_Size;
 			}
+			m_Count = Count;
 			m_Stride = Stride;
 		}
 	private:
 		std::vector<BufferElement> m_Elements;
-		uint32_t m_Stride = 0;
+		uint32_t m_Count = 0;  // nums of parameters 
+		uint32_t m_Stride = 0; // bytes size of the entire Vertex Buffer
 	};
 
 	class VertexBuffer
@@ -128,7 +135,7 @@ namespace Pika
 		virtual void unbind() = 0;
 
 		virtual const BufferLayout& getLayout() const = 0;
-		virtual void setLayout(const BufferLayout vLayout) = 0;
+		virtual void setLayout(const BufferLayout& vLayout) = 0;
 
 		static VertexBuffer* create(uint32_t vSize);
 		static VertexBuffer* create(float* vVertices, uint32_t vSize);

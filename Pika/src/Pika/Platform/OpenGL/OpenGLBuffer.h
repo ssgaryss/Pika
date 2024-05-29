@@ -9,12 +9,14 @@ namespace Pika
 	public:
 		OpenGLVertexBuffer(uint32_t vSize);
 		OpenGLVertexBuffer(float* vVertices, uint32_t vSize);
+		OpenGLVertexBuffer(const OpenGLVertexBuffer& vVertexBuffer) = default;
+		OpenGLVertexBuffer& operator=(const OpenGLVertexBuffer& rhs) = default;
 		~OpenGLVertexBuffer() override;
 		void bind() override;
 		void unbind() override;
 
 		const BufferLayout& getLayout() const override;
-		void setLayout(const BufferLayout vLayout) override;
+		void setLayout(const BufferLayout& vLayout) override;
 	private:
 		uint32_t m_RendererID;
 		BufferLayout m_Layout; //describe each part of VBO represent what type of data
