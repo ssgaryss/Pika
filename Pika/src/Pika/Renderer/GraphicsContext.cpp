@@ -6,7 +6,7 @@
 
 namespace Pika
 {
-	GraphicsContext* GraphicsContext::createContext(void* vWindow)
+	GraphicsContext* GraphicsContext::Create(void* vWindow)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -21,6 +21,8 @@ namespace Pika
 			return nullptr;
 #endif
 		}
+
+		PK_ASSERT(false, "GraphicsContext: Unknown renderer API!");
 		return nullptr;
 	}
 }

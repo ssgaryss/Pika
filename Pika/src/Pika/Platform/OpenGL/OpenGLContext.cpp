@@ -10,11 +10,6 @@ namespace Pika {
     {
     }
 
-    OpenGLContext::~OpenGLContext()
-    {
-        delete m_pWindowHandle;
-    }
-
     void OpenGLContext::init()
     {
         glfwMakeContextCurrent(m_pWindowHandle);

@@ -14,9 +14,11 @@ namespace Pika {
 		WindowsWindow(const WindowProps& vWindowProps);
 		~WindowsWindow();
 		void onUpdate() override;
-		unsigned int getWidth() const override;
-		unsigned int getHeight() const override;
-		void* getNativeWindow() const override;
+
+		inline std::string getTitle() const override { return m_Data.m_Title; }
+		inline unsigned int getWidth() const override { return m_Data.m_Width; }
+		inline unsigned int getHeight() const override { return m_Data.m_Height; }
+		inline void* getNativeWindow() const override { return m_pWindow; }
 
 		inline void setEventCallback(const EventCallbackFn& vEventCallback) override { m_Data.eventCallBack = vEventCallback; };
 		void setVSync(bool vEnable) override;
@@ -28,13 +30,13 @@ namespace Pika {
 		struct WindowData {
 			std::string m_Title;
 			unsigned int m_Width, m_Height;
-			bool VSync; //vetical synchronization
+			bool m_VSync; //vetical synchronization
 
 			EventCallbackFn eventCallBack;
 		};
 		WindowData m_Data;
 		GLFWwindow* m_pWindow;
-		GraphicsContext* m_pContext;
+		std::shared_ptr<GraphicsContext> m_pContext;
 
 	};
 }

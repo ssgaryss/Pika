@@ -8,7 +8,7 @@
 
 namespace Pika {
 
-	Window* Window::create(const WindowProps& vWindowProps) {
+	Window* Window::Ccreate(const WindowProps& vWindowProps) {
 		return new WindowsWindow(vWindowProps);
 	}
 
@@ -31,20 +31,6 @@ namespace Pika {
 		glfwPollEvents();
 		m_pContext->swapBuffer();
 	}
-	unsigned int Pika::WindowsWindow::getWidth() const
-	{
-		return m_Data.m_Width;
-	}
-
-	unsigned int WindowsWindow::getHeight() const
-	{
-		return m_Data.m_Height;
-	}
-
-	void* WindowsWindow::getNativeWindow() const
-	{
-		return m_pWindow;
-	}
 
 	void WindowsWindow::setVSync(bool vEnable)
 	{
@@ -54,12 +40,12 @@ namespace Pika {
 		else {
 			glfwSwapInterval(0);
 		}
-		m_Data.VSync = vEnable;
+		m_Data.m_VSync = vEnable;
 	}
 
 	bool WindowsWindow::isVSync() const
 	{
-		return m_Data.VSync;
+		return m_Data.m_VSync;
 	}
 
 	void WindowsWindow::init(const WindowProps& vWindowProps)
@@ -77,7 +63,7 @@ namespace Pika {
 		m_pWindow = glfwCreateWindow(static_cast<int>(vWindowProps.m_Width), static_cast<int>(vWindowProps.m_Height),
 			vWindowProps.m_Title.c_str(), nullptr, nullptr);
 
-		m_pContext = GraphicsContext::createContext(m_pWindow);
+		m_pContext.reset(GraphicsContext::Create(m_pWindow));
 		PK_ASSERT(m_pContext, "WindowsWindow : m_pContext is nullptr!");
 		m_pContext->init();
 

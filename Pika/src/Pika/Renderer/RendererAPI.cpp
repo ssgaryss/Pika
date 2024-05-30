@@ -4,11 +4,13 @@
 
 namespace Pika {
 
-	RendererAPI::GraphicsAPI RendererAPI::s_GraphicsAPI = GraphicsAPI::OpenGL;
+	RendererAPI::GraphicsAPI RendererAPI::s_GraphicsAPI = GraphicsAPI::OpenGL; //for now
 
+	void RendererAPI::setClearColor(Color vColor)
+	{
+	}
 
-
-	RendererAPI* RendererAPI::creat()
+	RendererAPI* RendererAPI::Create()
 	{
 		switch (s_GraphicsAPI)
 		{
@@ -24,6 +26,7 @@ namespace Pika {
 #endif
 		}
 
+		PK_ASSERT(false, "RendererAPI: Unknown renderer API!");
 		return nullptr;
 	}
 

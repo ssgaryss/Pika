@@ -30,6 +30,8 @@ namespace Pika {
 	class Event
 	{
 	public:
+		friend std::ostream& operator<<(std::ostream& os, const Event& e);
+	public:
 		virtual ~Event() = default;
 
 		bool m_Handled = false;

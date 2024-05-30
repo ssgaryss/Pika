@@ -8,6 +8,9 @@ namespace Pika
 	public:
 
 		void clear() override;
+		void setClearColor() override;
+		void setClearColor(Color vColor) override;
+		void drawIndexed(VertexArray* vVertexArray) override;
 	};
 }
 

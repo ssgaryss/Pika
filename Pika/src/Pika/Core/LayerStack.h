@@ -18,10 +18,10 @@ namespace Pika
 		inline std::vector<Layer*>::iterator end() { return m_pLayers.end(); }
 		inline std::vector<Layer*>::reverse_iterator rbegin() { return m_pLayers.rbegin(); }
 		inline std::vector<Layer*>::reverse_iterator rend() { return m_pLayers.rend(); }
-		inline std::vector<Layer*>::const_iterator cbegin() { return m_pLayers.cbegin(); }
-		inline std::vector<Layer*>::const_iterator cend() { return m_pLayers.cend(); }
-		inline std::vector<Layer*>::const_reverse_iterator crbegin() { return m_pLayers.crbegin(); }
-		inline std::vector<Layer*>::const_reverse_iterator crend() { return m_pLayers.crend(); }
+		inline std::vector<Layer*>::const_iterator begin() const { return m_pLayers.cbegin(); }
+		inline std::vector<Layer*>::const_iterator end() const { return m_pLayers.cend(); }
+		inline std::vector<Layer*>::const_reverse_iterator rbegin() const { return m_pLayers.crbegin(); }
+		inline std::vector<Layer*>::const_reverse_iterator rend() const { return m_pLayers.crend(); }
 
 	private:
 		std::vector<Layer*> m_pLayers;
