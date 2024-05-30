@@ -6,6 +6,10 @@ namespace Pika {
 
 	RendererAPI::GraphicsAPI RendererAPI::s_GraphicsAPI = GraphicsAPI::OpenGL; //for now
 
+	void RendererAPI::setClearColor(Color vColor)
+	{
+	}
+
 	RendererAPI* RendererAPI::Create()
 	{
 		switch (s_GraphicsAPI)

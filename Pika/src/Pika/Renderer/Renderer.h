@@ -9,7 +9,7 @@ namespace Pika
 	{
 	public:
 		static void BeginScene();
-		static void Submit(const Shader* vShader, const VertexArray* vData);
+		static void Submit(const Shader* vShader); //submit Scene info
 		static void EndScene();
 
 	};

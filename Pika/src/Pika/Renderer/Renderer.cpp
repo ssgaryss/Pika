@@ -9,10 +9,9 @@ namespace Pika {
 	{
 	}
 
-	void Renderer::Submit(const Shader* vShader, const VertexArray* vData)
+	void Renderer::Submit(const Shader* vShader)
 	{
 		vShader->bind();
-		vData->bind();
 	}
 
 	void Renderer::EndScene()

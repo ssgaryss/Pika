@@ -11,6 +11,7 @@
 #include "Pika/Renderer/Shader.h"
 #include "Pika/Renderer/Buffer.h"
 #include "Pika/Renderer/Renderer.h"
+#include "Pika/Renderer/RenderCommand.h"
 
 namespace Pika {
 

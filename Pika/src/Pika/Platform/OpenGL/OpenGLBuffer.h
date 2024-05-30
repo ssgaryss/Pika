@@ -31,6 +31,7 @@ namespace Pika
 		~OpenGLIndexBuffer();
 		void bind() const override;
 		void unbind() const override;
+		uint32_t getCount() const override;
 	private:
 		uint32_t m_RendererID;
 		uint32_t m_Count; //nums of indices

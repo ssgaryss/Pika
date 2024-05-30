@@ -7,7 +7,23 @@ namespace Pika
 {
 	void Pika::OpenGLRendererAPI::clear()
 	{
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
+	void OpenGLRendererAPI::setClearColor()
+	{
+		auto Temp = Color();
+		glClearColor(Temp.m_Red, Temp.m_Green, Temp.m_Blue, Temp.m_Alpha);
+	}
+	void OpenGLRendererAPI::setClearColor(Color vColor)
+	{
+		glClearColor(vColor.m_Red, vColor.m_Green, vColor.m_Blue, vColor.m_Alpha);
+	}
+
+	void OpenGLRendererAPI::drawIndexed(VertexArray* vVertexArray)
+	{
+		vVertexArray->bind();
+		glDrawElements(GL_TRIANGLES, vVertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
+		vVertexArray->unbind();
+	}
+
 }

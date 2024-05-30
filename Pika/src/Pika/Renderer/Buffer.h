@@ -147,6 +147,7 @@ namespace Pika
 		virtual ~IndexBuffer() = default;
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
+		virtual uint32_t getCount() const = 0; // nums of indices
 
 		static IndexBuffer* Create(uint32_t vCount);
 		static IndexBuffer* Create(uint32_t* vIndices, uint32_t vCount);

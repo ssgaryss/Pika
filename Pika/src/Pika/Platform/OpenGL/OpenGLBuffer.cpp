@@ -65,4 +65,9 @@ namespace Pika
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
+	uint32_t OpenGLIndexBuffer::getCount() const
+	{
+		return m_Count;
+	}
+
 }

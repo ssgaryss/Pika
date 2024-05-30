@@ -5,9 +5,6 @@
 #include <glm/glm.hpp>
 #include <imgui.h>
 
-#include "Pika/Renderer/Buffer.h"
-#include "Pika/Renderer/Shader.h"
-
 namespace Pika {
 	Application* Application::s_pSingletonInstance = nullptr;
 
@@ -154,15 +151,19 @@ namespace Pika {
 	{
 		while (m_Running)
 		{
-			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
+			//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+			//glClear(GL_COLOR_BUFFER_BIT);
+			RenderCommand::SetClearColor(Color(0.1f, 0.1f, 0.1f, 1.0f));
+			RenderCommand::Clear();
 
 			Renderer::BeginScene();
-			Renderer::Submit(shader_1.get(), VAO_1.get());
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
-			Renderer::Submit(shader_2.get(), VAO_2.get());
+			Renderer::Submit(shader_1.get());
+			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+			RenderCommand::DrawIndexed(VAO_1.get());
+			Renderer::Submit(shader_2.get());
 			//glDrawArrays(GL_TRIANGLES, 0, 6);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+			RenderCommand::DrawIndexed(VAO_2.get());
 
 			Renderer::EndScene();
 
