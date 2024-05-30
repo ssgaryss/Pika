@@ -129,4 +129,9 @@ namespace Pika
 		glUseProgram(0);
     }
 
+	void OpenGLShader::setUniformMat4(const std::string& vName, const glm::mat4& vValue) const
+	{
+		glUniformMatrix4fv(glGetUniformLocation(m_RendererID, vName.c_str()), 1, GL_FALSE, &vValue[0][0]);
+	}
+
 }

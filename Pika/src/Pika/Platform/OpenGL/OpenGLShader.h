@@ -13,6 +13,8 @@ namespace Pika
 		void bind() const override;
 		void unbind() const override;
 		inline const std::string& getName() const override { return m_Name; }
+
+		void setUniformMat4(const std::string& vName, const glm::mat4& vValue) const override;
 	private:
 		uint32_t m_RendererID; //shader program ID
 		std::string m_Name;

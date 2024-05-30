@@ -22,7 +22,7 @@ namespace Pika {
 		s_RendererAPI->setClearColor(vColor);
 	}
 
-	void RenderCommand::DrawIndexed(VertexArray* vVertexArray)
+	void RenderCommand::DrawIndexed(const VertexArray* vVertexArray)
 	{
 		s_RendererAPI->drawIndexed(vVertexArray);
 	}

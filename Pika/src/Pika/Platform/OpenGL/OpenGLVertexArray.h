@@ -15,7 +15,7 @@ namespace Pika
 		void addVertexBuffer(const std::shared_ptr<VertexBuffer>& vVertexBuffer) override;
 		void setIndexBuffer(const std::shared_ptr<IndexBuffer>& vIndexBuffer) override;
 		const std::vector<std::shared_ptr<VertexBuffer>>& getVertexBuffers() const override;
-		const std::shared_ptr<IndexBuffer>& getIndexBuffer() override;
+		const std::shared_ptr<IndexBuffer>& getIndexBuffer() const override;
 	private:
 		uint32_t m_RendererID;
 		std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;

@@ -29,7 +29,7 @@ namespace Pika {
 		virtual void clear() = 0;
 		virtual void setClearColor() = 0;
 		virtual void setClearColor(Color vColor) = 0;
-		virtual void drawIndexed(VertexArray* vVertexArray) = 0;
+		virtual void drawIndexed(const VertexArray* vVertexArray) = 0;
 
 		static RendererAPI* Create();
 	private:

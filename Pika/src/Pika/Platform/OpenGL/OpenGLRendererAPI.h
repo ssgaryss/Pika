@@ -10,7 +10,7 @@ namespace Pika
 		void clear() override;
 		void setClearColor() override;
 		void setClearColor(Color vColor) override;
-		void drawIndexed(VertexArray* vVertexArray) override;
+		void drawIndexed(const VertexArray* vVertexArray) override;
 	};
 }
 

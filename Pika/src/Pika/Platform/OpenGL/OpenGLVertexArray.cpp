@@ -85,7 +85,7 @@ namespace Pika {
 		m_IndexBuffer = vIndexBuffer;
 	}
 
-	const std::shared_ptr<IndexBuffer>& OpenGLVertexArray::getIndexBuffer()
+	const std::shared_ptr<IndexBuffer>& OpenGLVertexArray::getIndexBuffer() const
 	{
 		return m_IndexBuffer;
 	}
