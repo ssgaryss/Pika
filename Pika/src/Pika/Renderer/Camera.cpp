@@ -11,6 +11,11 @@ namespace Pika
         m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
     }
 
+    const glm::vec3 Camera::getPosition() const
+    {
+        return m_Position;
+    }
+
     const glm::mat4 Pika::Camera::getViewMatrix() const
     {
         return m_ViewMatrix;

@@ -1,11 +1,13 @@
 #include "Pika.h"
 #include "imgui/imgui.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 class ExampleLayer : public Pika::Layer
 {
 public:
-	ExampleLayer() 
-		:Layer{ "Example Layer" } 
+	ExampleLayer()
+		:Layer{ "Example Layer" }
 	{
 		const char* Name = R"(Colored shader)";
 
@@ -34,11 +36,11 @@ public:
 
 		const char* FragentShaderBlue = R"(
 		out vec4 FragmentColor;
-
-		in vec4 v_Color;
 		
+		uniform vec3 u_Color;
+	
 		void main(){
-			FragmentColor = vec4(0.1f, 0.1f, 0.9f, 1.0f);
+			FragmentColor = vec4(u_Color, 1.0f);
 		})";
 
 		shader_1 = Pika::Shader::Create(Name, VertexShader, FragentShader);
@@ -101,30 +103,32 @@ public:
 		VAO_2->addVertexBuffer(VBO_3);
 		VAO_2->setIndexBuffer(EBO);
 		VAO_2->unbind();
+
 	};
 
-	void onUpdate() override{ 
-		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::Tab)) {
-			PK_TRACE("Tab is pressed!");
-		}
+	void onUpdate() override {
+		//if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::Tab)) {
+		//	PK_TRACE("Tab is pressed!");
+		//}
 		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::A)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.1f, 0.0f, 0.0f));
-			PK_TRACE("Tab is pressed!");
+			Pika::Renderer::s_Camera->addPosition(glm::vec3(-0.01f, 0.0f, 0.0f));
 		}
 		else if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::D)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(-0.1f, 0.0f, 0.0f));
+			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.01f, 0.0f, 0.0f));
 		}
 
 		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::W)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.0f, 0.1f, 0.0f));
+			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.0f, 0.01f, 0.0f));
 		}
 		else if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::S)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.0f, -0.1f, 0.0f));
+			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.0f, -0.01f, 0.0f));
 		}
 		Pika::RenderCommand::SetClearColor(Pika::Color(0.1f, 0.1f, 0.1f, 1.0f));
 		Pika::RenderCommand::Clear();
 		Pika::Renderer::BeginScene();
 		Pika::Renderer::Submit(shader_1.get(), VAO_1.get());
+		shader_2->bind();
+		shader_2->setUniformFloat3("u_Color", m_Color);
 		Pika::Renderer::Submit(shader_2.get(), VAO_2.get());
 		Pika::Renderer::EndScene();
 	}
@@ -137,26 +141,27 @@ public:
 		}
 	}
 	void onImGuiRender() override {
-		//ImGui::Begin("Settings");
-		//ImGui::Text("Hello world!");
-		//ImGui::End();
+		ImGui::Begin("Color Board");
+		ImGui::ColorEdit3("Color Editor", glm::value_ptr(m_Color));
+		ImGui::End();
 	}
-	private:
-		std::shared_ptr<Pika::VertexArray> VAO_1;
-		std::shared_ptr<Pika::VertexArray> VAO_2;
-		std::shared_ptr<Pika::VertexBuffer> VBO_1;
-		std::shared_ptr<Pika::VertexBuffer> VBO_2;
-		std::shared_ptr<Pika::VertexBuffer> VBO_3;
-		std::shared_ptr<Pika::IndexBuffer> EBO;
-		std::shared_ptr<Pika::Shader> shader_1;
-		std::shared_ptr<Pika::Shader> shader_2;
+private:
+	std::shared_ptr<Pika::VertexArray> VAO_1;
+	std::shared_ptr<Pika::VertexArray> VAO_2;
+	std::shared_ptr<Pika::VertexBuffer> VBO_1;
+	std::shared_ptr<Pika::VertexBuffer> VBO_2;
+	std::shared_ptr<Pika::VertexBuffer> VBO_3;
+	std::shared_ptr<Pika::IndexBuffer> EBO;
+	std::shared_ptr<Pika::Shader> shader_1;
+	std::shared_ptr<Pika::Shader> shader_2;
+	glm::vec3 m_Color = glm::vec3(0.1f, 0.1f, 0.8f);
 
 };
 
 class Sandbox : public Pika::Application
 {
 public:
-	Sandbox() 
+	Sandbox()
 		:Application{}
 	{
 		pushLayer(new ExampleLayer());

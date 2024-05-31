@@ -14,7 +14,6 @@ namespace Pika {
 		s_pSingletonInstance = this;
 		m_Window = std::unique_ptr<Window>(Window::Ccreate());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
-
 	}
 
 	void Application::onEvent(Event& vEvent)
