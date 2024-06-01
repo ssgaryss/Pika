@@ -5,7 +5,7 @@
 
 namespace Pika {
 
-	std::unique_ptr<RendererAPI> RenderCommand::s_RendererAPI{ RendererAPI::Create() };
+	Scope<RendererAPI> RenderCommand::s_RendererAPI{ RendererAPI::Create() };
 
 	void RenderCommand::Clear()
 	{

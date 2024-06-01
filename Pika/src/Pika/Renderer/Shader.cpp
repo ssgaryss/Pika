@@ -14,7 +14,7 @@ namespace Pika {
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
-			return std::make_shared<OpenGLShader>(vName, vVertexShaderSrc, vFragmentShaderSrc);
+			return CreateRef<OpenGLShader>(vName, vVertexShaderSrc, vFragmentShaderSrc);
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "Shader: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;

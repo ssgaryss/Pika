@@ -6,7 +6,7 @@
 namespace Pika {
 
 	////////////////////////////VertexBuffer/////////////////////////////////
-	VertexBuffer* VertexBuffer::Create(uint32_t vSize)
+	Ref<VertexBuffer> VertexBuffer::Create(uint32_t vSize)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -15,7 +15,7 @@ namespace Pika {
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
-			return new OpenGLVertexBuffer(vSize);
+			return CreateRef<OpenGLVertexBuffer>(vSize);
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "VertexBuffer: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;
@@ -25,7 +25,7 @@ namespace Pika {
 		return nullptr;
 	}
 
-	VertexBuffer* VertexBuffer::Create(float* vVertices, uint32_t vSize)
+	Ref<VertexBuffer> VertexBuffer::Create(float* vVertices, uint32_t vSize)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -34,7 +34,7 @@ namespace Pika {
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
-			return new OpenGLVertexBuffer(vVertices, vSize);
+			return CreateRef<OpenGLVertexBuffer>(vVertices, vSize);
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "VertexBuffer: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;
@@ -45,7 +45,7 @@ namespace Pika {
 
 
 	////////////////////////////IndexBuffer/////////////////////////////////
-	IndexBuffer* IndexBuffer::Create(uint32_t* vIndices, uint32_t vCount)
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* vIndices, uint32_t vCount)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -54,7 +54,7 @@ namespace Pika {
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
-			return new OpenGLIndexBuffer(vIndices, vCount);
+			return CreateRef<OpenGLIndexBuffer>(vIndices, vCount);
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "IndexBuffer: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;

@@ -184,6 +184,7 @@
     <ClInclude Include="src\Pika\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Pika\Renderer\RendererAPI.h" />
     <ClInclude Include="src\pkpch.h" />
+    <ClInclude Include="src\Pika\Renderer\Texture.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -627,6 +628,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Pika\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

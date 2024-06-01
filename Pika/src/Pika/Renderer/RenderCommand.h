@@ -13,7 +13,7 @@ namespace Pika
 		static void SetClearColor(Color vColor);
 		static void DrawIndexed(const VertexArray* vVertexArray);
 	private:
-		static std::unique_ptr<RendererAPI> s_RendererAPI;
+		static Scope<RendererAPI> s_RendererAPI;
 	};
 
 }

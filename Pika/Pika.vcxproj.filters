@@ -1377,6 +1377,7 @@
     <ClInclude Include="src\Pika\Renderer\Camera.h" />
     <ClInclude Include="src\Pika\Core\Timestep.h" />
     <ClInclude Include="src\Pika\Core\Timer.h" />
+    <ClInclude Include="src\Pika\Renderer\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1425,5 +1426,6 @@
     <ClCompile Include="src\Pika\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Pika\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Pika\Renderer\Camera.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Texture.cpp" />
   </ItemGroup>
 </Project>

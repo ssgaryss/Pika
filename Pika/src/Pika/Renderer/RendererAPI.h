@@ -31,7 +31,7 @@ namespace Pika {
 		virtual void setClearColor(Color vColor) = 0;
 		virtual void drawIndexed(const VertexArray* vVertexArray) = 0;
 
-		static RendererAPI* Create();
+		static Scope<RendererAPI> Create();
 	private:
 		static GraphicsAPI s_GraphicsAPI;
 	};

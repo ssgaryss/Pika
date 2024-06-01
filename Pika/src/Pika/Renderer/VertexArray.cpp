@@ -5,7 +5,7 @@
 
 namespace Pika
 {
-	VertexArray* VertexArray::Create()
+	Ref<VertexArray> VertexArray::Create()
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -14,7 +14,7 @@ namespace Pika
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
-			return new OpenGLVertexArray();
+			return CreateRef<OpenGLVertexArray>();
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "Shader: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;

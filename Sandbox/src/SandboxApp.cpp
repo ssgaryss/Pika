@@ -19,9 +19,10 @@ public:
 		out vec4 v_Color;
 
 		uniform mat4 u_ViewProjectionMatrix;
+		uniform mat4 u_Transform;
 			
 		void main(){
-			gl_Position = u_ViewProjectionMatrix * vec4(a_Position, 1.0f);
+			gl_Position = u_ViewProjectionMatrix * u_Transform * vec4(a_Position, 1.0f);
 			v_Color = vec4(a_Color, 1.0f);
 		})";
 
@@ -46,7 +47,7 @@ public:
 		shader_1 = Pika::Shader::Create(Name, VertexShader, FragentShader);
 		shader_2 = Pika::Shader::Create(Name, VertexShader, FragentShaderBlue);
 
-		VAO_1.reset(Pika::VertexArray::Create());
+		VAO_1 = Pika::VertexArray::Create();
 		VAO_1->bind();
 
 		float vertices_pos[4 * 3]
@@ -63,8 +64,8 @@ public:
 			0.2f, 0.2f, 0.8f,
 			0.5f, 0.5f, 0.5f
 		};
-		VBO_1.reset(Pika::VertexBuffer::Create(vertices_pos, sizeof(vertices_pos)));
-		VBO_2.reset(Pika::VertexBuffer::Create(vertices_color, sizeof(vertices_color)));
+		VBO_1 = Pika::VertexBuffer::Create(vertices_pos, sizeof(vertices_pos));
+		VBO_2 = Pika::VertexBuffer::Create(vertices_color, sizeof(vertices_color));
 		Pika::BufferLayout Layout_1 = {
 			{Pika::ShaderDataType::Float3, "a_Position"}
 		};
@@ -79,14 +80,14 @@ public:
 			0, 1, 3,  // first Triangle
 			1, 2, 3   // second Triangle 
 		};
-		EBO.reset(Pika::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		EBO = Pika::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 		VAO_1->setIndexBuffer(EBO);
 		//glBindBuffer(GL_ARRAY_BUFFER, 0);
 		VBO_2->unbind();
 		VBO_1->unbind();
 		VAO_1->unbind();
 		///////////////////////////////////////////////////////
-		VAO_2.reset(Pika::VertexArray::Create());
+		VAO_2 = (Pika::VertexArray::Create());
 		VAO_2->bind();
 		float vertices[4 * 3]
 		{
@@ -95,7 +96,7 @@ public:
 			-0.2f, -0.2f, 0.0f, // bottom left
 			-0.2f,  0.2f, 0.0f,  // top left 
 		};
-		VBO_3.reset(Pika::VertexBuffer::Create(vertices, sizeof(vertices)));
+		VBO_3 = (Pika::VertexBuffer::Create(vertices, sizeof(vertices)));
 		Pika::BufferLayout Layout = {
 			{Pika::ShaderDataType::Float3, "a_Position"}
 		};
@@ -126,7 +127,15 @@ public:
 		Pika::Renderer::Submit(shader_1.get(), VAO_1.get());
 		shader_2->bind();
 		shader_2->setUniformFloat3("u_Color", m_Color);
-		Pika::Renderer::Submit(shader_2.get(), VAO_2.get());
+		float stride = 0.2f;
+		glm::mat4 Transform(1.0f);
+		Transform = glm::translate(Transform, glm::vec3(-0.2f, 0.2f, 0.0f));
+		Transform = glm::scale(Transform, glm::vec3(0.1f));
+		for (int i = 0; i < 10; ++i) {
+			for (int j = 0; j < 10; ++j) {
+				Pika::Renderer::Submit(shader_2.get(), VAO_2.get(), glm::translate(Transform, glm::vec3(0.5f * i, -0.5f * j, 0.0f)));
+			}
+		}
 		Pika::Renderer::EndScene();
 	}
 

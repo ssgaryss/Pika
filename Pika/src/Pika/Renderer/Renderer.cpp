@@ -11,11 +11,12 @@ namespace Pika {
 		s_Camera->updateCamera();
 	}
 
-	void Renderer::Submit(const Shader* vShader, const VertexArray* vData)
+	void Renderer::Submit(const Shader* vShader, const VertexArray* vData, const glm::mat4 vTransform)
 	{
 		vShader->bind();
 		vData->bind();
 		vShader->setUniformMat4("u_ViewProjectionMatrix", s_Camera->getViewProjectionMatrix());
+		vShader->setUniformMat4("u_Transform", vTransform);
 		RenderCommand::DrawIndexed(vData);
 	}
 
