@@ -29,7 +29,7 @@ namespace Pika
 		virtual void setUniformMat4(const std::string& vName, const glm::mat4& vValue) const = 0;
 		virtual void setUniformBool(const std::string& vName, const bool vValue) const = 0;
 
-		static std::shared_ptr<Shader> Create(const std::string& vName,
+		static Ref<Shader> Create(const std::string& vName,
 			const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
 	};
 

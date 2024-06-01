@@ -12,14 +12,14 @@ namespace Pika
 		void bind() const override;
 		void unbind() const override;
 
-		void addVertexBuffer(const std::shared_ptr<VertexBuffer>& vVertexBuffer) override;
-		void setIndexBuffer(const std::shared_ptr<IndexBuffer>& vIndexBuffer) override;
-		const std::vector<std::shared_ptr<VertexBuffer>>& getVertexBuffers() const override;
-		const std::shared_ptr<IndexBuffer>& getIndexBuffer() const override;
+		void addVertexBuffer(const Ref<VertexBuffer>& vVertexBuffer) override;
+		void setIndexBuffer(const Ref<IndexBuffer>& vIndexBuffer) override;
+		const std::vector<Ref<VertexBuffer>>& getVertexBuffers() const override;
+		const Ref<IndexBuffer>& getIndexBuffer() const override;
 	private:
 		uint32_t m_RendererID;
-		std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
-		std::shared_ptr<IndexBuffer> m_IndexBuffer;
+		std::vector<Ref<VertexBuffer>> m_VertexBuffers;
+		Ref<IndexBuffer> m_IndexBuffer;
 		uint32_t m_VertexBufferElementIndex = 0; //nums of elements
 	};
 

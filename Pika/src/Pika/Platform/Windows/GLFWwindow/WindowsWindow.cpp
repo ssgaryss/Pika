@@ -8,7 +8,7 @@
 
 namespace Pika {
 
-	Window* Window::Ccreate(const WindowProps& vWindowProps) {
+	Window* Window::Create(const WindowProps& vWindowProps) {
 		return new WindowsWindow(vWindowProps);
 	}
 

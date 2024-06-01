@@ -5,7 +5,7 @@
 
 namespace Pika {
 
-	std::shared_ptr<Shader> Shader::Create(const std::string& vName, const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc)
+	Ref<Shader> Shader::Create(const std::string& vName, const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc)
 	{
 		switch (RendererAPI::getAPI())
 		{

@@ -55,7 +55,7 @@ namespace Pika {
 		glBindVertexArray(0);
 	}
 
-	void OpenGLVertexArray::addVertexBuffer(const std::shared_ptr<VertexBuffer>& vVertexBuffer)
+	void OpenGLVertexArray::addVertexBuffer(const Ref<VertexBuffer>& vVertexBuffer)
 	{
 		glBindVertexArray(m_RendererID);
 		vVertexBuffer->bind();
@@ -73,19 +73,19 @@ namespace Pika {
 		m_VertexBuffers.emplace_back(vVertexBuffer);
 	}
 
-	const std::vector<std::shared_ptr<VertexBuffer>>& OpenGLVertexArray::getVertexBuffers() const
+	const std::vector<Ref<VertexBuffer>>& OpenGLVertexArray::getVertexBuffers() const
 	{
 		return m_VertexBuffers;
 	}
 
-	void OpenGLVertexArray::setIndexBuffer(const std::shared_ptr<IndexBuffer>& vIndexBuffer)
+	void OpenGLVertexArray::setIndexBuffer(const Ref<IndexBuffer>& vIndexBuffer)
 	{
 		glBindVertexArray(m_RendererID);
 		vIndexBuffer->bind();
 		m_IndexBuffer = vIndexBuffer;
 	}
 
-	const std::shared_ptr<IndexBuffer>& OpenGLVertexArray::getIndexBuffer() const
+	const Ref<IndexBuffer>& OpenGLVertexArray::getIndexBuffer() const
 	{
 		return m_IndexBuffer;
 	}

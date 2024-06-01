@@ -106,22 +106,19 @@ public:
 
 	};
 
-	void onUpdate() override {
-		//if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::Tab)) {
-		//	PK_TRACE("Tab is pressed!");
-		//}
+	void onUpdate(Pika::Timestep vTimestep) override {
 		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::A)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(-0.01f, 0.0f, 0.0f));
+			Pika::Renderer::s_Camera->addPosition(glm::vec3(-1.0f * vTimestep, 0.0f, 0.0f));
 		}
 		else if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::D)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.01f, 0.0f, 0.0f));
+			Pika::Renderer::s_Camera->addPosition(glm::vec3(1.0f * vTimestep, 0.0f, 0.0f));
 		}
 
 		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::W)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.0f, 0.01f, 0.0f));
+			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.0f, 1.0f * vTimestep, 0.0f));
 		}
 		else if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::S)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.0f, -0.01f, 0.0f));
+			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.0f, -1.0f * vTimestep, 0.0f));
 		}
 		Pika::RenderCommand::SetClearColor(Pika::Color(0.1f, 0.1f, 0.1f, 1.0f));
 		Pika::RenderCommand::Clear();
@@ -146,14 +143,14 @@ public:
 		ImGui::End();
 	}
 private:
-	std::shared_ptr<Pika::VertexArray> VAO_1;
-	std::shared_ptr<Pika::VertexArray> VAO_2;
-	std::shared_ptr<Pika::VertexBuffer> VBO_1;
-	std::shared_ptr<Pika::VertexBuffer> VBO_2;
-	std::shared_ptr<Pika::VertexBuffer> VBO_3;
-	std::shared_ptr<Pika::IndexBuffer> EBO;
-	std::shared_ptr<Pika::Shader> shader_1;
-	std::shared_ptr<Pika::Shader> shader_2;
+	Pika::Ref<Pika::VertexArray> VAO_1;
+	Pika::Ref<Pika::VertexArray> VAO_2;
+	Pika::Ref<Pika::VertexBuffer> VBO_1;
+	Pika::Ref<Pika::VertexBuffer> VBO_2;
+	Pika::Ref<Pika::VertexBuffer> VBO_3;
+	Pika::Ref<Pika::IndexBuffer> EBO;
+	Pika::Ref<Pika::Shader> shader_1;
+	Pika::Ref<Pika::Shader> shader_2;
 	glm::vec3 m_Color = glm::vec3(0.1f, 0.1f, 0.8f);
 
 };

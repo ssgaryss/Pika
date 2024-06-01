@@ -1,9 +1,12 @@
 #include "pkpch.h"
 #include "Application.h"
 #include "Pika/Core/Input.h"
+#include "Pika/Core/Timestep.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <imgui.h>
+
+#include <GLFW/glfw3.h>
 
 namespace Pika {
 	Application* Application::s_pSingletonInstance = nullptr;
@@ -12,7 +15,7 @@ namespace Pika {
 	{
 		PK_ASSERT(!s_pSingletonInstance, "Application already exists!");
 		s_pSingletonInstance = this;
-		m_Window = std::unique_ptr<Window>(Window::Ccreate());
+		m_Window = Scope<Window>(Window::Create());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 	}
 
@@ -41,8 +44,13 @@ namespace Pika {
 	{
 		while (m_Running)
 		{
+			float Time = (float)glfwGetTime();
+			Timestep DeltaTime(Time - m_LastFrameTime);
+			m_LastFrameTime = (float)glfwGetTime();
+			//PK_CORE_INFO("Time step : {}", DeltaTime.getSeconds());
+
 			for (auto& it : m_LayerStack) {
-				it->onUpdate();
+				it->onUpdate(DeltaTime);
 			}
 
 			m_pImGuiLayer->begin();

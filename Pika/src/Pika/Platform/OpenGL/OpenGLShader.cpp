@@ -156,17 +156,17 @@ namespace Pika
 
 	void OpenGLShader::setUniformInt2(const std::string& vName, const glm::vec2& vValue) const
 	{
-		glUniform2i(glGetUniformLocation(m_RendererID, vName.c_str()), vValue.x, vValue.y);
+		glUniform2i(glGetUniformLocation(m_RendererID, vName.c_str()), (int)vValue.x, (int)vValue.y);
 	}
 
 	void OpenGLShader::setUniformInt3(const std::string& vName, const glm::vec3& vValue) const
 	{
-		glUniform3i(glGetUniformLocation(m_RendererID, vName.c_str()), vValue.x, vValue.y, vValue.z);
+		glUniform3i(glGetUniformLocation(m_RendererID, vName.c_str()), (int)vValue.x, (int)vValue.y, (int)vValue.z);
 	}
 
 	void OpenGLShader::setUniformInt4(const std::string& vName, const glm::vec4& vValue) const
 	{
-		glUniform4i(glGetUniformLocation(m_RendererID, vName.c_str()), vValue.x, vValue.y, vValue.z, vValue.w);
+		glUniform4i(glGetUniformLocation(m_RendererID, vName.c_str()), (int)vValue.x, (int)vValue.y, (int)vValue.z, (int)vValue.w);
 	}
 
 	void OpenGLShader::setUniformMat3(const std::string& vName, const glm::mat3& vValue) const

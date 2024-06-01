@@ -4,7 +4,7 @@
 
 namespace Pika {
 
-	std::unique_ptr<Camera> Renderer::s_Camera{ std::make_unique<Camera>(-1.0f, 1.0f, -1.0f, 1.0f) };
+	Scope<Camera> Renderer::s_Camera{ std::make_unique<Camera>(-1.0f, 1.0f, -1.0f, 1.0f) };
 
 	void Renderer::BeginScene()
 	{
