@@ -15,6 +15,7 @@
 #include "Pika/Renderer/Buffer.h"
 #include "Pika/Renderer/Shader.h"
 #include "Pika/Renderer/RendererAPI.h"
+#include "Pika/Renderer/Texture.h"
 //---------------EntryPoint---------------
 #include "Pika/Core/EntryPoint.h"
 //----------------------------------------

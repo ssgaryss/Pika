@@ -9,44 +9,40 @@ public:
 	ExampleLayer()
 		:Layer{ "Example Layer" }
 	{
-		const char* Name = R"(Colored shader)";
-
 		const char* VertexShader = R"(
 		#version 460 core
 		layout (location = 0) in vec3 a_Position;
 		layout (location = 1) in vec2 a_TexCoord;
-
-		out vec4 v_Color;
+		out vec2 v_TexCoord;
 
 		uniform mat4 u_ViewProjectionMatrix;
 		uniform mat4 u_Transform;
 			
 		void main(){
 			gl_Position = u_ViewProjectionMatrix * u_Transform * vec4(a_Position, 1.0f);
-			v_Color = vec4(a_TexCoord, 0.0f, 1.0f);
+			v_TexCoord = a_TexCoord;
 		})";
 
 		const char* FragentShader = R"(
-		out vec4 FragmentColor;
-
-		in vec4 v_Color;
+		layout (location = 0) out vec4 FragmentColor;
+		in vec2 v_TexCoord;
+		uniform sampler2D u_Texture0;
 		
 		void main(){
-			FragmentColor = v_Color;
+			FragmentColor = texture(u_Texture0, v_TexCoord);
 		})";
 
 		const char* FragentShaderBlue = R"(
-		out vec4 FragmentColor;
+		layout (location = 0) out vec4 FragmentColor;
 		
 		uniform vec3 u_Color;
-		uniform sampler2D u_Texture0;
 	
 		void main(){
 			FragmentColor = vec4(u_Color, 1.0f);
 		})";
 
-		shader_1 = Pika::Shader::Create(Name, VertexShader, FragentShader);
-		shader_2 = Pika::Shader::Create(Name, VertexShader, FragentShaderBlue);
+		shader_1 = Pika::Shader::Create("shader_1", VertexShader, FragentShader);
+		shader_2 = Pika::Shader::Create("shader_2", VertexShader, FragentShaderBlue);
 
 		VAO_1 = Pika::VertexArray::Create();
 		VAO_1->bind();
@@ -93,6 +89,10 @@ public:
 		VAO_2->setIndexBuffer(EBO);
 		VAO_2->unbind();
 
+		texture1 = Pika::Texture2D::Create(R"(assets/textures/2024.png)");
+		PK_INFO(" u_Texture0 width = {0}, height = {1}", texture1->getWidth(), texture1->getHeight());
+		shader_1->bind();
+		shader_1->setUniformInt("u_Texture0", 0);
 	};
 
 	void onUpdate(Pika::Timestep vTimestep) override {
@@ -112,6 +112,7 @@ public:
 		Pika::RenderCommand::SetClearColor(Pika::Color(0.1f, 0.1f, 0.1f, 1.0f));
 		Pika::RenderCommand::Clear();
 		Pika::Renderer::BeginScene();
+		texture1->bind();
 		Pika::Renderer::Submit(shader_1.get(), VAO_1.get());
 		shader_2->bind();
 		shader_2->setUniformFloat3("u_Color", m_Color);
@@ -148,6 +149,7 @@ private:
 	Pika::Ref<Pika::IndexBuffer> EBO;
 	Pika::Ref<Pika::Shader> shader_1;
 	Pika::Ref<Pika::Shader> shader_2;
+	Pika::Ref<Pika::Texture2D> texture1;
 	glm::vec3 m_Color = glm::vec3(0.1f, 0.1f, 0.8f);
 
 };

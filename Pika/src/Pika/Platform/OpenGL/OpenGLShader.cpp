@@ -25,6 +25,7 @@ namespace Pika
 		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &isCompiled);
 		if (isCompiled == GL_FALSE)
 		{
+			PK_CORE_ERROR("Shader : {0}'s vertex part fail to compile!", m_Name);
 			GLint maxLength = 0;
 			glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &maxLength);
 
@@ -55,6 +56,7 @@ namespace Pika
 		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &isCompiled);
 		if (isCompiled == GL_FALSE)
 		{
+			PK_CORE_ERROR("Shader : {0}'s fragment part fail to compile!", m_Name);
 			GLint maxLength = 0;
 			glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
 
@@ -90,6 +92,7 @@ namespace Pika
 		glGetProgramiv(m_RendererID, GL_LINK_STATUS, (int*)&isLinked);
 		if (isLinked == GL_FALSE)
 		{
+			PK_CORE_ERROR("Shader : {0} fail to link!", m_Name);
 			GLint maxLength = 0;
 			glGetProgramiv(m_RendererID, GL_INFO_LOG_LENGTH, &maxLength);
 

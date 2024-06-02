@@ -5,41 +5,54 @@
 
 namespace Pika {
 
-	OpenGLTexture::OpenGLTexture(const std::string& Path)
+	OpenGLTexture::OpenGLTexture(const std::string& vPath)
+		: m_Path{ vPath }
 	{
+		int Width, Height, Channels;
+		stbi_set_flip_vertically_on_load(true);
+		stbi_uc* Data = stbi_load(vPath.c_str(), &Width, &Height, &Channels, 0); //0 means desired channels = Channels
+		PK_CORE_ASSERT(Data, "Texture Loading is failed!");
+		m_Width = Width;
+		m_Height = Height;
+
+		GLenum InternalFormat = 0, DataFormat = 0;
+		if (Channels == 4) {
+			InternalFormat = GL_RGBA8;
+			DataFormat = GL_RGBA;
+		}
+		else if (Channels == 3) {
+			InternalFormat = GL_RGB8;
+			DataFormat = GL_RGB;
+		}
+		m_InternalFormat = InternalFormat;
+		m_DataFormat = DataFormat;
+
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+		glTextureStorage2D(m_RendererID, 1, InternalFormat, m_Width, m_Height);
+
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, DataFormat, GL_UNSIGNED_BYTE, Data);
+
+		stbi_image_free(Data);
 	}
 
 	OpenGLTexture::~OpenGLTexture()
 	{
+		glDeleteTextures(1, &m_RendererID);
 	}
 
-	uint32_t OpenGLTexture::getWidth() const
+	void OpenGLTexture::bind(uint32_t vSlot) const
 	{
-		return 0;
+		glBindTextureUnit(vSlot, m_RendererID);
 	}
 
-	uint32_t OpenGLTexture::getHeight() const
+	void OpenGLTexture::unbind(uint32_t vSlot) const
 	{
-		return 0;
-	}
-
-	uint32_t OpenGLTexture::getRendererID() const
-	{
-		return 0;
-	}
-
-	const std::string& OpenGLTexture::getPath() const
-	{
-		// TODO: 在此处插入 return 语句
-		return "1";
-	}
-
-	void OpenGLTexture::bind() const
-	{
-	}
-
-	void OpenGLTexture::unbind() const
-	{
+		glBindTextureUnit(vSlot, 0);
 	}
 
 }

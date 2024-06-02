@@ -14,8 +14,8 @@ namespace Pika
 		virtual uint32_t getRendererID() const = 0;
 		virtual const std::string& getPath() const = 0;
 
-		virtual void bind() const = 0;
-		virtual void unbind() const = 0;
+		virtual void bind(uint32_t vSlot = 0) const = 0;
+		virtual void unbind(uint32_t vSlot = 0) const = 0;
 
 	};
 
