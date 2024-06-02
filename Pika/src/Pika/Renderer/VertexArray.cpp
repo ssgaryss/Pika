@@ -1,6 +1,6 @@
 #include "pkpch.h"
 #include "VertexArray.h"
-#include "Pika/Renderer/RendererAPI.h"
+#include "RendererAPI.h"
 #include "Pika/Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace Pika

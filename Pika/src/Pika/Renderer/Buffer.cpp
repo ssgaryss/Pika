@@ -1,6 +1,6 @@
 #include "pkpch.h"
 #include "Buffer.h"
-#include "Pika/Renderer/RendererAPI.h"
+#include "RendererAPI.h"
 #include "Pika/Platform/OpenGL/OpenGLBuffer.h"
 
 namespace Pika {

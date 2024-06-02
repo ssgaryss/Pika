@@ -14,7 +14,7 @@ public:
 		const char* VertexShader = R"(
 		#version 460 core
 		layout (location = 0) in vec3 a_Position;
-		layout (location = 1) in vec3 a_Color;
+		layout (location = 1) in vec2 a_TexCoord;
 
 		out vec4 v_Color;
 
@@ -23,7 +23,7 @@ public:
 			
 		void main(){
 			gl_Position = u_ViewProjectionMatrix * u_Transform * vec4(a_Position, 1.0f);
-			v_Color = vec4(a_Color, 1.0f);
+			v_Color = vec4(a_TexCoord, 0.0f, 1.0f);
 		})";
 
 		const char* FragentShader = R"(
@@ -39,6 +39,7 @@ public:
 		out vec4 FragmentColor;
 		
 		uniform vec3 u_Color;
+		uniform sampler2D u_Texture0;
 	
 		void main(){
 			FragmentColor = vec4(u_Color, 1.0f);
@@ -50,32 +51,20 @@ public:
 		VAO_1 = Pika::VertexArray::Create();
 		VAO_1->bind();
 
-		float vertices_pos[4 * 3]
+		float vertices_pos[4 * 5]
 		{
-			 0.5f,  0.5f, 0.0f, // top right
-			 0.5f, -0.5f, 0.0f, // bottom right
-			-0.5f, -0.5f, 0.0f, // bottom left
-			-0.5f,  0.5f, 0.0f,  // top left 
-		};
-		float vertices_color[4 * 3]
-		{
-			0.8f, 0.2f, 0.2f,
-			0.2f, 0.8f, 0.2f,
-			0.2f, 0.2f, 0.8f,
-			0.5f, 0.5f, 0.5f
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,// top right
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,// bottom right
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,// bottom left
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f // top left 
 		};
 		VBO_1 = Pika::VertexBuffer::Create(vertices_pos, sizeof(vertices_pos));
-		VBO_2 = Pika::VertexBuffer::Create(vertices_color, sizeof(vertices_color));
 		Pika::BufferLayout Layout_1 = {
-			{Pika::ShaderDataType::Float3, "a_Position"}
-		};
-		Pika::BufferLayout Layout_2 = {
-			{Pika::ShaderDataType::Float3, "a_Color"}
+			{Pika::ShaderDataType::Float3, "a_Position"},
+			{Pika::ShaderDataType::Float2, "a_TexCoord"}
 		};
 		VBO_1->setLayout(Layout_1);
-		VBO_2->setLayout(Layout_2);
 		VAO_1->addVertexBuffer(VBO_1);
-		VAO_1->addVertexBuffer(VBO_2);
 		uint32_t indices[6]{
 			0, 1, 3,  // first Triangle
 			1, 2, 3   // second Triangle 
@@ -83,7 +72,6 @@ public:
 		EBO = Pika::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 		VAO_1->setIndexBuffer(EBO);
 		//glBindBuffer(GL_ARRAY_BUFFER, 0);
-		VBO_2->unbind();
 		VBO_1->unbind();
 		VAO_1->unbind();
 		///////////////////////////////////////////////////////
@@ -155,7 +143,7 @@ private:
 	Pika::Ref<Pika::VertexArray> VAO_1;
 	Pika::Ref<Pika::VertexArray> VAO_2;
 	Pika::Ref<Pika::VertexBuffer> VBO_1;
-	Pika::Ref<Pika::VertexBuffer> VBO_2;
+	Pika::Ref<Pika::VertexBuffer> VBO_2; // no use for now
 	Pika::Ref<Pika::VertexBuffer> VBO_3;
 	Pika::Ref<Pika::IndexBuffer> EBO;
 	Pika::Ref<Pika::Shader> shader_1;
