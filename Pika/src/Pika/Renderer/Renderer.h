@@ -15,6 +15,11 @@ namespace Pika
 		static void EndScene();
 		static Scope<Camera> s_Camera;
 	private:
+		struct SceneDate
+		{
+			glm::mat4 ViewProjectionMatrix;
+		};
+		SceneDate m_SceneData;
 	};
 
 }

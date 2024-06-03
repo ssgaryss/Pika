@@ -4,6 +4,7 @@
 #include <memory>
 #include <functional>
 #include <chrono>
+#include <exception>
 
 //data structure
 #include <string>

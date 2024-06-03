@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <unordered_map>
 
 namespace Pika
 {
@@ -17,20 +18,28 @@ namespace Pika
 		virtual const std::string& getName() const = 0;
 
 		//glm data for now
-		virtual void setUniformFloat(const std::string& vName, const float vValue) const = 0;
-		virtual void setUniformFloat2(const std::string& vName, const glm::vec2& vValue) const = 0;
-		virtual void setUniformFloat3(const std::string& vName, const glm::vec3& vValue) const = 0;
-		virtual void setUniformFloat4(const std::string& vName, const glm::vec4& vValue) const = 0;
-		virtual void setUniformInt(const std::string& vName, const int vValue) const = 0;
-		virtual void setUniformInt2(const std::string& vName, const glm::vec2& vValue) const = 0;
-		virtual void setUniformInt3(const std::string& vName, const glm::vec3& vValue) const = 0;
-		virtual void setUniformInt4(const std::string& vName, const glm::vec4& vValue) const = 0;
-		virtual void setUniformMat3(const std::string& vName, const glm::mat3& vValue) const = 0;
-		virtual void setUniformMat4(const std::string& vName, const glm::mat4& vValue) const = 0;
-		virtual void setUniformBool(const std::string& vName, const bool vValue) const = 0;
+		virtual void setFloat(const std::string& vName, const float vValue) const = 0;
+		virtual void setFloat2(const std::string& vName, const glm::vec2& vValue) const = 0;
+		virtual void setFloat3(const std::string& vName, const glm::vec3& vValue) const = 0;
+		virtual void setFloat4(const std::string& vName, const glm::vec4& vValue) const = 0;
+		virtual void setInt(const std::string& vName, const int vValue) const = 0;
+		virtual void setInt2(const std::string& vName, const glm::vec2& vValue) const = 0;
+		virtual void setInt3(const std::string& vName, const glm::vec3& vValue) const = 0;
+		virtual void setInt4(const std::string& vName, const glm::vec4& vValue) const = 0;
+		virtual void setMat3(const std::string& vName, const glm::mat3& vValue) const = 0;
+		virtual void setMat4(const std::string& vName, const glm::mat4& vValue) const = 0;
+		virtual void setBool(const std::string& vName, const bool vValue) const = 0;
 
-		static Ref<Shader> Create(const std::string& vName,
-			const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
+		static Ref<Shader> Create(const std::string& vName, const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
+		static Ref<Shader> Create(const std::string& vFilePath);
+	};
+
+	class ShaderLibrary
+	{
+	public:
+
+	private:
+		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
 	};
 
 }

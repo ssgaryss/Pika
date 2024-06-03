@@ -15,8 +15,8 @@ namespace Pika {
 	{
 		vShader->bind();
 		vData->bind();
-		vShader->setUniformMat4("u_ViewProjectionMatrix", s_Camera->getViewProjectionMatrix());
-		vShader->setUniformMat4("u_Transform", vTransform);
+		vShader->setMat4("u_ViewProjectionMatrix", s_Camera->getViewProjectionMatrix());
+		vShader->setMat4("u_Transform", vTransform);
 		RenderCommand::DrawIndexed(vData);
 	}
 

@@ -43,6 +43,8 @@ public:
 
 		shader_1 = Pika::Shader::Create("shader_1", VertexShader, FragentShader);
 		shader_2 = Pika::Shader::Create("shader_2", VertexShader, FragentShaderBlue);
+		shader_3 = Pika::Shader::Create("assets/shaders/ShaderTexture.glsl");
+		//shader_3 = Pika::Shader::Create("assets/shaders/1.txt");
 
 		VAO_1 = Pika::VertexArray::Create();
 		VAO_1->bind();
@@ -92,7 +94,7 @@ public:
 		texture1 = Pika::Texture2D::Create(R"(assets/textures/2024.png)");
 		PK_INFO(" u_Texture0 width = {0}, height = {1}", texture1->getWidth(), texture1->getHeight());
 		shader_1->bind();
-		shader_1->setUniformInt("u_Texture0", 0);
+		shader_1->setInt("u_Texture0", 0);
 	};
 
 	void onUpdate(Pika::Timestep vTimestep) override {
@@ -115,7 +117,7 @@ public:
 		texture1->bind();
 		Pika::Renderer::Submit(shader_1.get(), VAO_1.get());
 		shader_2->bind();
-		shader_2->setUniformFloat3("u_Color", m_Color);
+		shader_2->setFloat3("u_Color", m_Color);
 		float stride = 0.2f;
 		glm::mat4 Transform(1.0f);
 		Transform = glm::translate(Transform, glm::vec3(-0.2f, 0.2f, 0.0f));
@@ -149,6 +151,7 @@ private:
 	Pika::Ref<Pika::IndexBuffer> EBO;
 	Pika::Ref<Pika::Shader> shader_1;
 	Pika::Ref<Pika::Shader> shader_2;
+	Pika::Ref<Pika::Shader> shader_3;
 	Pika::Ref<Pika::Texture2D> texture1;
 	glm::vec3 m_Color = glm::vec3(0.1f, 0.1f, 0.8f);
 

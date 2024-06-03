@@ -5,11 +5,11 @@
 namespace Pika
 {
 
-	class OpenGLTexture : public Texture2D
+	class OpenGLTexture2D : public Texture2D
 	{
 	public:
-		OpenGLTexture(const std::string& vPath);
-		~OpenGLTexture();
+		OpenGLTexture2D(const std::string& vPath);
+		~OpenGLTexture2D();
 		uint32_t getWidth() const override { return m_Width; }
 		uint32_t getHeight() const override { return m_Height; }
 		uint32_t getRendererID() const override { return m_RendererID; }
@@ -18,10 +18,14 @@ namespace Pika
 		void bind(uint32_t vSlot = 0) const override;
 		void unbind(uint32_t vSlot = 0) const override;
 	private:
+		void loadTexture(const std::string& vPath);
+	private:
 		uint32_t m_RendererID;
 		uint32_t m_Width;
 		uint32_t m_Height;
+
 		std::string m_Path;
+		bool m_IsLoaded = false;
 		GLenum m_InternalFormat, m_DataFormat;
 	};
 
