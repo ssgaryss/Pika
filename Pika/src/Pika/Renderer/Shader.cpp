@@ -64,4 +64,49 @@ namespace Pika {
 		return nullptr;
 	}
 
+	void ShaderLibrary::add(const Ref<Shader>& vShader)
+	{
+		std::string Name = vShader->getName();
+		add(Name, vShader);
+	}
+
+	void ShaderLibrary::add(const std::string& vName, const Ref<Shader>& vShader)
+	{
+		if (!isExist(vName)) {
+			m_Shaders[vName] = vShader;
+			vShader->setName(vName);
+		}
+		else {
+			PK_CORE_WARN(R"(ShaderLibrary : Shader "{0}" is exist!)", vName);
+		}
+	}
+
+	Ref<Shader> ShaderLibrary::load(const std::string& vFilePath)
+	{
+		Ref<Shader> pShader = Shader::Create(vFilePath);
+		add(pShader);
+		return pShader;
+	}
+
+	Ref<Shader> ShaderLibrary::load(const std::string& vName, const std::string& vFilePath)
+	{
+		Ref<Shader> pShader = Shader::Create(vFilePath);
+		add(vName, pShader);
+		return pShader;
+	}
+
+	Ref<Shader> ShaderLibrary::getShader(const std::string& vName)
+	{
+		if (m_Shaders.find(vName) != m_Shaders.end()) {
+			return m_Shaders[vName];
+		}
+		PK_CORE_WARN(R"(ShaderLibrary : Shader "{0}" is not exist!)", vName);
+		return nullptr;
+	}
+
+	bool ShaderLibrary::isExist(const std::string& vName) const
+	{
+		return m_Shaders.find(vName) != m_Shaders.end();
+	}
+
 }

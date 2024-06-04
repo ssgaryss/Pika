@@ -41,10 +41,10 @@ public:
 			FragmentColor = vec4(u_Color, 1.0f);
 		})";
 
-		shader_1 = Pika::Shader::Create("shader_1", "assets/shaders/ShaderTexture.glsl");
-		shader_2 = Pika::Shader::Create("shader_2", VertexShader, FragentShaderBlue);
-		shader_3 = Pika::Shader::Create("shader_3", "assets/shaders/ShaderTexture.glsl");
-		//shader_3 = Pika::Shader::Create("assets/shaders/1.txt");
+
+		Pika::Ref<Pika::Shader> shader_1 = m_ShaderLibrary.load("shader_1", "assets/shaders/ShaderTexture.glsl");
+		Pika::Ref<Pika::Shader> shader_2 = Pika::Shader::Create("shader_2", VertexShader, FragentShaderBlue);
+		m_ShaderLibrary.add(shader_2);
 
 		VAO_1 = Pika::VertexArray::Create();
 		VAO_1->bind();
@@ -115,7 +115,8 @@ public:
 		Pika::RenderCommand::Clear();
 		Pika::Renderer::BeginScene();
 		texture1->bind();
-		Pika::Renderer::Submit(shader_1.get(), VAO_1.get(), glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.2f, 0.0f)));
+		Pika::Renderer::Submit(m_ShaderLibrary.getShader("shader_1").get(), VAO_1.get(), glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.2f, 0.0f)));
+		Pika::Ref<Pika::Shader> shader_2 = m_ShaderLibrary.getShader("shader_2"); 
 		shader_2->bind();
 		shader_2->setFloat3("u_Color", m_Color);
 		float stride = 0.2f;
@@ -143,15 +144,13 @@ public:
 		ImGui::End();
 	}
 private:
+	Pika::ShaderLibrary m_ShaderLibrary;
 	Pika::Ref<Pika::VertexArray> VAO_1;
 	Pika::Ref<Pika::VertexArray> VAO_2;
 	Pika::Ref<Pika::VertexBuffer> VBO_1;
 	Pika::Ref<Pika::VertexBuffer> VBO_2; // no use for now
 	Pika::Ref<Pika::VertexBuffer> VBO_3;
 	Pika::Ref<Pika::IndexBuffer> EBO;
-	Pika::Ref<Pika::Shader> shader_1;
-	Pika::Ref<Pika::Shader> shader_2;
-	Pika::Ref<Pika::Shader> shader_3;
 	Pika::Ref<Pika::Texture2D> texture1;
 	glm::vec3 m_Color = glm::vec3(0.1f, 0.1f, 0.8f);
 

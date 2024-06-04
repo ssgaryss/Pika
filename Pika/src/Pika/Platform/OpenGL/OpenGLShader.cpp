@@ -174,6 +174,11 @@ namespace Pika
 
 	std::string OpenGLShader::readFile(const std::string& vPath)
 	{
+		size_t LastSlashIndex = vPath.find_last_of('/');
+		size_t LastDotIndex = vPath.find_last_of('.');
+		if (LastSlashIndex != std::string::npos && LastDotIndex != std::string::npos && LastSlashIndex < LastDotIndex) {
+			m_Name = vPath.substr(LastSlashIndex + 1, LastDotIndex - LastSlashIndex - 1);
+		}
 		std::string Result;
 		std::ifstream in(vPath, std::ios::in | std::ios::binary);
 		if (!in.good()) {
