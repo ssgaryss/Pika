@@ -15,7 +15,7 @@ namespace Pika {
 		}
 		catch (const std::runtime_error& e)
 		{
-			PK_CORE_ERROR("OpenGLTexture : fail to load texture at {0}", e.what());
+			PK_CORE_ERROR("OpenGLTexture2D : Fail to load texture at {0}", e.what());
 		}
 	}
 
@@ -71,6 +71,7 @@ namespace Pika {
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, DataFormat, GL_UNSIGNED_BYTE, Data);
 
 		stbi_image_free(Data);
+		PK_CORE_INFO("OpenGLTexture2D : Success to load a texture at {0}.", vPath);
 	}
 
 }

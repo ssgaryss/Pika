@@ -7,6 +7,11 @@ namespace Pika {
 
 	Scope<RendererAPI> RenderCommand::s_RendererAPI{ RendererAPI::Create() };
 
+	void RenderCommand::Init()
+	{
+		s_RendererAPI->init();
+	}
+
 	void RenderCommand::Clear()
 	{
 		s_RendererAPI->clear();

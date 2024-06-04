@@ -41,9 +41,9 @@ public:
 			FragmentColor = vec4(u_Color, 1.0f);
 		})";
 
-		shader_1 = Pika::Shader::Create("shader_1", VertexShader, FragentShader);
+		shader_1 = Pika::Shader::Create("shader_1", "assets/shaders/ShaderTexture.glsl");
 		shader_2 = Pika::Shader::Create("shader_2", VertexShader, FragentShaderBlue);
-		shader_3 = Pika::Shader::Create("assets/shaders/ShaderTexture.glsl");
+		shader_3 = Pika::Shader::Create("shader_3", "assets/shaders/ShaderTexture.glsl");
 		//shader_3 = Pika::Shader::Create("assets/shaders/1.txt");
 
 		VAO_1 = Pika::VertexArray::Create();
@@ -92,7 +92,7 @@ public:
 		VAO_2->unbind();
 
 		texture1 = Pika::Texture2D::Create(R"(assets/textures/2024.png)");
-		PK_INFO(" u_Texture0 width = {0}, height = {1}", texture1->getWidth(), texture1->getHeight());
+		//PK_INFO(" u_Texture0 width = {0}, height = {1}", texture1->getWidth(), texture1->getHeight());
 		shader_1->bind();
 		shader_1->setInt("u_Texture0", 0);
 	};
@@ -115,7 +115,7 @@ public:
 		Pika::RenderCommand::Clear();
 		Pika::Renderer::BeginScene();
 		texture1->bind();
-		Pika::Renderer::Submit(shader_1.get(), VAO_1.get());
+		Pika::Renderer::Submit(shader_1.get(), VAO_1.get(), glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.2f, 0.0f)));
 		shader_2->bind();
 		shader_2->setFloat3("u_Color", m_Color);
 		float stride = 0.2f;

@@ -5,16 +5,24 @@
 namespace Pika
 {
 	OpenGLShader::OpenGLShader(const std::string& vFilePath)
-		: m_FilePath{vFilePath}
+		: m_FilePath{ vFilePath }
 	{
 		try
 		{
-			readFile(vFilePath);
+			std::string Source = readFile(vFilePath);
+			m_OpenGLSourceCode = preProcess(Source);
+			compileAndLinkShader(m_OpenGLSourceCode[GL_VERTEX_SHADER], m_OpenGLSourceCode[GL_FRAGMENT_SHADER]);
 		}
 		catch (const std::runtime_error& e)
 		{
 			PK_CORE_ERROR("OpenGLShader : fail to load shader file at {0}", e.what());
 		}
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& vName, const std::string& vFilePath)
+		: OpenGLShader{ vFilePath }
+	{
+		m_Name = vName;
 	}
 
 	Pika::OpenGLShader::OpenGLShader(const std::string& vName,
@@ -181,7 +189,39 @@ namespace Pika
 		else {
 			PK_CORE_INFO("OpenGLShader : load an empty shader file!");
 		}
+		PK_CORE_INFO("OpenGLShader : Success to load a shader at {0}.", vPath);
 		return Result;
+	}
+
+	std::unordered_map<GLenum, std::string> OpenGLShader::preProcess(const std::string& vSources)
+	{
+		std::unordered_map<GLenum, std::string> ShaderSources;
+		//vertex shader
+		size_t Begin = vSources.find(Shader::s_FileMarkers.VertexShaderBegin);
+		size_t End = vSources.find(Shader::s_FileMarkers.VertexShaderEnd);
+		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
+			Begin += Shader::s_FileMarkers.VertexShaderBegin.length();
+			ShaderSources[GL_VERTEX_SHADER] = vSources.substr(Begin, End - Begin);
+			PK_CORE_TRACE("{}", ShaderSources[GL_VERTEX_SHADER]);
+		}
+		//fragment shader
+		Begin = vSources.find(Shader::s_FileMarkers.FragmentShaderBegin);
+		End = vSources.find(Shader::s_FileMarkers.FragmentShaderEnd);
+		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
+			Begin += Shader::s_FileMarkers.FragmentShaderBegin.length();
+			ShaderSources[GL_FRAGMENT_SHADER] = vSources.substr(Begin, End - Begin);
+			PK_CORE_TRACE("{}", ShaderSources[GL_FRAGMENT_SHADER]);
+		}
+		//pixel shader
+		Begin = vSources.find(Shader::s_FileMarkers.PixelShaderBegin);
+		End = vSources.find(Shader::s_FileMarkers.PixelShaderEnd);
+		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
+			Begin += Shader::s_FileMarkers.PixelShaderBegin.length();
+			ShaderSources[GL_FRAGMENT_SHADER] = vSources.substr(Begin, End - Begin);
+			PK_CORE_TRACE("{}", ShaderSources[GL_FRAGMENT_SHADER]);
+		}
+
+		return ShaderSources;
 	}
 
 }

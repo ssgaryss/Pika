@@ -9,6 +9,17 @@ namespace Pika
 		None = 0, Float, Float2, Float3, Float4, Int, Int2, Int3, Int4, Mat3, Mat4, Bool
 	};
 
+	struct ShaderSourceMarkers
+	{
+		std::string VertexShaderBegin = R"(#VERTEX_BEGIN())";
+		std::string VertexShaderEnd = R"(#VERTEX_END())";
+		std::string FragmentShaderBegin = R"(#FRAGMENT_BEGIN())";
+		std::string FragmentShaderEnd = R"(#FRAGMENT_END())";
+		std::string PixelShaderBegin = R"(#PIXEL_BEGIN())";
+		std::string PixelShaderEnd = R"(#PIXEL_END())";
+		ShaderSourceMarkers() = default;
+	};
+
 	class Shader
 	{
 	public:
@@ -30,8 +41,11 @@ namespace Pika
 		virtual void setMat4(const std::string& vName, const glm::mat4& vValue) const = 0;
 		virtual void setBool(const std::string& vName, const bool vValue) const = 0;
 
-		static Ref<Shader> Create(const std::string& vName, const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
 		static Ref<Shader> Create(const std::string& vFilePath);
+		static Ref<Shader> Create(const std::string& vName, const std::string& vFilePath);
+		static Ref<Shader> Create(const std::string& vName, const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
+	protected:
+		static ShaderSourceMarkers s_FileMarkers;
 	};
 
 	class ShaderLibrary

@@ -6,6 +6,11 @@ namespace Pika {
 
 	Scope<Camera> Renderer::s_Camera{ std::make_unique<Camera>(-1.0f, 1.0f, -1.0f, 1.0f) };
 
+	void Renderer::Init()
+	{
+		RenderCommand::Init();
+	}
+
 	void Renderer::BeginScene()
 	{
 		s_Camera->updateCamera();
