@@ -45,6 +45,10 @@ namespace Pika
 		static Ref<Shader> Create(const std::string& vFilePath);
 		static Ref<Shader> Create(const std::string& vName, const std::string& vFilePath);
 		static Ref<Shader> Create(const std::string& vName, const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
+	public:
+		inline bool isInShaderLibrary() const { return m_InShaderLibrary; }
+		bool m_InShaderLibrary = false; //All shaders must be loaded into the shader library 
+										//before they can be used.
 	protected:
 		static ShaderSourceMarkers s_FileMarkers;
 	};
@@ -56,6 +60,8 @@ namespace Pika
 		void add(const std::string& vName, const Ref<Shader>& vShader);
 		Ref<Shader> load(const std::string& vFilePath);
 		Ref<Shader> load(const std::string& vName, const std::string& vFilePath);
+		void remove(const std::string& vName);
+
 		Ref<Shader> getShader(const std::string& vName);
 	private:
 		bool isExist(const std::string& vName) const;

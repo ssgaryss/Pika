@@ -56,6 +56,14 @@ namespace Pika
 		glUseProgram(0);
 	}
 
+	void OpenGLShader::setName(const std::string& vName)
+	{
+		if (!m_InShaderLibrary)
+			m_Name = vName;
+		else
+			PK_CORE_WARN(R"(OpenGLShader : Shader "{0}" is already in ShaderLibrary which is not allow to change name!)", m_Name);
+	}
+
 	void OpenGLShader::setFloat(const std::string& vName, const float vValue) const
 	{
 		glUniform1f(glGetUniformLocation(m_RendererID, vName.c_str()), vValue);
@@ -207,7 +215,7 @@ namespace Pika
 		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
 			Begin += Shader::s_FileMarkers.VertexShaderBegin.length();
 			ShaderSources[GL_VERTEX_SHADER] = vSources.substr(Begin, End - Begin);
-			PK_CORE_TRACE("{}", ShaderSources[GL_VERTEX_SHADER]);
+			PK_CORE_TRACE("GL_VERTEX_SHADER content: {}", ShaderSources[GL_VERTEX_SHADER]);
 		}
 		//fragment shader
 		Begin = vSources.find(Shader::s_FileMarkers.FragmentShaderBegin);
@@ -215,7 +223,7 @@ namespace Pika
 		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
 			Begin += Shader::s_FileMarkers.FragmentShaderBegin.length();
 			ShaderSources[GL_FRAGMENT_SHADER] = vSources.substr(Begin, End - Begin);
-			PK_CORE_TRACE("{}", ShaderSources[GL_FRAGMENT_SHADER]);
+			PK_CORE_TRACE("GL_FRAGMENT_SHADER content:{}", ShaderSources[GL_FRAGMENT_SHADER]);
 		}
 		//pixel shader
 		Begin = vSources.find(Shader::s_FileMarkers.PixelShaderBegin);

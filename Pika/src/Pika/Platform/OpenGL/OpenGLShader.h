@@ -17,7 +17,7 @@ namespace Pika
 		void bind() const override;
 		void unbind() const override;
 		inline const std::string& getName() const override { return m_Name; }
-		inline void setName(const std::string& vName) override { m_Name = vName; }
+		void setName(const std::string& vName) override;
 
 		void setFloat(const std::string& vName, const float vValue) const override;
 		void setFloat2(const std::string& vName, const glm::vec2& vValue) const override;

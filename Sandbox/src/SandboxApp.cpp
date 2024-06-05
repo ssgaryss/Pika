@@ -1,4 +1,7 @@
 #include "Pika.h"
+//---------------EntryPoint---------------
+#include "Pika/Core/EntryPoint.h"
+//----------------------------------------
 #include "imgui/imgui.h"
 
 #include <glm/gtc/type_ptr.hpp>
