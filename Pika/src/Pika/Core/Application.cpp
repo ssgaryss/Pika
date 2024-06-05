@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "Pika/Core/Input.h"
 #include "Pika/Core/Timestep.h"
-#include "Pika/Renderer/Renderer.h"
+#include "Pika/Renderer/Renderer3D.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <imgui.h>
@@ -18,7 +18,7 @@ namespace Pika {
 		s_pSingletonInstance = this;
 		m_Window = Scope<Window>(Window::Create());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
-		Renderer::Init();
+		Renderer3D::Init();
 	}
 
 	void Application::onEvent(Event& vEvent)

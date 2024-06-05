@@ -2,25 +2,28 @@
 
 #include "VertexArray.h"
 #include "Shader.h"
-#include "Camera.h"
+#include "Camera2D.h"
 
 namespace Pika
 {
 
-	class Renderer
+	class Renderer3D
 	{
 	public:
+		Renderer3D() = delete;
 		static void Init();
 		static void BeginScene();
 		static void Submit(const Shader* vShader, const VertexArray* vData, const glm::mat4 vTransform = glm::mat4(1.0f)); //submit Scene info
 		static void EndScene();
-		static Scope<Camera> s_Camera;
+
+		//TODO : !!!!
+		static Scope<Camera2D> s_Camera;
 	private:
 		struct SceneDate
 		{
 			glm::mat4 ViewProjectionMatrix;
 		};
-		SceneDate m_SceneData;
+		static Scope<SceneDate> m_SceneData;
 	};
 
 }

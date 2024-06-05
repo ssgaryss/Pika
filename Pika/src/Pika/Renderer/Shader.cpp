@@ -102,7 +102,9 @@ namespace Pika {
 			PK_CORE_WARN(R"(ShaderLibrary : Shader "{0}" is not exist!)", vName);
 			return;
 		}
-		m_Shaders.erase(m_Shaders.find(vName));
+		auto& it = m_Shaders.find(vName);
+		it->second->m_InShaderLibrary = false;
+		m_Shaders.erase(it);
 	}
 
 	Ref<Shader> ShaderLibrary::getShader(const std::string& vName)

@@ -6,11 +6,11 @@
 namespace Pika
 {
 
-	class Camera
+	class Camera2D
 	{
 	public:
-		Camera() = default;
-		Camera(float vLeft, float vRight, float vBottom, float vTop);
+		Camera2D() = default;
+		Camera2D(float vLeft, float vRight, float vBottom, float vTop);
 
 		inline virtual void updateCamera() {
 			m_ViewMatrix = glm::lookAt(m_Position, m_Position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));

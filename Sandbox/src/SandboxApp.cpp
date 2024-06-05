@@ -102,23 +102,23 @@ public:
 
 	void onUpdate(Pika::Timestep vTimestep) override {
 		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::A)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(-1.0f * vTimestep, 0.0f, 0.0f));
+			Pika::Renderer3D::s_Camera->addPosition(glm::vec3(-1.0f * vTimestep, 0.0f, 0.0f));
 		}
 		else if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::D)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(1.0f * vTimestep, 0.0f, 0.0f));
+			Pika::Renderer3D::s_Camera->addPosition(glm::vec3(1.0f * vTimestep, 0.0f, 0.0f));
 		}
 
 		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::W)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.0f, 1.0f * vTimestep, 0.0f));
+			Pika::Renderer3D::s_Camera->addPosition(glm::vec3(0.0f, 1.0f * vTimestep, 0.0f));
 		}
 		else if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::S)) {
-			Pika::Renderer::s_Camera->addPosition(glm::vec3(0.0f, -1.0f * vTimestep, 0.0f));
+			Pika::Renderer3D::s_Camera->addPosition(glm::vec3(0.0f, -1.0f * vTimestep, 0.0f));
 		}
 		Pika::RenderCommand::SetClearColor(Pika::Color(0.1f, 0.1f, 0.1f, 1.0f));
 		Pika::RenderCommand::Clear();
-		Pika::Renderer::BeginScene();
+		Pika::Renderer3D::BeginScene();
 		texture1->bind();
-		Pika::Renderer::Submit(m_ShaderLibrary.getShader("shader_1").get(), VAO_1.get(), glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.2f, 0.0f)));
+		Pika::Renderer3D::Submit(m_ShaderLibrary.getShader("shader_1").get(), VAO_1.get(), glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.2f, 0.0f)));
 		Pika::Ref<Pika::Shader> shader_2 = m_ShaderLibrary.getShader("shader_2"); 
 		shader_2->bind();
 		shader_2->setFloat3("u_Color", m_Color);
@@ -128,10 +128,10 @@ public:
 		Transform = glm::scale(Transform, glm::vec3(0.1f));
 		for (int i = 0; i < 10; ++i) {
 			for (int j = 0; j < 10; ++j) {
-				Pika::Renderer::Submit(shader_2.get(), VAO_2.get(), glm::translate(Transform, glm::vec3(0.5f * i, -0.5f * j, 0.0f)));
+				Pika::Renderer3D::Submit(shader_2.get(), VAO_2.get(), glm::translate(Transform, glm::vec3(0.5f * i, -0.5f * j, 0.0f)));
 			}
 		}
-		Pika::Renderer::EndScene();
+		Pika::Renderer3D::EndScene();
 	}
 
 	void onEvent(Pika::Event& vEvent) override {

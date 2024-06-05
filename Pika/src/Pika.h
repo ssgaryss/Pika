@@ -10,7 +10,7 @@
 #include "Pika/Core/Timestep.h"
 //-----------------Render----------------
 #include "Pika/Renderer/RenderCommand.h"
-#include "Pika/Renderer/Renderer.h"
+#include "Pika/Renderer/Renderer3D.h"
 #include "Pika/Renderer/VertexArray.h"
 #include "Pika/Renderer/Buffer.h"
 #include "Pika/Renderer/Shader.h"
