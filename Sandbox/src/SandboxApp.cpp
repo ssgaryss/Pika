@@ -129,6 +129,7 @@ public:
 			Pika::KeyPressedEvent& Event = static_cast<Pika::KeyPressedEvent&>(vEvent);
 			PK_TRACE("Event Layer:Key {0} is pressed!", (char)Event.getKeyCode());
 		}
+		m_CameraController.onEvent(vEvent);
 	}
 	void onImGuiRender() override {
 		ImGui::Begin("Color Board");

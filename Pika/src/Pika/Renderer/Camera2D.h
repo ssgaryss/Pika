@@ -26,6 +26,10 @@ namespace Pika
 		inline virtual const glm::mat4 getViewMatrix() const { return m_ViewMatrix; }
 		inline virtual const glm::mat4 getProjectionMatrix() const { return m_ProjectionMatrix; }
 		inline virtual const glm::mat4 getViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
+		inline virtual const void setProjectionMatrix(float vLeft, float vRight, float vBottom, float vTop){
+			m_ProjectionMatrix = glm::ortho(vLeft, vRight, vBottom, vTop);
+			m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		}
 	private:
 		virtual void updateCameraParameters();
 	private:

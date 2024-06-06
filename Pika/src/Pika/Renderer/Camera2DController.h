@@ -2,7 +2,7 @@
 #include "Camera2D.h"
 #include "Pika/Core/Timestep.h"
 #include "Pika/Events/ApplicationEvent.h"
-#include "Pika/Events/KeyboardEvent.h"
+#include "Pika/Events/Event.h"
 #include "Pika/Events/MouseEvent.h"
 
 namespace Pika
@@ -11,8 +11,7 @@ namespace Pika
 	class Camera2DController
 	{
 	public:
-		Camera2DController(float vAspectRation, bool vAllowRotation = false)
-			: m_AspectRatio{ vAspectRation }, m_AllowRotation{ vAllowRotation } {}
+		Camera2DController(float vAspectRation, bool vAllowRotation = false);
 		void onUpdate(Timestep vTimestep);
 		void onEvent(Event& vEvent);
 
@@ -22,10 +21,10 @@ namespace Pika
 		inline float getZoomLevel() const { return m_ZoomLevel; }
 		inline void setZoomLevel(float vZoomLevel) { m_ZoomLevel = vZoomLevel; }
 	private:
-		void onWindowResizeEvent(WindowResizeEvent& vEvent);
-		void onMouseScrolledEvent(MouseScrolledEvent& vEvent);
+		bool onWindowResizeEvent(WindowResizeEvent& vEvent);
+		bool onMouseScrolledEvent(MouseScrolledEvent& vEvent);
 	private:
-		float m_AspectRatio = 1.0f;
+		float m_AspectRatio = 1.0f; // Width / Height
 		float m_ZoomLevel = 1.0f;   // ( Right - Left ) / 2
 		bool m_AllowRotation = false;
 		Camera2D m_Camera;
