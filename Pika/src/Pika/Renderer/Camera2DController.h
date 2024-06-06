@@ -8,7 +8,6 @@
 namespace Pika
 {
 
-	//In 2D mode, camera can only move at the plan where z = 1.0f, and face to -z direction
 	class Camera2DController
 	{
 	public:

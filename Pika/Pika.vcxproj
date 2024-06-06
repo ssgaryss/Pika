@@ -152,7 +152,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Pika\Renderer\Camera2DController.h" />
+    <ClInclude Include="src\Pika\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Pika.h" />
     <ClInclude Include="src\Pika\Core\Application.h" />
     <ClInclude Include="src\Pika\Core\Core.h" />
@@ -180,6 +180,7 @@
     <ClInclude Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.h" />
     <ClInclude Include="src\Pika\Renderer\Buffer.h" />
     <ClInclude Include="src\Pika\Renderer\Camera2D.h" />
+    <ClInclude Include="src\Pika\Renderer\Camera2DController.h" />
     <ClInclude Include="src\Pika\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Pika\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Pika\Renderer\Renderer3D.h" />
@@ -607,7 +608,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Pika\Renderer\Camera2DController.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
@@ -624,6 +625,7 @@
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.cpp" />
     <ClCompile Include="src\Pika\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Pika\Renderer\Camera2D.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Camera2DController.cpp" />
     <ClCompile Include="src\Pika\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="src\Pika\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Pika\Renderer\Renderer3D.cpp" />

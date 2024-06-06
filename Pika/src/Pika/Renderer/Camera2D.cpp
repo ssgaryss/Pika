@@ -4,29 +4,35 @@
 
 namespace Pika
 {
-    Pika::Camera2D::Camera2D(float vLeft, float vRight, float vBottom, float vTop)
-    {
-        m_ViewMatrix = glm::lookAt(m_Position, glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        m_ProjectionMatrix = glm::ortho(vLeft, vRight, vBottom, vTop);
-        m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
-    }
+	Pika::Camera2D::Camera2D(float vLeft, float vRight, float vBottom, float vTop)
+	{
+		m_ViewMatrix = glm::lookAt(glm::vec3(m_Position, s_Z), glm::vec3(m_Position, s_Z) + s_Direction, s_Up);
+		m_ProjectionMatrix = glm::ortho(vLeft, vRight, vBottom, vTop);
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
 
-    const glm::vec3 Camera2D::getPosition() const
-    {
-        return m_Position;
-    }
+	void Camera2D::addRotationDegrees(float vRotationDegrees)
+	{
+		if (m_RotationDegree + vRotationDegrees > 89.0f)
+		{
+			m_RotationDegree = 89.0f;
+		}
+		else if (m_RotationDegree + vRotationDegrees < -89.0f) {
+			m_RotationDegree = -89.0f;
+		}
+		else {
+			m_RotationDegree += vRotationDegrees;
+		}
+		updateCameraParameters();
 
-    const glm::mat4 Pika::Camera2D::getViewMatrix() const
-    {
-        return m_ViewMatrix;
-    }
+	}
 
-    const glm::mat4 Pika::Camera2D::getProjectionMatrix() const
-    {
-        return m_ProjectionMatrix;
-    }
-    const glm::mat4 Camera2D::getViewProjectionMatrix() const
-    {
-        return m_ViewProjectionMatrix;
-    }
+	void Camera2D::updateCameraParameters()
+	{
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), glm::vec3(m_Position, s_Z))
+			* glm::rotate(glm::mat4(1.0f), glm::radians(m_RotationDegree), s_Direction);
+		m_ViewMatrix = glm::inverse(Transform);
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
+
 }

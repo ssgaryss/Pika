@@ -7,6 +7,7 @@
 namespace Pika
 {
 
+	//TODO : Renderer3D need to be refactored!!!
 	class Renderer3D
 	{
 	public:

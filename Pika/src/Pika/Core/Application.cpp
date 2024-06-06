@@ -1,13 +1,12 @@
 #include "pkpch.h"
 #include "Application.h"
 #include "Pika/Core/Input.h"
+#include "Pika/Core/Timer.h"
 #include "Pika/Core/Timestep.h"
 #include "Pika/Renderer/Renderer3D.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <imgui.h>
-
-#include <GLFW/glfw3.h>
 
 namespace Pika {
 	Application* Application::s_pSingletonInstance = nullptr;
@@ -46,9 +45,9 @@ namespace Pika {
 	{
 		while (m_Running)
 		{
-			float Time = (float)glfwGetTime();
+			float Time = m_Timer.elapsed();
 			Timestep DeltaTime(Time - m_LastFrameTime);
-			m_LastFrameTime = (float)glfwGetTime();
+			m_LastFrameTime = m_Timer.elapsed();
 			//PK_CORE_INFO("Time step : {}", DeltaTime.getSeconds());
 
 			for (auto& it : m_LayerStack) {

@@ -13,7 +13,6 @@ namespace Pika {
 
 	void Renderer3D::BeginScene()
 	{
-		s_Camera->updateCamera();
 	}
 
 	void Renderer3D::Submit(const Shader* vShader, const VertexArray* vData, const glm::mat4 vTransform)

@@ -101,25 +101,14 @@ public:
 	};
 
 	void onUpdate(Pika::Timestep vTimestep) override {
-		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::A)) {
-			Pika::Renderer3D::s_Camera->addPosition(glm::vec3(-1.0f * vTimestep, 0.0f, 0.0f));
-		}
-		else if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::D)) {
-			Pika::Renderer3D::s_Camera->addPosition(glm::vec3(1.0f * vTimestep, 0.0f, 0.0f));
-		}
 
-		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::W)) {
-			Pika::Renderer3D::s_Camera->addPosition(glm::vec3(0.0f, 1.0f * vTimestep, 0.0f));
-		}
-		else if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::S)) {
-			Pika::Renderer3D::s_Camera->addPosition(glm::vec3(0.0f, -1.0f * vTimestep, 0.0f));
-		}
+		m_CameraController.onUpdate(vTimestep);
 		Pika::RenderCommand::SetClearColor(Pika::Color(0.1f, 0.1f, 0.1f, 1.0f));
 		Pika::RenderCommand::Clear();
-		Pika::Renderer3D::BeginScene();
+		Pika::Renderer2D::BeginScene(m_CameraController);
 		texture1->bind();
-		Pika::Renderer3D::Submit(m_ShaderLibrary.getShader("shader_1").get(), VAO_1.get(), glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.2f, 0.0f)));
-		Pika::Ref<Pika::Shader> shader_2 = m_ShaderLibrary.getShader("shader_2"); 
+		Pika::Renderer2D::Submit(m_ShaderLibrary.getShader("shader_1").get(), VAO_1.get(), glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.2f, 0.0f)));
+		Pika::Ref<Pika::Shader> shader_2 = m_ShaderLibrary.getShader("shader_2");
 		shader_2->bind();
 		shader_2->setFloat3("u_Color", m_Color);
 		float stride = 0.2f;
@@ -128,10 +117,10 @@ public:
 		Transform = glm::scale(Transform, glm::vec3(0.1f));
 		for (int i = 0; i < 10; ++i) {
 			for (int j = 0; j < 10; ++j) {
-				Pika::Renderer3D::Submit(shader_2.get(), VAO_2.get(), glm::translate(Transform, glm::vec3(0.5f * i, -0.5f * j, 0.0f)));
+				Pika::Renderer2D::Submit(shader_2.get(), VAO_2.get(), glm::translate(Transform, glm::vec3(0.5f * i, -0.5f * j, 0.0f)));
 			}
 		}
-		Pika::Renderer3D::EndScene();
+		Pika::Renderer2D::EndScene();
 	}
 
 	void onEvent(Pika::Event& vEvent) override {
@@ -147,6 +136,7 @@ public:
 		ImGui::End();
 	}
 private:
+	Pika::Camera2DController m_CameraController{ 1920.0f / 1080.0f };
 	Pika::ShaderLibrary m_ShaderLibrary;
 	Pika::Ref<Pika::VertexArray> VAO_1;
 	Pika::Ref<Pika::VertexArray> VAO_2;

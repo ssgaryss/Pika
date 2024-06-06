@@ -11,8 +11,10 @@
 //-----------------Render----------------
 #include "Pika/Renderer/RenderCommand.h"
 #include "Pika/Renderer/Renderer3D.h"
+#include "Pika/Renderer/Renderer2D.h"
 #include "Pika/Renderer/VertexArray.h"
 #include "Pika/Renderer/Buffer.h"
 #include "Pika/Renderer/Shader.h"
 #include "Pika/Renderer/RendererAPI.h"
 #include "Pika/Renderer/Texture.h"
+#include "Pika/Renderer/Camera2DController.h"
