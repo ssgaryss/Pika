@@ -33,7 +33,7 @@ namespace Pika {
 		virtual void setVSync(bool vEnable) = 0;
 		virtual bool isVSync() const = 0;
 
-		static Window* Ccreate(const WindowProps& vWindowProps = WindowProps());
+		static Window* Create(const WindowProps& vWindowProps = WindowProps());
 	};
 
 }

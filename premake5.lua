@@ -17,6 +17,7 @@ includeDir["GLFW"] = "Pika/vendor/GLFW/include"
 includeDir["glad"] = "Pika/vendor/glad/include"
 includeDir["ImGui"] = "Pika/vendor/imgui"
 includeDir["glm"] = "Pika/vendor/glm"
+includeDir["stb_image"] = "Pika/vendor/stb_image"
 
 group "Dependencies"
 	include "Pika/vendor/GLFW"
@@ -43,7 +44,9 @@ project "Pika"
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"
+		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp"
 	}
 
 	includedirs
@@ -53,7 +56,8 @@ project "Pika"
 		"%{includeDir.GLFW}",
 		"%{includeDir.glad}",
 		"%{includeDir.ImGui}",
-		"%{includeDir.glm}"
+		"%{includeDir.glm}",
+		"%{includeDir.stb_image}"
 	}
 
 	links

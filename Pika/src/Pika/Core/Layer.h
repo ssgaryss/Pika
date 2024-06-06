@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Pika/Core/Timestep.h"
 #include "Pika/Events/Event.h"
 
 namespace Pika {
@@ -11,7 +11,7 @@ namespace Pika {
 		virtual ~Layer() = default;
 		virtual void onAttach() {};
 		virtual void onDetach() {};
-		virtual void onUpdate() {};
+		virtual void onUpdate(Timestep vTimestep) {};
 		virtual void onImGuiRender() {};
 		virtual void onEvent(Event& vEvent) {};
 		inline const std::string& getName() const { return m_DebugName; }

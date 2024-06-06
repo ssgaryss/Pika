@@ -1,11 +1,16 @@
-#include "pkpch.h"
+    #include "pkpch.h"
 #include "RenderCommand.h"
 #include "RendererAPI.h"
 
 
 namespace Pika {
 
-	std::unique_ptr<RendererAPI> RenderCommand::s_RendererAPI{ RendererAPI::Create() };
+	Scope<RendererAPI> RenderCommand::s_RendererAPI{ RendererAPI::Create() };
+
+	void RenderCommand::Init()
+	{
+		s_RendererAPI->init();
+	}
 
 	void RenderCommand::Clear()
 	{
@@ -22,7 +27,7 @@ namespace Pika {
 		s_RendererAPI->setClearColor(vColor);
 	}
 
-	void RenderCommand::DrawIndexed(VertexArray* vVertexArray)
+	void RenderCommand::DrawIndexed(const VertexArray* vVertexArray)
 	{
 		s_RendererAPI->drawIndexed(vVertexArray);
 	}

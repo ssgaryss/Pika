@@ -6,11 +6,7 @@ namespace Pika {
 
 	RendererAPI::GraphicsAPI RendererAPI::s_GraphicsAPI = GraphicsAPI::OpenGL; //for now
 
-	void RendererAPI::setClearColor(Color vColor)
-	{
-	}
-
-	RendererAPI* RendererAPI::Create()
+	Scope<RendererAPI> RendererAPI::Create()
 	{
 		switch (s_GraphicsAPI)
 		{
@@ -19,7 +15,7 @@ namespace Pika {
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case Pika::RendererAPI::GraphicsAPI::OpenGL:
-			return new OpenGLRendererAPI();
+			return CreateScope<OpenGLRendererAPI>();
 		case Pika::RendererAPI::GraphicsAPI::DirectX:
 			PK_ASSERT(false, "RendererAPI: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;

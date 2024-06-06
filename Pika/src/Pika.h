@@ -1,11 +1,20 @@
 #pragma once
 
 //For use by Pika applications
+#include "Pika/Core/Log.h"
 #include "Pika/Core/Application.h"
 #include "Pika/Core/Layer.h"
 #include "Pika/ImGui/ImGuiLayer.h"
 #include "Pika/Core/Input.h"
-#include "Pika/Core/Log.h"
-//---------------EntryPoint---------------
-#include "Pika/Core/EntryPoint.h"
-//----------------------------------------
+#include "Pika/Core/Timer.h"
+#include "Pika/Core/Timestep.h"
+//-----------------Render----------------
+#include "Pika/Renderer/RenderCommand.h"
+#include "Pika/Renderer/Renderer3D.h"
+#include "Pika/Renderer/Renderer2D.h"
+#include "Pika/Renderer/VertexArray.h"
+#include "Pika/Renderer/Buffer.h"
+#include "Pika/Renderer/Shader.h"
+#include "Pika/Renderer/RendererAPI.h"
+#include "Pika/Renderer/Texture.h"
+#include "Pika/Renderer/Camera2DController.h"

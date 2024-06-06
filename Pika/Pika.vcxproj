@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>pkpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PK_PLATFORM_WINDOWS;PK_BUILD_DLL;GLFW_INCLUDE_NONE;PIKA_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\GLFW\include;vendor\glad\include;vendor\imgui;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\GLFW\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -101,7 +101,7 @@
       <PrecompiledHeaderFile>pkpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PK_PLATFORM_WINDOWS;PK_BUILD_DLL;GLFW_INCLUDE_NONE;PIKA_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\GLFW\include;vendor\glad\include;vendor\imgui;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\GLFW\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -129,7 +129,7 @@
       <PrecompiledHeaderFile>pkpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PK_PLATFORM_WINDOWS;PK_BUILD_DLL;GLFW_INCLUDE_NONE;PIKA_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\GLFW\include;vendor\glad\include;vendor\imgui;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\GLFW\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -152,14 +152,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Pika\Renderer\RenderCommand.h" />
-    <ClInclude Include="src\Pika\Renderer\Renderer.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLBuffer.h" />
-    <ClInclude Include="src\Pika\Renderer\Buffer.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLShader.h" />
-    <ClInclude Include="src\Pika\Renderer\Shader.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\Pika\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Pika.h" />
     <ClInclude Include="src\Pika\Core\Application.h" />
     <ClInclude Include="src\Pika\Core\Core.h" />
@@ -170,16 +163,31 @@
     <ClInclude Include="src\Pika\Core\LayerStack.h" />
     <ClInclude Include="src\Pika\Core\Log.h" />
     <ClInclude Include="src\Pika\Core\MouseCodes.h" />
+    <ClInclude Include="src\Pika\Core\Timer.h" />
+    <ClInclude Include="src\Pika\Core\Timestep.h" />
     <ClInclude Include="src\Pika\Core\Window.h" />
     <ClInclude Include="src\Pika\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Pika\Events\Event.h" />
     <ClInclude Include="src\Pika\Events\KeyboardEvent.h" />
     <ClInclude Include="src\Pika\Events\MouseEvent.h" />
     <ClInclude Include="src\Pika\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLTexture.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.h" />
+    <ClInclude Include="src\Pika\Renderer\Buffer.h" />
+    <ClInclude Include="src\Pika\Renderer\Camera2D.h" />
+    <ClInclude Include="src\Pika\Renderer\Camera2DController.h" />
     <ClInclude Include="src\Pika\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\Pika\Renderer\RenderCommand.h" />
+    <ClInclude Include="src\Pika\Renderer\Renderer3D.h" />
     <ClInclude Include="src\Pika\Renderer\RendererAPI.h" />
+    <ClInclude Include="src\Pika\Renderer\Shader.h" />
+    <ClInclude Include="src\Pika\Renderer\Texture.h" />
+    <ClInclude Include="src\Pika\Renderer\VertexArray.h" />
     <ClInclude Include="src\pkpch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -597,32 +605,38 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
-    <ClInclude Include="src\Pika\Renderer\VertexArray.h" />
+    <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Pika\Renderer\RenderCommand.cpp" />
-    <ClCompile Include="src\Pika\Renderer\Renderer.cpp" />
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.cpp" />
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp" />
-    <ClCompile Include="src\Pika\Renderer\Buffer.cpp" />
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLShader.cpp" />
-    <ClCompile Include="src\Pika\Renderer\Shader.cpp" />
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
     <ClCompile Include="src\Pika\Core\Log.cpp" />
     <ClCompile Include="src\Pika\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLShader.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLTexture.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsInput.cpp" />
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Camera2D.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Camera2DController.cpp" />
     <ClCompile Include="src\Pika\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="src\Pika\Renderer\RenderCommand.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Renderer3D.cpp" />
     <ClCompile Include="src\Pika\Renderer\RendererAPI.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Pika\Renderer\Texture.cpp" />
+    <ClCompile Include="src\Pika\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\pkpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Pika\Renderer\VertexArray.cpp" />
+    <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

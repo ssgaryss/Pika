@@ -36,7 +36,7 @@ namespace Pika {
 		};
 		WindowData m_Data;
 		GLFWwindow* m_pWindow;
-		std::shared_ptr<GraphicsContext> m_pContext;
+		Ref<GraphicsContext> m_pContext;
 
 	};
 }

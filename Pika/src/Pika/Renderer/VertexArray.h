@@ -12,12 +12,12 @@ namespace Pika
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
 		
-		virtual void addVertexBuffer(const std::shared_ptr<VertexBuffer>& vVertexBuffer) = 0;
-		virtual const std::vector<std::shared_ptr<VertexBuffer>>& getVertexBuffers() const = 0;
-		virtual void setIndexBuffer(const std::shared_ptr<IndexBuffer>& vIndexBuffer) = 0;
-		virtual const std::shared_ptr<IndexBuffer>& getIndexBuffer() = 0;
+		virtual void addVertexBuffer(const Ref<VertexBuffer>& vVertexBuffer) = 0;
+		virtual const std::vector<Ref<VertexBuffer>>& getVertexBuffers() const = 0;
+		virtual void setIndexBuffer(const Ref<IndexBuffer>& vIndexBuffer) = 0;
+		virtual const Ref<IndexBuffer>& getIndexBuffer() const = 0;
 
-		static VertexArray* Create();
+		static Ref<VertexArray> Create();
 	};
 
 }

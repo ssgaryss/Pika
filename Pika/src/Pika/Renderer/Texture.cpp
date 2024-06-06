@@ -1,11 +1,11 @@
 #include "pkpch.h"
-#include "VertexArray.h"
+#include "Texture.h"
 #include "RendererAPI.h"
-#include "Pika/Platform/OpenGL/OpenGLVertexArray.h"
+#include "Pika/Platform/OpenGL/OpenGLTexture.h"
 
-namespace Pika
-{
-	Ref<VertexArray> VertexArray::Create()
+namespace Pika {
+
+	Ref<Texture2D> Texture2D::Create(const std::string& vPath)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -14,7 +14,7 @@ namespace Pika
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
-			return CreateRef<OpenGLVertexArray>();
+			return CreateRef<OpenGLTexture2D>(vPath);
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "Shader: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;
@@ -23,4 +23,5 @@ namespace Pika
 		PK_ASSERT(false, "Shader: Unknown renderer API!");
 		return nullptr;
 	}
+
 }

@@ -53,7 +53,7 @@ namespace Pika {
 		template<typename T, typename F> //T:Event£¬F:function
 		bool dispatch(const F& func) {
 			if (m_Event.getEventType() == T::getStaticType()) {
-				m_Event.m_Handled |= func(*static_cast<T*>(& m_Event));
+				m_Event.m_Handled |= func(*static_cast<T*>(&m_Event));
 				return true;
 			}
 			return false;

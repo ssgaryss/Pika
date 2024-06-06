@@ -1,14 +1,9 @@
 #pragma once
-
+#include "Shader.h"
 #include <initializer_list>
 
 namespace Pika
 {
-
-	enum class ShaderDataType
-	{
-		None = 0, Float, Float2, Float3, Float4, Int, Int2, Int3, Int4, Mat3, Mat4, Bool
-	};
 
 	static uint32_t getShaderDataTypeSize(ShaderDataType vType) {
 		switch (vType)
@@ -137,8 +132,8 @@ namespace Pika
 		virtual const BufferLayout& getLayout() const = 0;
 		virtual void setLayout(const BufferLayout& vLayout) = 0;
 
-		static VertexBuffer* Create(uint32_t vSize);
-		static VertexBuffer* Create(float* vVertices, uint32_t vSize);
+		static Ref<VertexBuffer> Create(uint32_t vSize);
+		static Ref<VertexBuffer> Create(float* vVertices, uint32_t vSize);
 	};
 
 	class IndexBuffer
@@ -149,8 +144,7 @@ namespace Pika
 		virtual void unbind() const = 0;
 		virtual uint32_t getCount() const = 0; // nums of indices
 
-		static IndexBuffer* Create(uint32_t vCount);
-		static IndexBuffer* Create(uint32_t* vIndices, uint32_t vCount);
+		static Ref<IndexBuffer> Create(uint32_t* vIndices, uint32_t vCount);
 	};
 
 }

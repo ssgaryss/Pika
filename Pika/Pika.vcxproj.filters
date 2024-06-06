@@ -52,6 +52,9 @@
     <Filter Include="vendor\glm\glm\gtx">
       <UniqueIdentifier>{B3A6A76B-9F8A-68C1-08EB-6214F4ED5243}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\stb_image">
+      <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pika.h">
@@ -84,6 +87,12 @@
     <ClInclude Include="src\Pika\Core\MouseCodes.h">
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Core\Timer.h">
+      <Filter>src\Pika\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Core\Timestep.h">
+      <Filter>src\Pika\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Core\Window.h">
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
@@ -102,16 +111,55 @@
     <ClInclude Include="src\Pika\ImGui\ImGuiLayer.h">
       <Filter>src\Pika\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLBuffer.h">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.h">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLShader.h">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLTexture.h">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Pika\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.h">
       <Filter>src\Pika\Platform\Windows\GLFWwindow</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\Buffer.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\Camera2D.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\Camera2DController.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Renderer\GraphicsContext.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\RenderCommand.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\Renderer3D.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Renderer\RendererAPI.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\Shader.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\Texture.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\VertexArray.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\pkpch.h">
@@ -1365,15 +1413,10 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.h" />
-    <ClInclude Include="src\Pika\Renderer\Shader.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLShader.h" />
-    <ClInclude Include="src\Pika\Renderer\Buffer.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLBuffer.h" />
-    <ClInclude Include="src\Pika\Renderer\VertexArray.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.h" />
-    <ClInclude Include="src\Pika\Renderer\Renderer.h" />
-    <ClInclude Include="src\Pika\Renderer\RenderCommand.h" />
+    <ClInclude Include="vendor\stb_image\stb_image.h">
+      <Filter>vendor\stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\Renderer2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1394,7 +1437,22 @@
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp">
       <Filter>src\Pika\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.cpp">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLShader.cpp">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLTexture.cpp">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.cpp">
       <Filter>src\Pika\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsInput.cpp">
@@ -1403,23 +1461,42 @@
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.cpp">
       <Filter>src\Pika\Platform\Windows\GLFWwindow</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\Buffer.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\Camera2D.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\Camera2DController.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\Renderer\GraphicsContext.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\RenderCommand.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\Renderer3D.cpp">
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Renderer\RendererAPI.cpp">
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\Shader.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\Texture.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\VertexArray.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\pkpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.cpp" />
-    <ClCompile Include="src\Pika\Renderer\Shader.cpp" />
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLShader.cpp" />
-    <ClCompile Include="src\Pika\Renderer\Buffer.cpp" />
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp" />
-    <ClCompile Include="src\Pika\Renderer\VertexArray.cpp" />
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.cpp" />
-    <ClCompile Include="src\Pika\Renderer\Renderer.cpp" />
-    <ClCompile Include="src\Pika\Renderer\RenderCommand.cpp" />
+    <ClCompile Include="vendor\stb_image\stb_image.cpp">
+      <Filter>vendor\stb_image</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\Renderer2D.cpp" />
   </ItemGroup>
 </Project>

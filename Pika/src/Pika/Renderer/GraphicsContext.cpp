@@ -1,12 +1,12 @@
 #include "pkpch.h"
 #include "GraphicsContext.h"
+#include "RendererAPI.h"
 #include "Pika/Platform/OpenGL/OpenGLContext.h"
-#include "Pika/Renderer/RendererAPI.h"
 
 
 namespace Pika
 {
-	GraphicsContext* GraphicsContext::Create(void* vWindow)
+	Ref<GraphicsContext> GraphicsContext::Create(void* vWindow)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -15,7 +15,7 @@ namespace Pika
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
-			return new OpenGLContext(reinterpret_cast<GLFWwindow*>(vWindow));
+			return CreateRef<OpenGLContext>(reinterpret_cast<GLFWwindow*>(vWindow));
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "GraphicsContext: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;

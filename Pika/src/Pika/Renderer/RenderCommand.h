@@ -8,12 +8,13 @@ namespace Pika
 	class RenderCommand
 	{
 	public:
+		static void Init();
 		static void Clear();
 		static void SetClearColor();
 		static void SetClearColor(Color vColor);
-		static void DrawIndexed(VertexArray* vVertexArray);
+		static void DrawIndexed(const VertexArray* vVertexArray);
 	private:
-		static std::unique_ptr<RendererAPI> s_RendererAPI;
+		static Scope<RendererAPI> s_RendererAPI;
 	};
 
 }

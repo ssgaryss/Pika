@@ -26,12 +26,13 @@ namespace Pika {
 		inline static GraphicsAPI getAPI() { return s_GraphicsAPI; }
 		inline static void setAPI(GraphicsAPI vGraphicsAPI) { s_GraphicsAPI = vGraphicsAPI; }
 
+		virtual void init() = 0;
 		virtual void clear() = 0;
 		virtual void setClearColor() = 0;
 		virtual void setClearColor(Color vColor) = 0;
-		virtual void drawIndexed(VertexArray* vVertexArray) = 0;
+		virtual void drawIndexed(const VertexArray* vVertexArray) = 0;
 
-		static RendererAPI* Create();
+		static Scope<RendererAPI> Create();
 	private:
 		static GraphicsAPI s_GraphicsAPI;
 	};
