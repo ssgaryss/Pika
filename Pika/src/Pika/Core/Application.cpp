@@ -4,6 +4,7 @@
 #include "Pika/Core/Timer.h"
 #include "Pika/Core/Timestep.h"
 #include "Pika/Renderer/Renderer3D.h"
+#include "Pika/Renderer/RenderCommand.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <imgui.h>
@@ -42,7 +43,9 @@ namespace Pika {
 			float Time = m_Timer.elapsed();
 			Timestep DeltaTime(Time - m_LastFrameTime);
 			m_LastFrameTime = m_Timer.elapsed();
-			//PK_CORE_INFO("Time step : {}", DeltaTime.getSeconds());
+
+			RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+			RenderCommand::Clear();
 
 			if (!m_IsMinimized) {
 				for (auto& it : m_LayerStack) {
@@ -54,8 +57,6 @@ namespace Pika {
 				{
 					it->onImGuiRender();
 				}
-				static bool Show = true;
-				ImGui::ShowDemoWindow(&Show);
 				m_pImGuiLayer->end();
 			}
 

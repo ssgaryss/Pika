@@ -29,13 +29,4 @@ namespace Pika {
 	{
 	}
 
-	void Renderer2D::Submit(const Shader* vShader, const VertexArray* vData, const glm::mat4 vTransform)
-	{
-		vShader->bind();
-		vData->bind();
-		vShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
-		vShader->setMat4("u_Transform", vTransform);
-		RenderCommand::DrawIndexed(vData);
-	}
-
 }

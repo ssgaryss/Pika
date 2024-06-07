@@ -147,6 +147,9 @@
     <ClInclude Include="src\Pika\Renderer\RenderCommand.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\Renderer2D.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Renderer\Renderer3D.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
@@ -1416,7 +1419,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Renderer\Renderer2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1476,6 +1478,9 @@
     <ClCompile Include="src\Pika\Renderer\RenderCommand.cpp">
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\Renderer2D.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\Renderer\Renderer3D.cpp">
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
@@ -1497,6 +1502,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Renderer\Renderer2D.cpp" />
   </ItemGroup>
 </Project>

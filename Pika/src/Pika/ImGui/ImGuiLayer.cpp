@@ -40,6 +40,9 @@ namespace Pika {
 	}
 	void ImGuiLayer::onDetach()
 	{
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 	}
 
 	void ImGuiLayer::onEvent(Event& vEvent)
