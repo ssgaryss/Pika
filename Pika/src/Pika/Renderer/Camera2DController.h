@@ -25,7 +25,7 @@ namespace Pika
 		bool onMouseScrolledEvent(MouseScrolledEvent& vEvent);
 	private:
 		float m_AspectRatio = 1.0f; // Width / Height
-		float m_ZoomLevel = 1.0f;   // ( Right - Left ) / 2
+		float m_ZoomLevel = 1.0f;   // ( top - bottom ) / 2
 		bool m_AllowRotation = false;
 		Camera2D m_Camera;
 	};

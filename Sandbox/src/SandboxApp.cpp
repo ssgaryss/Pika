@@ -157,7 +157,6 @@ public:
 		:Application{}
 	{
 		pushLayer(new ExampleLayer());
-		pushOverlay(new Pika::ImGuiLayer());
 	};
 	~Sandbox() {};
 };

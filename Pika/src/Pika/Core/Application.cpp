@@ -18,14 +18,16 @@ namespace Pika {
 		m_Window = Scope<Window>(Window::Create());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 		Renderer3D::Init();
+		m_pImGuiLayer = new ImGuiLayer();
+		pushOverlay(m_pImGuiLayer);
 	}
 
 	void Application::onEvent(Event& vEvent)
 	{
 		EventDispatcher Dispatcher(vEvent);
 		Dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::onWindowCloseEvent, this, std::placeholders::_1));
+		Dispatcher.dispatch<WindowResizeEvent>(std::bind(&Application::onWindowResizeEvent, this, std::placeholders::_1));
 		//PK_CORE_TRACE(vEvent.toString()); //trace all events
-		//std::cout << vEvent << "\n";
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it) {
 			if (vEvent.m_Handled) break;
@@ -33,35 +35,29 @@ namespace Pika {
 		}
 	}
 
-	void Application::pushLayer(Layer* vLayer)
-	{
-		m_LayerStack.pushLayer(vLayer);
-	}
-	void Application::pushOverlay(Layer* vLayer)
-	{
-		m_LayerStack.pushOverlay(vLayer);
-	}
 	void Application::run()
 	{
-		while (m_Running)
+		while (m_IsRunning)
 		{
 			float Time = m_Timer.elapsed();
 			Timestep DeltaTime(Time - m_LastFrameTime);
 			m_LastFrameTime = m_Timer.elapsed();
 			//PK_CORE_INFO("Time step : {}", DeltaTime.getSeconds());
 
-			for (auto& it : m_LayerStack) {
-				it->onUpdate(DeltaTime);
-			}
+			if (!m_IsMinimized) {
+				for (auto& it : m_LayerStack) {
+					it->onUpdate(DeltaTime);
+				}
 
-			m_pImGuiLayer->begin();
-			for (auto it : m_LayerStack)
-			{
-				it->onImGuiRender();
+				m_pImGuiLayer->begin();
+				for (auto it : m_LayerStack)
+				{
+					it->onImGuiRender();
+				}
+				static bool Show = true;
+				ImGui::ShowDemoWindow(&Show);
+				m_pImGuiLayer->end();
 			}
-			static bool Show = true;
-			ImGui::ShowDemoWindow(&Show);
-			m_pImGuiLayer->end();
 
 			m_Window->onUpdate();
 
@@ -73,8 +69,17 @@ namespace Pika {
 	}
 	bool Application::onWindowCloseEvent(WindowCloseEvent& vEvent)
 	{
-		m_Running = false;
+		m_IsRunning = false;
 		return true;
+	}
+
+	bool Application::onWindowResizeEvent(WindowResizeEvent& vEvent)
+	{
+		if (vEvent.getWidth() && vEvent.getHeight())
+			m_IsMinimized = false;
+		else
+			m_IsMinimized = true;
+		return false;
 	}
 
 }
