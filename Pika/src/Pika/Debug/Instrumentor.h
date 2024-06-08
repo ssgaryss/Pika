@@ -203,7 +203,9 @@ namespace Pika {
 
 }
 
+
 // if you need Pika profile, set PK_PROFILE = 1 and drag your data to chrome://tracing to analyse the program.
+// You can also use the profile function provided by your IDE by the way.
 #ifdef PIKA_DEBUG
 	#define PK_PROFILE 0
 	#if PK_PROFILE

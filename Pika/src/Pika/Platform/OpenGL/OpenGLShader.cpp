@@ -76,56 +76,67 @@ namespace Pika
 
 	void OpenGLShader::setFloat(const std::string& vName, const float vValue) const
 	{
+		PK_PROFILE_FUNCTION();
 		glUniform1f(glGetUniformLocation(m_RendererID, vName.c_str()), vValue);
 	}
 
 	void OpenGLShader::setFloat2(const std::string& vName, const glm::vec2& vValue) const
 	{
+		PK_PROFILE_FUNCTION();
 		glUniform2f(glGetUniformLocation(m_RendererID, vName.c_str()), vValue.x, vValue.y);
 	}
 
 	void OpenGLShader::setFloat3(const std::string& vName, const glm::vec3& vValue) const
 	{
+		PK_PROFILE_FUNCTION();
 		glUniform3f(glGetUniformLocation(m_RendererID, vName.c_str()), vValue.x, vValue.y, vValue.z);
 	}
 
 	void OpenGLShader::setFloat4(const std::string& vName, const glm::vec4& vValue) const
 	{
+		PK_PROFILE_FUNCTION();
 		glUniform4f(glGetUniformLocation(m_RendererID, vName.c_str()), vValue.x, vValue.y, vValue.z, vValue.w);
 	}
 
 	void OpenGLShader::setInt(const std::string& vName, const int vValue) const
 	{
+		PK_PROFILE_FUNCTION();
 		glUniform1i(glGetUniformLocation(m_RendererID, vName.c_str()), vValue);
 	}
 
 	void OpenGLShader::setInt2(const std::string& vName, const glm::vec2& vValue) const
 	{
+		PK_PROFILE_FUNCTION();
 		glUniform2i(glGetUniformLocation(m_RendererID, vName.c_str()), (int)vValue.x, (int)vValue.y);
 	}
 
 	void OpenGLShader::setInt3(const std::string& vName, const glm::vec3& vValue) const
 	{
+		PK_PROFILE_FUNCTION();
 		glUniform3i(glGetUniformLocation(m_RendererID, vName.c_str()), (int)vValue.x, (int)vValue.y, (int)vValue.z);
 	}
 
 	void OpenGLShader::setInt4(const std::string& vName, const glm::vec4& vValue) const
 	{
+		PK_PROFILE_FUNCTION();
 		glUniform4i(glGetUniformLocation(m_RendererID, vName.c_str()), (int)vValue.x, (int)vValue.y, (int)vValue.z, (int)vValue.w);
 	}
 
 	void OpenGLShader::setMat3(const std::string& vName, const glm::mat3& vValue) const
 	{
+		PK_PROFILE_FUNCTION();
 		glUniformMatrix3fv(glGetUniformLocation(m_RendererID, vName.c_str()), 1, GL_FALSE, &vValue[0][0]);
 	}
 
 	void OpenGLShader::setMat4(const std::string& vName, const glm::mat4& vValue) const
 	{
+		PK_PROFILE_FUNCTION();
 		glUniformMatrix4fv(glGetUniformLocation(m_RendererID, vName.c_str()), 1, GL_FALSE, &vValue[0][0]);
 	}
 
 	void OpenGLShader::setBool(const std::string& vName, const bool vValue) const
 	{
+		PK_PROFILE_FUNCTION();
 		glUniform1i(glGetUniformLocation(m_RendererID, vName.c_str()), vValue);
 	}
 
