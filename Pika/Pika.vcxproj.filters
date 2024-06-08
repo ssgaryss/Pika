@@ -10,6 +10,9 @@
     <Filter Include="src\Pika\Core">
       <UniqueIdentifier>{197B0F92-853B-8BC8-4E76-D445BAF5CFA4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Pika\Debug">
+      <UniqueIdentifier>{57390BD4-4307-FFD9-2C9B-6F001808DB3E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Pika\Events">
       <UniqueIdentifier>{E5B6FC58-5142-6A1D-5A53-ED11C65DC61D}</UniqueIdentifier>
     </Filter>
@@ -95,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="src\Pika\Core\Window.h">
       <Filter>src\Pika\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Debug\Instrumentor.h">
+      <Filter>src\Pika\Debug</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Events\ApplicationEvent.h">
       <Filter>src\Pika\Events</Filter>

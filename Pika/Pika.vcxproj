@@ -165,6 +165,7 @@
     <ClInclude Include="src\Pika\Core\Timer.h" />
     <ClInclude Include="src\Pika\Core\Timestep.h" />
     <ClInclude Include="src\Pika\Core\Window.h" />
+    <ClInclude Include="src\Pika\Debug\Instrumentor.h" />
     <ClInclude Include="src\Pika\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Pika\Events\Event.h" />
     <ClInclude Include="src\Pika\Events\KeyboardEvent.h" />
