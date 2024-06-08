@@ -10,6 +10,9 @@
     <Filter Include="src\Pika\Core">
       <UniqueIdentifier>{197B0F92-853B-8BC8-4E76-D445BAF5CFA4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Pika\Debug">
+      <UniqueIdentifier>{57390BD4-4307-FFD9-2C9B-6F001808DB3E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Pika\Events">
       <UniqueIdentifier>{E5B6FC58-5142-6A1D-5A53-ED11C65DC61D}</UniqueIdentifier>
     </Filter>
@@ -96,6 +99,9 @@
     <ClInclude Include="src\Pika\Core\Window.h">
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Debug\Instrumentor.h">
+      <Filter>src\Pika\Debug</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Events\ApplicationEvent.h">
       <Filter>src\Pika\Events</Filter>
     </ClInclude>
@@ -145,6 +151,9 @@
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Renderer\RenderCommand.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\Renderer2D.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Renderer\Renderer3D.h">
@@ -1416,7 +1425,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Renderer\Renderer2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1476,6 +1484,9 @@
     <ClCompile Include="src\Pika\Renderer\RenderCommand.cpp">
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\Renderer2D.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\Renderer\Renderer3D.cpp">
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
@@ -1497,6 +1508,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Renderer\Renderer2D.cpp" />
   </ItemGroup>
 </Project>

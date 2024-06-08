@@ -8,6 +8,8 @@ namespace Pika {
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& vPath)
 		: m_Path{ vPath }
 	{
+		PK_PROFILE_FUNCTION();
+
 		try
 		{
 			loadTexture(vPath);
@@ -21,21 +23,26 @@ namespace Pika {
 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
+		PK_PROFILE_FUNCTION();
 		glDeleteTextures(1, &m_RendererID);
 	}
 
 	void OpenGLTexture2D::bind(uint32_t vSlot) const
 	{
+		PK_PROFILE_FUNCTION();
 		glBindTextureUnit(vSlot, m_RendererID);
 	}
 
 	void OpenGLTexture2D::unbind(uint32_t vSlot) const
 	{
+		PK_PROFILE_FUNCTION();
 		glBindTextureUnit(vSlot, 0);
 	}
 
 	void OpenGLTexture2D::loadTexture(const std::string& vPath)
 	{
+		PK_PROFILE_FUNCTION();
+
 		int Width, Height, Channels;
 		stbi_set_flip_vertically_on_load(true);
 		stbi_uc* Data = stbi_load(vPath.c_str(), &Width, &Height, &Channels, 0); //0 means desired channels = Channels

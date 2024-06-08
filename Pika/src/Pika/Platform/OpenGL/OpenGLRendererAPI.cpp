@@ -7,12 +7,16 @@ namespace Pika
 {
 	void OpenGLRendererAPI::init()
 	{
+		PK_PROFILE_FUNCTION();
+
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		
 	}
 	void Pika::OpenGLRendererAPI::clear()
 	{
+		PK_PROFILE_FUNCTION();
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 	void OpenGLRendererAPI::setClearColor()
@@ -27,6 +31,8 @@ namespace Pika
 
 	void OpenGLRendererAPI::drawIndexed(const VertexArray* vVertexArray)
 	{
+		PK_PROFILE_FUNCTION();
+
 		vVertexArray->bind();
 		glDrawElements(GL_TRIANGLES, vVertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
 		vVertexArray->unbind();

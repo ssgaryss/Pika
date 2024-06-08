@@ -18,3 +18,4 @@
 
 //Pika engine
 #include "Pika/Core/Log.h"
+#include "Pika/Debug/Instrumentor.h"

@@ -15,8 +15,11 @@ namespace Pika {
 	public:
 		virtual ~Application() = default;
 		void onEvent(Event& vEvent);
-		void pushLayer(Layer* vLayer);
-		void pushOverlay(Layer* vLayer);
+		inline void pushLayer(Layer* vLayer) { vLayer->onAttach(); m_LayerStack.pushLayer(vLayer); }
+		inline void pushOverlay(Layer* vLayer) { vLayer->onAttach(); m_LayerStack.pushOverlay(vLayer); }
+		inline void popLayer(Layer* vLayer) { vLayer->onDetach(); m_LayerStack.popLayer(vLayer); }
+		inline void popOverlay(Layer* vLayer) { vLayer->onDetach(); m_LayerStack.popOverlay(vLayer); }
+
 		void run();
 
 		static Application& getInstance(); //s_pSingletonInstance
@@ -25,9 +28,11 @@ namespace Pika {
 		Application(); //Singleton pattern, can not use ctor
 	private:
 		bool onWindowCloseEvent(WindowCloseEvent& vEvent);
+		bool onWindowResizeEvent(WindowResizeEvent& vEvent);
 	private:
 		std::unique_ptr<Window> m_Window;
-		bool m_Running = true;
+		bool m_IsRunning = true;
+		bool m_IsMinimized = false;
 		LayerStack m_LayerStack;
 		ImGuiLayer* m_pImGuiLayer; //only one ImGuiLayer instance, but each Layer can use ImGuiRender()
 	private:

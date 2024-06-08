@@ -12,6 +12,8 @@ namespace Pika {
 
     void OpenGLContext::init()
     {
+        PK_PROFILE_FUNCTION();
+
         glfwMakeContextCurrent(m_pWindowHandle);
         int Status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
         PK_CORE_ASSERT(Status, "Could not initialize gald!");
@@ -24,6 +26,8 @@ namespace Pika {
 
     void OpenGLContext::swapBuffer()
     {
+        PK_PROFILE_FUNCTION();
+
         glfwSwapBuffers(m_pWindowHandle);
     }
 

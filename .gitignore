@@ -5,3 +5,8 @@ bin-int/
 
 # Files
 *.user
+
+#Debug only
+Sandbox/PikaProfile-Runtime.json
+Sandbox/PikaProfile-Shutdown.json
+Sandbox/PikaProfile-Startup.json

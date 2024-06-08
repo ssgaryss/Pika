@@ -14,6 +14,8 @@ namespace Pika {
 
 	void Camera2DController::onUpdate(Timestep vTimestep)
 	{
+		PK_PROFILE_FUNCTION();
+
 		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::A)) {
 			m_Camera.addPosition(glm::vec2(-1.0f * vTimestep, 0.0f));
 		}
@@ -49,8 +51,8 @@ namespace Pika {
 
 	bool Camera2DController::onWindowResizeEvent(WindowResizeEvent& vEvent)
 	{
-		float Width = vEvent.getWidth();
-		float Height = vEvent.getHeight();
+		float Width = static_cast<float>(vEvent.getWidth());
+		float Height = static_cast<float>(vEvent.getHeight());
 		m_AspectRatio = Width / Height;
 		m_Camera.setProjectionMatrix(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
