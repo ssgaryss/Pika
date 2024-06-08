@@ -8,6 +8,8 @@ public:
 	ExampleLayer()
 		:Layer{ "Example Layer" }
 	{
+		PK_PROFILE_FUNCTION();
+
 		const char* VertexShader = R"(
 		#version 460 core
 		layout (location = 0) in vec3 a_Position;
@@ -97,27 +99,33 @@ public:
 	};
 
 	void onUpdate(Pika::Timestep vTimestep) override {
+		PK_PROFILE_FUNCTION();
 
 		m_CameraController.onUpdate(vTimestep);
-		Pika::Renderer3D::BeginScene();
-		texture1->bind();
-		Pika::Renderer3D::Submit(m_ShaderLibrary.getShader("shader_1").get(), VAO_1.get(), glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.2f, 0.0f)));
-		Pika::Ref<Pika::Shader> shader_2 = m_ShaderLibrary.getShader("shader_2");
-		shader_2->bind();
-		shader_2->setFloat3("u_Color", m_Color);
-		float stride = 0.2f;
-		glm::mat4 Transform(1.0f);
-		Transform = glm::translate(Transform, glm::vec3(-0.2f, 0.2f, 0.0f));
-		Transform = glm::scale(Transform, glm::vec3(0.1f));
-		for (int i = 0; i < 10; ++i) {
-			for (int j = 0; j < 10; ++j) {
-				Pika::Renderer3D::Submit(shader_2.get(), VAO_2.get(), glm::translate(Transform, glm::vec3(0.5f * i, -0.5f * j, 0.0f)));
+		{
+			PK_PROFILE_SCOPE("ExampleLayer : Renderer Draw");
+
+			Pika::Renderer3D::BeginScene();
+			texture1->bind();
+			Pika::Renderer3D::Submit(m_ShaderLibrary.getShader("shader_1").get(), VAO_1.get(), glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.2f, 0.0f)));
+			Pika::Ref<Pika::Shader> shader_2 = m_ShaderLibrary.getShader("shader_2");
+			shader_2->bind();
+			shader_2->setFloat3("u_Color", m_Color);
+			float stride = 0.2f;
+			glm::mat4 Transform(1.0f);
+			Transform = glm::translate(Transform, glm::vec3(-0.2f, 0.2f, 0.0f));
+			Transform = glm::scale(Transform, glm::vec3(0.1f));
+			for (int i = 0; i < 10; ++i) {
+				for (int j = 0; j < 10; ++j) {
+					Pika::Renderer3D::Submit(shader_2.get(), VAO_2.get(), glm::translate(Transform, glm::vec3(0.5f * i, -0.5f * j, 0.0f)));
+				}
 			}
+			Pika::Renderer3D::EndScene();
 		}
-		Pika::Renderer3D::EndScene();
 	}
 
 	void onEvent(Pika::Event& vEvent) override {
+		PK_PROFILE_FUNCTION();
 		//PK_TRACE(vEvent.toString());
 		if (vEvent.getEventType() == Pika::EventType::KeyPressed) {
 			Pika::KeyPressedEvent& Event = static_cast<Pika::KeyPressedEvent&>(vEvent);
@@ -126,6 +134,8 @@ public:
 		m_CameraController.onEvent(vEvent);
 	}
 	void onImGuiRender() override {
+		PK_PROFILE_FUNCTION();
+
 		ImGui::Begin("Color Board");
 		ImGui::ColorEdit3("Color Editor", glm::value_ptr(m_Color));
 		static bool Show = true;

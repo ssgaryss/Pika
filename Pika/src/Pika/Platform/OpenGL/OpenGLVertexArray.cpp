@@ -37,26 +37,32 @@ namespace Pika {
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
+		PK_PROFILE_FUNCTION();
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
+		PK_PROFILE_FUNCTION();
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 
 	void OpenGLVertexArray::bind() const
 	{
+		PK_PROFILE_FUNCTION();
 		glBindVertexArray(m_RendererID);
 	}
 
 	void OpenGLVertexArray::unbind() const
 	{
+		PK_PROFILE_FUNCTION();
 		glBindVertexArray(0);
 	}
 
 	void OpenGLVertexArray::addVertexBuffer(const Ref<VertexBuffer>& vVertexBuffer)
 	{
+		PK_PROFILE_FUNCTION();
+
 		glBindVertexArray(m_RendererID);
 		vVertexBuffer->bind();
 		const auto& Layout = vVertexBuffer->getLayout();

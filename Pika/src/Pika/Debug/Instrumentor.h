@@ -200,10 +200,12 @@ namespace Pika {
 			return result;
 		}
 	}
+
 }
 
-#ifdef PK_DEBUG
-	#define PK_PROFILE 1
+// if you need Pika profile, set PK_PROFILE = 1 and drag your data to chrome://tracing to analyse the program.
+#ifdef PIKA_DEBUG
+	#define PK_PROFILE 0
 	#if PK_PROFILE
 	// Resolve which function signature macro will be used. Note that this only
 	// is resolved when the (pre)compiler starts, so the syntax highlighting
@@ -226,10 +228,10 @@ namespace Pika {
 			#define PK_FUNC_SIG "PK_FUNC_SIG unknown!"
 		#endif
 
-		#define PK_PROFILE_BEGIN_SESSION(name, filepath) ::Hazel::Instrumentor::Get().BeginSession(name, filepath)
-		#define PK_PROFILE_END_SESSION() ::Hazel::Instrumentor::Get().EndSession()
-		#define PK_PROFILE_SCOPE_LINE2(name, line) constexpr auto fixedName##line = ::Hazel::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
-													   ::Hazel::InstrumentationTimer timer##line(fixedName##line.Data)
+		#define PK_PROFILE_BEGIN_SESSION(name, filepath) ::Pika::Instrumentor::Get().BeginSession(name, filepath)
+		#define PK_PROFILE_END_SESSION() ::Pika::Instrumentor::Get().EndSession()
+		#define PK_PROFILE_SCOPE_LINE2(name, line) constexpr auto fixedName##line = ::Pika::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
+													   ::Pika::InstrumentationTimer timer##line(fixedName##line.Data)
 		#define PK_PROFILE_SCOPE_LINE(name, line) PK_PROFILE_SCOPE_LINE2(name, line)
 		#define PK_PROFILE_SCOPE(name) PK_PROFILE_SCOPE_LINE(name, __LINE__)
 		#define PK_PROFILE_FUNCTION() PK_PROFILE_SCOPE(PK_FUNC_SIG)

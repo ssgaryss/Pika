@@ -11,12 +11,15 @@ public:
 	Sandbox()
 		:Application{}
 	{
-		//pushLayer(new ExampleLayer());
+		PK_PROFILE_FUNCTION();
+
+		pushLayer(new ExampleLayer());
 		pushLayer(new Sandbox2D());
 	};
-	~Sandbox() {};
+	~Sandbox() { PK_PROFILE_FUNCTION(); }
 };
 
 Pika::Application* Pika::createApplication() {
+	PK_PROFILE_FUNCTION();
 	return new Sandbox();
 }

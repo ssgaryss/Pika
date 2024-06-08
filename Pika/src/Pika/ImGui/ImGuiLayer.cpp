@@ -20,6 +20,8 @@ namespace Pika {
 	}
 	void ImGuiLayer::onAttach()
 	{
+		PK_PROFILE_FUNCTION();
+
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 
@@ -40,6 +42,8 @@ namespace Pika {
 	}
 	void ImGuiLayer::onDetach()
 	{
+		PK_PROFILE_FUNCTION();
+
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
@@ -47,6 +51,8 @@ namespace Pika {
 
 	void ImGuiLayer::onEvent(Event& vEvent)
 	{
+		PK_PROFILE_FUNCTION();
+
 		if (m_BlockEvents) {
 			ImGuiIO& io = ImGui::GetIO();
 			//ImGui Layer can handle mouse and keyboard events
@@ -57,6 +63,8 @@ namespace Pika {
 
 	void ImGuiLayer::begin()
 	{
+		PK_PROFILE_FUNCTION();
+
 		ImGui_ImplOpenGL3_NewFrame(); //update GL context status
 		ImGui_ImplGlfw_NewFrame(); //update GLFW context status
 		ImGui::NewFrame();
@@ -64,6 +72,8 @@ namespace Pika {
 
 	void ImGuiLayer::end()
 	{
+		PK_PROFILE_FUNCTION();
+
 		ImGuiIO& io = ImGui::GetIO();
 		Application& App = Application::getInstance();
 		io.DisplaySize = ImVec2(static_cast<float>(App.getWindow().getWidth()),

@@ -7,6 +7,8 @@ namespace Pika
 	OpenGLShader::OpenGLShader(const std::string& vFilePath)
 		: m_FilePath{ vFilePath }
 	{
+		PK_PROFILE_FUNCTION();
+
 		try
 		{
 			std::string Source = readFile(vFilePath);
@@ -30,6 +32,8 @@ namespace Pika
 		const std::string& vFragmentShaderSrc)
 		:m_Name{ vName }
 	{
+		PK_PROFILE_FUNCTION();
+
 		try
 		{
 			compileAndLinkShader(vVertexShaderSrc, vFragmentShaderSrc);
@@ -43,16 +47,22 @@ namespace Pika
 
 	Pika::OpenGLShader::~OpenGLShader()
 	{
+		PK_PROFILE_FUNCTION();
+
 		glDeleteProgram(m_RendererID);
 	}
 
 	void Pika::OpenGLShader::bind() const
 	{
+		PK_PROFILE_FUNCTION();
+
 		glUseProgram(m_RendererID);
 	}
 
 	void Pika::OpenGLShader::unbind() const
 	{
+		PK_PROFILE_FUNCTION();
+
 		glUseProgram(0);
 	}
 
@@ -121,6 +131,8 @@ namespace Pika
 
 	void OpenGLShader::compileAndLinkShader(const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc)
 	{
+		PK_PROFILE_FUNCTION();
+
 		GLuint VertexShader = glCreateShader(GL_VERTEX_SHADER);
 		const GLchar* Source = (const GLchar*)vVertexShaderSrc.c_str();
 		glShaderSource(VertexShader, 1, &Source, 0);
@@ -182,6 +194,8 @@ namespace Pika
 
 	std::string OpenGLShader::readFile(const std::string& vPath)
 	{
+		PK_PROFILE_FUNCTION();
+
 		size_t LastSlashIndex = vPath.find_last_of('/');
 		size_t LastDotIndex = vPath.find_last_of('.');
 		if (LastSlashIndex != std::string::npos && LastDotIndex != std::string::npos && LastSlashIndex < LastDotIndex) {
@@ -208,6 +222,8 @@ namespace Pika
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::preProcess(const std::string& vSources)
 	{
+		PK_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> ShaderSources;
 		//vertex shader
 		size_t Begin = vSources.find(Shader::s_FileMarkers.VertexShaderBegin);

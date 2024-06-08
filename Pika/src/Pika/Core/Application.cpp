@@ -14,6 +14,8 @@ namespace Pika {
 
 	Application::Application()
 	{
+		PK_PROFILE_FUNCTION();
+
 		PK_ASSERT(!s_pSingletonInstance, "Application already exists!");
 		s_pSingletonInstance = this;
 		m_Window = Scope<Window>(Window::Create());
@@ -25,6 +27,8 @@ namespace Pika {
 
 	void Application::onEvent(Event& vEvent)
 	{
+		PK_PROFILE_FUNCTION();
+
 		EventDispatcher Dispatcher(vEvent);
 		Dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::onWindowCloseEvent, this, std::placeholders::_1));
 		Dispatcher.dispatch<WindowResizeEvent>(std::bind(&Application::onWindowResizeEvent, this, std::placeholders::_1));
@@ -38,16 +42,26 @@ namespace Pika {
 
 	void Application::run()
 	{
+		PK_PROFILE_FUNCTION();
+
 		while (m_IsRunning)
 		{
+			PK_PROFILE_FUNCTION();
+
 			float Time = m_Timer.elapsed();
 			Timestep DeltaTime(Time - m_LastFrameTime);
 			m_LastFrameTime = m_Timer.elapsed();
 
-			RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-			RenderCommand::Clear();
+			{
+				PK_PROFILE_SCOPE("Application : Renderer prep");
+
+				RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+				RenderCommand::Clear();
+			}
 
 			if (!m_IsMinimized) {
+				PK_PROFILE_SCOPE("Application : Layers update");
+
 				for (auto& it : m_LayerStack) {
 					it->onUpdate(DeltaTime);
 				}
@@ -70,12 +84,16 @@ namespace Pika {
 	}
 	bool Application::onWindowCloseEvent(WindowCloseEvent& vEvent)
 	{
+		PK_PROFILE_FUNCTION();
+
 		m_IsRunning = false;
 		return true;
 	}
 
 	bool Application::onWindowResizeEvent(WindowResizeEvent& vEvent)
 	{
+		PK_PROFILE_FUNCTION();
+
 		if (vEvent.getWidth() && vEvent.getHeight())
 			m_IsMinimized = false;
 		else

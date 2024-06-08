@@ -14,6 +14,8 @@ namespace Pika {
 
 	void Camera2DController::onUpdate(Timestep vTimestep)
 	{
+		PK_PROFILE_FUNCTION();
+
 		if (Pika::Input::isKeyPressed(Pika::Key::KeyCode::A)) {
 			m_Camera.addPosition(glm::vec2(-1.0f * vTimestep, 0.0f));
 		}

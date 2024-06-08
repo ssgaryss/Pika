@@ -7,6 +7,8 @@ namespace Pika
 	////////////////////////////VertexBuffer/////////////////////////////////
 	Pika::OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t vSize)
 	{
+		PK_PROFILE_FUNCTION();
+
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ARRAY_BUFFER, vSize, nullptr, GL_DYNAMIC_DRAW);
@@ -14,6 +16,8 @@ namespace Pika
 
 	Pika::OpenGLVertexBuffer::OpenGLVertexBuffer(float* vVertices, uint32_t vSize)
 	{
+		PK_PROFILE_FUNCTION();
+
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ARRAY_BUFFER, vSize, vVertices, GL_DYNAMIC_DRAW);
@@ -21,16 +25,22 @@ namespace Pika
 
 	Pika::OpenGLVertexBuffer::~OpenGLVertexBuffer()
 	{
+		PK_PROFILE_FUNCTION();
+
 		glDeleteBuffers(1, &m_RendererID);
 	}
 
 	void Pika::OpenGLVertexBuffer::bind() const
 	{
+		PK_PROFILE_FUNCTION();
+
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 	}
 
 	void Pika::OpenGLVertexBuffer::unbind() const
 	{
+		PK_PROFILE_FUNCTION();
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
@@ -47,6 +57,8 @@ namespace Pika
 	////////////////////////////IndexBuffer/////////////////////////////////
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* vIndices, uint32_t vCount)
 	{
+		PK_PROFILE_FUNCTION();
+
 		m_Count = vCount;
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
@@ -54,14 +66,17 @@ namespace Pika
 	}
 	OpenGLIndexBuffer::~OpenGLIndexBuffer()
 	{
+		PK_PROFILE_FUNCTION();
 		glDeleteBuffers(1, &m_RendererID);
 	}
 	void OpenGLIndexBuffer::bind() const
 	{
+		PK_PROFILE_FUNCTION();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 	}
 	void OpenGLIndexBuffer::unbind() const
 	{
+		PK_PROFILE_FUNCTION();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
