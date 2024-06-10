@@ -19,6 +19,7 @@ void main(){
 #FRAGMENT_BEGIN()
 layout (location = 0) out vec4 FragmentColor;
 in vec2 v_TexCoord;
+
 uniform sampler2D u_Texture0;
 
 void main(){

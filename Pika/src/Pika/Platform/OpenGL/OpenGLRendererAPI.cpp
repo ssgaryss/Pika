@@ -36,6 +36,7 @@ namespace Pika
 		vVertexArray->bind();
 		glDrawElements(GL_TRIANGLES, vVertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
 		vVertexArray->unbind();
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 }

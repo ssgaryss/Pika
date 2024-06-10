@@ -17,7 +17,7 @@ namespace Pika
 		}
 		catch (const std::runtime_error& e)
 		{
-			PK_CORE_ERROR("OpenGLShader : fail to load shader file at {0}", e.what());
+			PK_CORE_ERROR("OpenGLShader : fail to load shader file!\n {0}", e.what());
 		}
 	}
 
@@ -77,67 +77,122 @@ namespace Pika
 	void OpenGLShader::setFloat(const std::string& vName, const float vValue) const
 	{
 		PK_PROFILE_FUNCTION();
-		glUniform1f(glGetUniformLocation(m_RendererID, vName.c_str()), vValue);
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniform1f(Location, vValue);
 	}
 
 	void OpenGLShader::setFloat2(const std::string& vName, const glm::vec2& vValue) const
 	{
 		PK_PROFILE_FUNCTION();
-		glUniform2f(glGetUniformLocation(m_RendererID, vName.c_str()), vValue.x, vValue.y);
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniform2f(Location, vValue.x, vValue.y);
 	}
 
 	void OpenGLShader::setFloat3(const std::string& vName, const glm::vec3& vValue) const
 	{
 		PK_PROFILE_FUNCTION();
-		glUniform3f(glGetUniformLocation(m_RendererID, vName.c_str()), vValue.x, vValue.y, vValue.z);
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniform3f(Location, vValue.x, vValue.y, vValue.z);
 	}
 
 	void OpenGLShader::setFloat4(const std::string& vName, const glm::vec4& vValue) const
 	{
 		PK_PROFILE_FUNCTION();
-		glUniform4f(glGetUniformLocation(m_RendererID, vName.c_str()), vValue.x, vValue.y, vValue.z, vValue.w);
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniform4f(Location, vValue.x, vValue.y, vValue.z, vValue.w);
 	}
 
 	void OpenGLShader::setInt(const std::string& vName, const int vValue) const
 	{
 		PK_PROFILE_FUNCTION();
-		glUniform1i(glGetUniformLocation(m_RendererID, vName.c_str()), vValue);
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniform1i(Location, vValue);
 	}
 
 	void OpenGLShader::setInt2(const std::string& vName, const glm::vec2& vValue) const
 	{
 		PK_PROFILE_FUNCTION();
-		glUniform2i(glGetUniformLocation(m_RendererID, vName.c_str()), (int)vValue.x, (int)vValue.y);
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniform2i(Location, (int)vValue.x, (int)vValue.y);
 	}
 
 	void OpenGLShader::setInt3(const std::string& vName, const glm::vec3& vValue) const
 	{
 		PK_PROFILE_FUNCTION();
-		glUniform3i(glGetUniformLocation(m_RendererID, vName.c_str()), (int)vValue.x, (int)vValue.y, (int)vValue.z);
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniform3i(Location, (int)vValue.x, (int)vValue.y, (int)vValue.z);
 	}
 
 	void OpenGLShader::setInt4(const std::string& vName, const glm::vec4& vValue) const
 	{
 		PK_PROFILE_FUNCTION();
-		glUniform4i(glGetUniformLocation(m_RendererID, vName.c_str()), (int)vValue.x, (int)vValue.y, (int)vValue.z, (int)vValue.w);
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniform4i(Location, (int)vValue.x, (int)vValue.y, (int)vValue.z, (int)vValue.w);
 	}
 
 	void OpenGLShader::setMat3(const std::string& vName, const glm::mat3& vValue) const
 	{
 		PK_PROFILE_FUNCTION();
-		glUniformMatrix3fv(glGetUniformLocation(m_RendererID, vName.c_str()), 1, GL_FALSE, &vValue[0][0]);
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniformMatrix3fv(Location, 1, GL_FALSE, &vValue[0][0]);
 	}
 
 	void OpenGLShader::setMat4(const std::string& vName, const glm::mat4& vValue) const
 	{
 		PK_PROFILE_FUNCTION();
-		glUniformMatrix4fv(glGetUniformLocation(m_RendererID, vName.c_str()), 1, GL_FALSE, &vValue[0][0]);
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniformMatrix4fv(Location, 1, GL_FALSE, &vValue[0][0]);
 	}
 
 	void OpenGLShader::setBool(const std::string& vName, const bool vValue) const
 	{
 		PK_PROFILE_FUNCTION();
-		glUniform1i(glGetUniformLocation(m_RendererID, vName.c_str()), vValue);
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniform1i(Location, vValue);
 	}
 
 	void OpenGLShader::compileAndLinkShader(const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc)

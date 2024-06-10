@@ -23,5 +23,5 @@ int main(int argc, char** argv)
 }
 #else
 #error Pika only for Windows! 
-#endif // PK_PLATFORM_WINDOWS
+#endif
 

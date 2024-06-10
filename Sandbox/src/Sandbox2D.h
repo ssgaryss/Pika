@@ -4,11 +4,7 @@
 class Sandbox2D : public Pika::Layer
 {
 public:
-	Sandbox2D()
-		: Layer{"Sandbox2D"}, m_CameraController{1920.0f / 1080.0f}
-	{
-	}
-
+	Sandbox2D();
 	~Sandbox2D() = default;
 	void onAttach() override;
 	void onDetach() override;

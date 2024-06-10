@@ -1,7 +1,6 @@
 #pragma once
-#include "Shader.h"
 #include "Camera2DController.h"
-#include "VertexArray.h"
+#include <glm/glm.hpp>
 
 namespace Pika
 {
@@ -13,6 +12,8 @@ namespace Pika
 		static void Init();
 		static void BeginScene(Camera2DController& vCameraController);
 		static void EndScene();
+
+		static void drawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec4& vColor);
 
 		//static
 	};

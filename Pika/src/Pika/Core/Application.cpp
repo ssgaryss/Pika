@@ -3,6 +3,7 @@
 #include "Pika/Core/Input.h"
 #include "Pika/Core/Timer.h"
 #include "Pika/Core/Timestep.h"
+#include "Pika/Renderer/Renderer2D.h"
 #include "Pika/Renderer/Renderer3D.h"
 #include "Pika/Renderer/RenderCommand.h"
 #include <glad/glad.h>
@@ -20,7 +21,8 @@ namespace Pika {
 		s_pSingletonInstance = this;
 		m_Window = Scope<Window>(Window::Create());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
-		Renderer3D::Init();
+		Renderer2D::Init();
+		//Renderer3D::Init();
 		m_pImGuiLayer = new ImGuiLayer();
 		pushOverlay(m_pImGuiLayer);
 	}
