@@ -2,7 +2,7 @@
 #include <imgui/imgui.h>
 
 Sandbox2D::Sandbox2D()
-	: Layer{ "Sandbox2D" }, m_CameraController{ 1920.0f / 1080.0f },
+	: Layer{ "Sandbox2D" }, m_CameraController{ 1920.0f / 1080.0f, true },
 	m_ShaderLibrary{ Pika::CreateRef<Pika::ShaderLibrary>() }
 {
 }
@@ -10,7 +10,9 @@ Sandbox2D::Sandbox2D()
 void Sandbox2D::onAttach()
 {
 	PK_PROFILE_FUNCTION();
-	//m_TextureBackround = Pika::Texture2D::Create("assets/textures/board.png");
+	Pika::Renderer2D::Init();
+
+	m_TextureBackround = Pika::Texture2D::Create("assets/textures/board.png");
 	//m_ShaderLibrary->load("assets/shaders/ShaderTexture.glsl");
 }
 
@@ -25,7 +27,9 @@ void Sandbox2D::onUpdate(Pika::Timestep vTimestep)
 
 	m_CameraController.onUpdate(vTimestep);
 	Pika::Renderer2D::BeginScene(m_CameraController);
-	Pika::Renderer2D::drawQuad({ 0.2f, 0.2f }, { 1.0f,1.0f }, { 0.8f, 0.2f, 0.2f, 1.0f });
+	Pika::Renderer2D::drawQuad({ 0.0f, 0.0f, -0.9f }, { 10.0f, 10.0f }, m_TextureBackround, 10.0f);
+	Pika::Renderer2D::drawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
+	Pika::Renderer2D::drawRotatedQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, glm::radians(45.0f), { 1.0f, 0.0f, 1.0f, 1.0f });
 	Pika::Renderer2D::EndScene();
 
 }

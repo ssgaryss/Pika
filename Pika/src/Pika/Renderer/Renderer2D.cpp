@@ -13,7 +13,7 @@ namespace Pika {
 		Ref<VertexArray> m_QuadVertexArray;
 		Ref<VertexBuffer> m_QuadVertexBuffer;
 		Ref<Shader> m_QuadShader;
-		Ref<Texture> m_Texture1; // for now
+
 		Ref<Texture> m_WhiteTexture; // for now
 
 		struct Camera2DData {
@@ -26,6 +26,8 @@ namespace Pika {
 
 	void Renderer2D::Init()
 	{
+		PK_PROFILE_FUNCTION();
+
 		RenderCommand::Init();
 		s_Data.m_QuadVertexArray = VertexArray::Create();
 
@@ -51,8 +53,7 @@ namespace Pika {
 		s_Data.m_QuadVertexArray->addVertexBuffer(s_Data.m_QuadVertexBuffer);
 		s_Data.m_QuadVertexArray->setIndexBuffer(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		s_Data.m_QuadShader = Shader::Create("assets/shaders/Renderer2D/DefaultQuadShader.glsl");
-		
-		s_Data.m_Texture1 = Texture2D::Create("assets/textures/board.png");
+
 		TextureSpecification TS;
 		s_Data.m_WhiteTexture = Texture2D::Create(TS);
 		uint32_t Data = 0xffffffff;
@@ -61,20 +62,87 @@ namespace Pika {
 
 	void Renderer2D::BeginScene(Camera2DController& vCameraController)
 	{
+		PK_PROFILE_FUNCTION();
 		s_Data.m_Camera2DData.m_ViewProjectionMatrix = vCameraController.getCamera().getViewProjectionMatrix();
 	}
 
 	void Renderer2D::EndScene()
 	{
+		PK_PROFILE_FUNCTION();
 	}
 
-	void Renderer2D::drawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec4& vColor)
+	void Renderer2D::drawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec4& vTintColor)
 	{
+		PK_PROFILE_FUNCTION();
+		drawQuad(glm::vec3(vPosition, 0.0f), vScale, vTintColor);
+	}
+
+	void Renderer2D::drawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec4& vTintColor)
+	{
+		PK_PROFILE_FUNCTION();
 		s_Data.m_QuadShader->bind();
-		s_Data.m_QuadShader->setFloat4("u_TintColor", vColor);
+		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
+		s_Data.m_QuadShader->setMat4("u_Transform", Transform);
+		s_Data.m_QuadShader->setFloat("u_TilingFactor", 1.0f);
+		s_Data.m_QuadShader->setFloat4("u_TintColor", vTintColor);
 		s_Data.m_WhiteTexture->bind();
 		s_Data.m_QuadShader->setInt("u_Texture", 0);
 		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get());
+	}
+
+	void Renderer2D::drawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	{
+		PK_PROFILE_FUNCTION();
+		drawQuad(glm::vec3(vPosition, 0.0f), vScale, vTexture, vTilingFactor, vTintColor);
+	}
+
+	void Renderer2D::drawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	{
+		PK_PROFILE_FUNCTION();
+		s_Data.m_QuadShader->bind();
+		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
+		s_Data.m_QuadShader->setMat4("u_Transform", Transform);
+		s_Data.m_QuadShader->setFloat("u_TilingFactor", vTilingFactor);
+		s_Data.m_QuadShader->setFloat4("u_TintColor", vTintColor);
+		vTexture->bind();
+		s_Data.m_QuadShader->setInt("u_Texture", 0);
+		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get());
+	}
+
+	void Renderer2D::drawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const glm::vec4& vTintColor)
+	{
+		PK_PROFILE_FUNCTION();
+		drawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vTintColor);
+	}
+
+	void Renderer2D::drawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const glm::vec4& vTintColor)
+	{
+		PK_PROFILE_FUNCTION();
+		s_Data.m_QuadShader->bind();
+		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
+			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
+		s_Data.m_QuadShader->setMat4("u_Transform", Transform);
+		s_Data.m_QuadShader->setFloat("u_TilingFactor", 1.0f);
+		s_Data.m_QuadShader->setFloat4("u_TintColor", vTintColor);
+		s_Data.m_WhiteTexture->bind();
+		s_Data.m_QuadShader->setInt("u_Texture", 0);
+		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get());
+	}
+
+	void Renderer2D::drawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	{
+		PK_PROFILE_FUNCTION();
+	}
+
+	void Renderer2D::drawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	{
+		PK_PROFILE_FUNCTION();
 	}
 
 }

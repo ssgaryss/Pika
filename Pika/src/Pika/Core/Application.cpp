@@ -21,8 +21,6 @@ namespace Pika {
 		s_pSingletonInstance = this;
 		m_Window = Scope<Window>(Window::Create());
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
-		Renderer2D::Init();
-		//Renderer3D::Init();
 		m_pImGuiLayer = new ImGuiLayer();
 		pushOverlay(m_pImGuiLayer);
 	}

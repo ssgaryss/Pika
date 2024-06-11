@@ -20,9 +20,10 @@ layout(location = 0) out vec4 FragmentColor;
 in vec2 v_TexCoord;
 
 uniform vec4 u_TintColor;
+uniform float u_TilingFactor;
 uniform sampler2D u_Texture;
 
 void main() {
-	FragmentColor = texture(u_Texture, v_TexCoord) * u_TintColor;
+	FragmentColor = texture(u_Texture, v_TexCoord * u_TilingFactor) * u_TintColor;
 }
 #FRAGMENT_END()
