@@ -94,7 +94,6 @@ namespace Pika {
 
 	void Renderer2D::drawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
-		PK_PROFILE_FUNCTION();
 		drawQuad(glm::vec3(vPosition, 0.0f), vScale, vTexture, vTilingFactor, vTintColor);
 	}
 
@@ -115,7 +114,6 @@ namespace Pika {
 
 	void Renderer2D::drawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const glm::vec4& vTintColor)
 	{
-		PK_PROFILE_FUNCTION();
 		drawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vTintColor);
 	}
 
@@ -138,11 +136,23 @@ namespace Pika {
 	void Renderer2D::drawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
 		PK_PROFILE_FUNCTION();
+		drawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vTexture, vTilingFactor, vTintColor);
 	}
 
 	void Renderer2D::drawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
 		PK_PROFILE_FUNCTION();
+		s_Data.m_QuadShader->bind();
+		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
+			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
+		s_Data.m_QuadShader->setMat4("u_Transform", Transform);
+		s_Data.m_QuadShader->setFloat("u_TilingFactor", vTilingFactor);
+		s_Data.m_QuadShader->setFloat4("u_TintColor", vTintColor);
+		vTexture->bind();
+		s_Data.m_QuadShader->setInt("u_Texture", 0);
+		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get());
 	}
 
 }
