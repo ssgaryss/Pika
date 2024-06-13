@@ -13,6 +13,7 @@ namespace Pika
 		static void SetClearColor();
 		static void SetClearColor(const Color& vColor);
 		static void DrawIndexed(const VertexArray* vVertexArray);
+		static uint32_t getAvailableTextureSlots();
 	private:
 		static Scope<RendererAPI> s_RendererAPI;
 	};

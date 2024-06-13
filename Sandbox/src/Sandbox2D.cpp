@@ -27,9 +27,9 @@ void Sandbox2D::onUpdate(Pika::Timestep vTimestep)
 
 	m_CameraController.onUpdate(vTimestep);
 	Pika::Renderer2D::BeginScene(m_CameraController);
-	Pika::Renderer2D::drawQuad({ 0.0f, 0.0f, -0.9f }, { 10.0f, 10.0f }, m_TextureBackround, 10.0f);
-	Pika::Renderer2D::drawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
-	Pika::Renderer2D::drawRotatedQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, glm::radians(Rotation), { 1.0f, 0.0f, 1.0f, 1.0f });
+	//Pika::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 10.0f, 10.0f }, m_TextureBackround, 10.0f);
+	Pika::Renderer2D::DrawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
+	//Pika::Renderer2D::DrawRotatedQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, glm::radians(Rotation), { 1.0f, 0.0f, 1.0f, 1.0f });
 	Rotation += glm::radians(10.0f);
 	Pika::Renderer2D::EndScene();
 

@@ -44,6 +44,12 @@ namespace Pika
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
+	void OpenGLVertexBuffer::setData(const void* vData, uint32_t vSize)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, vSize, vData);
+	}
+
 	const BufferLayout& OpenGLVertexBuffer::getLayout() const
 	{
 		return m_Layout;

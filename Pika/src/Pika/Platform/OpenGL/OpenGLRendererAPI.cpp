@@ -42,4 +42,11 @@ namespace Pika
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	uint32_t OpenGLRendererAPI::getAvailableTextureSlots()
+	{
+		GLint maxTextureUnits = 0;
+		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
+		return static_cast<uint32_t>(maxTextureUnits);
+	}
+
 }

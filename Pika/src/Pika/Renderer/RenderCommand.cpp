@@ -32,4 +32,9 @@ namespace Pika {
 		s_RendererAPI->drawIndexed(vVertexArray);
 	}
 
+	uint32_t RenderCommand::getAvailableTextureSlots()
+	{
+		return s_RendererAPI->getAvailableTextureSlots();
+	}
+
 }

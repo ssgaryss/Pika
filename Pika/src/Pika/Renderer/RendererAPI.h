@@ -31,6 +31,7 @@ namespace Pika {
 		virtual void setClearColor() = 0;
 		virtual void setClearColor(Color vColor) = 0;
 		virtual void drawIndexed(const VertexArray* vVertexArray) = 0;
+		virtual uint32_t getAvailableTextureSlots() = 0;
 
 		static Scope<RendererAPI> Create();
 	private:

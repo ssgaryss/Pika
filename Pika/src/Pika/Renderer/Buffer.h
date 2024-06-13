@@ -128,6 +128,7 @@ namespace Pika
 		virtual ~VertexBuffer() = default;
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
+		virtual void setData(const void* vData, uint32_t vSize) = 0;
 
 		virtual const BufferLayout& getLayout() const = 0;
 		virtual void setLayout(const BufferLayout& vLayout) = 0;
