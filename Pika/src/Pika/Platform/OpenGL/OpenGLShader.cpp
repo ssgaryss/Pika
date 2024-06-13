@@ -195,6 +195,17 @@ namespace Pika
 		glUniform1i(Location, vValue);
 	}
 
+	void OpenGLShader::setIntArray(const std::string& vName, const int* vValue, uint32_t vCount) const
+	{
+		PK_PROFILE_FUNCTION();
+		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
+		if (Location == -1) {
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			return;
+		}
+		glUniform1iv(Location, vCount, vValue);
+	}
+
 	void OpenGLShader::compileAndLinkShader(const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc)
 	{
 		PK_PROFILE_FUNCTION();

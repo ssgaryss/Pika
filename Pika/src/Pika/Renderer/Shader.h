@@ -41,6 +41,7 @@ namespace Pika
 		virtual void setMat3(const std::string& vName, const glm::mat3& vValue) const = 0;
 		virtual void setMat4(const std::string& vName, const glm::mat4& vValue) const = 0;
 		virtual void setBool(const std::string& vName, const bool vValue) const = 0;
+		virtual void setIntArray(const std::string& vName, const int* vValue, uint32_t vCount) const = 0;
 
 		static Ref<Shader> Create(const std::string& vFilePath);
 		static Ref<Shader> Create(const std::string& vName, const std::string& vFilePath);

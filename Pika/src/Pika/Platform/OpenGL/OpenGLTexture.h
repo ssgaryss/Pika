@@ -20,6 +20,9 @@ namespace Pika
 
 		void bind(uint32_t vSlot = 0) const override;
 		void unbind(uint32_t vSlot = 0) const override;
+		inline bool operator==(const Texture& rhs) const override {
+			return m_RendererID == dynamic_cast<const OpenGLTexture2D&>(rhs).getRendererID();
+		}
 	private:
 		void loadTexture(const std::string& vPath);
 	private:

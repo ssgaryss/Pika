@@ -12,13 +12,12 @@ out float v_TextureIndex;
 out float v_TilingFactor;
 
 uniform mat4 u_ViewProjectionMatrix;
-uniform mat4 u_Transform;
 
 void main() {
 	v_Color = a_Color;
 	v_TextureIndex = a_TextureIndex;
 	v_TilingFactor = a_TilingFactor;
-	gl_Position = u_ViewProjectionMatrix * u_Transform * vec4(a_Position, 1.0f);
+	gl_Position = u_ViewProjectionMatrix * vec4(a_Position, 1.0f);
 	v_TexCoord = a_TexCoord;
 }
 #VERTEX_END()
@@ -33,11 +32,9 @@ in vec2 v_TexCoord;
 in float v_TextureIndex;
 in float v_TilingFactor;
 
-uniform vec4 u_TintColor;
-uniform sampler2D u_Texture;
+uniform sampler2D u_Textures[32];
 
 void main() {
-	//FragmentColor = texture(u_Texture, v_TexCoord * u_TilingFactor) * u_TintColor;
-	FragmentColor = v_Color;
+	FragmentColor = texture(u_Textures[int(v_TextureIndex)], v_TexCoord * v_TilingFactor) * v_Color;
 }
 #FRAGMENT_END()

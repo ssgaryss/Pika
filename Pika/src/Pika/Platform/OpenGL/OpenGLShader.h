@@ -30,6 +30,7 @@ namespace Pika
 		void setMat3(const std::string& vName, const glm::mat3& vValue) const override;
 		void setMat4(const std::string& vName, const glm::mat4& vValue) const override;
 		void setBool(const std::string& vName, const bool vValue) const override;
+		void setIntArray(const std::string& vName, const int* vValue, uint32_t vCount) const override;
 	private:
 		void compileAndLinkShader(const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
 		std::string readFile(const std::string& vPath);

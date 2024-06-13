@@ -33,6 +33,7 @@ namespace Pika
 
 		virtual void bind(uint32_t vSlot = 0) const = 0;
 		virtual void unbind(uint32_t vSlot = 0) const = 0;
+		virtual bool operator==(const Texture& rhs) const = 0;
 
 	};
 
