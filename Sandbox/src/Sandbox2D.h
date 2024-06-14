@@ -15,6 +15,7 @@ private:
 	Pika::Camera2DController m_CameraController;
 	Pika::Ref<Pika::ShaderLibrary> m_ShaderLibrary;
 	Pika::Ref<Pika::Texture2D> m_TextureBackround;
+	Pika::Ref<Pika::Texture2D> m_Texture2024;
 	float Rotation = 0.0f; //for now
 
 };

@@ -13,6 +13,7 @@ void Sandbox2D::onAttach()
 	Pika::Renderer2D::Init();
 
 	m_TextureBackround = Pika::Texture2D::Create("assets/textures/board.png");
+	m_Texture2024 = Pika::Texture2D::Create("assets/textures/2024.png");
 	//m_ShaderLibrary->load("assets/shaders/ShaderTexture.glsl");
 }
 
@@ -31,7 +32,8 @@ void Sandbox2D::onUpdate(Pika::Timestep vTimestep)
 	Pika::Renderer2D::DrawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
 	Pika::Renderer2D::DrawQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f });
 	Pika::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.2f, 0.5f }, { 0.5f, 0.5f, 1.0f, 1.0f });
-	//Pika::Renderer2D::DrawRotatedQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, glm::radians(Rotation), { 1.0f, 0.0f, 1.0f, 1.0f });
+	Pika::Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f }, { 0.5f, 0.5f }, glm::radians(Rotation), { 1.0f, 0.0f, 1.0f, 1.0f });
+	Pika::Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f, 0.1f }, { 0.5f, 0.5f }, glm::radians(Rotation), m_Texture2024);
 	Rotation += glm::radians(10.0f);
 	Pika::Renderer2D::EndScene();
 
