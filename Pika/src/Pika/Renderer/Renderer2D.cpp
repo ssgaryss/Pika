@@ -36,7 +36,7 @@ namespace Pika {
 		friend void Renderer2D::Init();
 		uint32_t getMaxTextureSlots() const { return m_MaxTextureSlots; }
 		std::optional<uint32_t> findTextureIndex(const Ref<Texture2D>& vTexture) {  // 已存在Texture则返回其index
-			for (uint32_t i = 0; i < m_TextureIndex; ++i) {
+			for (uint32_t i = 1; i < m_TextureIndex; ++i) {
 				if (*vTexture.get() == *m_TextureSlots[i].get()) {
 					return i;
 				}
@@ -46,11 +46,11 @@ namespace Pika {
 		std::optional<uint32_t> addTexture(const Ref<Texture2D>& vTexture) {
 			if (m_TextureIndex >= m_MaxTextureSlots) return std::nullopt;
 			uint32_t TextureIndex = m_TextureIndex;
-			m_TextureSlots.emplace_back(vTexture);
+			m_TextureSlots[TextureIndex] = vTexture;
 			m_TextureIndex++;
 			return TextureIndex;
 		}
-		std::vector<Ref<Texture2D>> m_TextureSlots;
+		std::array<Ref<Texture2D>, 128> m_TextureSlots; // for now : 默认不多于128个texture
 		Ref<Texture2D> m_WhiteTexture; // Default at texture slot 0
 		uint32_t m_TextureIndex = 1;
 
@@ -110,12 +110,11 @@ namespace Pika {
 		s_Data.m_pQuadVertexBufferPtr = s_Data.m_pQuadVertexBufferBase;
 
 		s_Data.m_MaxTextureSlots = RenderCommand::getAvailableTextureSlots();
-		s_Data.m_TextureSlots.reserve(s_Data.getMaxTextureSlots());
 		TextureSpecification TS;
 		s_Data.m_WhiteTexture = Texture2D::Create(TS);
 		uint32_t Data = 0xffffffff;
 		s_Data.m_WhiteTexture->setData(&Data, sizeof(Data));
-		s_Data.m_TextureSlots.emplace_back(s_Data.m_WhiteTexture);
+		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture;
 		//s_Data.m_TextureSlots.emplace_back(s_Data.m_WhiteTexture); //默认Slot0是纯白纹理
 		//s_Data.m_TextureSlots.reserve(s_Data.m_MaxTextureSlots);
 	}
@@ -153,7 +152,7 @@ namespace Pika {
 
 		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get());
 		s_Data.m_pQuadVertexBufferPtr = s_Data.m_pQuadVertexBufferBase;
-
+		s_Data.m_TextureIndex = 1;
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec4& vColor)
