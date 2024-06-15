@@ -28,12 +28,17 @@ void Sandbox2D::onUpdate(Pika::Timestep vTimestep)
 
 	m_CameraController.onUpdate(vTimestep);
 	Pika::Renderer2D::BeginScene(m_CameraController);
-	Pika::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 10.0f, 10.0f }, m_TextureBackround, 10.0f);
+	Pika::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 20.0f, 20.0f }, m_TextureBackround, 10.0f);
 	Pika::Renderer2D::DrawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
 	Pika::Renderer2D::DrawQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f });
 	Pika::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.2f, 0.5f }, { 0.5f, 0.5f, 1.0f, 1.0f });
 	Pika::Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f }, { 0.5f, 0.5f }, glm::radians(Rotation), { 1.0f, 0.0f, 1.0f, 1.0f });
 	Pika::Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f, 0.1f }, { 0.5f, 0.5f }, glm::radians(Rotation), m_Texture2024);
+	for (float x = -5.0f; x < 5.0f; x += 0.2f) {
+		for (float y = -5.0f; y < 5.0f; y += 0.2f) {
+			Pika::Renderer2D::DrawQuad({ x, y, -0.2f }, { 0.2f, 0.2f }, { (x + 5.0f) / 10.0f, (y + 5.0f) / 10.0f, 0.5f, 1.0f });
+		}
+	}
 	Rotation += glm::radians(10.0f);
 	Pika::Renderer2D::EndScene();
 
@@ -42,9 +47,10 @@ void Sandbox2D::onUpdate(Pika::Timestep vTimestep)
 void Sandbox2D::onImGuiRender()
 {
 	PK_PROFILE_FUNCTION();
-
-	ImGui::Begin("Color");
-	ImGui::Text("hello!");
+	auto Statistics = Pika::Renderer2D::GetStatistics();
+	ImGui::Begin("Renderer statistics");
+	ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
+	ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
 	ImGui::End();
 }
 

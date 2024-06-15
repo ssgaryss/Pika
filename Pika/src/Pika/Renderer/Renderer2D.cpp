@@ -9,7 +9,7 @@
 
 namespace Pika {
 
-#define MAX_QUADS_PER_BATCH 1000 // for now
+#define MAX_QUADS_PER_BATCH 10000 // for now
 
 	struct QuadVertexData {
 		glm::vec3 m_Position;
@@ -24,6 +24,7 @@ namespace Pika {
 		static const uint32_t s_MaxVerticesPerBatch = s_MaxQuadsPerBatch * 4;
 		static const uint32_t s_MaxIndicesPerBatch = s_MaxQuadsPerBatch * 6;
 
+		uint32_t m_QuadIndexCount = 0;
 		Ref<VertexArray> m_QuadVertexArray;
 		Ref<VertexBuffer> m_QuadVertexBuffer;
 		Ref<Shader> m_QuadShader;
@@ -60,6 +61,7 @@ namespace Pika {
 		};
 		Camera2DData m_Camera2DData;
 
+		Renderer2D::Statistics m_Statistics; // Record the renderer states
 	private:
 		uint32_t m_MaxTextureSlots = 32; // Only can be reset by Renderer2D::Init()
 	};
@@ -71,12 +73,12 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 
 		RenderCommand::Init();
-		s_Data.m_QuadVertexArray = VertexArray::Create();
 		s_Data.m_QuadUnitVertex[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.m_QuadUnitVertex[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.m_QuadUnitVertex[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
 		s_Data.m_QuadUnitVertex[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
+		s_Data.m_QuadVertexArray = VertexArray::Create();
 		uint32_t* QuadIndicesPerBatch = new uint32_t[s_Data.s_MaxIndicesPerBatch];
 		{
 			uint32_t Offset = 0;
@@ -107,7 +109,6 @@ namespace Pika {
 		s_Data.m_QuadShader = Shader::Create("assets/shaders/Renderer2D/DefaultQuadShader.glsl");
 
 		s_Data.m_pQuadVertexBufferBase = new QuadVertexData[s_Data.s_MaxVerticesPerBatch];
-		s_Data.m_pQuadVertexBufferPtr = s_Data.m_pQuadVertexBufferBase;
 
 		s_Data.m_MaxTextureSlots = RenderCommand::getAvailableTextureSlots();
 		TextureSpecification TS;
@@ -115,14 +116,22 @@ namespace Pika {
 		uint32_t Data = 0xffffffff;
 		s_Data.m_WhiteTexture->setData(&Data, sizeof(Data));
 		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture;
-		//s_Data.m_TextureSlots.emplace_back(s_Data.m_WhiteTexture); //默认Slot0是纯白纹理
-		//s_Data.m_TextureSlots.reserve(s_Data.m_MaxTextureSlots);
 	}
 
 	void Renderer2D::BeginScene(Camera2DController& vCameraController)
 	{
 		PK_PROFILE_FUNCTION();
 		s_Data.m_Camera2DData.m_ViewProjectionMatrix = vCameraController.getCamera().getViewProjectionMatrix();
+		s_Data.m_QuadShader->bind();
+		// TODO : delete!!!
+		int32_t Textures[32]; //基于Shader中变量的数据
+		for (int32_t i = 0; i < 32; ++i)
+			Textures[i] = i;
+		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
+		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
+
+		ResetStatistics();
+		StartBatch();
 	}
 
 	void Renderer2D::EndScene()
@@ -141,18 +150,10 @@ namespace Pika {
 		// Bind all textures to slots
 		for (uint32_t i = 0; i < s_Data.m_TextureIndex; ++i)
 			s_Data.m_TextureSlots[i]->bind(i);
+
 		s_Data.m_QuadShader->bind();
-
-		// TODO : delete!!!
-		int32_t Textures[32]; //基于Shader中变量的数据
-		for (int32_t i = 0; i < 32; ++i)
-			Textures[i] = i;
-		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
-		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
-
 		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get());
-		s_Data.m_pQuadVertexBufferPtr = s_Data.m_pQuadVertexBufferBase;
-		s_Data.m_TextureIndex = 1;
+		s_Data.m_Statistics.m_DrawCalls++;
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec4& vColor)
@@ -164,10 +165,9 @@ namespace Pika {
 	void Renderer2D::DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec4& vColor)
 	{
 		PK_PROFILE_FUNCTION();
-		ptrdiff_t BatchElementNums = s_Data.m_pQuadVertexBufferPtr - s_Data.m_pQuadVertexBufferBase;
-		if (BatchElementNums >= s_Data.s_MaxVerticesPerBatch) {
-			Flush();
-		}
+		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
+			NextBatch();
+
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
@@ -180,15 +180,8 @@ namespace Pika {
 			s_Data.m_pQuadVertexBufferPtr++;
 		}
 
-		//s_Data.m_QuadShader->bind();
-		//s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
-		//glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
-		//	glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
-		//s_Data.m_QuadShader->setMat4("u_Transform", Transform);
-		//s_Data.m_QuadShader->setFloat4("u_TintColor", vTintColor);
-		//s_Data.m_WhiteTexture->bind();
-		//s_Data.m_QuadShader->setInt("u_Texture", 0);
-		//RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get());
+		s_Data.m_QuadIndexCount += 6;
+		s_Data.m_Statistics.m_QuadCount++;
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
@@ -199,22 +192,26 @@ namespace Pika {
 	void Renderer2D::DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
 		PK_PROFILE_FUNCTION();
-		ptrdiff_t BatchElementNums = s_Data.m_pQuadVertexBufferPtr - s_Data.m_pQuadVertexBufferBase;
-		if (BatchElementNums >= s_Data.s_MaxVerticesPerBatch) {
-			Flush();
-		}
+		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
+			NextBatch();
+
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
 
 		float TextureIndex = static_cast<float>(s_Data.findTextureIndex(vTexture).value_or(0.0f));
 		if (TextureIndex == 0.0f) {
+			if (s_Data.m_TextureIndex >= s_Data.getMaxTextureSlots()) {
+				NextBatch();
+				TextureIndex = static_cast<float>(s_Data.addTexture(vTexture).value());
+			}
 			auto Success = s_Data.addTexture(vTexture);
 			if (Success.has_value())
 				TextureIndex = static_cast<float>(Success.value());
 			else
-				Flush();
+				PK_CORE_ERROR(R"(Renderer2D : Fail to add texture(ID = {0}) to slots)", vTexture->getRendererID());
 		}
+
 		for (int i = 0; i < 4; ++i) {
 			s_Data.m_pQuadVertexBufferPtr->m_Position = Transform * s_Data.m_QuadUnitVertex[i];
 			s_Data.m_pQuadVertexBufferPtr->m_Color = vTintColor;
@@ -223,6 +220,9 @@ namespace Pika {
 			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = vTilingFactor;
 			s_Data.m_pQuadVertexBufferPtr++;
 		}
+
+		s_Data.m_QuadIndexCount += 6; // 6 indices per quad
+		s_Data.m_Statistics.m_QuadCount++;
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const glm::vec4& vColor)
@@ -233,10 +233,9 @@ namespace Pika {
 	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const glm::vec4& vColor)
 	{
 		PK_PROFILE_FUNCTION();
-		ptrdiff_t BatchElementNums = s_Data.m_pQuadVertexBufferPtr - s_Data.m_pQuadVertexBufferBase;
-		if (BatchElementNums >= s_Data.s_MaxVerticesPerBatch) {
-			Flush();
-		}
+		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
+			NextBatch();
+
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
 			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
@@ -249,17 +248,9 @@ namespace Pika {
 			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = 1.0f;
 			s_Data.m_pQuadVertexBufferPtr++;
 		}
-		//s_Data.m_QuadShader->bind();
-		//s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
-		//glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
-		//	glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
-		//	glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
-		//s_Data.m_QuadShader->setMat4("u_Transform", Transform);
-		//s_Data.m_QuadShader->setFloat("u_TilingFactor", 1.0f);
-		//s_Data.m_QuadShader->setFloat4("u_TintColor", vColor);
-		//s_Data.m_WhiteTexture->bind();
-		//s_Data.m_QuadShader->setInt("u_Texture", 0);
-		//RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get());
+
+		s_Data.m_QuadIndexCount += 6;
+		s_Data.m_Statistics.m_QuadCount++;
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
@@ -271,10 +262,9 @@ namespace Pika {
 	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
 		PK_PROFILE_FUNCTION();
-		ptrdiff_t BatchElementNums = s_Data.m_pQuadVertexBufferPtr - s_Data.m_pQuadVertexBufferBase;
-		if (BatchElementNums >= s_Data.s_MaxVerticesPerBatch) {
-			Flush();
-		}
+		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
+			NextBatch();
+
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
 			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
@@ -282,12 +272,17 @@ namespace Pika {
 
 		float TextureIndex = static_cast<float>(s_Data.findTextureIndex(vTexture).value_or(0.0f));
 		if (TextureIndex == 0.0f) {
+			if (s_Data.m_TextureIndex >= s_Data.getMaxTextureSlots()) {
+				NextBatch();
+				TextureIndex = static_cast<float>(s_Data.addTexture(vTexture).value());
+			}
 			auto Success = s_Data.addTexture(vTexture);
 			if (Success.has_value())
 				TextureIndex = static_cast<float>(Success.value());
 			else
-				Flush();
+				PK_CORE_ERROR(R"(Renderer2D : Fail to add texture(ID = {0}) to slots)", vTexture->getRendererID());
 		}
+
 		for (int i = 0; i < 4; ++i) {
 			s_Data.m_pQuadVertexBufferPtr->m_Position = Transform * s_Data.m_QuadUnitVertex[i];
 			s_Data.m_pQuadVertexBufferPtr->m_Color = vTintColor;
@@ -296,17 +291,34 @@ namespace Pika {
 			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = vTilingFactor;
 			s_Data.m_pQuadVertexBufferPtr++;
 		}
-		//s_Data.m_QuadShader->bind();
-		//s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
-		//glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
-		//	glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
-		//	glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
-		//s_Data.m_QuadShader->setMat4("u_Transform", Transform);
-		//s_Data.m_QuadShader->setFloat("u_TilingFactor", vTilingFactor);
-		//s_Data.m_QuadShader->setFloat4("u_TintColor", vTintColor);
-		//vTexture->bind();
-		//s_Data.m_QuadShader->setInt("u_Texture", 0);
-		//RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get());
+
+		s_Data.m_QuadIndexCount += 6;
+		s_Data.m_Statistics.m_QuadCount++;
+	}
+
+	void Renderer2D::ResetStatistics()
+	{
+		std::memset(&s_Data.m_Statistics, 0, sizeof(Statistics));
+	}
+
+	Renderer2D::Statistics Renderer2D::GetStatistics()
+	{
+		return s_Data.m_Statistics;
+	}
+
+	void Renderer2D::StartBatch()
+	{
+
+		s_Data.m_QuadIndexCount = 0;
+		s_Data.m_pQuadVertexBufferPtr = s_Data.m_pQuadVertexBufferBase;
+
+		s_Data.m_TextureIndex = 1;
+	}
+
+	void Renderer2D::NextBatch()
+	{
+		Flush();
+		StartBatch();
 	}
 
 }
