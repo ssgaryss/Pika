@@ -14,6 +14,7 @@ namespace Pika
 		~OpenGLVertexBuffer() override;
 		void bind() const override;
 		void unbind() const override;
+		void setData(const void* vData, uint32_t vSize) override;
 
 		const BufferLayout& getLayout() const override;
 		void setLayout(const BufferLayout& vLayout) override;

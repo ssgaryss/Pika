@@ -74,8 +74,6 @@ namespace Pika {
 			glEnableVertexAttribArray(m_VertexBufferElementIndex);
 			m_VertexBufferElementIndex++;
 		}
-
-
 		m_VertexBuffers.emplace_back(vVertexBuffer);
 	}
 

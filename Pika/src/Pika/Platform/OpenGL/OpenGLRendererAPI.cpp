@@ -11,6 +11,9 @@ namespace Pika
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LINE_SMOOTH);  //MSAA
 		
 	}
 	void Pika::OpenGLRendererAPI::clear()
@@ -36,6 +39,14 @@ namespace Pika
 		vVertexArray->bind();
 		glDrawElements(GL_TRIANGLES, vVertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
 		vVertexArray->unbind();
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	uint32_t OpenGLRendererAPI::getAvailableTextureSlots()
+	{
+		GLint maxTextureUnits = 0;
+		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
+		return static_cast<uint32_t>(maxTextureUnits);
 	}
 
 }

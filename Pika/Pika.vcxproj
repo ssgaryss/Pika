@@ -187,6 +187,7 @@
     <ClInclude Include="src\Pika\Renderer\Renderer3D.h" />
     <ClInclude Include="src\Pika\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Pika\Renderer\Shader.h" />
+    <ClInclude Include="src\Pika\Renderer\SubTexture2D.h" />
     <ClInclude Include="src\Pika\Renderer\Texture.h" />
     <ClInclude Include="src\Pika\Renderer\VertexArray.h" />
     <ClInclude Include="src\pkpch.h" />
@@ -632,6 +633,7 @@
     <ClCompile Include="src\Pika\Renderer\Renderer3D.cpp" />
     <ClCompile Include="src\Pika\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Pika\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Pika\Renderer\SubTexture2D.cpp" />
     <ClCompile Include="src\Pika\Renderer\Texture.cpp" />
     <ClCompile Include="src\Pika\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\pkpch.cpp">

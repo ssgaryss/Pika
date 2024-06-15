@@ -6,8 +6,8 @@
 namespace Pika
 {
 
-	//In 2D mode, camera can only move at the plan where z = 1.0f, Up is +y direction and face to -z direction
-	static const float s_Z = 1.0f;
+	//In 2D mode, camera can only move at the plan where z = 0.0f, Up is +y direction and face to -z direction
+	static const float s_Z = 0.0f;
 	static const glm::vec3 s_Direction = glm::vec3(0.0f, 0.0f, -1.0f);
 	static const glm::vec3 s_Up = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -20,14 +20,14 @@ namespace Pika
 
 
 		inline virtual void addPosition(glm::vec2 vPositon) { m_Position += vPositon; updateCameraParameters(); }
-		virtual void addRotationDegrees(float vRotationDegrees); //TODO : bug1!!
+		inline virtual void addRotationDegrees(float vRotationDegrees) { m_RotationDegree += vRotationDegrees; updateCameraParameters(); }
 
 		inline virtual const glm::vec2 getPosition() const { return m_Position; }
 		inline virtual const glm::mat4 getViewMatrix() const { return m_ViewMatrix; }
 		inline virtual const glm::mat4 getProjectionMatrix() const { return m_ProjectionMatrix; }
 		inline virtual const glm::mat4 getViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
-		inline virtual const void setProjectionMatrix(float vLeft, float vRight, float vBottom, float vTop){
-			m_ProjectionMatrix = glm::ortho(vLeft, vRight, vBottom, vTop);
+		inline virtual const void setProjectionMatrix(float vLeft, float vRight, float vBottom, float vTop) {
+			m_ProjectionMatrix = glm::ortho(vLeft, vRight, vBottom, vTop, -1.0f, 1.0f);
 			m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 		}
 	private:

@@ -5,8 +5,61 @@
 
 namespace Pika {
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& vPath)
-		: m_Path{ vPath }
+	namespace Utils {
+		static GLenum PikaTextureFormatToGLDataFormat(TextureFormat vFormat) {
+			switch (vFormat)
+			{
+			case Pika::TextureFormat::R8:
+				return GL_RED;
+			case Pika::TextureFormat::RGB8:
+				return GL_RGB;
+			case Pika::TextureFormat::RGBA8:
+				return GL_RGBA;
+			case Pika::TextureFormat::RGBA32F:
+				return GL_RGBA;
+			}
+			PK_CORE_ERROR(R"(OpenGLTexture2D : Unknown Pika format!)");
+			return -1;
+		}
+
+		static GLenum PikaTextureFormatToGLInternalFormat(TextureFormat vFormat) {
+			switch (vFormat)
+			{
+			case Pika::TextureFormat::R8:
+				return GL_RED;
+			case Pika::TextureFormat::RGB8:
+				return GL_RGB8;
+			case Pika::TextureFormat::RGBA8:
+				return GL_RGBA8;
+			case Pika::TextureFormat::RGBA32F:
+				return GL_RGBA32F;
+			}
+			PK_CORE_ERROR(R"(OpenGLTexture2D : Unknown Pika format!)");
+			return -1;
+		}
+	}
+
+	OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification& vTextureSpecification)
+		: m_Width{vTextureSpecification.m_Width}, m_Height{vTextureSpecification.m_Height},
+		m_RequiredMips{ vTextureSpecification.m_RequiredMips }
+	{
+		m_InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(vTextureSpecification.m_Format);
+		m_DataFormat = Utils::PikaTextureFormatToGLDataFormat(vTextureSpecification.m_Format);
+
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
+
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		if (m_RequiredMips)
+			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		else
+			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& vPath, bool vRequiredMips)
+		: m_Path{ vPath }, m_RequiredMips{vRequiredMips}
 	{
 		PK_PROFILE_FUNCTION();
 
@@ -25,6 +78,21 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 		glDeleteTextures(1, &m_RendererID);
+	}
+
+	void OpenGLTexture2D::setData(void* vData, uint32_t vSize)
+	{
+		PK_PROFILE_FUNCTION();
+		if (vData == nullptr || vSize == 0) {
+			PK_CORE_WARN("OpenGLTexture2D : Set an empty texture data!");
+			return;
+		}
+		uint32_t BPP = 0; //bytes per pixel
+		if (m_DataFormat == GL_RED) BPP = 1;
+		else if (m_DataFormat == GL_RGB) BPP = 3;
+		else if (m_DataFormat == GL_RGBA) BPP = 4;
+		PK_ASSERT(vSize == m_Width * m_Height * BPP, "Data must be entire texture!");
+		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, vData);
 	}
 
 	void OpenGLTexture2D::bind(uint32_t vSlot) const
@@ -72,7 +140,10 @@ namespace Pika {
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		if(m_RequiredMips)
+			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		else
+			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, DataFormat, GL_UNSIGNED_BYTE, Data);

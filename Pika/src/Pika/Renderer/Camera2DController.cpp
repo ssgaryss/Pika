@@ -4,8 +4,6 @@
 
 namespace Pika {
 
-
-
 	Camera2DController::Camera2DController(float vAspectRation, bool vAllowRotation)
 		: m_AspectRatio{ vAspectRation }, m_AllowRotation{ vAllowRotation },
 		m_Camera{ -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel }

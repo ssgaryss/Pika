@@ -7,24 +7,8 @@ namespace Pika
 	Pika::Camera2D::Camera2D(float vLeft, float vRight, float vBottom, float vTop)
 	{
 		m_ViewMatrix = glm::lookAt(glm::vec3(m_Position, s_Z), glm::vec3(m_Position, s_Z) + s_Direction, s_Up);
-		m_ProjectionMatrix = glm::ortho(vLeft, vRight, vBottom, vTop);
+		m_ProjectionMatrix = glm::ortho(vLeft, vRight, vBottom, vTop, -1.0f, 1.0f);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
-	}
-
-	void Camera2D::addRotationDegrees(float vRotationDegrees)
-	{
-		if (m_RotationDegree + vRotationDegrees > 89.0f)
-		{
-			m_RotationDegree = 89.0f;
-		}
-		else if (m_RotationDegree + vRotationDegrees < -89.0f) {
-			m_RotationDegree = -89.0f;
-		}
-		else {
-			m_RotationDegree += vRotationDegrees;
-		}
-		updateCameraParameters();
-
 	}
 
 	void Camera2D::updateCameraParameters()

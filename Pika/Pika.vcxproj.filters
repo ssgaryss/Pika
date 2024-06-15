@@ -165,6 +165,9 @@
     <ClInclude Include="src\Pika\Renderer\Shader.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\SubTexture2D.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Renderer\Texture.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
@@ -1494,6 +1497,9 @@
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Renderer\Shader.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\SubTexture2D.cpp">
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Renderer\Texture.cpp">

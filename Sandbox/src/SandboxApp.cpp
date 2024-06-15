@@ -13,7 +13,7 @@ public:
 	{
 		PK_PROFILE_FUNCTION();
 
-		pushLayer(new ExampleLayer());
+		//pushLayer(new ExampleLayer());
 		pushLayer(new Sandbox2D());
 	};
 	~Sandbox() { PK_PROFILE_FUNCTION(); }
