@@ -16,6 +16,9 @@ private:
 	Pika::Ref<Pika::ShaderLibrary> m_ShaderLibrary;
 	Pika::Ref<Pika::Texture2D> m_TextureBackround;
 	Pika::Ref<Pika::Texture2D> m_Texture2024;
+	Pika::Ref<Pika::Texture2D> m_TextureRPGpack_sheet_2X;
+	Pika::Ref<Pika::SubTexture2D> m_TextureTree;
+
 	float Rotation = 0.0f; //for now
 
 };
