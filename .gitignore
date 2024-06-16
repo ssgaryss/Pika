@@ -5,8 +5,15 @@ bin-int/
 
 # Files
 *.user
+*imgui.ini
 
 #Debug only
 Sandbox/PikaProfile-Runtime.json
 Sandbox/PikaProfile-Shutdown.json
 Sandbox/PikaProfile-Startup.json
+
+#Visual Studio
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
