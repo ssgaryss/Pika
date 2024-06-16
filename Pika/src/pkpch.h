@@ -3,8 +3,11 @@
 #include <iostream>
 #include <memory>
 #include <functional>
+#include <numeric>
+#include <algorithm>
 #include <chrono>
 #include <exception>
+#include <random>
 
 //data structure
 #include <optional>
