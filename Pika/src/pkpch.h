@@ -8,6 +8,7 @@
 #include <chrono>
 #include <exception>
 #include <random>
+#include <limits>
 
 //data structure
 #include <optional>
@@ -18,6 +19,7 @@
 #include <unordered_map>
 
 //windows api
+#define NOMINMAX //禁用Windows.h中定义的min、max宏
 #include <Windows.h>
 
 //Pika engine

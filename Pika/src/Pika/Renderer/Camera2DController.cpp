@@ -4,10 +4,11 @@
 
 namespace Pika {
 
-	Camera2DController::Camera2DController(float vAspectRation, bool vAllowRotation)
-		: m_AspectRatio{ vAspectRation }, m_AllowRotation{ vAllowRotation },
+	Camera2DController::Camera2DController(float vAspectRatio, bool vAllowRotation)
+		: m_AspectRatio{ vAspectRatio }, m_AllowRotation{ vAllowRotation },
 		m_Camera{ -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel }
 	{
+		m_Bounds.setBounds(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 	}
 
 	void Camera2DController::onUpdate(Timestep vTimestep)
@@ -52,6 +53,7 @@ namespace Pika {
 		float Width = static_cast<float>(vEvent.getWidth());
 		float Height = static_cast<float>(vEvent.getHeight());
 		m_AspectRatio = Width / Height;
+		m_Bounds.setBounds(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		m_Camera.setProjectionMatrix(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
 	}
@@ -59,7 +61,8 @@ namespace Pika {
 	bool Camera2DController::onMouseScrolledEvent(MouseScrolledEvent& vEvent)
 	{
 		float Zoom = vEvent.getYOffet() / 10;
-		m_ZoomLevel = m_ZoomLevel - Zoom > 0.1f ? m_ZoomLevel - Zoom : 0.1f;
+		m_ZoomLevel = std::clamp(m_ZoomLevel - Zoom, 0.1f, std::numeric_limits<float>::max());
+		m_Bounds.setBounds(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		m_Camera.setProjectionMatrix(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
 	}

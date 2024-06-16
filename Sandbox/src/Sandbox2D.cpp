@@ -41,6 +41,15 @@ void Sandbox2D::onAttach()
 	m_TextureTree = Pika::SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
 	m_TextureWater = Pika::SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
 	m_TextureGround = Pika::SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
+
+	// Init here
+	m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
+	m_Particle.ColorEnd = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };
+	m_Particle.SizeBegin = 0.05f, m_Particle.SizeVariation = 0.05f, m_Particle.SizeEnd = 0.0f;
+	m_Particle.LifeTime = 1.0f;
+	m_Particle.Velocity = { 0.0f, 0.0f };
+	m_Particle.VelocityVariation = { 3.0f, 1.0f };
+	m_Particle.Position = { 0.0f, 0.0f };
 }
 
 void Sandbox2D::onDetach()
@@ -72,9 +81,12 @@ void Sandbox2D::onUpdate(Pika::Timestep vTimestep)
 		}
 	}
 
+	// Particles
+	m_ParticleSystem.OnUpdate(vTimestep);
+	m_ParticleSystem.OnRender();
+
 	Rotation += glm::radians(10.0f);
 	Pika::Renderer2D::EndScene();
-
 }
 
 void Sandbox2D::onImGuiRender()
@@ -91,4 +103,23 @@ void Sandbox2D::onEvent(Pika::Event& vEvent)
 {
 	PK_PROFILE_FUNCTION();
 	m_CameraController.onEvent(vEvent);
+	Pika::EventDispatcher Dispatcher(vEvent);
+	Dispatcher.dispatch<Pika::MouseMovedEvent>(std::bind(&Sandbox2D::onMouseMovedEvent, this, std::placeholders::_1));
+}
+
+bool Sandbox2D::onMouseMovedEvent(Pika::MouseMovedEvent& vEvent)
+{
+	float x = vEvent.getMouseX();
+	float y = vEvent.getMouseY();
+	float width = static_cast<float>(Pika::Application::getInstance().getWindow().getWidth());
+	float height = static_cast<float>(Pika::Application::getInstance().getWindow().getHeight());
+
+	auto bounds = m_CameraController.getBounds();
+	auto pos = m_CameraController.getCamera().getPosition();
+	x = (x / width) * bounds.getWidth() - bounds.getWidth() * 0.5f;
+	y = bounds.getHeight() * 0.5f - (y / height) * bounds.getHeight();
+	m_Particle.Position = { x + pos.x, y + pos.y };
+	for (int i = 0; i < 5; i++)
+		m_ParticleSystem.Emit(m_Particle);
+	return false;
 }

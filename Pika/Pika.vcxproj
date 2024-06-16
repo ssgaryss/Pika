@@ -154,7 +154,7 @@
   <ItemGroup>
     <ClInclude Include="src\Pika.h" />
     <ClInclude Include="src\Pika\Core\Application.h" />
-    <ClInclude Include="src\Pika\Core\Core.h" />
+    <ClInclude Include="src\Pika\Core\Base.h" />
     <ClInclude Include="src\Pika\Core\EntryPoint.h" />
     <ClInclude Include="src\Pika\Core\Input.h" />
     <ClInclude Include="src\Pika\Core\KeyCodes.h" />
@@ -615,6 +615,7 @@
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
     <ClCompile Include="src\Pika\Core\Log.cpp" />
+    <ClCompile Include="src\Pika\Core\Random.cpp" />
     <ClCompile Include="src\Pika\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp" />
