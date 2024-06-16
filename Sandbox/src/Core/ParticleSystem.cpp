@@ -6,7 +6,8 @@
 
 ParticleSystem::ParticleSystem()
 {
-	m_ParticlePool.resize(1000);
+	m_ParticlePool.resize(100);
+	m_PoolIndex = m_ParticlePool.size() - 1;
 }
 
 void ParticleSystem::OnUpdate(Pika::Timestep ts)
@@ -65,5 +66,8 @@ void ParticleSystem::Emit(const ParticleProps& particleProps)
 	particle.SizeBegin = particleProps.SizeBegin + particleProps.SizeVariation * (Pika::Random::GetFloat() - 0.5f);
 	particle.SizeEnd = particleProps.SizeEnd;
 
-	m_PoolIndex = --m_PoolIndex % m_ParticlePool.size();
+	if (m_PoolIndex > 0)
+		m_PoolIndex--;
+	else
+		m_PoolIndex = m_ParticlePool.size() - 1;
 }
