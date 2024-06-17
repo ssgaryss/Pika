@@ -21,6 +21,7 @@ group ""
 
 group "Core"
 	include "Pika"
+	include "Pikartisan"
 group ""
 
 group "Misc"

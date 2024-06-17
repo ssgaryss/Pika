@@ -1,7 +1,7 @@
 project "Pika"
 	kind "Staticlib"
 	language "C++"
-	cppdialect "C++17"
+	cppdialect "C++20"
 	staticruntime "on" -- buildoptions "/MDd" --> [staticruntime("On") == "MD"  staticruntime("Off") == "MT"] + [runtime "Debug/Release"] == "MDd"/"MTd"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")

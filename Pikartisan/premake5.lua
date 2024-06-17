@@ -1,13 +1,12 @@
-project "Sandbox"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++20"
-	staticruntime "on"
+project "Pikartisan"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++20"
 
-	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
+    targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
-	files
+    files
 	{
 		"src/**.h",
 		"src/**.cpp"
@@ -48,4 +47,3 @@ project "Sandbox"
 		defines "PIKA_DIST"
 		runtime "Release"
 		optimize "On"
-	
