@@ -7,7 +7,7 @@
 ParticleSystem::ParticleSystem()
 {
 	m_ParticlePool.resize(100);
-	m_PoolIndex = m_ParticlePool.size() - 1;
+	m_PoolIndex = static_cast<uint32_t>(m_ParticlePool.size() - 1);
 }
 
 void ParticleSystem::OnUpdate(Pika::Timestep ts)
@@ -69,5 +69,5 @@ void ParticleSystem::Emit(const ParticleProps& particleProps)
 	if (m_PoolIndex > 0)
 		m_PoolIndex--;
 	else
-		m_PoolIndex = m_ParticlePool.size() - 1;
+		m_PoolIndex = static_cast<uint32_t>(m_ParticlePool.size() - 1);
 }
