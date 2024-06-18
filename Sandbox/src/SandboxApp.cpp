@@ -8,8 +8,8 @@
 class Sandbox : public Pika::Application
 {
 public:
-	Sandbox()
-		:Application{}
+	Sandbox(const Pika::ApplicationSpecification& vApplicationSpecification)
+		:Application{ vApplicationSpecification }
 	{
 		PK_PROFILE_FUNCTION();
 
@@ -21,5 +21,7 @@ public:
 
 Pika::Application* Pika::createApplication() {
 	PK_PROFILE_FUNCTION();
-	return new Sandbox();
+	Pika::ApplicationSpecification Specification;
+	Specification.m_AppName = "Sandbox2D";
+	return new Sandbox(Specification);
 }

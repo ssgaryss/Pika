@@ -10,6 +10,11 @@
 
 namespace Pika {
 
+	struct ApplicationSpecification
+	{
+		std::string m_AppName = "Pika Engine";
+	};
+
 	class Application
 	{
 	public:
@@ -21,11 +26,13 @@ namespace Pika {
 		inline void popOverlay(Layer* vLayer) { vLayer->onDetach(); m_LayerStack.popOverlay(vLayer); }
 
 		void run();
+		inline void close() { m_IsRunning = false; }
 
-		static Application& getInstance(); //s_pSingletonInstance
 		inline Window& getWindow() { return *m_Window; }
+
+		static Application& GetInstance(); //s_pSingletonInstance
 	protected:
-		Application(); //Singleton pattern, can not use ctor
+		Application(const ApplicationSpecification& vApplicationSpecification); //Singleton pattern, can not use ctor
 	private:
 		bool onWindowCloseEvent(WindowCloseEvent& vEvent);
 		bool onWindowResizeEvent(WindowResizeEvent& vEvent);

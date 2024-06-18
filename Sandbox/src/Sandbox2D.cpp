@@ -96,6 +96,8 @@ void Sandbox2D::onImGuiRender()
 	ImGui::Begin("Renderer statistics");
 	ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
 	ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
+	bool open = true;
+	ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_None); 
 	ImGui::End();
 }
 
@@ -111,11 +113,12 @@ bool Sandbox2D::onMouseMovedEvent(Pika::MouseMovedEvent& vEvent)
 {
 	float x = vEvent.getMouseX();
 	float y = vEvent.getMouseY();
-	float width = static_cast<float>(Pika::Application::getInstance().getWindow().getWidth());
-	float height = static_cast<float>(Pika::Application::getInstance().getWindow().getHeight());
+	float width = static_cast<float>(Pika::Application::GetInstance().getWindow().getWidth());
+	float height = static_cast<float>(Pika::Application::GetInstance().getWindow().getHeight());
 
 	auto bounds = m_CameraController.getBounds();
 	auto pos = m_CameraController.getCamera().getPosition();
+
 	x = (x / width) * bounds.getWidth() - bounds.getWidth() * 0.5f;
 	y = bounds.getHeight() * 0.5f - (y / height) * bounds.getHeight();
 	m_Particle.Position = { x + pos.x, y + pos.y };

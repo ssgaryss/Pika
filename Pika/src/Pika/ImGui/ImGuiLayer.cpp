@@ -33,7 +33,7 @@ namespace Pika {
 
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsClassic();
-		Application& App = Application::getInstance();
+		Application& App = Application::GetInstance();
 		GLFWwindow* Window = reinterpret_cast<GLFWwindow*>(App.getWindow().getNativeWindow());
 
 		ImGui_ImplGlfw_InitForOpenGL(Window, true);
@@ -75,7 +75,7 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
-		Application& App = Application::getInstance();
+		Application& App = Application::GetInstance();
 		io.DisplaySize = ImVec2(static_cast<float>(App.getWindow().getWidth()),
 								static_cast<float>(App.getWindow().getHeight()));
 
