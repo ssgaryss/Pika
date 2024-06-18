@@ -36,7 +36,7 @@ namespace Pika
 		std::string readFile(const std::string& vPath);
 		std::unordered_map<GLenum, std::string> preProcess(const std::string& vSources); //Analyse the shaders in file
 	private:
-		uint32_t m_RendererID; //shader program ID
+		uint32_t m_RendererID = 0; //shader program ID
 		std::string m_Name;
 		std::string m_FilePath;
 		std::unordered_map<GLenum, std::string> m_OpenGLSourceCode;

@@ -19,8 +19,11 @@
 #include <unordered_map>
 
 //windows api
-#define NOMINMAX //禁用Windows.h中定义的min、max宏
-#include <Windows.h>
+#ifdef PK_PLATFORM_WINDOWS
+	#define NOMINMAX //禁用Windows.h中定义的min、max宏
+	#include <Windows.h>
+#endif
+
 
 //Pika engine
 #include "Pika/Core/Log.h"

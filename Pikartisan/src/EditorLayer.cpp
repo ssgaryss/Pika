@@ -168,7 +168,7 @@ namespace Pika
 		ImGui::Begin("Renderer statistics");
 		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
 		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
-		auto TextureID = m_Texture2024->getRendererID();
+		uintptr_t TextureID = static_cast<uintptr_t>(m_Texture2024->getRendererID());
 		ImGui::Image(reinterpret_cast<void*>(TextureID), { 256.0f,256.0f }, { 0.0f,1.0f }, { 1.0f,0.0f });
 		ImGui::End();
 

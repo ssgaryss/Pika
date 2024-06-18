@@ -19,7 +19,7 @@ namespace Pika
 		const BufferLayout& getLayout() const override;
 		void setLayout(const BufferLayout& vLayout) override;
 	private:
-		uint32_t m_RendererID;
+		uint32_t m_RendererID = 0;
 		BufferLayout m_Layout; //describe each part of VBO represent what type of data
 	};
 
@@ -34,7 +34,7 @@ namespace Pika
 		void unbind() const override;
 		uint32_t getCount() const override;
 	private:
-		uint32_t m_RendererID;
+		uint32_t m_RendererID = 0;
 		uint32_t m_Count; //nums of indices
 	};
 

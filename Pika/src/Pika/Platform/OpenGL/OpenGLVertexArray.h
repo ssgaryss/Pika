@@ -17,7 +17,7 @@ namespace Pika
 		const std::vector<Ref<VertexBuffer>>& getVertexBuffers() const override;
 		const Ref<IndexBuffer>& getIndexBuffer() const override;
 	private:
-		uint32_t m_RendererID;
+		uint32_t m_RendererID = 0;
 		std::vector<Ref<VertexBuffer>> m_VertexBuffers;
 		Ref<IndexBuffer> m_IndexBuffer;
 		uint32_t m_VertexBufferElementIndex = 0; //nums of elements

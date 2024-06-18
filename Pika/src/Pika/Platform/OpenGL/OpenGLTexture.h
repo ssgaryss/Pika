@@ -26,14 +26,14 @@ namespace Pika
 	private:
 		void loadTexture(const std::string& vPath);
 	private:
-		uint32_t m_RendererID;
+		uint32_t m_RendererID = 0;
 		uint32_t m_Width;
 		uint32_t m_Height;
 
 		std::string m_Path;
 		bool m_RequiredMips = true;
 		bool m_IsLoaded = false;
-		GLenum m_InternalFormat, m_DataFormat;
+		GLenum m_InternalFormat, m_DataFormat; // InternalFormat : GPU side, DataFormat : CPU side
 	};
 
 }

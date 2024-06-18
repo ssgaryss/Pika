@@ -12,8 +12,6 @@ namespace Pika {
 		virtual void swapBuffer() = 0;
 
 		static Ref<GraphicsContext> Create(void* vWindow); //only GLFW for now
-	private:
-
 	};
 
 }
