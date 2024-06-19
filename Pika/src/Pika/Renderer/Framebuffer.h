@@ -1,26 +1,15 @@
 #pragma once
+#include "TextureFormat.h"
 
 namespace Pika
 {
 
-	enum class FramebufferTextureFormat
-	{
-		None = 0,
-		// Color Attachment
-		RGB8,
-		RED_INTEGER,
-		// Depth/Stencil
-		DEPTH24STENCIL8,
-
-		Depth = DEPTH24STENCIL8
-	};
-
 	struct FramebufferTextureSpecification
 	{
 		FramebufferTextureSpecification() = default;
-		FramebufferTextureSpecification(FramebufferTextureFormat vFormat)
+		FramebufferTextureSpecification(TextureFormat vFormat)
 			: m_TextureFormat{ vFormat } {}
-		FramebufferTextureFormat m_TextureFormat = FramebufferTextureFormat::None;
+		TextureFormat m_TextureFormat = TextureFormat::None;
 	};
 
 	struct FramebufferAttachmentSpecification
@@ -48,6 +37,11 @@ namespace Pika
 		virtual void bind() = 0;
 		virtual void unbind() = 0;
 		virtual void refresh() = 0; // Regenerate the whole framebuffer
+
+		virtual void setViewport(uint32_t vLBX, uint32_t vLBY, uint32_t vRTX, uint32_t vRTY) = 0;
+		virtual void resize(uint32_t vWidth, uint32_t vHeight) = 0;
+		virtual int readPixel(uint32_t vAttachmentIndex, int x, int y) = 0;
+		virtual void clearAttachment(uint32_t vAttachmentIndex, int value) = 0;
 
 		virtual uint32_t getColorAttachmentRendererID(uint32_t vIndex = 0) const = 0;
 		virtual const FramebufferSpecification& getFramebufferSpecification() const = 0;

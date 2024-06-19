@@ -56,8 +56,8 @@ namespace Pika {
 		if (m_BlockEvents) {
 			ImGuiIO& io = ImGui::GetIO();
 			//ImGui Layer can handle mouse and keyboard events
-			vEvent.m_Handled = vEvent.isInCategory(EventCategoryMouse) && io.WantCaptureMouse;
-			vEvent.m_Handled = vEvent.isInCategory(EventCategoryKeyboard) && io.WantCaptureKeyboard;
+			vEvent.m_Handled |= vEvent.isInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+			vEvent.m_Handled |= vEvent.isInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
 		}
 	}
 

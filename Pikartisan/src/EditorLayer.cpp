@@ -36,8 +36,8 @@ namespace Pika
 	{
 		PK_PROFILE_FUNCTION();
 		Pika::Renderer2D::Init();
-		m_Framebuffer = Pika::Framebuffer::Create({ 1920,1080,1,
-			{FramebufferTextureFormat::RGB8, FramebufferTextureFormat::RGB8, FramebufferTextureFormat::Depth},false });
+		m_Framebuffer = Pika::Framebuffer::Create({ 1920, 1080, 1,
+			{TextureFormat::RGB8, TextureFormat::RGB8, TextureFormat::DEPTH24STENCIL8}, false });
 
 		m_TextureBackround = Pika::Texture2D::Create("assets/textures/board.png");
 		m_Texture2024 = Pika::Texture2D::Create("assets/textures/2024.png");
@@ -64,7 +64,8 @@ namespace Pika
 			RenderCommand::Clear();
 		}
 
-		m_CameraController.onUpdate(vTimestep);
+		if(m_IsViewportFocus)
+			m_CameraController.onUpdate(vTimestep);
 		Pika::Renderer2D::BeginScene(m_CameraController);
 		Pika::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 20.0f, 20.0f }, m_TextureBackround, 10.0f);
 		Pika::Renderer2D::DrawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
@@ -118,16 +119,9 @@ namespace Pika
 			dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
 		}
 
-		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-		// and handle the pass-thru hole, so we ask Begin() to not render a background.
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
 			window_flags |= ImGuiWindowFlags_NoBackground;
 
-		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-		// all active windows docked into it will lose their parent and become undocked.
-		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		if (!opt_padding)
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &dockspace_open, window_flags);
@@ -181,12 +175,26 @@ namespace Pika
 		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
 		ImGui::End();
 
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");
-		ImVec2 ViewportPanelSize = ImGui::GetContentRegionAvail();
-		//PK_INFO("WIDTH :{}, HEIGHT :{}", ViewportPanelSize.x, ViewportPanelSize.y);
-		uintptr_t TextureID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID());
-		ImGui::Image(reinterpret_cast<void*>(TextureID), { 1280.0f,720.0f }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		{
+			m_IsViewportFocus = ImGui::IsWindowFocused();
+			m_IsViewportHovered = ImGui::IsWindowHovered();
+			Pika::Application::GetInstance().getImGuiLayer()->setBlockEvents(!m_IsViewportFocus || !m_IsViewportHovered);
+		}
+		{
+			static glm::vec2 ViewportSize;
+			ImVec2 ViewportPanelSize = ImGui::GetContentRegionAvail();
+			if (ViewportPanelSize.x != ViewportPanelSize.x || ViewportPanelSize.y != ViewportPanelSize.y) {
+				m_Framebuffer->resize((uint32_t)ViewportPanelSize.x, (uint32_t)ViewportPanelSize.y);
+				ViewportSize = { ViewportPanelSize.x, ViewportPanelSize.y };
+			}
+			m_CameraController.onResize(ViewportPanelSize.x, ViewportPanelSize.y);
+			uintptr_t TextureID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID());
+			ImGui::Image(reinterpret_cast<void*>(TextureID), { ViewportPanelSize.x, ViewportPanelSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		}
 		ImGui::End();
+		ImGui::PopStyleVar();
 
 
 		ImGui::End();

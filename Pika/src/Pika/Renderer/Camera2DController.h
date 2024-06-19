@@ -28,6 +28,7 @@ namespace Pika
 		Camera2DController(float vAspectRation, bool vAllowRotation = false);
 		void onUpdate(Timestep vTimestep);
 		void onEvent(Event& vEvent);
+		void onResize(float vWidth, float vHeight);
 
 		inline Camera2D getCamera() { return m_Camera; }
 		inline const Camera2D getCamera() const { return m_Camera; }

@@ -29,6 +29,7 @@ namespace Pika {
 		inline void close() { m_IsRunning = false; }
 
 		inline Window& getWindow() { return *m_Window; }
+		inline ImGuiLayer* getImGuiLayer() { return m_pImGuiLayer; }
 
 		static Application& GetInstance(); //s_pSingletonInstance
 	protected:

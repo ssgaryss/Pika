@@ -95,9 +95,7 @@ void Sandbox2D::onImGuiRender()
 	auto Statistics = Pika::Renderer2D::GetStatistics();
 	ImGui::Begin("Renderer statistics");
 	ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
-	ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
-	bool open = true;
-	ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_None); 
+	ImGui::Text("QuadCount : %d", Statistics.getQuadCount()); 
 	ImGui::End();
 }
 

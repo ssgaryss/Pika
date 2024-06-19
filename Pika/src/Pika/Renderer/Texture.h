@@ -1,16 +1,9 @@
 #pragma once
+#include "TextureFormat.h"
 
 
 namespace Pika
 {
-
-	enum class TextureFormat {
-		None = 0,
-		R8,
-		RGB8,
-		RGBA8,
-		RGBA32F
-	};
 
 	struct TextureSpecification {
 		uint32_t m_Width = 1;

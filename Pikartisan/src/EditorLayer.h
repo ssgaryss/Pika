@@ -15,6 +15,10 @@ namespace Pika
 		void onImGuiRender() override;
 		void onEvent(Pika::Event& vEvent) override;
 	private:
+		// Viewport
+		bool m_IsViewportFocus = false;
+		bool m_IsViewportHovered = false;
+	private:
 		Pika::Camera2DController m_CameraController;
 		Pika::Ref<Pika::ShaderLibrary> m_ShaderLibrary;
 		Pika::Ref<Pika::Framebuffer> m_Framebuffer;
