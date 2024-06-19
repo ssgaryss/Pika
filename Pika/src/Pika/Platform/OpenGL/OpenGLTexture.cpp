@@ -1,46 +1,12 @@
 #include "pkpch.h"
 #include "OpenGLTexture.h"
+#include "OpenGLTextureFormat.h"
 #include <stb_image.h>
-
 
 namespace Pika {
 
-	namespace Utils {
-		static GLenum PikaTextureFormatToGLDataFormat(TextureFormat vFormat) {
-			switch (vFormat)
-			{
-			case Pika::TextureFormat::R8:
-				return GL_RED;
-			case Pika::TextureFormat::RGB8:
-				return GL_RGB;
-			case Pika::TextureFormat::RGBA8:
-				return GL_RGBA;
-			case Pika::TextureFormat::RGBA32F:
-				return GL_RGBA;
-			}
-			PK_CORE_ERROR(R"(OpenGLTexture2D : Unknown Pika format!)");
-			return -1;
-		}
-
-		static GLenum PikaTextureFormatToGLInternalFormat(TextureFormat vFormat) {
-			switch (vFormat)
-			{
-			case Pika::TextureFormat::R8:
-				return GL_RED;
-			case Pika::TextureFormat::RGB8:
-				return GL_RGB8;
-			case Pika::TextureFormat::RGBA8:
-				return GL_RGBA8;
-			case Pika::TextureFormat::RGBA32F:
-				return GL_RGBA32F;
-			}
-			PK_CORE_ERROR(R"(OpenGLTexture2D : Unknown Pika format!)");
-			return -1;
-		}
-	}
-
 	OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification& vTextureSpecification)
-		: m_Width{vTextureSpecification.m_Width}, m_Height{vTextureSpecification.m_Height},
+		: m_Width{ vTextureSpecification.m_Width }, m_Height{ vTextureSpecification.m_Height },
 		m_RequiredMips{ vTextureSpecification.m_RequiredMips }
 	{
 		m_InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(vTextureSpecification.m_Format);
@@ -59,7 +25,7 @@ namespace Pika {
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& vPath, bool vRequiredMips)
-		: m_Path{ vPath }, m_RequiredMips{vRequiredMips}
+		: m_Path{ vPath }, m_RequiredMips{ vRequiredMips }
 	{
 		PK_PROFILE_FUNCTION();
 
@@ -140,7 +106,7 @@ namespace Pika {
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		if(m_RequiredMips)
+		if (m_RequiredMips)
 			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		else
 			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

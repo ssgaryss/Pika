@@ -4,10 +4,11 @@
 
 namespace Pika {
 
-	Camera2DController::Camera2DController(float vAspectRation, bool vAllowRotation)
-		: m_AspectRatio{ vAspectRation }, m_AllowRotation{ vAllowRotation },
+	Camera2DController::Camera2DController(float vAspectRatio, bool vAllowRotation)
+		: m_AspectRatio{ vAspectRatio }, m_AllowRotation{ vAllowRotation },
 		m_Camera{ -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel }
 	{
+		m_Bounds.setBounds(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 	}
 
 	void Camera2DController::onUpdate(Timestep vTimestep)
@@ -43,23 +44,30 @@ namespace Pika {
 	{
 		EventDispatcher Dispatcher(vEvent);
 		Dispatcher.dispatch<MouseScrolledEvent>(std::bind(&Camera2DController::onMouseScrolledEvent, this, std::placeholders::_1));
-		Dispatcher.dispatch<WindowResizeEvent>(std::bind(&Camera2DController::onWindowResizeEvent, this, std::placeholders::_1));
+		//Dispatcher.dispatch<WindowResizeEvent>(std::bind(&Camera2DController::onWindowResizeEvent, this, std::placeholders::_1));
 
+	}
+
+	void Camera2DController::onResize(float vWidth, float vHeight)
+	{
+		m_AspectRatio = vWidth / vHeight;
+		m_Bounds.setBounds(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_Camera.setProjectionMatrix(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 	}
 
 	bool Camera2DController::onWindowResizeEvent(WindowResizeEvent& vEvent)
 	{
 		float Width = static_cast<float>(vEvent.getWidth());
 		float Height = static_cast<float>(vEvent.getHeight());
-		m_AspectRatio = Width / Height;
-		m_Camera.setProjectionMatrix(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		onResize(Width, Height);
 		return false;
 	}
 
 	bool Camera2DController::onMouseScrolledEvent(MouseScrolledEvent& vEvent)
 	{
 		float Zoom = vEvent.getYOffet() / 10;
-		m_ZoomLevel = m_ZoomLevel - Zoom > 0.1f ? m_ZoomLevel - Zoom : 0.1f;
+		m_ZoomLevel = std::clamp(m_ZoomLevel - Zoom, 0.1f, std::numeric_limits<float>::max());
+		m_Bounds.setBounds(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		m_Camera.setProjectionMatrix(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
 	}

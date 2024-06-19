@@ -66,7 +66,7 @@
     <ClInclude Include="src\Pika\Core\Application.h">
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Core\Core.h">
+    <ClInclude Include="src\Pika\Core\Base.h">
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Core\EntryPoint.h">
@@ -88,6 +88,9 @@
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Core\MouseCodes.h">
+      <Filter>src\Pika\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Core\Random.h">
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Core\Timer.h">
@@ -123,6 +126,9 @@
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLContext.h">
       <Filter>src\Pika\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLFramebuffer.h">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.h">
       <Filter>src\Pika\Platform\OpenGL</Filter>
     </ClInclude>
@@ -145,6 +151,9 @@
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Renderer\Camera2DController.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\Framebuffer.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Renderer\GraphicsContext.h">
@@ -1428,6 +1437,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\TextureFormat.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLTextureFormat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1442,6 +1453,9 @@
     <ClCompile Include="src\Pika\Core\Log.cpp">
       <Filter>src\Pika\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Core\Random.cpp">
+      <Filter>src\Pika\Core</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\ImGui\ImGuiBuild.cpp">
       <Filter>src\Pika\ImGui</Filter>
     </ClCompile>
@@ -1452,6 +1466,9 @@
       <Filter>src\Pika\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLFramebuffer.cpp">
       <Filter>src\Pika\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.cpp">
@@ -1479,6 +1496,9 @@
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Renderer\Camera2DController.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\Framebuffer.cpp">
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Renderer\GraphicsContext.cpp">
@@ -1514,5 +1534,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLTextureFormat.cpp" />
   </ItemGroup>
 </Project>

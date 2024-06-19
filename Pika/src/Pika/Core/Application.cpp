@@ -13,13 +13,13 @@
 namespace Pika {
 	Application* Application::s_pSingletonInstance = nullptr;
 
-	Application::Application()
+	Application::Application(const ApplicationSpecification& vApplicationSpecification)
 	{
 		PK_PROFILE_FUNCTION();
 
 		PK_ASSERT(!s_pSingletonInstance, "Application already exists!");
 		s_pSingletonInstance = this;
-		m_Window = Scope<Window>(Window::Create());
+		m_Window = Scope<Window>(Window::Create(vApplicationSpecification.m_AppName));
 		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 		m_pImGuiLayer = new ImGuiLayer();
 		pushOverlay(m_pImGuiLayer);
@@ -52,13 +52,6 @@ namespace Pika {
 			Timestep DeltaTime(Time - m_LastFrameTime);
 			m_LastFrameTime = m_Timer.elapsed();
 
-			{
-				PK_PROFILE_SCOPE("Application : Renderer prep");
-
-				RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-				RenderCommand::Clear();
-			}
-
 			if (!m_IsMinimized) {
 				PK_PROFILE_SCOPE("Application : Layers update");
 
@@ -78,7 +71,7 @@ namespace Pika {
 
 		}
 	}
-	Application& Application::getInstance()
+	Application& Application::GetInstance()
 	{
 		return *s_pSingletonInstance;
 	}

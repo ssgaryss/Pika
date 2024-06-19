@@ -6,17 +6,20 @@ namespace Pika {
 	SubTexture2D::SubTexture2D(const Ref<Texture2D>& vTexture, const glm::vec2& vLB, const glm::vec2& vTR)
 		: m_Texture{ vTexture }
 	{
-		m_TextureCoordinates[0].x = vLB.x;
-		m_TextureCoordinates[0].y = vLB.y; //LB
-		m_TextureCoordinates[1].x = vTR.x;
-		m_TextureCoordinates[1].y = vLB.y; //RB
-		m_TextureCoordinates[2].x = vTR.x;
-		m_TextureCoordinates[2].y = vTR.y; //TR
-		m_TextureCoordinates[3].x = vLB.x;
-		m_TextureCoordinates[3].y = vTR.y; //LT
+		PK_PROFILE_FUNCTION();
+		float Width = static_cast<float>(vTexture->getWidth());
+		float Height = static_cast<float>(vTexture->getHeight());
+		m_TextureCoordinates[0].x = std::clamp(vLB.x, 0.0f, 1.0f);
+		m_TextureCoordinates[0].y = std::clamp(vLB.y, 0.0f, 1.0f); //LB
+		m_TextureCoordinates[1].x = std::clamp(vTR.x, 0.0f, 1.0f);
+		m_TextureCoordinates[1].y = std::clamp(vLB.y, 0.0f, 1.0f); //RB
+		m_TextureCoordinates[2].x = std::clamp(vTR.x, 0.0f, 1.0f);
+		m_TextureCoordinates[2].y = std::clamp(vTR.y, 0.0f, 1.0f); //TR
+		m_TextureCoordinates[3].x = std::clamp(vLB.x, 0.0f, 1.0f);
+		m_TextureCoordinates[3].y = std::clamp(vTR.y, 0.0f, 1.0f); //LT
 	}
 
-	Ref<SubTexture2D> SubTexture2D::Create(const Ref<Texture2D>& vTexture, const glm::vec2& vCoordinates, const glm::vec2& vCellSize, const glm::vec2& vSpriteSize)
+	Ref<SubTexture2D> SubTexture2D::Create(const Ref<Texture2D>& vTexture, const glm::vec2& vCoordinates, const glm::vec2& vSpriteSize, const glm::vec2& vCellSize)
 	{
 		float Width = static_cast<float>(vTexture->getWidth());
 		float Height = static_cast<float>(vTexture->getHeight());

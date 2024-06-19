@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core.h"
+#include "Base.h"
 #include "Pika/Events/Event.h"
 #include "Pika/Events/ApplicationEvent.h"
 #include "Pika/Core/Timer.h"
@@ -9,6 +9,11 @@
 #include "Pika/ImGui/ImGuiLayer.h"
 
 namespace Pika {
+
+	struct ApplicationSpecification
+	{
+		std::string m_AppName = "Pika Engine";
+	};
 
 	class Application
 	{
@@ -21,11 +26,14 @@ namespace Pika {
 		inline void popOverlay(Layer* vLayer) { vLayer->onDetach(); m_LayerStack.popOverlay(vLayer); }
 
 		void run();
+		inline void close() { m_IsRunning = false; }
 
-		static Application& getInstance(); //s_pSingletonInstance
 		inline Window& getWindow() { return *m_Window; }
+		inline ImGuiLayer* getImGuiLayer() { return m_pImGuiLayer; }
+
+		static Application& GetInstance(); //s_pSingletonInstance
 	protected:
-		Application(); //Singleton pattern, can not use ctor
+		Application(const ApplicationSpecification& vApplicationSpecification); //Singleton pattern, can not use ctor
 	private:
 		bool onWindowCloseEvent(WindowCloseEvent& vEvent);
 		bool onWindowResizeEvent(WindowResizeEvent& vEvent);
