@@ -17,6 +17,8 @@ namespace Pika
 	private:
 		Pika::Camera2DController m_CameraController;
 		Pika::Ref<Pika::ShaderLibrary> m_ShaderLibrary;
+		Pika::Ref<Pika::Framebuffer> m_Framebuffer;
+
 		Pika::Ref<Pika::Texture2D> m_TextureBackround;
 		Pika::Ref<Pika::Texture2D> m_Texture2024;
 		Pika::Ref<Pika::Texture2D> m_TextureRPGpack_sheet_2X;

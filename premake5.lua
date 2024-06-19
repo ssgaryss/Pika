@@ -2,7 +2,7 @@ include "Dependencies.lua"
 
 workspace "Pika"
 	architecture "x64"
-	startproject "Sandbox"
+	startproject "Pikartisan"
 	
 	configurations
 	{

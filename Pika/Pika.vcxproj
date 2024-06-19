@@ -152,7 +152,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="src\Pika.h" />
     <ClInclude Include="src\Pika\Core\Application.h" />
     <ClInclude Include="src\Pika\Core\Base.h" />
@@ -175,6 +174,7 @@
     <ClInclude Include="src\Pika\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLTexture.h" />
@@ -613,7 +613,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
@@ -623,6 +622,7 @@
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLTexture.cpp" />

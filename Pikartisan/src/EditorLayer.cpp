@@ -36,6 +36,8 @@ namespace Pika
 	{
 		PK_PROFILE_FUNCTION();
 		Pika::Renderer2D::Init();
+		m_Framebuffer = Pika::Framebuffer::Create({ 1920,1080,1,
+			{FramebufferTextureFormat::RGB8, FramebufferTextureFormat::RGB8, FramebufferTextureFormat::Depth},false });
 
 		m_TextureBackround = Pika::Texture2D::Create("assets/textures/board.png");
 		m_Texture2024 = Pika::Texture2D::Create("assets/textures/2024.png");
@@ -54,6 +56,13 @@ namespace Pika
 	void EditorLayer::onUpdate(Pika::Timestep vTimestep)
 	{
 		PK_PROFILE_FUNCTION();
+
+		{
+			PK_PROFILE_SCOPE("Renderer Prep");
+			m_Framebuffer->bind();
+			RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+			RenderCommand::Clear();
+		}
 
 		m_CameraController.onUpdate(vTimestep);
 		Pika::Renderer2D::BeginScene(m_CameraController);
@@ -77,6 +86,8 @@ namespace Pika
 
 		Rotation += glm::radians(10.0f);
 		Pika::Renderer2D::EndScene();
+		m_Framebuffer->unbind();
+
 	}
 
 	void EditorLayer::onImGuiRender()
@@ -168,8 +179,13 @@ namespace Pika
 		ImGui::Begin("Renderer statistics");
 		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
 		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
-		uintptr_t TextureID = static_cast<uintptr_t>(m_Texture2024->getRendererID());
-		ImGui::Image(reinterpret_cast<void*>(TextureID), { 256.0f,256.0f }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		ImGui::End();
+
+		ImGui::Begin("Viewport");
+		ImVec2 ViewportPanelSize = ImGui::GetContentRegionAvail();
+		//PK_INFO("WIDTH :{}, HEIGHT :{}", ViewportPanelSize.x, ViewportPanelSize.y);
+		uintptr_t TextureID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID());
+		ImGui::Image(reinterpret_cast<void*>(TextureID), { 1280.0f,720.0f }, { 0.0f,1.0f }, { 1.0f,0.0f });
 		ImGui::End();
 
 

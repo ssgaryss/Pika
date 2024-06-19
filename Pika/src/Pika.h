@@ -20,4 +20,5 @@
 #include "Pika/Renderer/RendererAPI.h"
 #include "Pika/Renderer/Texture.h"
 #include "Pika/Renderer/SubTexture2D.h"
+#include "Pika/Renderer/Framebuffer.h"
 #include "Pika/Renderer/Camera2DController.h"

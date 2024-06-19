@@ -49,6 +49,7 @@ namespace Pika
 		virtual void unbind() = 0;
 		virtual void refresh() = 0; // Regenerate the whole framebuffer
 
+		virtual uint32_t getColorAttachmentRendererID(uint32_t vIndex = 0) const = 0;
 		virtual const FramebufferSpecification& getFramebufferSpecification() const = 0;
 
 		static Ref<Framebuffer> Create(const FramebufferSpecification& vFramebufferSpecifiacation);

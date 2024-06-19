@@ -52,13 +52,6 @@ namespace Pika {
 			Timestep DeltaTime(Time - m_LastFrameTime);
 			m_LastFrameTime = m_Timer.elapsed();
 
-			{
-				PK_PROFILE_SCOPE("Application : Renderer prep");
-
-				RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-				RenderCommand::Clear();
-			}
-
 			if (!m_IsMinimized) {
 				PK_PROFILE_SCOPE("Application : Layers update");
 

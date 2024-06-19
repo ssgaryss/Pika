@@ -6,6 +6,7 @@ namespace Pika {
 	SubTexture2D::SubTexture2D(const Ref<Texture2D>& vTexture, const glm::vec2& vLB, const glm::vec2& vTR)
 		: m_Texture{ vTexture }
 	{
+		PK_PROFILE_FUNCTION();
 		float Width = static_cast<float>(vTexture->getWidth());
 		float Height = static_cast<float>(vTexture->getHeight());
 		m_TextureCoordinates[0].x = std::clamp(vLB.x, 0.0f, 1.0f);
