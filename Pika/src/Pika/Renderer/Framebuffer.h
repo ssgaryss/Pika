@@ -43,6 +43,7 @@ namespace Pika
 		virtual int readPixel(uint32_t vAttachmentIndex, int x, int y) = 0;
 		virtual void clearAttachment(uint32_t vAttachmentIndex, int value) = 0;
 
+		virtual uint32_t getDepthStencilAttachmentRendererID() const = 0;
 		virtual uint32_t getColorAttachmentRendererID(uint32_t vIndex = 0) const = 0;
 		virtual const FramebufferSpecification& getFramebufferSpecification() const = 0;
 
