@@ -34,6 +34,9 @@
     <Filter Include="src\Pika\Renderer">
       <UniqueIdentifier>{E7120182-5329-FF17-9CA0-8A3908F6CF9F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Pika\Scene">
+      <UniqueIdentifier>{FE9B19D5-EA69-0DDB-D3FD-7D01BF6AE93F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
@@ -138,6 +141,9 @@
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLTexture.h">
       <Filter>src\Pika\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLTextureFormat.h">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Pika\Platform\OpenGL</Filter>
     </ClInclude>
@@ -180,8 +186,17 @@
     <ClInclude Include="src\Pika\Renderer\Texture.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\TextureFormat.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Renderer\VertexArray.h">
       <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Scene\Entity.h">
+      <Filter>src\Pika\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Scene\Scene.h">
+      <Filter>src\Pika\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\pkpch.h">
       <Filter>src</Filter>
@@ -1437,8 +1452,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Renderer\TextureFormat.h" />
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLTextureFormat.h" />
+    <ClInclude Include="src\Pika\Scene\Components.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1478,6 +1492,9 @@
       <Filter>src\Pika\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLTexture.cpp">
+      <Filter>src\Pika\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLTextureFormat.cpp">
       <Filter>src\Pika\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.cpp">
@@ -1528,12 +1545,17 @@
     <ClCompile Include="src\Pika\Renderer\VertexArray.cpp">
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Scene\Entity.cpp">
+      <Filter>src\Pika\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Scene\Scene.cpp">
+      <Filter>src\Pika\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\pkpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLTextureFormat.cpp" />
   </ItemGroup>
 </Project>
