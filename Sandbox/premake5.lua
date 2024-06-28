@@ -18,7 +18,8 @@ project "Sandbox"
 		"%{wks.location}/Pika/vendor/spdlog/include",
 		"%{wks.location}/Pika/src",
 		"%{wks.location}/Pika/vendor",
-		"%{includeDir.glm}"
+		"%{includeDir.glm}",
+		"%{includeDir.entt}"
 	}
 
 	links

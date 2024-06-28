@@ -22,3 +22,7 @@
 #include "Pika/Renderer/SubTexture2D.h"
 #include "Pika/Renderer/Framebuffer.h"
 #include "Pika/Renderer/Camera2DController.h"
+//-----------------Scene-----------------
+#include "Pika/Scene/Scene.h"
+#include "Pika/Scene/Entity.h"
+#include "Pika/Scene/Components.h"

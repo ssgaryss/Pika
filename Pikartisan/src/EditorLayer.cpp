@@ -38,6 +38,9 @@ namespace Pika
 		Pika::Renderer2D::Init();
 		m_Framebuffer = Pika::Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGB8, TextureFormat::RGB8, TextureFormat::DEPTH24STENCIL8}, false });
+		m_ActiveScene = CreateRef<Pika::Scene>();
+		auto Entity = m_ActiveScene->createEntity("Blue quad");
+		Entity.addComponent<Pika::SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
 
 		m_TextureBackround = Pika::Texture2D::Create("assets/textures/board.png");
 		m_Texture2024 = Pika::Texture2D::Create("assets/textures/2024.png");
@@ -86,6 +89,8 @@ namespace Pika
 		}
 
 		Rotation += glm::radians(10.0f);
+
+
 		Pika::Renderer2D::EndScene();
 		m_Framebuffer->unbind();
 

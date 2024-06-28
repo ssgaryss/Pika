@@ -22,6 +22,7 @@ namespace Pika
 		Pika::Camera2DController m_CameraController;
 		Pika::Ref<Pika::ShaderLibrary> m_ShaderLibrary;
 		Pika::Ref<Pika::Framebuffer> m_Framebuffer;
+		Pika::Ref<Pika::Scene> m_ActiveScene;
 
 		Pika::Ref<Pika::Texture2D> m_TextureBackround;
 		Pika::Ref<Pika::Texture2D> m_Texture2024;

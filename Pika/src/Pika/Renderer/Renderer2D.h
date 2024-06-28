@@ -31,6 +31,10 @@ namespace Pika
 		static void DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
 		static void DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
 
+		static void DrawQuad(const glm::mat4& vTransform, const glm::vec4& vColor);
+		static void DrawQuad(const glm::mat4& vTransform, const Ref<Texture2D>& vTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
+		static void DrawQuad(const glm::mat4& vTransform, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
+
 		struct Statistics {
 			uint32_t m_DrawCalls = 0;
 			uint32_t m_QuadCount = 0;
