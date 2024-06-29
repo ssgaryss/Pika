@@ -1,5 +1,6 @@
 #include "EditorLayer.h"
 #include <imgui/imgui.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Pika
 {
@@ -38,6 +39,10 @@ namespace Pika
 		Pika::Renderer2D::Init();
 		m_Framebuffer = Pika::Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGB8, TextureFormat::RGB8, TextureFormat::DEPTH24STENCIL8}, false });
+		m_ActiveScene = CreateRef<Pika::Scene>();
+		m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
+		m_BulueQuad.addComponent<Pika::SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
+		m_BulueQuad.addComponent<Pika::CameraComponent>();
 
 		m_TextureBackround = Pika::Texture2D::Create("assets/textures/board.png");
 		m_Texture2024 = Pika::Texture2D::Create("assets/textures/2024.png");
@@ -66,6 +71,7 @@ namespace Pika
 
 		if(m_IsViewportFocus)
 			m_CameraController.onUpdate(vTimestep);
+
 		Pika::Renderer2D::BeginScene(m_CameraController);
 		Pika::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 20.0f, 20.0f }, m_TextureBackround, 10.0f);
 		Pika::Renderer2D::DrawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
@@ -87,6 +93,11 @@ namespace Pika
 
 		Rotation += glm::radians(10.0f);
 		Pika::Renderer2D::EndScene();
+
+		//Renderer2D::BeginScene();
+		//m_ActiveScene->onUpdate(vTimestep);
+		//Pika::Renderer2D::EndScene();
+
 		m_Framebuffer->unbind();
 
 	}
@@ -173,6 +184,14 @@ namespace Pika
 		ImGui::Begin("Renderer statistics");
 		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
 		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
+		ImGui::Separator();
+		uintptr_t DepthID = static_cast<uintptr_t>(m_Framebuffer->getDepthStencilAttachmentRendererID());
+		ImGui::Image(reinterpret_cast<void*>(DepthID), { 384.0f, 256.0f }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		ImGui::Separator();
+		uintptr_t ColorID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID(1));
+		ImGui::Image(reinterpret_cast<void*>(ColorID), { 384.0f, 256.0f }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		ImGui::Separator();
+		ImGui::ColorEdit3("Blue quad", glm::value_ptr(m_BulueQuad.getComponent<SpriteRendererComponent>().m_Color));
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });

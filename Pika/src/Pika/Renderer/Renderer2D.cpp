@@ -118,7 +118,23 @@ namespace Pika {
 		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture;
 	}
 
-	void Renderer2D::BeginScene(Camera2DController& vCameraController)
+	void Renderer2D::BeginScene(const Camera& vCamera, const glm::mat4& vTramsform)
+	{
+		PK_PROFILE_FUNCTION();
+		s_Data.m_Camera2DData.m_ViewProjectionMatrix = vCamera.getProjectionMatrix() * glm::inverse(vTramsform);
+		s_Data.m_QuadShader->bind();
+		// TODO : delete!!!
+		int32_t Textures[32]; //基于Shader中变量的数据
+		for (int32_t i = 0; i < 32; ++i)
+			Textures[i] = i;
+		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
+		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
+
+		ResetStatistics();
+		StartBatch();
+	}
+
+	void Renderer2D::BeginScene(const Camera2DController& vCameraController)
 	{
 		PK_PROFILE_FUNCTION();
 		s_Data.m_Camera2DData.m_ViewProjectionMatrix = vCameraController.getCamera().getViewProjectionMatrix();
@@ -163,24 +179,9 @@ namespace Pika {
 
 	void Renderer2D::DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec4& vColor)
 	{
-		PK_PROFILE_FUNCTION();
-		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
-			NextBatch();
-
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
-		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
-		for (int i = 0; i < 4; ++i) {
-			s_Data.m_pQuadVertexBufferPtr->m_Position = Transform * s_Data.m_QuadUnitVertex[i];
-			s_Data.m_pQuadVertexBufferPtr->m_Color = vColor;
-			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
-			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = 0;
-			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = 1.0f;
-			s_Data.m_pQuadVertexBufferPtr++;
-		}
-
-		s_Data.m_QuadIndexCount += 6;
-		s_Data.m_Statistics.m_QuadCount++;
+		DrawQuad(Transform, vColor);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
@@ -190,38 +191,9 @@ namespace Pika {
 
 	void Renderer2D::DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
-		PK_PROFILE_FUNCTION();
-		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
-			NextBatch();
-
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
-		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
-
-		float TextureIndex = static_cast<float>(s_Data.findTextureIndex(vTexture).value_or(0.0f));
-		if (TextureIndex == 0.0f) {
-			if (s_Data.m_TextureIndex >= s_Data.getMaxTextureSlots()) {
-				NextBatch();
-				TextureIndex = static_cast<float>(s_Data.addTexture(vTexture).value());
-			}
-			auto Success = s_Data.addTexture(vTexture);
-			if (Success.has_value())
-				TextureIndex = static_cast<float>(Success.value());
-			else
-				PK_CORE_ERROR(R"(Renderer2D : Fail to add texture(ID = {0}) to slots)", vTexture->getRendererID());
-		}
-
-		for (int i = 0; i < 4; ++i) {
-			s_Data.m_pQuadVertexBufferPtr->m_Position = Transform * s_Data.m_QuadUnitVertex[i];
-			s_Data.m_pQuadVertexBufferPtr->m_Color = vTintColor;
-			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
-			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = TextureIndex;
-			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = vTilingFactor;
-			s_Data.m_pQuadVertexBufferPtr++;
-		}
-
-		s_Data.m_QuadIndexCount += 6; // 6 indices per quad
-		s_Data.m_Statistics.m_QuadCount++;
+		DrawQuad(Transform, vTexture, vTilingFactor, vTintColor);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const glm::vec4& vColor)
@@ -231,16 +203,56 @@ namespace Pika {
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const glm::vec4& vColor)
 	{
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
+			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
+		DrawQuad(Transform, vColor);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	{
+		DrawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vTexture, vTilingFactor, vTintColor);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	{
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
+			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
+		DrawQuad(Transform, vTexture, vTilingFactor, vTintColor);
+	}
+
+	// SubTexture2D
+	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
+		DrawQuad(glm::vec3(vPosition, 0.0f), vScale, vSubTexture, vTilingFactor, vTintColor);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
+		DrawQuad(Transform, vSubTexture, vTilingFactor, vTintColor);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
+		DrawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vSubTexture, vTilingFactor, vTintColor);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
+			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
+		DrawQuad(Transform, vSubTexture, vTilingFactor, vTintColor);
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const glm::vec4& vColor)
+	{
 		PK_PROFILE_FUNCTION();
 		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
 			NextBatch();
 
-		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
-			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
-			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
 		for (int i = 0; i < 4; ++i) {
-			s_Data.m_pQuadVertexBufferPtr->m_Position = Transform * s_Data.m_QuadUnitVertex[i];
+			s_Data.m_pQuadVertexBufferPtr->m_Position = vTransform * s_Data.m_QuadUnitVertex[i];
 			s_Data.m_pQuadVertexBufferPtr->m_Color = vColor;
 			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
 			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = 0;
@@ -252,20 +264,12 @@ namespace Pika {
 		s_Data.m_Statistics.m_QuadCount++;
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
-	{
-		DrawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vTexture, vTilingFactor, vTintColor);
-	}
-
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
 		PK_PROFILE_FUNCTION();
 		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
 			NextBatch();
 
-		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
-			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
-			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
 
 		float TextureIndex = static_cast<float>(s_Data.findTextureIndex(vTexture).value_or(0.0f));
@@ -282,48 +286,7 @@ namespace Pika {
 		}
 
 		for (int i = 0; i < 4; ++i) {
-			s_Data.m_pQuadVertexBufferPtr->m_Position = Transform * s_Data.m_QuadUnitVertex[i];
-			s_Data.m_pQuadVertexBufferPtr->m_Color = vTintColor;
-			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
-			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = TextureIndex;
-			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = vTilingFactor;
-			s_Data.m_pQuadVertexBufferPtr++;
-		}
-
-		s_Data.m_QuadIndexCount += 6;
-		s_Data.m_Statistics.m_QuadCount++;
-	}
-
-	// SubTexture2D
-	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
-		DrawQuad(glm::vec3(vPosition, 0.0f), vScale, vSubTexture, vTilingFactor, vTintColor);
-	}
-
-	void Renderer2D::DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
-		PK_PROFILE_FUNCTION();
-		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
-			NextBatch();
-
-		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
-			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
-
-		auto Texture = vSubTexture->getTexture();
-		auto TexCoord = vSubTexture->getTextureCoordinates();
-		float TextureIndex = static_cast<float>(s_Data.findTextureIndex(Texture).value_or(0.0f));
-		if (TextureIndex == 0.0f) {
-			if (s_Data.m_TextureIndex >= s_Data.getMaxTextureSlots()) {
-				NextBatch();
-				TextureIndex = static_cast<float>(s_Data.addTexture(Texture).value());
-			}
-			auto Success = s_Data.addTexture(Texture);
-			if (Success.has_value())
-				TextureIndex = static_cast<float>(Success.value());
-			else
-				PK_CORE_ERROR(R"(Renderer2D : Fail to add texture(ID = {0}) to slots)", Texture->getRendererID());
-		}
-
-		for (int i = 0; i < 4; ++i) {
-			s_Data.m_pQuadVertexBufferPtr->m_Position = Transform * s_Data.m_QuadUnitVertex[i];
+			s_Data.m_pQuadVertexBufferPtr->m_Position = vTransform * s_Data.m_QuadUnitVertex[i];
 			s_Data.m_pQuadVertexBufferPtr->m_Color = vTintColor;
 			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
 			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = TextureIndex;
@@ -334,19 +297,12 @@ namespace Pika {
 		s_Data.m_QuadIndexCount += 6; // 6 indices per quad
 		s_Data.m_Statistics.m_QuadCount++;
 	}
-	
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
-		DrawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vSubTexture, vTilingFactor, vTintColor);
-	}
-	
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
+
+	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	{
 		PK_PROFILE_FUNCTION();
 		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
 			NextBatch();
-
-		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
-			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
-			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
 
 		auto Texture = vSubTexture->getTexture();
 		auto TexCoord = vSubTexture->getTextureCoordinates();
@@ -364,7 +320,7 @@ namespace Pika {
 		}
 
 		for (int i = 0; i < 4; ++i) {
-			s_Data.m_pQuadVertexBufferPtr->m_Position = Transform * s_Data.m_QuadUnitVertex[i];
+			s_Data.m_pQuadVertexBufferPtr->m_Position = vTransform * s_Data.m_QuadUnitVertex[i];
 			s_Data.m_pQuadVertexBufferPtr->m_Color = vTintColor;
 			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
 			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = TextureIndex;

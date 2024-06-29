@@ -28,7 +28,8 @@ project "Pika"
 		"%{includeDir.glad}",
 		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
-		"%{includeDir.stb_image}"
+		"%{includeDir.stb_image}",
+		"%{includeDir.entt}"
 	}
 
 	links
