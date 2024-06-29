@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Components.h"
 #include "Entity.h"
+#include "Pika/Renderer/Renderer2D.h"
 
 namespace Pika
 {
@@ -17,7 +18,10 @@ namespace Pika
 	}
 	void Scene::onUpdate(Timestep vTimestep)
 	{
-		auto Group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		//Group.each([]())
+		auto View = m_Registry.group<TransformComponent, SpriteRendererComponent>();
+		for (auto& Entity : View) {
+			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity);
+			Renderer2D::DrawQuad(Transform.m_Position, Transform.m_Scale, SpriteRenderer.m_Color);
+		}
 	}
 }	

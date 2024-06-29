@@ -19,10 +19,13 @@ namespace Pika
 		bool m_IsViewportFocus = false;
 		bool m_IsViewportHovered = false;
 	private:
+		// Renderer
 		Pika::Camera2DController m_CameraController;
 		Pika::Ref<Pika::ShaderLibrary> m_ShaderLibrary;
 		Pika::Ref<Pika::Framebuffer> m_Framebuffer;
+		// Scene
 		Pika::Ref<Pika::Scene> m_ActiveScene;
+		Pika::Entity m_BulueQuad;
 
 		Pika::Ref<Pika::Texture2D> m_TextureBackround;
 		Pika::Ref<Pika::Texture2D> m_Texture2024;

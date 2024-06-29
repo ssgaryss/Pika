@@ -1,4 +1,5 @@
 #pragma once
+#include "Pika/Renderer/Camera.h"
 #include <string>
 #include <glm/glm.hpp>
 
@@ -37,6 +38,14 @@ namespace Pika
 
 	struct CameraComponent
 	{
+		Camera m_Camera;
+		bool m_IsPrimary = true;
+		bool m_IsFixedAspectRatio = false;
+
+		CameraComponent() = default;
+		CameraComponent(const glm::mat4& vProjectionMatrix)
+			: m_Camera{ vProjectionMatrix } {}
+		CameraComponent(const CameraComponent&) = default;
 
 	};
 

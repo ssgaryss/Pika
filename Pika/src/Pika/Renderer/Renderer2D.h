@@ -1,4 +1,5 @@
 #pragma once
+#include "Camera.h"
 #include "Camera2DController.h"
 #include "Texture.h"
 #include "SubTexture2D.h"
@@ -12,7 +13,9 @@ namespace Pika
 	public:
 		Renderer2D() = delete;
 		static void Init();
-		static void BeginScene(Camera2DController& vCameraController);
+		// TODO : BeginScene should begin with all scene data!
+		static void BeginScene(const Camera& vCamera, const glm::mat4& vTramsform);
+		static void BeginScene(const Camera2DController& vCameraController);
 		static void EndScene();
 		static void Flush();
 

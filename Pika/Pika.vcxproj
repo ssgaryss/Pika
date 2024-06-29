@@ -184,6 +184,7 @@
     <ClInclude Include="src\Pika\Renderer\Buffer.h" />
     <ClInclude Include="src\Pika\Renderer\Camera2D.h" />
     <ClInclude Include="src\Pika\Renderer\Camera2DController.h" />
+    <ClInclude Include="src\Pika\Renderer\Camera.h" />
     <ClInclude Include="src\Pika\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Pika\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Pika\Renderer\RenderCommand.h" />
