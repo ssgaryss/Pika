@@ -46,7 +46,10 @@ namespace Pika
 		CameraComponent(const glm::mat4& vProjectionMatrix)
 			: m_Camera{ vProjectionMatrix } {}
 		CameraComponent(const CameraComponent&) = default;
+	};
 
+	struct NativeScriptComponent {
+		// TODO
 	};
 
 }

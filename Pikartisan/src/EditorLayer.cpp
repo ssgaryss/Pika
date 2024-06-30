@@ -5,6 +5,7 @@
 namespace Pika
 {
 
+	// TODO : The tiled map example for now!
 	static const char* s_Map =
 		"000000000000000000000000000000"
 		"000000000000000000000000000000"
