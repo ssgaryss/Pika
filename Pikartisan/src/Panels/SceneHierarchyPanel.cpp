@@ -11,10 +11,10 @@ namespace Pika {
 	void SceneHierarchyPanel::onImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
-		m_Context->m_Registry.view<TagComponent>().each([this](auto vEntityHandle) {
-			Entity Entity{ vEntityHandle, m_Context.get() };
-			drawEntityNode();
-			});
+		//m_Context->m_Registry.view<TagComponent>().each([this](auto vEntityHandle) {
+		//	Entity Entity{ vEntityHandle, m_Context.get() };
+		//	drawEntityNode(Entity);
+		//	});
 		ImGui::End();
 
 		ImGui::Begin("Properties");

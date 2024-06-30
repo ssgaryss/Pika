@@ -1456,6 +1456,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Renderer\Camera.h" />
+    <ClInclude Include="src\Pika\Scene\SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1560,5 +1561,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Scene\SceneCamera.cpp" />
   </ItemGroup>
 </Project>
