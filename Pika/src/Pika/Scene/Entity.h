@@ -42,7 +42,9 @@ namespace Pika
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
+		operator bool() const { return m_EntityHandle != entt::null; }
 		operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
+		bool operator==(const Entity& vOther) const { return m_EntityHandle == vOther.m_EntityHandle; }
 
 	private:
 		entt::entity m_EntityHandle = entt::null;

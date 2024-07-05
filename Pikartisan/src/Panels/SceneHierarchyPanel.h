@@ -16,6 +16,7 @@ namespace Pika
 		void drawEntityComponents(Entity vEntity);  // draw entity components in scene hierarchy panel
 	private:
 		Ref<Scene> m_Context; // Scene data
+		Entity m_SelectedEntity;
 	};
 
 }
