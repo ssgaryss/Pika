@@ -153,6 +153,9 @@
     <ClInclude Include="src\Pika\Renderer\Buffer.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\Camera.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Renderer\Camera2D.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
@@ -199,6 +202,9 @@
       <Filter>src\Pika\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Scene\Scene.h">
+      <Filter>src\Pika\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Scene\SceneCamera.h">
       <Filter>src\Pika\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\pkpch.h">
@@ -1455,7 +1461,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Renderer\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1552,6 +1557,9 @@
       <Filter>src\Pika\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Scene\Scene.cpp">
+      <Filter>src\Pika\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Scene\SceneCamera.cpp">
       <Filter>src\Pika\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\pkpch.cpp">

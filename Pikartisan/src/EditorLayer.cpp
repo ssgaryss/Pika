@@ -5,6 +5,7 @@
 namespace Pika
 {
 
+	// TODO : The tiled map example for now!
 	static const char* s_Map =
 		"000000000000000000000000000000"
 		"000000000000000000000000000000"
@@ -29,28 +30,35 @@ namespace Pika
 
 	EditorLayer::EditorLayer()
 		: Layer{ "EditorLayer" }, m_CameraController{ 1920.0f / 1080.0f },
-		m_ShaderLibrary{ Pika::CreateRef<Pika::ShaderLibrary>() }
+		m_ShaderLibrary{ CreateRef<ShaderLibrary>() }
 	{
 	}
 
 	void EditorLayer::onAttach()
 	{
 		PK_PROFILE_FUNCTION();
-		Pika::Renderer2D::Init();
-		m_Framebuffer = Pika::Framebuffer::Create({ 1920, 1080, 1,
+		Renderer2D::Init();
+		m_Framebuffer = Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGB8, TextureFormat::RGB8, TextureFormat::DEPTH24STENCIL8}, false });
-		m_ActiveScene = CreateRef<Pika::Scene>();
+		m_ActiveScene = CreateRef<Scene>();
 		m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
-		m_BulueQuad.addComponent<Pika::SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
-		m_BulueQuad.addComponent<Pika::CameraComponent>();
+		m_BulueQuad.addComponent<SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
+		m_BulueQuad.addComponent<CameraComponent>();
 
-		m_TextureBackround = Pika::Texture2D::Create("assets/textures/board.png");
-		m_Texture2024 = Pika::Texture2D::Create("assets/textures/2024.png");
-		m_TextureRPGpack_sheet_2X = Pika::Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
+		m_RedQuad = m_ActiveScene->createEntity("Red quad");
+		m_RedQuad.addComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.1f, 0.1f, 1.0f));
+		m_RedQuad.addComponent<CameraComponent>();
 
-		m_TextureTree = Pika::SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
-		m_TextureWater = Pika::SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
-		m_TextureGround = Pika::SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
+		m_TextureBackround = Texture2D::Create("assets/textures/board.png");
+		m_Texture2024 = Texture2D::Create("assets/textures/2024.png");
+		m_TextureRPGpack_sheet_2X = Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
+
+		m_TextureTree = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
+		m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
+		m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
+
+		// Panels
+		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>(m_ActiveScene);
 	}
 
 	void EditorLayer::onDetach()
@@ -58,7 +66,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 	}
 
-	void EditorLayer::onUpdate(Pika::Timestep vTimestep)
+	void EditorLayer::onUpdate(Timestep vTimestep)
 	{
 		PK_PROFILE_FUNCTION();
 
@@ -69,34 +77,34 @@ namespace Pika
 			RenderCommand::Clear();
 		}
 
-		if(m_IsViewportFocus)
+		if (m_IsViewportFocus)
 			m_CameraController.onUpdate(vTimestep);
 
-		Pika::Renderer2D::BeginScene(m_CameraController);
-		Pika::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 20.0f, 20.0f }, m_TextureBackround, 10.0f);
-		Pika::Renderer2D::DrawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
-		Pika::Renderer2D::DrawQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f });
-		Pika::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.2f, 0.5f }, { 0.5f, 0.5f, 1.0f, 1.0f });
-		Pika::Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f }, { 0.5f, 0.5f }, glm::radians(Rotation), { 1.0f, 0.0f, 1.0f, 1.0f });
-		Pika::Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f, 0.1f }, { 0.5f, 0.5f }, glm::radians(Rotation), m_Texture2024);
-		int num = 0;
-		for (int i = 0; i < 20; ++i) {
-			for (int j = 0; j < 30; ++j) {
-				if (s_Map[i * 30 + j] == '0')
-					Pika::Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureWater);
-				else if (s_Map[i * 30 + j] == '1')
-					Pika::Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureGround);
-				else
-					Pika::Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureTree);
-			}
-		}
+		//Renderer2D::BeginScene(m_CameraController);
+		//Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 20.0f, 20.0f }, m_TextureBackround, 10.0f);
+		//Renderer2D::DrawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
+		//Renderer2D::DrawQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f });
+		//Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.2f, 0.5f }, { 0.5f, 0.5f, 1.0f, 1.0f });
+		//Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f }, { 0.5f, 0.5f }, glm::radians(Rotation), { 1.0f, 0.0f, 1.0f, 1.0f });
+		//Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f, 0.1f }, { 0.5f, 0.5f }, glm::radians(Rotation), m_Texture2024);
+		//int num = 0;
+		//for (int i = 0; i < 20; ++i) {
+		//	for (int j = 0; j < 30; ++j) {
+		//		if (s_Map[i * 30 + j] == '0')
+		//			Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureWater);
+		//		else if (s_Map[i * 30 + j] == '1')
+		//			Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureGround);
+		//		else
+		//			Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureTree);
+		//	}
+		//}
 
-		Rotation += glm::radians(10.0f);
-		Pika::Renderer2D::EndScene();
+		//Rotation += glm::radians(10.0f);
+		//Renderer2D::EndScene();
 
-		//Renderer2D::BeginScene();
-		//m_ActiveScene->onUpdate(vTimestep);
-		//Pika::Renderer2D::EndScene();
+		Renderer2D::BeginScene(m_CameraController);
+		m_ActiveScene->onUpdate(vTimestep);
+		Renderer2D::EndScene();
 
 		m_Framebuffer->unbind();
 
@@ -135,6 +143,7 @@ namespace Pika
 
 		if (!opt_padding)
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
 		ImGui::Begin("DockSpace Demo", &dockspace_open, window_flags);
 		if (!opt_padding)
 			ImGui::PopStyleVar();
@@ -173,14 +182,14 @@ namespace Pika
 
 				if (ImGui::MenuItem("Close", NULL, false, dockspace_open != NULL))
 					dockspace_open = false;
-				if (ImGui::MenuItem("Exit")) Pika::Application::GetInstance().close();
+				if (ImGui::MenuItem("Exit")) Application::GetInstance().close();
 				ImGui::EndMenu();
 			}
 
 			ImGui::EndMenuBar();
 		}
 
-		auto Statistics = Pika::Renderer2D::GetStatistics();
+		auto Statistics = Renderer2D::GetStatistics();
 		ImGui::Begin("Renderer statistics");
 		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
 		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
@@ -199,7 +208,7 @@ namespace Pika
 		{
 			m_IsViewportFocus = ImGui::IsWindowFocused();
 			m_IsViewportHovered = ImGui::IsWindowHovered();
-			Pika::Application::GetInstance().getImGuiLayer()->setBlockEvents(!m_IsViewportFocus || !m_IsViewportHovered);
+			Application::GetInstance().getImGuiLayer()->setBlockEvents(!m_IsViewportFocus || !m_IsViewportHovered);
 		}
 		{
 			static glm::vec2 ViewportSize;
@@ -215,11 +224,12 @@ namespace Pika
 		ImGui::End();
 		ImGui::PopStyleVar();
 
+		m_SceneHierarchyPanel->onImGuiRender();
 
 		ImGui::End();
 	}
 
-	void EditorLayer::onEvent(Pika::Event& vEvent)
+	void EditorLayer::onEvent(Event& vEvent)
 	{
 		PK_PROFILE_FUNCTION();
 		m_CameraController.onEvent(vEvent);

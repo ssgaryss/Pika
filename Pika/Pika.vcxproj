@@ -182,9 +182,9 @@
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.h" />
     <ClInclude Include="src\Pika\Renderer\Buffer.h" />
+    <ClInclude Include="src\Pika\Renderer\Camera.h" />
     <ClInclude Include="src\Pika\Renderer\Camera2D.h" />
     <ClInclude Include="src\Pika\Renderer\Camera2DController.h" />
-    <ClInclude Include="src\Pika\Renderer\Camera.h" />
     <ClInclude Include="src\Pika\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Pika\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Pika\Renderer\RenderCommand.h" />
@@ -199,6 +199,7 @@
     <ClInclude Include="src\Pika\Scene\Components.h" />
     <ClInclude Include="src\Pika\Scene\Entity.h" />
     <ClInclude Include="src\Pika\Scene\Scene.h" />
+    <ClInclude Include="src\Pika\Scene\SceneCamera.h" />
     <ClInclude Include="src\pkpch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -651,6 +652,7 @@
     <ClCompile Include="src\Pika\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Pika\Scene\Entity.cpp" />
     <ClCompile Include="src\Pika\Scene\Scene.cpp" />
+    <ClCompile Include="src\Pika\Scene\SceneCamera.cpp" />
     <ClCompile Include="src\pkpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

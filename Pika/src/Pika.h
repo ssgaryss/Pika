@@ -1,6 +1,7 @@
 #pragma once
 
 //For use by Pika applications
+#include "Pika/Core/Base.h"
 #include "Pika/Core/Log.h"
 #include "Pika/Core/Application.h"
 #include "Pika/Core/Layer.h"
