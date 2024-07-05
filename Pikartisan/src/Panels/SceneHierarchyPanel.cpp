@@ -1,5 +1,6 @@
 #include "SceneHierarchyPanel.h"
 #include <imgui/imgui.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Pika {
 
@@ -44,19 +45,21 @@ namespace Pika {
 		}
 	}
 
+	// 主要给drawEntityComponents()使用的模板
 	template <typename T, typename Func>
 	void drawEntityComponent(const std::string& vName, Entity vEntity, Func vFunction) {
 		if (vEntity.hasComponent<T>()) {
 			auto& Component = vEntity.getComponent<T>();
 			const ImGuiTreeNodeFlags TreeNodeFlags{
+				ImGuiTreeNodeFlags_DefaultOpen |
 				ImGuiTreeNodeFlags_OpenOnArrow
 			};
-			bool Opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)vEntity, TreeNodeFlags, vName.c_str());
+			// typeid(T).hash_code()保证树节点标号不同
+			bool Opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), TreeNodeFlags, vName.c_str());
 			if (Opened) {
 				vFunction(Component);
 				ImGui::TreePop();
 			}
-
 		}
 	}
 
@@ -64,18 +67,20 @@ namespace Pika {
 	{
 		// TODO !
 
-		drawEntityComponent<TagComponent>("Tag", vEntity, [](auto& vComponent) {
+		drawEntityComponent<TagComponent>("Tag", vEntity, [](auto& vTagComponent) {
 			static char Buffer[256];
 			memset(Buffer, 0, sizeof(Buffer));
-			strcpy_s(Buffer, vComponent);
+			strcpy_s(Buffer, vTagComponent);
 
 			if (ImGui::InputText("TagComponent", Buffer, sizeof(Buffer)))
-				vComponent.m_Tag = std::string(Buffer);
+				vTagComponent.m_Tag = std::string(Buffer);
 			});
 
-		if (vEntity.hasComponent<TransformComponent>()) {
-			//ImGui::DragFloat3()
-		}
+		drawEntityComponent<TransformComponent>("Transform", vEntity, [](auto& vTransformComponent) {
+			ImGui::DragFloat3("Position", glm::value_ptr(vTransformComponent.m_Position), 0.1f);
+			ImGui::DragFloat3("Rotation", glm::value_ptr(vTransformComponent.m_Rotation), 0.1f);
+			ImGui::DragFloat3("Scale", glm::value_ptr(vTransformComponent.m_Scale), 0.1f);
+			});
 
 		if (vEntity.hasComponent<CameraComponent>()) {
 			//ImGui::BeginCombo()
