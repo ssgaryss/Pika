@@ -13,6 +13,7 @@ namespace Pika
 		~Scene() = default; // TODO : For now!
 
 		Entity createEntity(const std::string& vName = "");
+		//void destroyEntity()
 
 		void onUpdate(Timestep vTimestep);
 

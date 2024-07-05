@@ -14,6 +14,9 @@ namespace Pika
 		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string& vTag)
 			: m_Tag{ vTag } {}
+
+		operator std::string() const { return m_Tag; }
+		operator const char* () const { return m_Tag.c_str(); }
 	};
 
 	struct TransformComponent
@@ -23,6 +26,8 @@ namespace Pika
 		glm::vec3 m_Scale{ 1.0f, 1.0f, 1.0f };
 
 		TransformComponent() = default;
+		TransformComponent(const glm::vec3& vPosition)
+			: m_Position{ vPosition } {}
 		TransformComponent(const TransformComponent&) = default;
 	};
 

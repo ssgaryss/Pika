@@ -42,6 +42,8 @@ namespace Pika
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
+		operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
+
 	private:
 		entt::entity m_EntityHandle = entt::null;
 		Scene* m_Scene = nullptr; // TODO : remove raw pointer

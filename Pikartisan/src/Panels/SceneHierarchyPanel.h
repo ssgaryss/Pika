@@ -15,7 +15,7 @@ namespace Pika
 		void drawEntityNode(Entity vEntity);        // draw entity node in scene hierarchy panel
 		void drawEntityComponents(Entity vEntity);  // draw entity components in scene hierarchy panel
 	private:
-		Ref<Pika::Scene> m_Context; // Scene data
+		Ref<Scene> m_Context; // Scene data
 	};
 
 }

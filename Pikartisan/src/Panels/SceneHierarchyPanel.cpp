@@ -11,10 +11,10 @@ namespace Pika {
 	void SceneHierarchyPanel::onImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
-		//m_Context->m_Registry.view<TagComponent>().each([this](auto vEntityHandle) {
-		//	Entity Entity{ vEntityHandle, m_Context.get() };
-		//	drawEntityNode(Entity);
-		//	});
+		m_Context->m_Registry.view<TagComponent>().each([this](auto vEntityHandle, auto& vTagComponent) {
+			Entity Entity(vEntityHandle, m_Context.get());
+			drawEntityNode(Entity);
+			});
 		ImGui::End();
 
 		ImGui::Begin("Properties");
@@ -26,16 +26,18 @@ namespace Pika {
 	void SceneHierarchyPanel::drawEntityNode(Entity vEntity)
 	{
 		//TODO : ImGui TreeNodeEx!
+		auto& Tag = vEntity.getComponent<TagComponent>();
+		ImGui::TreeNodeEx((void*)(uint64_t)vEntity, ImGuiTreeNodeFlags_Selected, Tag);
 	}
 
 	void SceneHierarchyPanel::drawEntityComponents(Entity vEntity)
 	{
 		// TODO !
-		if (vEntity.hasComponent<TagComponent>()){
+		if (vEntity.hasComponent<TagComponent>()) {
 
 		}
 
-		if (vEntity.hasComponent<TransformComponent>()){
+		if (vEntity.hasComponent<TransformComponent>()) {
 			//ImGui::DragFloat3()
 		}
 

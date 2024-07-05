@@ -14,8 +14,8 @@ namespace Pika
 		Tag.m_Tag = vName.empty() ? "Entity" : vName;
 		Entity.addComponent<TransformComponent>();
 		return Entity;
-
 	}
+
 	void Scene::onUpdate(Timestep vTimestep)
 	{
 		auto View = m_Registry.group<TransformComponent, SpriteRendererComponent>();
