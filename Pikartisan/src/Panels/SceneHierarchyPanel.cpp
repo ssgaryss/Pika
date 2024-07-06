@@ -19,12 +19,36 @@ namespace Pika {
 				drawEntityNode(Entity);
 				});
 
+			if (ImGui::BeginPopupContextWindow("Create entity", ImGuiPopupFlags_MouseButtonRight)) {
+				if (ImGui::MenuItem("Empty entity"))
+					m_Context->createEntity("Empty entity");
+				ImGui::EndPopup();
+			}
+
 		}
 		ImGui::End();
 
 		ImGui::Begin("Properties");
-		if (m_SelectedEntity)
+		if (m_SelectedEntity) {
 			drawEntityComponents(m_SelectedEntity);
+			if (ImGui::Button("Add component"))
+				ImGui::OpenPopup("AddComponent");
+
+			if (ImGui::BeginPopup("AddComponent")) {
+				if (!m_SelectedEntity.hasComponent<SpriteRendererComponent>()) {
+					if (ImGui::MenuItem("Sprite Renderer Component")) {
+						m_SelectedEntity.addComponent<SpriteRendererComponent>();
+					}
+				}
+				if (!m_SelectedEntity.hasComponent<CameraComponent>()) {
+					if (ImGui::MenuItem("Camera Component")) {
+						m_SelectedEntity.addComponent<CameraComponent>();
+					}
+				}
+				ImGui::EndPopup();
+			}
+		}
+
 		ImGui::End();
 	}
 
@@ -60,6 +84,17 @@ namespace Pika {
 				vFunction(Component);
 				ImGui::TreePop();
 			}
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+				ImGui::OpenPopup("DeleteComponent");
+			}
+
+			// TODO : bugs 
+			if (ImGui::BeginPopup("DeleteComponent")) {
+				if (ImGui::MenuItem("Delete"))
+					//vEntity.removeComponent<Component>();
+				ImGui::EndPopup();
+			}
 		}
 	}
 
@@ -80,6 +115,10 @@ namespace Pika {
 			ImGui::DragFloat3("Position", glm::value_ptr(vTransformComponent.m_Position), 0.1f);
 			ImGui::DragFloat3("Rotation", glm::value_ptr(vTransformComponent.m_Rotation), 0.1f);
 			ImGui::DragFloat3("Scale", glm::value_ptr(vTransformComponent.m_Scale), 0.1f);
+			});
+
+		drawEntityComponent<SpriteRendererComponent>("Sprite Renderer", vEntity, [](auto& vSpriteRendererComponent) {
+			ImGui::ColorEdit4("Color", glm::value_ptr(vSpriteRendererComponent.m_Color));
 			});
 
 		if (vEntity.hasComponent<CameraComponent>()) {

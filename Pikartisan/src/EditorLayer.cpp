@@ -43,11 +43,9 @@ namespace Pika
 		m_ActiveScene = CreateRef<Scene>();
 		m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
 		m_BulueQuad.addComponent<SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
-		m_BulueQuad.addComponent<CameraComponent>();
 
 		m_RedQuad = m_ActiveScene->createEntity("Red quad");
 		m_RedQuad.addComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.1f, 0.1f, 1.0f));
-		m_RedQuad.addComponent<CameraComponent>();
 
 		m_TextureBackround = Texture2D::Create("assets/textures/board.png");
 		m_Texture2024 = Texture2D::Create("assets/textures/2024.png");
