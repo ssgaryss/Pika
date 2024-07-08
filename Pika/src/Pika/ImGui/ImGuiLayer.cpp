@@ -31,6 +31,9 @@ namespace Pika {
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
+		// font
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/Open_Sans/static/OpenSans-Regular.ttf", 18.0f);
+
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsClassic();
 		Application& App = Application::GetInstance();

@@ -1,4 +1,5 @@
 #include "SceneHierarchyPanel.h"
+#include <format>
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -57,7 +58,8 @@ namespace Pika {
 		auto& Tag = vEntity.getComponent<TagComponent>();
 		const ImGuiTreeNodeFlags TreeNodeFlags{
 			((m_SelectedEntity == vEntity) ? ImGuiTreeNodeFlags_Selected : 0) |
-			ImGuiTreeNodeFlags_OpenOnArrow
+			ImGuiTreeNodeFlags_OpenOnArrow |
+			ImGuiTreeNodeFlags_SpanAvailWidth
 		};
 		bool Opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)vEntity, TreeNodeFlags, Tag);
 		if (ImGui::IsItemClicked()) {
@@ -70,13 +72,14 @@ namespace Pika {
 	}
 
 	// 主要给drawEntityComponents()使用的模板
-	template <typename T, typename Func>
-	void drawEntityComponent(const std::string& vName, Entity vEntity, Func vFunction) {
+	template <typename T, typename UIFunction>
+	void drawEntityComponent(const std::string& vName, Entity vEntity, UIFunction vFunction) {
 		if (vEntity.hasComponent<T>()) {
 			auto& Component = vEntity.getComponent<T>();
 			const ImGuiTreeNodeFlags TreeNodeFlags{
 				ImGuiTreeNodeFlags_DefaultOpen |
-				ImGuiTreeNodeFlags_OpenOnArrow
+				ImGuiTreeNodeFlags_OpenOnArrow |
+				ImGuiTreeNodeFlags_SpanAvailWidth
 			};
 			// typeid(T).hash_code()保证树节点标号不同
 			bool Opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), TreeNodeFlags, vName.c_str());
@@ -86,15 +89,18 @@ namespace Pika {
 			}
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
-				ImGui::OpenPopup("DeleteComponent");
+				ImGui::OpenPopup(std::format("ComponentSettings##{0}", vName).c_str());
 			}
 
-			// TODO : bugs 
-			if (ImGui::BeginPopup("DeleteComponent")) {
+			bool IsRemoved = false;
+			if (ImGui::BeginPopup(std::format("ComponentSettings##{0}", vName).c_str())) {
 				if (ImGui::MenuItem("Delete"))
-					//vEntity.removeComponent<Component>();
+					IsRemoved = true;
 				ImGui::EndPopup();
 			}
+
+			if (IsRemoved)
+				vEntity.removeComponent<T>();
 		}
 	}
 
@@ -107,25 +113,24 @@ namespace Pika {
 			memset(Buffer, 0, sizeof(Buffer));
 			strcpy_s(Buffer, vTagComponent);
 
-			if (ImGui::InputText("TagComponent", Buffer, sizeof(Buffer)))
+			if (ImGui::InputText("##TagComponent", Buffer, sizeof(Buffer)))
 				vTagComponent.m_Tag = std::string(Buffer);
 			});
 
 		drawEntityComponent<TransformComponent>("Transform", vEntity, [](auto& vTransformComponent) {
-			ImGui::DragFloat3("Position", glm::value_ptr(vTransformComponent.m_Position), 0.1f);
-			ImGui::DragFloat3("Rotation", glm::value_ptr(vTransformComponent.m_Rotation), 0.1f);
-			ImGui::DragFloat3("Scale", glm::value_ptr(vTransformComponent.m_Scale), 0.1f);
+			ImGui::DragFloat3("##Position", glm::value_ptr(vTransformComponent.m_Position), 0.1f);
+			ImGui::DragFloat3("##Rotation", glm::value_ptr(vTransformComponent.m_Rotation), 0.1f);
+			ImGui::DragFloat3("##Scale", glm::value_ptr(vTransformComponent.m_Scale), 0.1f);
 			});
 
 		drawEntityComponent<SpriteRendererComponent>("Sprite Renderer", vEntity, [](auto& vSpriteRendererComponent) {
 			ImGui::ColorEdit4("Color", glm::value_ptr(vSpriteRendererComponent.m_Color));
 			});
 
-		if (vEntity.hasComponent<CameraComponent>()) {
-			//ImGui::BeginCombo()
-			//if(perspective)
-			//if(orthographic)
-		}
+		drawEntityComponent<CameraComponent>("Camera", vEntity, [](auto& vCameraComponent) {
+
+			});
+
 	}
 
 }
