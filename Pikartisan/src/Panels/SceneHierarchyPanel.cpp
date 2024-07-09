@@ -61,7 +61,9 @@ namespace Pika {
 			ImGuiTreeNodeFlags_OpenOnArrow |
 			ImGuiTreeNodeFlags_SpanAvailWidth
 		};
+
 		bool Opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)vEntity, TreeNodeFlags, Tag);
+		// TODO : Popup eg.delete entity
 		if (ImGui::IsItemClicked()) {
 			m_SelectedEntity = vEntity;
 		}
@@ -79,14 +81,12 @@ namespace Pika {
 			const ImGuiTreeNodeFlags TreeNodeFlags{
 				ImGuiTreeNodeFlags_DefaultOpen |
 				ImGuiTreeNodeFlags_OpenOnArrow |
-				ImGuiTreeNodeFlags_SpanAvailWidth
+				ImGuiTreeNodeFlags_SpanAvailWidth |
+				ImGuiTreeNodeFlags_Framed
 			};
+
 			// typeid(T).hash_code()保证树节点标号不同
 			bool Opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), TreeNodeFlags, vName.c_str());
-			if (Opened) {
-				vFunction(Component);
-				ImGui::TreePop();
-			}
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
 				ImGui::OpenPopup(std::format("ComponentSettings##{0}", vName).c_str());
@@ -97,6 +97,11 @@ namespace Pika {
 				if (ImGui::MenuItem("Delete"))
 					IsRemoved = true;
 				ImGui::EndPopup();
+			}
+
+			if (Opened) {
+				vFunction(Component);
+				ImGui::TreePop();
 			}
 
 			if (IsRemoved)

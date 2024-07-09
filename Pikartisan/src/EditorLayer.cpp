@@ -150,8 +150,8 @@ namespace Pika
 			ImGui::PopStyleVar(2);
 
 		// Submit the DockSpace
-		ImGuiIO& io = ImGui::GetIO();
-		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		ImGuiIO& IO = ImGui::GetIO();
+		if (IO.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
@@ -198,7 +198,6 @@ namespace Pika
 		uintptr_t ColorID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID(1));
 		ImGui::Image(reinterpret_cast<void*>(ColorID), { 384.0f, 256.0f }, { 0.0f,1.0f }, { 1.0f,0.0f });
 		ImGui::Separator();
-		ImGui::ColorEdit3("Blue quad", glm::value_ptr(m_BulueQuad.getComponent<SpriteRendererComponent>().m_Color));
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
