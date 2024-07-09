@@ -27,9 +27,9 @@ namespace Pika {
 		s_RendererAPI->setClearColor(vColor);
 	}
 
-	void RenderCommand::DrawIndexed(const VertexArray* vVertexArray)
+	void RenderCommand::DrawIndexed(const VertexArray* vVertexArray, uint32_t vIndexCount)
 	{
-		s_RendererAPI->drawIndexed(vVertexArray);
+		s_RendererAPI->drawIndexed(vVertexArray, vIndexCount);
 	}
 
 	uint32_t RenderCommand::getAvailableTextureSlots()

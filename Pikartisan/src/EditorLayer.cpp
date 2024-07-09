@@ -200,6 +200,9 @@ namespace Pika
 		ImGui::Separator();
 		ImGui::End();
 
+		// SceneHierarchyPanel
+		m_SceneHierarchyPanel->onImGuiRender();
+
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");
 		{
@@ -220,8 +223,6 @@ namespace Pika
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
-
-		m_SceneHierarchyPanel->onImGuiRender();
 
 		ImGui::End();
 	}

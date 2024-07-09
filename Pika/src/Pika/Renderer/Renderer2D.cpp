@@ -168,7 +168,7 @@ namespace Pika {
 			s_Data.m_TextureSlots[i]->bind(i);
 
 		s_Data.m_QuadShader->bind();
-		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get());
+		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get(), s_Data.m_QuadIndexCount);
 		s_Data.m_Statistics.m_DrawCalls++;
 	}
 
