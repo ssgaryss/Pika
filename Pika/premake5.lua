@@ -29,7 +29,8 @@ project "Pika"
 		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
 		"%{includeDir.stb_image}",
-		"%{includeDir.entt}"
+		"%{includeDir.entt}",
+		"%{includeDir.yaml_cpp}"
 	}
 
 	links
@@ -37,6 +38,7 @@ project "Pika"
 		"GLFW",
 		"glad",
 		"ImGui",
+		"yaml-cpp",
 		"opengl32.lib"
 	}
 
