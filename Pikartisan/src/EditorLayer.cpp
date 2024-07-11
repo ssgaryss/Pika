@@ -41,6 +41,7 @@ namespace Pika
 		m_Framebuffer = Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGB8, TextureFormat::RGB8, TextureFormat::DEPTH24STENCIL8}, false });
 		m_ActiveScene = CreateRef<Scene>();
+		m_SceneSerilizer = CreateRef<SceneSerializer>(m_ActiveScene);
 		m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
 		m_BulueQuad.addComponent<SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
 

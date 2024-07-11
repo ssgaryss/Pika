@@ -26,6 +26,7 @@ namespace Pika
 		Ref<Framebuffer> m_Framebuffer;
 		// Scene
 		Ref<Scene> m_ActiveScene;
+		Ref<SceneSerializer> m_SceneSerilizer;
 		Entity m_BulueQuad;
 		Entity m_RedQuad;
 		// Panels

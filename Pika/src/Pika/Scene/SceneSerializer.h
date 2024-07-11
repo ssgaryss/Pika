@@ -9,10 +9,11 @@ namespace Pika
 	public:
 		SceneSerializer(const Ref<Scene>& vScene);
 
+		// YAML
 		void serializeYAMLText(const std::string& vFilePath);
 		void serializeYAMLBinary(const std::string& vFilePath);
-		void deserializeYAMLText(const std::string& vFilePath);
-		void deserializeYAMLBinary(const std::string& vFilePath);
+		bool deserializeYAMLText(const std::string& vFilePath);
+		bool deserializeYAMLBinary(const std::string& vFilePath);
 	private:
 		Ref<Scene> m_Scene;
 	};

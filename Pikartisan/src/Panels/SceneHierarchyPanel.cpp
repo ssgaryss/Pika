@@ -15,8 +15,9 @@ namespace Pika {
 		ImGui::Begin("Scene Hierarchy");
 
 		if (m_Context) {
-			m_Context->m_Registry.view<TagComponent>().each([this](auto vEntityHandle, auto& vTagComponent) {
-				Entity Entity(vEntityHandle, m_Context.get());
+			// TODO : Tag -> UUID
+			m_Context->m_Registry.view<TagComponent>().each([this](auto vEntity, auto& vTagComponent) {
+				Entity Entity(vEntity, m_Context.get());
 				drawEntityNode(Entity);
 				});
 
@@ -88,10 +89,10 @@ namespace Pika {
 			// typeid(T).hash_code()保证树节点标号不同
 			bool Opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), TreeNodeFlags, vName.c_str());
 
+			// TODO : 不是所有component都能删除
 			if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
 				ImGui::OpenPopup(std::format("ComponentSettings##{0}", vName).c_str());
 			}
-
 			bool IsRemoved = false;
 			if (ImGui::BeginPopup(std::format("ComponentSettings##{0}", vName).c_str())) {
 				if (ImGui::MenuItem("Delete"))
