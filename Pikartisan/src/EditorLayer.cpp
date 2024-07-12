@@ -184,7 +184,7 @@ namespace Pika
 
 				// TODO!
 				if (ImGui::MenuItem("Save as ...", "Ctrl + Shift + S"))
-					m_SceneSerilizer->serializeYAMLText("C:/Users/qiu/Desktop/test.pika");
+					m_SceneSerilizer->serializeYAMLText("assets/scenes/test.pika");
 				if (ImGui::MenuItem("Exit")) 
 					Application::GetInstance().close();
 				ImGui::EndMenu();
