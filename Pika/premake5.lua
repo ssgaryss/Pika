@@ -44,7 +44,7 @@ project "Pika"
 
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS",
+		"_CRT_SECURE_NO_WARNINGS",  -- _CRT_SECURE_NO_WARNINGS 是一个预处理器定义，用于禁用 Microsoft Visual Studio 编译器对一些标准 C/C++ 函数（如 strcpy、sprintf 等）的安全性警告。
 		"YAML_CPP_STATIC_DEFINE" -- use yaml-cpp as static lib instead of dll
 	}
 
