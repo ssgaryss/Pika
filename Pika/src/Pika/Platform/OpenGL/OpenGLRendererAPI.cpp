@@ -14,7 +14,7 @@ namespace Pika
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);  //MSAA
-		
+
 	}
 	void Pika::OpenGLRendererAPI::clear()
 	{
@@ -32,12 +32,14 @@ namespace Pika
 		glClearColor(vColor.m_Red, vColor.m_Green, vColor.m_Blue, vColor.m_Alpha);
 	}
 
-	void OpenGLRendererAPI::drawIndexed(const VertexArray* vVertexArray)
+	void OpenGLRendererAPI::drawIndexed(const VertexArray* vVertexArray, uint32_t vIndexCount)
 	{
 		PK_PROFILE_FUNCTION();
 
 		vVertexArray->bind();
-		glDrawElements(GL_TRIANGLES, vVertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
+		// vIndexCount不能超过VAO的IndexBuffer最大限制
+		uint32_t Count = std::clamp(vIndexCount, 0u, vVertexArray->getIndexBuffer()->getCount());
+		glDrawElements(GL_TRIANGLES, Count, GL_UNSIGNED_INT, nullptr);
 		vVertexArray->unbind();
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}

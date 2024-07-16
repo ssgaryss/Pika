@@ -27,3 +27,4 @@
 #include "Pika/Scene/Scene.h"
 #include "Pika/Scene/Entity.h"
 #include "Pika/Scene/Components.h"
+#include "Pika/Scene/SceneSerializer.h"

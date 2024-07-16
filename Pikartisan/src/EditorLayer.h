@@ -29,7 +29,7 @@ namespace Pika
 		Entity m_BulueQuad;
 		Entity m_RedQuad;
 		// Panels
-		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel;
+		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel; // TODO : Mutiple Scenes
 
 		Ref<Texture2D> m_TextureBackround;
 		Ref<Texture2D> m_Texture2024;

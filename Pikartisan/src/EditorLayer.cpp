@@ -41,13 +41,11 @@ namespace Pika
 		m_Framebuffer = Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGB8, TextureFormat::RGB8, TextureFormat::DEPTH24STENCIL8}, false });
 		m_ActiveScene = CreateRef<Scene>();
-		m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
-		m_BulueQuad.addComponent<SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
-		m_BulueQuad.addComponent<CameraComponent>();
+		//m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
+		//m_BulueQuad.addComponent<SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
 
-		m_RedQuad = m_ActiveScene->createEntity("Red quad");
-		m_RedQuad.addComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.1f, 0.1f, 1.0f));
-		m_RedQuad.addComponent<CameraComponent>();
+		//m_RedQuad = m_ActiveScene->createEntity("Red quad");
+		//m_RedQuad.addComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.1f, 0.1f, 1.0f));
 
 		m_TextureBackround = Texture2D::Create("assets/textures/board.png");
 		m_Texture2024 = Texture2D::Create("assets/textures/2024.png");
@@ -152,8 +150,8 @@ namespace Pika
 			ImGui::PopStyleVar(2);
 
 		// Submit the DockSpace
-		ImGuiIO& io = ImGui::GetIO();
-		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		ImGuiIO& IO = ImGui::GetIO();
+		if (IO.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
@@ -166,23 +164,36 @@ namespace Pika
 		{
 			if (ImGui::BeginMenu("Files"))
 			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows,
-				// which we can't undo at the moment without finer window depth/z control.
-				ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-				ImGui::MenuItem("Padding", NULL, &opt_padding);
-				ImGui::Separator();
+				//// Disabling fullscreen would allow the window to be moved to the front of other windows,
+				//// which we can't undo at the moment without finer window depth/z control.
+				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
+				//ImGui::MenuItem("Padding", NULL, &opt_padding);
+				//ImGui::Separator();
 
-				if (ImGui::MenuItem("Flag: NoDockingOverCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingOverCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingOverCentralNode; }
-				if (ImGui::MenuItem("Flag: NoDockingSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingSplit; }
-				if (ImGui::MenuItem("Flag: NoUndocking", "", (dockspace_flags & ImGuiDockNodeFlags_NoUndocking) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoUndocking; }
-				if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-				if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-				if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-				ImGui::Separator();
+				//if (ImGui::MenuItem("Flag: NoDockingOverCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingOverCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingOverCentralNode; }
+				//if (ImGui::MenuItem("Flag: NoDockingSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingSplit; }
+				//if (ImGui::MenuItem("Flag: NoUndocking", "", (dockspace_flags & ImGuiDockNodeFlags_NoUndocking) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoUndocking; }
+				//if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
+				//if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
+				//if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
+				//ImGui::Separator();
 
-				if (ImGui::MenuItem("Close", NULL, false, dockspace_open != NULL))
-					dockspace_open = false;
-				if (ImGui::MenuItem("Exit")) Application::GetInstance().close();
+				//if (ImGui::MenuItem("Close", NULL, false, dockspace_open != NULL))
+				//	dockspace_open = false;
+
+				// TODO!
+				if (ImGui::MenuItem("Open ...", "Ctrl + Shift + O")) {
+					// TODO : Use Serializer instead of SceneSceneSerializer
+					auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
+					Serializer->deserializeYAMLText("assets/scenes/test1.pika");
+				}
+				if (ImGui::MenuItem("Save as ...", "Ctrl + Shift + S")) {
+					// TODO : Use Serializer instead of SceneSceneSerializer
+					auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
+					Serializer->serializeYAMLText("assets/scenes/test1.pika");
+				}
+				if (ImGui::MenuItem("Exit"))
+					Application::GetInstance().close();
 				ImGui::EndMenu();
 			}
 
@@ -200,8 +211,10 @@ namespace Pika
 		uintptr_t ColorID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID(1));
 		ImGui::Image(reinterpret_cast<void*>(ColorID), { 384.0f, 256.0f }, { 0.0f,1.0f }, { 1.0f,0.0f });
 		ImGui::Separator();
-		ImGui::ColorEdit3("Blue quad", glm::value_ptr(m_BulueQuad.getComponent<SpriteRendererComponent>().m_Color));
 		ImGui::End();
+
+		// SceneHierarchyPanel
+		m_SceneHierarchyPanel->onImGuiRender();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");
@@ -223,8 +236,6 @@ namespace Pika
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
-
-		m_SceneHierarchyPanel->onImGuiRender();
 
 		ImGui::End();
 	}

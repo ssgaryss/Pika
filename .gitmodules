@@ -11,3 +11,6 @@
 [submodule "Pika/vendor/GLFW"]
 	path = Pika/vendor/GLFW
 	url = git@github.com:ssgaryss/glfw.git
+[submodule "Pika/vendor/yaml-cpp"]
+	path = Pika/vendor/yaml-cpp
+	url = git@github.com:ssgaryss/yaml-cpp.git

@@ -12,7 +12,7 @@ namespace Pika
 		Scene() = default;
 		~Scene() = default; // TODO : For now!
 
-		Entity createEntity(const std::string& vName = "");
+		Entity createEntity(const std::string& vName = "Untitled");
 		//void destroyEntity()
 
 		void onUpdate(Timestep vTimestep);
@@ -22,6 +22,7 @@ namespace Pika
 
 		friend class Entity;
 		friend class SceneHierarchyPanel;
+		friend class SceneSerializer;
 	};
 
 }

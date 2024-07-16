@@ -37,6 +37,9 @@
     <Filter Include="src\Pika\Scene">
       <UniqueIdentifier>{FE9B19D5-EA69-0DDB-D3FD-7D01BF6AE93F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Pika\Utils">
+      <UniqueIdentifier>{413047D5-2DFE-3ADB-1692-AB0102FF1640}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
@@ -206,6 +209,12 @@
     </ClInclude>
     <ClInclude Include="src\Pika\Scene\SceneCamera.h">
       <Filter>src\Pika\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Scene\SceneSerializer.h">
+      <Filter>src\Pika\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Utils\PlatformUtils.h">
+      <Filter>src\Pika\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\pkpch.h">
       <Filter>src</Filter>
@@ -1560,6 +1569,9 @@
       <Filter>src\Pika\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Scene\SceneCamera.cpp">
+      <Filter>src\Pika\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Scene\SceneSerializer.cpp">
       <Filter>src\Pika\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\pkpch.cpp">
