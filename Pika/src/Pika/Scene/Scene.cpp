@@ -10,6 +10,7 @@ namespace Pika
 	Entity Scene::createEntity(const std::string& vName)
 	{
 		Entity Entity{ m_Registry.create(), this };
+		// TODO : UUID
 		auto& Tag = Entity.addComponent<TagComponent>(vName);
 		Tag.m_Tag = vName.empty() ? "Entity" : vName;
 		Entity.addComponent<TransformComponent>();

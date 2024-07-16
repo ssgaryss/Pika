@@ -26,11 +26,10 @@ namespace Pika
 		Ref<Framebuffer> m_Framebuffer;
 		// Scene
 		Ref<Scene> m_ActiveScene;
-		Ref<SceneSerializer> m_SceneSerilizer;
 		Entity m_BulueQuad;
 		Entity m_RedQuad;
 		// Panels
-		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel;
+		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel; // TODO : Mutiple Scenes
 
 		Ref<Texture2D> m_TextureBackround;
 		Ref<Texture2D> m_Texture2024;

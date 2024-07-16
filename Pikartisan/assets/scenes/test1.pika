@@ -14,8 +14,8 @@ Scene:
       TagComponent:
         Tag: Blue quad
       TransformComponent:
-        Position: [0, 0, 0]
-        Rotation: [0, 0, 0]
+        Position: [0, 1.39999998, 0]
+        Rotation: [0, -0.100000001, 0.600000024]
         Scale: [1, 1, 1]
       SpriteRendererComponent:
         Color: [0.100000001, 0.100000001, 1, 1]

@@ -41,12 +41,11 @@ namespace Pika
 		m_Framebuffer = Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGB8, TextureFormat::RGB8, TextureFormat::DEPTH24STENCIL8}, false });
 		m_ActiveScene = CreateRef<Scene>();
-		m_SceneSerilizer = CreateRef<SceneSerializer>(m_ActiveScene);
-		m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
-		m_BulueQuad.addComponent<SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
+		//m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
+		//m_BulueQuad.addComponent<SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
 
-		m_RedQuad = m_ActiveScene->createEntity("Red quad");
-		m_RedQuad.addComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.1f, 0.1f, 1.0f));
+		//m_RedQuad = m_ActiveScene->createEntity("Red quad");
+		//m_RedQuad.addComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.1f, 0.1f, 1.0f));
 
 		m_TextureBackround = Texture2D::Create("assets/textures/board.png");
 		m_Texture2024 = Texture2D::Create("assets/textures/2024.png");
@@ -183,9 +182,17 @@ namespace Pika
 				//	dockspace_open = false;
 
 				// TODO!
-				if (ImGui::MenuItem("Save as ...", "Ctrl + Shift + S"))
-					m_SceneSerilizer->serializeYAMLText("assets/scenes/test.pika");
-				if (ImGui::MenuItem("Exit")) 
+				if (ImGui::MenuItem("Open ...", "Ctrl + Shift + O")) {
+					// TODO : Use Serializer instead of SceneSceneSerializer
+					auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
+					Serializer->deserializeYAMLText("assets/scenes/test1.pika");
+				}
+				if (ImGui::MenuItem("Save as ...", "Ctrl + Shift + S")) {
+					// TODO : Use Serializer instead of SceneSceneSerializer
+					auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
+					Serializer->serializeYAMLText("assets/scenes/test1.pika");
+				}
+				if (ImGui::MenuItem("Exit"))
 					Application::GetInstance().close();
 				ImGui::EndMenu();
 			}
