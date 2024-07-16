@@ -9,7 +9,7 @@ namespace Pika
 	public:
 		SceneHierarchyPanel() = default;
 		SceneHierarchyPanel(const Ref<Scene>& vContext);
-		inline void setContext(const Ref<Scene>& vContext) { m_Context = vContext; }
+		inline void setContext(const Ref<Scene>& vContext) { m_Context = vContext; m_SelectedEntity = {}; }
 		void onImGuiRender();
 	private:
 		void drawEntityNode(Entity vEntity);        // draw entity node in scene hierarchy panel

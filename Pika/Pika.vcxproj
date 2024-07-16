@@ -638,6 +638,7 @@
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLTextureFormat.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsInput.cpp" />
+    <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.cpp" />
     <ClCompile Include="src\Pika\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Pika\Renderer\Camera2D.cpp" />
