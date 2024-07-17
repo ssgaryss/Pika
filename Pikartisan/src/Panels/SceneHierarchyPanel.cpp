@@ -1,6 +1,7 @@
 #include "SceneHierarchyPanel.h"
 #include <format>
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Pika {
@@ -110,6 +111,64 @@ namespace Pika {
 		}
 	}
 
+	static void drawVec3Control(const std::string& vLabel, glm::vec3& vValue,
+		float vResetValue = 0.0f, float vColWidth = 100.0f) {
+		ImGuiIO& IO = ImGui::GetIO();
+		auto BoldFont = IO.Fonts->Fonts[0]; // TODO : Use a fonts library
+
+		ImGui::PushID(vLabel.c_str());
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, vColWidth);
+		ImGui::Text(vLabel.c_str());
+		ImGui::NextColumn();
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth()); // push 3个ItemWidth
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 }); // 不要padding
+		float LineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+		ImVec2 ButtonSize = { LineHeight + 3.0f, LineHeight };
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+		ImGui::PushFont(BoldFont);
+		if (ImGui::Button("X", ButtonSize))
+			vValue.x = vResetValue;
+		ImGui::PopFont();
+		ImGui::PopStyleColor(3);
+		ImGui::SameLine();
+		ImGui::DragFloat("##X", &vValue.x, 0.1f);
+		ImGui::PopItemWidth(); // pop 第一个
+
+		ImGui::SameLine();
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+		ImGui::PushFont(BoldFont);
+		if (ImGui::Button("Y", ButtonSize))
+			vValue.y = vResetValue;
+		ImGui::PopFont();
+		ImGui::PopStyleColor(3);
+		ImGui::SameLine();
+		ImGui::DragFloat("##Y", &vValue.y, 0.1f);
+		ImGui::PopItemWidth(); // pop 第二个
+
+		ImGui::SameLine();
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+		ImGui::PushFont(BoldFont);
+		if (ImGui::Button("Z", ButtonSize))
+			vValue.z = vResetValue;
+		ImGui::PopFont();
+		ImGui::PopStyleColor(3);
+		ImGui::SameLine();
+		ImGui::DragFloat("##Z", &vValue.z, 0.1f);
+		ImGui::PopItemWidth(); // pop 第三个
+		ImGui::PopStyleVar();
+
+		ImGui::Columns(1); // 设置回默认的单列
+		ImGui::PopID();
+	}
+
 	void SceneHierarchyPanel::drawEntityComponents(Entity vEntity)
 	{
 		// TODO !
@@ -124,9 +183,9 @@ namespace Pika {
 			});
 
 		drawEntityComponent<TransformComponent>("Transform", vEntity, [](auto& vTransformComponent) {
-			ImGui::DragFloat3("##Position", glm::value_ptr(vTransformComponent.m_Position), 0.1f);
-			ImGui::DragFloat3("##Rotation", glm::value_ptr(vTransformComponent.m_Rotation), 0.1f);
-			ImGui::DragFloat3("##Scale", glm::value_ptr(vTransformComponent.m_Scale), 0.1f);
+			drawVec3Control("Transform", vTransformComponent.m_Position);
+			drawVec3Control("Rotation", vTransformComponent.m_Rotation);
+			drawVec3Control("Scale", vTransformComponent.m_Scale, 1.0f);
 			});
 
 		drawEntityComponent<SpriteRendererComponent>("Sprite Renderer", vEntity, [](auto& vSpriteRendererComponent) {

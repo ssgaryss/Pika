@@ -32,6 +32,7 @@ namespace Pika {
 		IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 		// font
+		IO.FontDefault = IO.Fonts->AddFontFromFileTTF("assets/fonts/Open_Sans/static/OpenSans_Condensed-Bold.ttf", 18.0f);
 		IO.FontDefault = IO.Fonts->AddFontFromFileTTF("assets/fonts/Open_Sans/static/OpenSans-Regular.ttf", 18.0f);
 
 		//UI Theme

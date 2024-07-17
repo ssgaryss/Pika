@@ -1,6 +1,7 @@
 #include "EditorLayer.h"
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
+#include "Pika/Utils/PlatformUtils.h"
 
 namespace Pika
 {
@@ -41,6 +42,7 @@ namespace Pika
 		m_Framebuffer = Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGB8, TextureFormat::RGB8, TextureFormat::DEPTH24STENCIL8}, false });
 		m_ActiveScene = CreateRef<Scene>();
+		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>(m_ActiveScene);
 		//m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
 		//m_BulueQuad.addComponent<SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
 
@@ -54,9 +56,6 @@ namespace Pika
 		m_TextureTree = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
 		m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
 		m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
-
-		// Panels
-		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>(m_ActiveScene);
 	}
 
 	void EditorLayer::onDetach()
@@ -184,13 +183,21 @@ namespace Pika
 				// TODO!
 				if (ImGui::MenuItem("Open ...", "Ctrl + Shift + O")) {
 					// TODO : Use Serializer instead of SceneSceneSerializer
-					auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
-					Serializer->deserializeYAMLText("assets/scenes/test1.pika");
+					std::string Path = FileDialogs::OpenFile("Pika Scene\0*.pika\0");
+					if (!Path.empty()) {
+						m_ActiveScene = CreateRef<Scene>();
+						m_SceneHierarchyPanel->setContext(m_ActiveScene);
+						auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
+						Serializer->deserializeYAMLText(Path);
+					}
 				}
 				if (ImGui::MenuItem("Save as ...", "Ctrl + Shift + S")) {
 					// TODO : Use Serializer instead of SceneSceneSerializer
-					auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
-					Serializer->serializeYAMLText("assets/scenes/test1.pika");
+					std::string Path = FileDialogs::SaveFile("Pika Scene\0*.pika\0");
+					if (!Path.empty()) {
+						auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
+						Serializer->serializeYAMLText(Path);
+					}
 				}
 				if (ImGui::MenuItem("Exit"))
 					Application::GetInstance().close();

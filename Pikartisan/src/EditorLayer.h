@@ -24,11 +24,10 @@ namespace Pika
 		Camera2DController m_CameraController;
 		Ref<ShaderLibrary> m_ShaderLibrary;
 		Ref<Framebuffer> m_Framebuffer;
-		// Scene
+		// Scenes and SceneHierarchyPanel
 		Ref<Scene> m_ActiveScene;
-		Entity m_BulueQuad;
-		Entity m_RedQuad;
-		// Panels
+		std::vector<Ref<Scene>> m_Scenes; // TODO : Not use it yet(only one FBO for now)
+		// Panel
 		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel; // TODO : Mutiple Scenes
 
 		Ref<Texture2D> m_TextureBackround;
