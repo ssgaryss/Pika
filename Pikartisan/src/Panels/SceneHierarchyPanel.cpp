@@ -183,7 +183,7 @@ namespace Pika {
 			});
 
 		drawEntityComponent<TransformComponent>("Transform", vEntity, [](auto& vTransformComponent) {
-			drawVec3Control("Transform", vTransformComponent.m_Position);
+			drawVec3Control("Translation", vTransformComponent.m_Position);
 			drawVec3Control("Rotation", vTransformComponent.m_Rotation);
 			drawVec3Control("Scale", vTransformComponent.m_Scale, 1.0f);
 			});

@@ -18,6 +18,7 @@ group "Dependencies"
 	include "Pika/vendor/glad"
 	include "Pika/vendor/imgui"
 	include "Pika/vendor/yaml-cpp"
+	include "Pika/vendor/ImGuizmo"
 group ""
 
 group "Core"

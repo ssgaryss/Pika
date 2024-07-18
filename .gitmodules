@@ -14,3 +14,6 @@
 [submodule "Pika/vendor/yaml-cpp"]
 	path = Pika/vendor/yaml-cpp
 	url = git@github.com:ssgaryss/yaml-cpp.git
+[submodule "Pika/vendor/ImGuizmo"]
+	path = Pika/vendor/ImGuizmo
+	url = git@github.com:ssgaryss/ImGuizmo.git

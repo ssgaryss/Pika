@@ -1,5 +1,6 @@
 #include "EditorLayer.h"
 #include <imgui/imgui.h>
+#include <ImGuizmo/ImGuizmo.h>
 #include <glm/gtc/type_ptr.hpp>
 #include "Pika/Utils/PlatformUtils.h"
 
@@ -218,7 +219,7 @@ namespace Pika
 		uintptr_t ColorID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID(1));
 		ImGui::Image(reinterpret_cast<void*>(ColorID), { 384.0f, 256.0f }, { 0.0f,1.0f }, { 1.0f,0.0f });
 		ImGui::Separator();
-		ImGui::End();
+		ImGui::End(); // Renderer statistics
 
 		// SceneHierarchyPanel
 		m_SceneHierarchyPanel->onImGuiRender();
@@ -226,25 +227,45 @@ namespace Pika
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");
 		{
+			// Viewport鼠标事件的block条件
 			m_IsViewportFocus = ImGui::IsWindowFocused();
 			m_IsViewportHovered = ImGui::IsWindowHovered();
 			Application::GetInstance().getImGuiLayer()->setBlockEvents(!m_IsViewportFocus || !m_IsViewportHovered);
 		}
 		{
+			// ViewportSize 
 			static glm::vec2 ViewportSize;
 			ImVec2 ViewportPanelSize = ImGui::GetContentRegionAvail();
-			if (ViewportPanelSize.x != ViewportPanelSize.x || ViewportPanelSize.y != ViewportPanelSize.y) {
-				m_Framebuffer->resize((uint32_t)ViewportPanelSize.x, (uint32_t)ViewportPanelSize.y);
+			if (ViewportSize.x != ViewportPanelSize.x || ViewportSize.y != ViewportPanelSize.y) {
+				//m_Framebuffer->resize((uint32_t)ViewportPanelSize.x, (uint32_t)ViewportPanelSize.y);
 				ViewportSize = { ViewportPanelSize.x, ViewportPanelSize.y };
 			}
-			m_CameraController.onResize(ViewportPanelSize.x, ViewportPanelSize.y);
+			m_CameraController.onResize(ViewportSize.x, ViewportSize.y);
 			uintptr_t TextureID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID());
-			ImGui::Image(reinterpret_cast<void*>(TextureID), { ViewportPanelSize.x, ViewportPanelSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
+			ImGui::Image(reinterpret_cast<void*>(TextureID), { ViewportSize.x, ViewportSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
 		}
-		ImGui::End();
+
+		// Gizmos
+		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
+		if (SelectedEntity) {
+			ImGuizmo::SetOrthographic(true);
+			ImGuizmo::SetDrawlist();
+
+			float WindowWidth = ImGui::GetWindowWidth();
+			float WindowHeight = ImGui::GetWindowHeight();
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, WindowWidth, WindowHeight); // ImGuizmo的绘制区域
+			
+			auto& Transform = SelectedEntity.getComponent<TransformComponent>();
+			m_Transform = glm::translate(glm::mat4(1.0f), Transform.m_Position);
+			ImGuizmo::Manipulate(glm::value_ptr(m_CameraController.getCamera().getViewMatrix()),
+				glm::value_ptr(m_CameraController.getCamera().getProjectionMatrix()),
+				ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(m_Transform));
+		}
+
+		ImGui::End(); // Viewport
 		ImGui::PopStyleVar();
 
-		ImGui::End();
+		ImGui::End(); // DockSpace Demo
 	}
 
 	void EditorLayer::onEvent(Event& vEvent)

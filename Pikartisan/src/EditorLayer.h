@@ -30,14 +30,16 @@ namespace Pika
 		// Panel
 		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel; // TODO : Mutiple Scenes
 
+		// TODO : remove these!
 		Ref<Texture2D> m_TextureBackround;
 		Ref<Texture2D> m_Texture2024;
 		Ref<Texture2D> m_TextureRPGpack_sheet_2X;
 		Ref<SubTexture2D> m_TextureTree;
 		Ref<SubTexture2D> m_TextureWater, m_TextureGround;
 
+		// TODO : Delete!
 		float Rotation = 0.0f; //for now
-
+		glm::mat4 m_Transform = glm::mat4(1.0f);
 	};
 
 }

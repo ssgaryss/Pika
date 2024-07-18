@@ -1520,6 +1520,9 @@
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsInput.cpp">
       <Filter>src\Pika\Platform\Windows\GLFWwindow</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsPlatformUtils.cpp">
+      <Filter>src\Pika\Platform\Windows\GLFWwindow</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.cpp">
       <Filter>src\Pika\Platform\Windows\GLFWwindow</Filter>
     </ClCompile>
@@ -1580,6 +1583,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsPlatformUtils.cpp" />
   </ItemGroup>
 </Project>
