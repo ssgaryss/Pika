@@ -16,9 +16,13 @@ namespace Pika
 		void onImGuiRender() override;
 		void onEvent(Event& vEvent) override;
 	private:
+		bool OnKeyPressed(KeyPressedEvent& vEvent);
+	private:
 		// Viewport
 		bool m_IsViewportFocus = false;
 		bool m_IsViewportHovered = false;
+		// Gizmo
+		uint32_t m_GizmoType = 0;
 	private:
 		// Renderer
 		Camera2DController m_CameraController;
@@ -39,7 +43,6 @@ namespace Pika
 
 		// TODO : Delete!
 		float Rotation = 0.0f; //for now
-		glm::mat4 m_Transform = glm::mat4(1.0f);
 	};
 
 }

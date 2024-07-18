@@ -5,7 +5,8 @@ namespace Pika {
 
 	namespace Mouse {
 
-		enum class MouseCode : uint16_t {
+		enum class MouseCode : uint16_t 
+		{
 			// From glfw3.h
 			Button0 = 0,
 			Button1 = 1,

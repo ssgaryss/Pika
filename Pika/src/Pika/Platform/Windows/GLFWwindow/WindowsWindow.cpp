@@ -3,10 +3,19 @@
 #include "Pika/Events/ApplicationEvent.h"
 #include "Pika/Events/KeyboardEvent.h"
 #include "Pika/Events/MouseEvent.h"
-
+#include "Pika/Core/KeyCodes.h"
+#include "Pika/Core/MouseCodes.h"
 #include <glad/glad.h>
 
 namespace Pika {
+
+	static Key::KeyCode GLFWToPikaKeyCode(int vKeyCode) {
+		return static_cast<Key::KeyCode>(vKeyCode);	   // KeyCode就是GLFW版本
+	}
+
+	static Mouse::MouseCode GLFWToPikaMouseCode(int vButton) {
+		return static_cast<Mouse::MouseCode>(vButton); // MouseCode就是GLFW版本
+	}
 
 	Window* Window::Create(const WindowProps& vWindowProps) {
 		return new WindowsWindow(vWindowProps);
@@ -108,19 +117,19 @@ namespace Pika {
 					{
 					case GLFW_PRESS:
 					{
-						KeyPressedEvent Event(key, 0);
+						KeyPressedEvent Event(GLFWToPikaKeyCode(key), 0);
 						Data.eventCallBack(Event);
 						break;
 					}
 					case GLFW_RELEASE:
 					{
-						KeyReleasedEvent Event(key);
+						KeyReleasedEvent Event(GLFWToPikaKeyCode(key));
 						Data.eventCallBack(Event);
 						break;
 					}
 					case GLFW_REPEAT:
 					{
-						KeyPressedEvent Event(key, 1);
+						KeyPressedEvent Event(GLFWToPikaKeyCode(key), 1);
 						Data.eventCallBack(Event);
 						break;
 					}
@@ -130,7 +139,7 @@ namespace Pika {
 			glfwSetCharCallback(m_pWindow, [](GLFWwindow* window, unsigned int codepoint)
 				{
 					WindowData& Data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
-					KeyTypedEvent Event(codepoint); //codepoint is keycode
+					KeyTypedEvent Event(GLFWToPikaKeyCode(codepoint)); //codepoint is keycode
 					Data.eventCallBack(Event);
 				});
 
@@ -141,13 +150,13 @@ namespace Pika {
 					{
 					case GLFW_PRESS:
 					{
-						MouseButtonPressedEvent Event(button);
+						MouseButtonPressedEvent Event(GLFWToPikaMouseCode(button));
 						Data.eventCallBack(Event);
 						break;
 					}
 					case GLFW_RELEASE:
 					{
-						MouseButtonRleasedEvent Event(button);
+						MouseButtonRleasedEvent Event(GLFWToPikaMouseCode(button));
 						Data.eventCallBack(Event);
 						break;
 					}

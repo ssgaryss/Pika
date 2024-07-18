@@ -1,6 +1,6 @@
 #pragma once
-
 #include "Event.h"
+#include "Pika/Core/MouseCodes.h"
 #include <sstream>
 
 namespace Pika {
@@ -8,22 +8,22 @@ namespace Pika {
 	class MouseButtonEvent : public Event
 	{
 	public:
-		inline int getMouseButton() const { return m_Button; }
+		inline Mouse::MouseCode getMouseButton() const { return m_Button; }
 		EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryMouse | EventCategoryMouseButton);
 	protected:
-		MouseButtonEvent(int vButton) :
+		MouseButtonEvent(const Mouse::MouseCode vButton) :
 			m_Button{ vButton } {}
-		int m_Button;
+		Mouse::MouseCode m_Button;
 	};
 
 	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonPressedEvent(int vButton) :
+		MouseButtonPressedEvent(const Mouse::MouseCode vButton) :
 			MouseButtonEvent{ vButton } {}
 		inline std::string toString() const override {
 			std::stringstream ss;
-			ss << "MouseButtonPressedEvent: " << m_Button;
+			ss << "MouseButtonPressedEvent: " << static_cast<uint16_t>(m_Button);
 			return ss.str();
 		}
 		EVENT_CLASS_TYPE(MouseButtonPressed);
@@ -32,11 +32,11 @@ namespace Pika {
 	class MouseButtonRleasedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonRleasedEvent(int vButton) :
+		MouseButtonRleasedEvent(const Mouse::MouseCode vButton) :
 			MouseButtonEvent{ vButton } {}
 		inline std::string toString() const override {
 			std::stringstream ss;
-			ss << "MouseButtonRleasedEvent: " << m_Button;
+			ss << "MouseButtonRleasedEvent: " << static_cast<uint16_t>(m_Button);
 			return ss.str();
 		}
 		EVENT_CLASS_TYPE(MouseButtonRleased);

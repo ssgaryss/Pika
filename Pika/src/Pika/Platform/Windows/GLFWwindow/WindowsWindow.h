@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Pika/Core/Window.h"
 #include "Pika/Renderer/GraphicsContext.h"
 #include <GLFW/glfw3.h>

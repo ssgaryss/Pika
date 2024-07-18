@@ -15,6 +15,7 @@ namespace Pika {
 		CHAR currentDir[256] = { 0 };  // 定义一个字符数组 currentDir，用于存储当前目录
 		ZeroMemory(&ofn, sizeof(OPENFILENAME)); // 将 OPENFILENAME 结构体的内存清零
 		ofn.lStructSize = sizeof(OPENFILENAME);  // 设置 OPENFILENAME 结构体的大小
+		// glfwGetWin32Window()获得GLFW内置底层的Win32窗口
 		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::GetInstance().getWindow().getNativeWindow());  // 设置文件对话框的所有者窗口句柄
 		ofn.lpstrFile = szFile;  // 设置用于存储文件路径的缓冲区
 		ofn.nMaxFile = sizeof(szFile); // 设置缓冲区大小

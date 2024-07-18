@@ -1,8 +1,11 @@
 #include "EditorLayer.h"
 #include <imgui/imgui.h>
 #include <ImGuizmo/ImGuizmo.h>
-#include <glm/gtc/type_ptr.hpp>
 #include "Pika/Utils/PlatformUtils.h"
+#include <glm/gtc/type_ptr.hpp>
+#define GLM_ENABLE_EXPERIMENTAL // 允许如glm::decomposed等函数使用
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 namespace Pika
 {
@@ -246,20 +249,40 @@ namespace Pika
 		}
 
 		// Gizmos
-		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
-		if (SelectedEntity) {
-			ImGuizmo::SetOrthographic(true);
-			ImGuizmo::SetDrawlist();
+		{
+			Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
+			if (SelectedEntity) {
+				ImGuizmo::SetOrthographic(true);
+				ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
 
-			float WindowWidth = ImGui::GetWindowWidth();
-			float WindowHeight = ImGui::GetWindowHeight();
-			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, WindowWidth, WindowHeight); // ImGuizmo的绘制区域
-			
-			auto& Transform = SelectedEntity.getComponent<TransformComponent>();
-			m_Transform = glm::translate(glm::mat4(1.0f), Transform.m_Position);
-			ImGuizmo::Manipulate(glm::value_ptr(m_CameraController.getCamera().getViewMatrix()),
-				glm::value_ptr(m_CameraController.getCamera().getProjectionMatrix()),
-				ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(m_Transform));
+				float WindowWidth = ImGui::GetWindowWidth();
+				float WindowHeight = ImGui::GetWindowHeight();
+				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, WindowWidth, WindowHeight); // ImGuizmo的绘制区域
+
+				auto& Transform = SelectedEntity.getComponent<TransformComponent>();
+				glm::mat4 TransformMatrix = glm::translate(glm::mat4(1.0f), Transform.m_Position) *
+					glm::rotate(glm::mat4(1.0f), Transform.m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)) *
+					glm::scale(glm::mat4(1.0f), Transform.m_Scale);
+				glm::vec3 Scale = Transform.m_Scale;
+				glm::quat Orientation = glm::quat(Transform.m_Rotation);
+				glm::vec3 Translation = Transform.m_Position;
+				glm::vec3 Skew; // 切变
+				glm::vec4 Perspective; // 投影变换
+				if (m_GizmoType) {
+					ImGuizmo::Manipulate(glm::value_ptr(m_CameraController.getCamera().getViewMatrix()),
+						glm::value_ptr(m_CameraController.getCamera().getProjectionMatrix()),
+						static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::LOCAL, glm::value_ptr(TransformMatrix));
+				}
+
+				if (ImGuizmo::IsUsing()) {
+					// TODO : Math decompose function
+					bool Success = glm::decompose(TransformMatrix, Scale, Orientation, Translation, Skew, Perspective);
+					PK_ASSERT(Success, "Fail to decompose TransformMatrix!");
+					Transform.m_Position = Translation;
+					Transform.m_Rotation = glm::eulerAngles(Orientation);
+					Transform.m_Scale = Scale;
+				}
+			}
 		}
 
 		ImGui::End(); // Viewport
@@ -272,6 +295,42 @@ namespace Pika
 	{
 		PK_PROFILE_FUNCTION();
 		m_CameraController.onEvent(vEvent);
+		EventDispatcher Dispatcher(vEvent);
+		Dispatcher.dispatch<KeyPressedEvent>(std::bind(&EditorLayer::OnKeyPressed, this, std::placeholders::_1));
+	}
+
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent& vEvent)
+	{
+		switch (vEvent.getKeyCode())
+		{
+		case Key::KeyCode::D1:
+		{
+			if (!ImGuizmo::IsUsing())
+				m_GizmoType = 0;
+			break;
+		}
+		case Key::KeyCode::D2:
+		{
+			if (!ImGuizmo::IsUsing())
+				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+			break;
+		}
+		case Key::KeyCode::D3:
+		{
+			if (!ImGuizmo::IsUsing())
+				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+			break;
+		}
+		case Key::KeyCode::D4:
+		{
+			if (!ImGuizmo::IsUsing())
+				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			break;
+		}
+		default:
+			break;
+		}
+		return false;
 	}
 
 }
