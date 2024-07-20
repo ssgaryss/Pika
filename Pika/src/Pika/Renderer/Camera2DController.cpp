@@ -65,7 +65,7 @@ namespace Pika {
 
 	bool Camera2DController::onMouseScrolledEvent(MouseScrolledEvent& vEvent)
 	{
-		float Zoom = vEvent.getYOffet() / 10;
+		float Zoom = vEvent.getYOffet() * 0.25f;
 		m_ZoomLevel = std::clamp(m_ZoomLevel - Zoom, 0.1f, std::numeric_limits<float>::max());
 		m_Bounds.setBounds(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		m_Camera.setProjectionMatrix(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);

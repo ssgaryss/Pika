@@ -229,59 +229,62 @@ namespace Pika
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");
-		{
-			// Viewport鼠标事件的block条件
-			m_IsViewportFocus = ImGui::IsWindowFocused();
-			m_IsViewportHovered = ImGui::IsWindowHovered();
-			Application::GetInstance().getImGuiLayer()->setBlockEvents(!m_IsViewportFocus || !m_IsViewportHovered);
-		}
-		{
-			// ViewportSize 
-			static glm::vec2 ViewportSize;
-			ImVec2 ViewportPanelSize = ImGui::GetContentRegionAvail();
-			if (ViewportSize.x != ViewportPanelSize.x || ViewportSize.y != ViewportPanelSize.y) {
-				//m_Framebuffer->resize((uint32_t)ViewportPanelSize.x, (uint32_t)ViewportPanelSize.y);
-				ViewportSize = { ViewportPanelSize.x, ViewportPanelSize.y };
-			}
-			m_CameraController.onResize(ViewportSize.x, ViewportSize.y);
-			uintptr_t TextureID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID());
-			ImGui::Image(reinterpret_cast<void*>(TextureID), { ViewportSize.x, ViewportSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
-		}
+		// Viewport鼠标事件的block条件
+		m_IsViewportFocus = ImGui::IsWindowFocused();
+		m_IsViewportHovered = ImGui::IsWindowHovered();
+		Application::GetInstance().getImGuiLayer()->setBlockEvents(!m_IsViewportFocus || !m_IsViewportHovered);
+		// m_ViewportBounds
+		auto WindowContentMinPoint = ImGui::GetWindowContentRegionMin();  // ImGui相对坐标系（file左下角才是Content开始点）
+		auto WindowContentMaxPoint = ImGui::GetWindowContentRegionMax();  // ImGui相对坐标系
+		auto ViewportOffset = ImGui::GetWindowPos(); // 屏幕绝对坐标
+		m_ViewportBounds[0] = { WindowContentMinPoint.x + ViewportOffset.x, WindowContentMinPoint.y + ViewportOffset.y }; // 绝对坐标加Content的相对坐标 = Content的屏幕绝对坐标
+		m_ViewportBounds[1] = { WindowContentMaxPoint.x + ViewportOffset.x, WindowContentMaxPoint.y + ViewportOffset.y }; // 绝对坐标加Content的相对坐标 = Content的屏幕绝对坐标
+
+		// m_ViewportSize 
+		ImVec2 ViewportPanelSize = ImGui::GetContentRegionAvail();
+		if (m_ViewportSize.x != ViewportPanelSize.x || m_ViewportSize.y != ViewportPanelSize.y)
+			m_ViewportSize = { ViewportPanelSize.x, ViewportPanelSize.y };
+		m_CameraController.onResize(m_ViewportSize.x, m_ViewportSize.y);
+		// TODO!
+		uintptr_t TextureID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID());
+		ImGui::Image(reinterpret_cast<void*>(TextureID), { m_ViewportSize.x, m_ViewportSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
 
 		// Gizmos
-		{
-			Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
-			if (SelectedEntity) {
-				ImGuizmo::SetOrthographic(true);
-				ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
+		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
+		if (SelectedEntity) {
+			ImGuizmo::SetOrthographic(true);
+			ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
 
-				float WindowWidth = ImGui::GetWindowWidth();
-				float WindowHeight = ImGui::GetWindowHeight();
-				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, WindowWidth, WindowHeight); // ImGuizmo的绘制区域
+			//float WindowWidth = ImGui::GetWindowWidth();
+			//float WindowHeight = ImGui::GetWindowHeight();
+			//PK_CORE_ERROR("Window : width {}, height {}", WindowWidth, WindowHeight);
+			//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, WindowWidth, WindowHeight); // ImGuizmo的绘制区域
+			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, 
+				m_ViewportBounds[1].x - m_ViewportBounds[0].x,
+				m_ViewportBounds[1].y - m_ViewportBounds[0].y); // ImGuizmo的绘制区域
 
-				auto& Transform = SelectedEntity.getComponent<TransformComponent>();
-				glm::mat4 TransformMatrix = glm::translate(glm::mat4(1.0f), Transform.m_Position) *
-					glm::rotate(glm::mat4(1.0f), Transform.m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)) *
-					glm::scale(glm::mat4(1.0f), Transform.m_Scale);
-				glm::vec3 Scale = Transform.m_Scale;
-				glm::quat Orientation = glm::quat(Transform.m_Rotation);
-				glm::vec3 Translation = Transform.m_Position;
-				glm::vec3 Skew; // 切变
-				glm::vec4 Perspective; // 投影变换
-				if (m_GizmoType) {
-					ImGuizmo::Manipulate(glm::value_ptr(m_CameraController.getCamera().getViewMatrix()),
-						glm::value_ptr(m_CameraController.getCamera().getProjectionMatrix()),
-						static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::LOCAL, glm::value_ptr(TransformMatrix));
-				}
+			auto& Transform = SelectedEntity.getComponent<TransformComponent>();
+			glm::mat4 TransformMatrix = glm::translate(glm::mat4(1.0f), Transform.m_Position) *
+				glm::rotate(glm::mat4(1.0f), Transform.m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)) *
+				glm::scale(glm::mat4(1.0f), Transform.m_Scale);
+			glm::vec3 Scale = Transform.m_Scale;
+			glm::quat Orientation = glm::quat(Transform.m_Rotation);
+			glm::vec3 Translation = Transform.m_Position;
+			glm::vec3 Skew; // 切变
+			glm::vec4 Perspective; // 投影变换
+			if (m_GizmoType) {
+				ImGuizmo::Manipulate(glm::value_ptr(m_CameraController.getCamera().getViewMatrix()),
+					glm::value_ptr(m_CameraController.getCamera().getProjectionMatrix()),
+					static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::LOCAL, glm::value_ptr(TransformMatrix));
+			}
 
-				if (ImGuizmo::IsUsing()) {
-					// TODO : Math decompose function
-					bool Success = glm::decompose(TransformMatrix, Scale, Orientation, Translation, Skew, Perspective);
-					PK_ASSERT(Success, "Fail to decompose TransformMatrix!");
-					Transform.m_Position = Translation;
-					Transform.m_Rotation = glm::eulerAngles(Orientation);
-					Transform.m_Scale = Scale;
-				}
+			if (ImGuizmo::IsUsing()) {
+				// TODO : Math decompose function
+				bool Success = glm::decompose(TransformMatrix, Scale, Orientation, Translation, Skew, Perspective);
+				PK_ASSERT(Success, "Fail to decompose TransformMatrix!");
+				Transform.m_Position = Translation;
+				Transform.m_Rotation = glm::eulerAngles(Orientation);
+				Transform.m_Scale = Scale;
 			}
 		}
 

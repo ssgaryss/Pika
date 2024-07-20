@@ -19,6 +19,9 @@
     <Filter Include="src\Pika\ImGui">
       <UniqueIdentifier>{0BA469D4-F771-5DDA-E005-CE00CC72393F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Pika\Math">
+      <UniqueIdentifier>{9ABB1492-067C-90C8-CFB6-D9453B36D5A4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Pika\Platform">
       <UniqueIdentifier>{950B24A7-0122-223D-4A99-AD5EB6EEF2C4}</UniqueIdentifier>
     </Filter>
@@ -125,6 +128,9 @@
     </ClInclude>
     <ClInclude Include="src\Pika\ImGui\ImGuiLayer.h">
       <Filter>src\Pika\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Math\Math.h">
+      <Filter>src\Pika\Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>src\Pika\Platform\OpenGL</Filter>
@@ -1470,7 +1476,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Math\Math.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1493,6 +1498,9 @@
     </ClCompile>
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp">
       <Filter>src\Pika\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Math\Math.cpp">
+      <Filter>src\Pika\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Pika\Platform\OpenGL</Filter>
@@ -1584,6 +1592,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Math\Math.cpp" />
   </ItemGroup>
 </Project>

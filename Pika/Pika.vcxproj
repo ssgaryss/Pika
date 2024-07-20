@@ -152,7 +152,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Pika\Math\Math.h" />
     <ClInclude Include="src\Pika.h" />
     <ClInclude Include="src\Pika\Core\Application.h" />
     <ClInclude Include="src\Pika\Core\Base.h" />
@@ -173,6 +172,7 @@
     <ClInclude Include="src\Pika\Events\KeyboardEvent.h" />
     <ClInclude Include="src\Pika\Events\MouseEvent.h" />
     <ClInclude Include="src\Pika\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Pika\Math\Math.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLFramebuffer.h" />
@@ -623,7 +623,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Pika\Math\Math.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
@@ -631,6 +630,7 @@
     <ClCompile Include="src\Pika\Core\Random.cpp" />
     <ClCompile Include="src\Pika\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Pika\Math\Math.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLFramebuffer.cpp" />

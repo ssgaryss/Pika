@@ -21,6 +21,8 @@ namespace Pika
 		// Viewport
 		bool m_IsViewportFocus = false;
 		bool m_IsViewportHovered = false;
+		glm::vec2 m_ViewportSize = { 0.0f, 0.0f }; // Viewport可用区域长宽
+		glm::vec2 m_ViewportBounds[2]; // Viewport可用区域的左上与右下点
 		// Gizmo
 		uint32_t m_GizmoType = 0;
 	private:
