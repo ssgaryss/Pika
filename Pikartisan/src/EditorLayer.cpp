@@ -241,6 +241,7 @@ namespace Pika
 		m_ViewportBounds[1] = { WindowContentMaxPoint.x + ViewportOffset.x, WindowContentMaxPoint.y + ViewportOffset.y }; // 绝对坐标加Content的相对坐标 = Content的屏幕绝对坐标
 
 		// m_ViewportSize 
+		ImGui::SetCursorPos(ImVec2{ 0, 0 });
 		ImVec2 ViewportPanelSize = ImGui::GetContentRegionAvail();
 		if (m_ViewportSize.x != ViewportPanelSize.x || m_ViewportSize.y != ViewportPanelSize.y)
 			m_ViewportSize = { ViewportPanelSize.x, ViewportPanelSize.y };
@@ -259,7 +260,7 @@ namespace Pika
 			//float WindowHeight = ImGui::GetWindowHeight();
 			//PK_CORE_ERROR("Window : width {}, height {}", WindowWidth, WindowHeight);
 			//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, WindowWidth, WindowHeight); // ImGuizmo的绘制区域
-			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, 
+			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
 				m_ViewportBounds[1].x - m_ViewportBounds[0].x,
 				m_ViewportBounds[1].y - m_ViewportBounds[0].y); // ImGuizmo的绘制区域
 
@@ -281,10 +282,12 @@ namespace Pika
 			if (ImGuizmo::IsUsing()) {
 				// TODO : Math decompose function
 				bool Success = glm::decompose(TransformMatrix, Scale, Orientation, Translation, Skew, Perspective);
-				PK_ASSERT(Success, "Fail to decompose TransformMatrix!");
-				Transform.m_Position = Translation;
-				Transform.m_Rotation = glm::eulerAngles(Orientation);
-				Transform.m_Scale = Scale;
+				//PK_ASSERT(Success, "Fail to decompose TransformMatrix!");
+				if (Success) {
+					Transform.m_Position = Translation;
+					Transform.m_Rotation = glm::eulerAngles(Orientation);
+					Transform.m_Scale = Scale;
+				}
 			}
 		}
 

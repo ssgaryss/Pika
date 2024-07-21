@@ -32,7 +32,7 @@ namespace Pika {
 		EventDispatcher Dispatcher(vEvent);
 		Dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::onWindowCloseEvent, this, std::placeholders::_1));
 		Dispatcher.dispatch<WindowResizeEvent>(std::bind(&Application::onWindowResizeEvent, this, std::placeholders::_1));
-		Dispatcher.dispatch<MouseMovedEvent>(std::bind(&Application::onMouseMovedEvent, this, std::placeholders::_1));
+		//Dispatcher.dispatch<MouseMovedEvent>(std::bind(&Application::onMouseMovedEvent, this, std::placeholders::_1));
 		//PK_CORE_TRACE(vEvent.toString()); //trace all events
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it) {
