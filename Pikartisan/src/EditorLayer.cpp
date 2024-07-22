@@ -44,7 +44,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		Renderer2D::Init();
 		m_Framebuffer = Framebuffer::Create({ 1920, 1080, 1,
-			{TextureFormat::RGB8, TextureFormat::RGB8, TextureFormat::DEPTH24STENCIL8}, false });
+			{TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::DEPTH24STENCIL8}, false });
 		m_ActiveScene = CreateRef<Scene>();
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>(m_ActiveScene);
 		//m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
@@ -233,9 +233,14 @@ namespace Pika
 		m_IsViewportFocus = ImGui::IsWindowFocused();
 		m_IsViewportHovered = ImGui::IsWindowHovered();
 		Application::GetInstance().getImGuiLayer()->setBlockEvents(!m_IsViewportFocus || !m_IsViewportHovered);
+
+		auto MousePos = ImGui::GetMousePos(); // 屏幕绝对坐标
+		int MouseX = static_cast<int>(MousePos.x);
+		int MouseY = static_cast<int>(MousePos.y);
+		PK_CORE_INFO("Mouse Position : {}, {}", MouseX, MouseY);
 		// m_ViewportBounds
-		auto WindowContentMinPoint = ImGui::GetWindowContentRegionMin();  // ImGui相对坐标系（file左下角才是Content开始点）
-		auto WindowContentMaxPoint = ImGui::GetWindowContentRegionMax();  // ImGui相对坐标系
+		auto WindowContentMinPoint = ImGui::GetWindowContentRegionMin();  // ImGui相对坐标系（Viewport标志左下角才是Content开始点, 若隐藏则是（0， 0））
+		auto WindowContentMaxPoint = ImGui::GetWindowContentRegionMax();  // ImGui相对坐标系（Viewport右下角的相对坐标系）
 		auto ViewportOffset = ImGui::GetWindowPos(); // 屏幕绝对坐标
 		m_ViewportBounds[0] = { WindowContentMinPoint.x + ViewportOffset.x, WindowContentMinPoint.y + ViewportOffset.y }; // 绝对坐标加Content的相对坐标 = Content的屏幕绝对坐标
 		m_ViewportBounds[1] = { WindowContentMaxPoint.x + ViewportOffset.x, WindowContentMaxPoint.y + ViewportOffset.y }; // 绝对坐标加Content的相对坐标 = Content的屏幕绝对坐标

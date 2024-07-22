@@ -9,7 +9,7 @@ namespace Pika
 	public:
 
 	private:
-
+		CameraProjectionMode m_Mode = CameraProjectionMode::Othographic;
 	};
 
 }

@@ -212,7 +212,8 @@ namespace Pika {
 	int OpenGLFramebuffer::readPixel(uint32_t vAttachmentIndex, int x, int y)
 	{
 		PK_PROFILE_FUNCTION();
-
+		if (vAttachmentIndex >= m_ColorAttachments.size())
+			PK_CORE_ERROR("OpenGLFramebuffer : Invalid color attachment index {0}", vAttachmentIndex);
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + vAttachmentIndex);
 		int PixelData;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &PixelData);
