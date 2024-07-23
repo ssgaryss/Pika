@@ -189,11 +189,13 @@ namespace Pika {
 			});
 
 		drawEntityComponent<SpriteRendererComponent>("Sprite Renderer", vEntity, [](auto& vSpriteRendererComponent) {
-			ImGui::ColorEdit4("Color", glm::value_ptr(vSpriteRendererComponent.m_Color));
+			ImGui::ColorEdit4("##Color", glm::value_ptr(vSpriteRendererComponent.m_Color));
 			});
 
 		drawEntityComponent<CameraComponent>("Camera", vEntity, [](auto& vCameraComponent) {
-
+			//TODO!
+			float OthograhicSize = vCameraComponent.m_Camera.getOthographicSize();
+			ImGui::DragFloat("aa", &OthograhicSize);
 			});
 
 	}
