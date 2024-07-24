@@ -1,29 +1,29 @@
 #pragma once
-
 #include "Pika/Events/Event.h"
+#include "Pika/Core/KeyCodes.h"
 #include <sstream>
 
 namespace Pika {
 
 	class KeyEvent : public Event {
 	public:
-		inline int getKeyCode() const { return m_KeyCode; }
+		inline Key::KeyCode getKeyCode() const { return m_KeyCode; }
 		EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryKeyboard)
 	protected:
-		KeyEvent(int vKeyCode) :
+		KeyEvent(const Key::KeyCode vKeyCode) :
 			m_KeyCode{ vKeyCode } {}
-		int m_KeyCode;
+		Key::KeyCode m_KeyCode;
 	};
 
 	class KeyPressedEvent : public KeyEvent {
 	public:
-		KeyPressedEvent(int vKeyCode, int vRepeatCount) :
+		KeyPressedEvent(const Key::KeyCode vKeyCode, int vRepeatCount) :
 			KeyEvent{ vKeyCode }, m_RepeatCount{ vRepeatCount } {}
 		inline int getRepeatCount() const { return m_RepeatCount; }
 
 		inline std::string toString() const override {
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
+			ss << "KeyPressedEvent: " << static_cast<uint16_t>(m_KeyCode) << " (" << m_RepeatCount << " repeats)";
 			return ss.str();
 		}
 
@@ -35,11 +35,11 @@ namespace Pika {
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(int vKeyCode) :
+		KeyReleasedEvent(const Key::KeyCode vKeyCode) :
 			KeyEvent{ vKeyCode } {}
 		inline std::string toString() const override {
 			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << m_KeyCode;
+			ss << "KeyReleasedEvent: " << static_cast<uint16_t>(m_KeyCode);
 			return ss.str();
 		}
 		EVENT_CLASS_TYPE(KeyReleased)
@@ -48,11 +48,11 @@ namespace Pika {
 	class KeyTypedEvent : public KeyEvent
 	{
 	public:
-		KeyTypedEvent(int vKeycode) :
+		KeyTypedEvent(const Key::KeyCode vKeycode) :
 			KeyEvent{ vKeycode } {}
 		inline std::string toString() const override {
 			std::stringstream ss;
-			ss << "KeyTypedEvent: " << m_KeyCode;
+			ss << "KeyTypedEvent: " << static_cast<uint16_t>(m_KeyCode);
 			return ss.str();
 		}
 		EVENT_CLASS_TYPE(KeyTyped)

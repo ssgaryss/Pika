@@ -75,13 +75,14 @@ namespace Pika {
 
 	void SceneSerializer::serializeYAMLText(const std::string& vFilePath)
 	{
+		std::string SceneName = "Untitled"; // TODO : Scene name!
 		YAML::Emitter Out;
 
 		Out << YAML::BeginMap; // 每个Scene
 		{
 			Out << YAML::Key << "Scene" << YAML::Value << YAML::BeginMap;
 			{
-				Out << YAML::Key << "Name" << YAML::Value << "Untitled"; // TODO : Scene name!
+				Out << YAML::Key << "Name" << YAML::Value << SceneName;
 				Out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // 所有Entities
 				{
 					// TODO : Tag -> UUID
@@ -123,11 +124,13 @@ namespace Pika {
 
 		// Write in file
 		std::ofstream FileOut(vFilePath, std::ios_base::out | std::ios_base::trunc);
+		PK_CORE_INFO(R"(SceneSerializer : Try to serialize .pika file at "{0}" ...)", vFilePath);
 		if (!FileOut.is_open()) {
-			PK_CORE_ERROR(R"(SceneSerilizer : Fail to open yaml file "{0}")", vFilePath);
+			PK_CORE_ERROR(R"(SceneSerializer : Fail to open yaml file at "{0}".)", vFilePath);
 			return;
 		}
 		FileOut << Out.c_str();
+		PK_CORE_INFO(R"(SceneSerializer : Success to save scene "{0}".)", SceneName);
 	}
 
 	void SceneSerializer::serializeYAMLBinary(const std::string& vFilePath)
@@ -144,14 +147,17 @@ namespace Pika {
 		}
 		catch (YAML::ParserException e)
 		{
-			PK_CORE_ERROR("Failed to load .hazel file '{0}'\n     {1}", vFilePath, e.what());
+			PK_CORE_ERROR(R"(SceneSerializer : Failed to load .pika file at "{0}".)", vFilePath);
+			std::cerr << e.what() << std::endl;
 			return false;
 		}
 
 		if (!Data["Scene"]) {
-			PK_CORE_ERROR(R"(SceneSerilizer : Not a valid scene yaml file "{0}")", vFilePath);
+			PK_CORE_ERROR(R"(SceneSerializer : Not a valid scene yaml file "{0}")", vFilePath);
 			return false;
 		}
+
+		PK_CORE_INFO(R"(SceneSerializer : Try to deserialize .pika file at "{0}" ...)", vFilePath);
 		auto SceneNode = Data["Scene"];
 		// Name
 		std::string SceneName = SceneNode["Name"].as<std::string>(); // TODO!
@@ -184,6 +190,7 @@ namespace Pika {
 			}
 		}
 
+		PK_CORE_INFO(R"(SceneSerializer : Success to load scene "{0}".)", SceneName);
 		return true;
 	}
 

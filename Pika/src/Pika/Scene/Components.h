@@ -1,5 +1,5 @@
 #pragma once
-#include "Pika/Renderer/Camera.h"
+#include "SceneCamera.h"
 #include <string>
 #include <glm/glm.hpp>
 
@@ -34,6 +34,7 @@ namespace Pika
 	struct SpriteRendererComponent
 	{
 		glm::vec4 m_Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		// TODO : texuture!
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const glm::vec4& vColor)
@@ -43,13 +44,10 @@ namespace Pika
 
 	struct CameraComponent
 	{
-		Camera m_Camera;
-		bool m_IsPrimary = true;
+		SceneCamera m_Camera;
 		bool m_IsFixedAspectRatio = false;
 
 		CameraComponent() = default;
-		CameraComponent(const glm::mat4& vProjectionMatrix)
-			: m_Camera{ vProjectionMatrix } {}
 		CameraComponent(const CameraComponent&) = default;
 	};
 

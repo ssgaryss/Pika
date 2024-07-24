@@ -17,7 +17,7 @@ project "Pika"
 		"vendor/glm/glm/**.hpp",
 		"vendor/glm/glm/**.inl",
 		"vendor/stb_image/**.h",
-		"vendor/stb_image/**.cpp"
+		"vendor/stb_image/**.cpp",
 	}
 
 	includedirs
@@ -30,7 +30,8 @@ project "Pika"
 		"%{includeDir.glm}",
 		"%{includeDir.stb_image}",
 		"%{includeDir.entt}",
-		"%{includeDir.yaml_cpp}"
+		"%{includeDir.yaml_cpp}",
+		"%{includeDir.ImGuizmo}"
 	}
 
 	links
@@ -39,7 +40,8 @@ project "Pika"
 		"glad",
 		"ImGui",
 		"yaml-cpp",
-		"opengl32.lib"
+		"opengl32.lib",
+		"ImGuizmo"
 	}
 
 	defines

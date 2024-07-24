@@ -22,8 +22,13 @@ namespace Pika {
 				drawEntityNode(Entity);
 				});
 
-			if (ImGui::BeginPopupContextWindow("Create entity", ImGuiPopupFlags_MouseButtonRight)) {
-				if (ImGui::MenuItem("Empty entity"))
+			// 左键空白区域取消选中
+			if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
+				m_SelectedEntity = {};
+
+			// 右键空白区域弹出菜单
+			if (ImGui::BeginPopupContextWindow("Create entity", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
+				if (ImGui::MenuItem("Create empty entity"))
 					m_Context->createEntity("Empty entity");
 				ImGui::EndPopup();
 			}
@@ -34,9 +39,9 @@ namespace Pika {
 		ImGui::Begin("Properties");
 		if (m_SelectedEntity) {
 			drawEntityComponents(m_SelectedEntity);
+			// 点击按钮弹出加入component弹窗
 			if (ImGui::Button("Add component"))
 				ImGui::OpenPopup("AddComponent");
-
 			if (ImGui::BeginPopup("AddComponent")) {
 				if (!m_SelectedEntity.hasComponent<SpriteRendererComponent>()) {
 					if (ImGui::MenuItem("Sprite Renderer Component")) {
@@ -65,10 +70,22 @@ namespace Pika {
 		};
 
 		bool Opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)vEntity, TreeNodeFlags, Tag);
-		// TODO : Popup eg.delete entity
-		if (ImGui::IsItemClicked()) {
+		// 左击Entity选中
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
 			m_SelectedEntity = vEntity;
 		}
+		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+			ImGui::OpenPopup(std::format("EntitySettings##{0}", (uint32_t)vEntity).c_str());
+		}
+		if (ImGui::BeginPopup(std::format("EntitySettings##{0}", (uint32_t)vEntity).c_str())) {
+			if (ImGui::MenuItem("Delete")) {
+				m_Context->destroyEntity(vEntity);
+				if (m_SelectedEntity == vEntity)
+					m_SelectedEntity = {};
+			}
+			ImGui::EndPopup();
+		}
+
 		if (Opened) {
 			// TODO : Child Entity need to be added!
 			ImGui::TreePop();
@@ -183,17 +200,46 @@ namespace Pika {
 			});
 
 		drawEntityComponent<TransformComponent>("Transform", vEntity, [](auto& vTransformComponent) {
-			drawVec3Control("Transform", vTransformComponent.m_Position);
+			drawVec3Control("Translation", vTransformComponent.m_Position);
 			drawVec3Control("Rotation", vTransformComponent.m_Rotation);
 			drawVec3Control("Scale", vTransformComponent.m_Scale, 1.0f);
 			});
 
 		drawEntityComponent<SpriteRendererComponent>("Sprite Renderer", vEntity, [](auto& vSpriteRendererComponent) {
-			ImGui::ColorEdit4("Color", glm::value_ptr(vSpriteRendererComponent.m_Color));
+			ImGui::ColorEdit4("##Color", glm::value_ptr(vSpriteRendererComponent.m_Color));
 			});
 
 		drawEntityComponent<CameraComponent>("Camera", vEntity, [](auto& vCameraComponent) {
+			//TODO!
+			//bool IsPrimary = m_Context->;
+			//if (ImGui::Checkbox("##IsPrimary", &IsPrimary)) {
+			//	IsPrimary != IsPrimary;
+			//	vCameraComponent.m_IsPrimary = IsPrimary;
+			//}
+		
+			Camera::CameraProjectionMode CurrentProjectionMode = vCameraComponent.m_Camera.getProjectionMode();
+			int Index = static_cast<int>(CurrentProjectionMode);
+			const char* ProjectionModes[] = { "Othographic", "Perspective" };
+			if (ImGui::Combo("##ProjectionMode", &Index, ProjectionModes, IM_ARRAYSIZE(ProjectionModes))) {
+				vCameraComponent.m_Camera.setProjectionMode(static_cast<Camera::CameraProjectionMode>(Index));
+			}
 
+			if (CurrentProjectionMode == Camera::CameraProjectionMode::Othographic) {
+				float OthographicSize = vCameraComponent.m_Camera.getOthographicSize();
+				float OthographicNear = vCameraComponent.m_Camera.getOthographicNear();
+				float OthographicFar = vCameraComponent.m_Camera.getOthographicFar();
+				ImGui::DragFloat("##OthographicSize", &OthographicSize);
+				ImGui::DragFloat("##OthographicNear", &OthographicNear);
+				ImGui::DragFloat("##OthographicFar", &OthographicFar);
+			}
+			else if (CurrentProjectionMode == Camera::CameraProjectionMode::Perspective) {
+				float PerspectiveFOV = vCameraComponent.m_Camera.getPerspectiveFOV();
+				float PerspectiveNear = vCameraComponent.m_Camera.getPerspectiveNear();
+				float PerspectiveFar = vCameraComponent.m_Camera.getPerspectiveFar();
+				ImGui::DragFloat("##PerspectiveFOV", &PerspectiveFOV);
+				ImGui::DragFloat("##PerspectiveNear", &PerspectiveNear);
+				ImGui::DragFloat("##PerspectiveFar", &PerspectiveFar);
+			}
 			});
 
 	}

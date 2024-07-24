@@ -37,6 +37,7 @@ namespace Pika {
 	private:
 		bool onWindowCloseEvent(WindowCloseEvent& vEvent);
 		bool onWindowResizeEvent(WindowResizeEvent& vEvent);
+		bool onMouseMovedEvent(MouseMovedEvent& vEvent); // TODO : Use to debug for now!
 	private:
 		std::unique_ptr<Window> m_Window;
 		bool m_IsRunning = true;

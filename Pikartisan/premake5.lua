@@ -15,11 +15,13 @@ project "Pikartisan"
 
 	includedirs
 	{
-		"%{wks.location}/Pika/vendor/spdlog/include",
 		"%{wks.location}/Pika/src",
 		"%{wks.location}/Pika/vendor",
+		"%{wks.location}/Pika/vendor/spdlog/include",
 		"%{includeDir.glm}",
-		"%{includeDir.entt}"
+		"%{includeDir.entt}",
+		"%{includeDir.ImGui}",
+		"%{includeDir.ImGuizmo}"
 	}
 
 	links
