@@ -45,7 +45,6 @@ namespace Pika
 	struct CameraComponent
 	{
 		SceneCamera m_Camera;
-		bool m_IsPrimary = true; // TODO : think about moving to Scene!
 		bool m_IsFixedAspectRatio = false;
 
 		CameraComponent() = default;

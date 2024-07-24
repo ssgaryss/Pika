@@ -237,7 +237,8 @@ namespace Pika
 		auto MousePos = ImGui::GetMousePos(); // 屏幕绝对坐标
 		int MouseX = static_cast<int>(MousePos.x);
 		int MouseY = static_cast<int>(MousePos.y);
-		PK_CORE_INFO("Mouse Position : {}, {}", MouseX, MouseY);
+		//PK_CORE_INFO("Mouse Position : {}, {}", MouseX, MouseY);
+
 		// m_ViewportBounds
 		auto WindowContentMinPoint = ImGui::GetWindowContentRegionMin();  // ImGui相对坐标系（Viewport标志左下角才是Content开始点, 若隐藏则是（0， 0））
 		auto WindowContentMaxPoint = ImGui::GetWindowContentRegionMax();  // ImGui相对坐标系（Viewport右下角的相对坐标系）

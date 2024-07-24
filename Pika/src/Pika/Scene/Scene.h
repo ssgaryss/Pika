@@ -1,5 +1,6 @@
 #pragma once
 #include "Pika/Core/Timestep.h"
+#include "Pika/Renderer/Camera.h"
 #include <entt.h>
 
 namespace Pika
@@ -13,12 +14,14 @@ namespace Pika
 		~Scene() = default; // TODO : For now!
 
 		Entity createEntity(const std::string& vName = "Untitled");
-		//void destroyEntity()
+		void destroyEntity(Entity vEntity);
 
 		void onUpdate(Timestep vTimestep);
 
 	private:
-		entt::registry m_Registry;
+		entt::registry m_Registry;   // Entities
+		// TODO : Lighting & Camera
+		Ref<Camera> m_PrimaryCamera; // Camera
 
 		friend class Entity;
 		friend class SceneHierarchyPanel;

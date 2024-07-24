@@ -17,6 +17,11 @@ namespace Pika
 		return Entity;
 	}
 
+	void Scene::destroyEntity(Entity vEntity)
+	{
+		m_Registry.destroy(vEntity);
+	}
+
 	void Scene::onUpdate(Timestep vTimestep)
 	{
 		auto View = m_Registry.group<TransformComponent, SpriteRendererComponent>();

@@ -7,6 +7,11 @@ namespace Pika {
 	class Camera
 	{
 	public:
+		enum class CameraProjectionMode {
+			Othographic = 0,
+			Perspective = 1
+		};
+	public:
 		Camera() = default;
 		Camera(const glm::mat4& vProjectionMatrix)
 			: m_ProjectionMatrix{ vProjectionMatrix } {}
@@ -15,11 +20,6 @@ namespace Pika {
 
 		const glm::mat4& getProjectionMatrix() const { return m_ProjectionMatrix; }
 	protected:
-		enum class CameraProjectionMode {
-			None = 0,
-			Othographic = 1,
-			Perspective = 2
-		};
 		glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f);
 	};
 
