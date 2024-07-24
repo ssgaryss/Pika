@@ -16,7 +16,7 @@ namespace Pika
 		void onImGuiRender() override;
 		void onEvent(Event& vEvent) override;
 	private:
-		bool OnKeyPressed(KeyPressedEvent& vEvent);
+		bool onKeyPressed(KeyPressedEvent& vEvent);
 	private:
 		// Viewport
 		bool m_IsViewportFocus = false;
@@ -33,7 +33,7 @@ namespace Pika
 		// Scenes and SceneHierarchyPanel
 		Ref<Scene> m_ActiveScene;
 		std::vector<Ref<Scene>> m_Scenes; // TODO : Not use it yet(only one FBO for now)
-		// Panel
+		// Panels
 		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel; // TODO : Mutiple Scenes
 
 		// TODO : remove these!

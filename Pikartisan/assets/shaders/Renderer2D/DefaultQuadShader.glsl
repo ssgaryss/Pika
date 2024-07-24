@@ -26,7 +26,7 @@ void main() {
 #version 460 core
 
 layout(location = 0) out vec4 FragmentColor;
-layout(location = 1) out vec4 TestColor;
+layout(location = 1) out int EntityMask;
 
 in vec4 v_Color;
 in vec2 v_TexCoord;
@@ -37,6 +37,6 @@ uniform sampler2D u_Textures[32];
 
 void main() {
 	FragmentColor = texture(u_Textures[int(v_TextureIndex)], v_TexCoord * v_TilingFactor) * v_Color;
-	TestColor = v_Color;
+	EntityMask = 50;
 }
 #FRAGMENT_END()

@@ -16,7 +16,8 @@ namespace Pika
 
 		void setViewport(uint32_t vLBX, uint32_t vLBY, uint32_t vRTX, uint32_t vRTY) override;
 		void resize(uint32_t vWidth, uint32_t vHeight) override;
-		int readPixel(uint32_t vAttachmentIndex, int x, int y) override;
+		int readPixel(uint32_t vAttachmentIndex, int x, int y) override; // 返回对于位置的红色通道值
+		// TODO : readRegion()
 		void clearAttachment(uint32_t vAttachmentIndex, int value) override;
 
 		inline uint32_t getDepthStencilAttachmentRendererID() const override { return m_DepthStencilAttachment; }

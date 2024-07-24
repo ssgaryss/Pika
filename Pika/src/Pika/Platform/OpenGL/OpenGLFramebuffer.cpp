@@ -181,6 +181,8 @@ namespace Pika {
 			glDrawBuffer(GL_NONE);
 		}
 
+		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height);  // 当FBO resize后须调用
+
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer is incomplete!");
 
