@@ -18,7 +18,7 @@ namespace Pika
 
 		void onUpdate(Timestep vTimestep);
 
-		void onViewportResize(uint32_t vWidth, uint32_t vHeight);
+		void onViewportResize(uint32_t vWidth, uint32_t vHeight); // 更新Scene和SceneCamera的Viewport
 
 	private:
 		// Scene data

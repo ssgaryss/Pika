@@ -3,6 +3,7 @@
 #include "Camera2DController.h"
 #include "Texture.h"
 #include "SubTexture2D.h"
+#include "Pika/Scene/Components.h"
 #include <glm/glm.hpp>
 
 namespace Pika
@@ -37,6 +38,8 @@ namespace Pika
 		static void DrawQuad(const glm::mat4& vTransform, const glm::vec4& vColor);
 		static void DrawQuad(const glm::mat4& vTransform, const Ref<Texture2D>& vTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
 		static void DrawQuad(const glm::mat4& vTransform, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
+
+		static void DrawSprite(const glm::mat4& vTransform, const SpriteRendererComponent& vSprite, int vEntityID = -1);
 
 		struct Statistics {
 			uint32_t m_DrawCalls = 0;

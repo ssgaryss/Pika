@@ -134,11 +134,12 @@ namespace Pika
 		int EntityIDTextureY = static_cast<int>(m_ViewportBounds[1].y - MousePos.y);
 		//PK_CORE_INFO("Mouse Position : {}, {}", MousePos.x, MousePos.y);
 		PK_CORE_INFO("Mouse Relative Position : {}, {}", EntityIDTextureX, EntityIDTextureY);
-		int EntityID = m_Framebuffer->readPixel(1, EntityIDTextureX, EntityIDTextureY);
-		PK_CORE_INFO("Entity ID : {}", EntityID);
+		if (EntityIDTextureX >= 0 && EntityIDTextureX < (int)m_ViewportSize.x && EntityIDTextureY >= 0 && EntityIDTextureY < (int)m_ViewportSize.y) {
+			int EntityID = m_Framebuffer->readPixel(1, EntityIDTextureX, EntityIDTextureY);
+			m_MouseHoveredEntity = EntityID == -1 ? Entity{} : Entity{ static_cast<entt::entity>(EntityID), m_ActiveScene.get() };
+		}
 
 		m_Framebuffer->unbind();
-
 	}
 
 	void EditorLayer::onImGuiRender()
@@ -243,6 +244,8 @@ namespace Pika
 
 		auto Statistics = Renderer2D::GetStatistics();
 		ImGui::Begin("Renderer statistics");
+		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) ? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
+		ImGui::Text("Mouse hovered entity : %s", MouseHoveredEntityName.c_str());
 		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
 		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
 		ImGui::Separator();

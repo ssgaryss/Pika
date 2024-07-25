@@ -39,22 +39,7 @@ namespace Pika {
 		ImGui::Begin("Properties");
 		if (m_SelectedEntity) {
 			drawEntityComponents(m_SelectedEntity);
-			// 点击按钮弹出加入component弹窗
-			if (ImGui::Button("Add component"))
-				ImGui::OpenPopup("AddComponent");
-			if (ImGui::BeginPopup("AddComponent")) {
-				if (!m_SelectedEntity.hasComponent<SpriteRendererComponent>()) {
-					if (ImGui::MenuItem("Sprite Renderer Component")) {
-						m_SelectedEntity.addComponent<SpriteRendererComponent>();
-					}
-				}
-				if (!m_SelectedEntity.hasComponent<CameraComponent>()) {
-					if (ImGui::MenuItem("Camera Component")) {
-						m_SelectedEntity.addComponent<CameraComponent>();
-					}
-				}
-				ImGui::EndPopup();
-			}
+			ImGui::Separator();
 		}
 
 		ImGui::End();
@@ -104,8 +89,10 @@ namespace Pika {
 				ImGuiTreeNodeFlags_Framed
 			};
 
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
 			// typeid(T).hash_code()保证树节点标号不同
 			bool Opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), TreeNodeFlags, vName.c_str());
+			ImGui::PopStyleVar();
 
 			// TODO : 不是所有component都能删除
 			if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
@@ -199,6 +186,26 @@ namespace Pika {
 				vTagComponent.m_Tag = std::string(Buffer);
 			});
 
+		// 点击AddComponent按钮弹出加入component弹窗
+		ImGui::SameLine();
+		ImGui::PushItemWidth(-1);
+		if (ImGui::Button("Add component"))
+			ImGui::OpenPopup("AddComponent");
+		if (ImGui::BeginPopup("AddComponent")) {
+			if (!m_SelectedEntity.hasComponent<SpriteRendererComponent>()) {
+				if (ImGui::MenuItem("Sprite Renderer Component")) {
+					m_SelectedEntity.addComponent<SpriteRendererComponent>();
+				}
+			}
+			if (!m_SelectedEntity.hasComponent<CameraComponent>()) {
+				if (ImGui::MenuItem("Camera Component")) {
+					m_SelectedEntity.addComponent<CameraComponent>();
+				}
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::PopItemWidth();
+
 		drawEntityComponent<TransformComponent>("Transform", vEntity, [](auto& vTransformComponent) {
 			drawVec3Control("Translation", vTransformComponent.m_Position);
 			drawVec3Control("Rotation", vTransformComponent.m_Rotation);
@@ -216,7 +223,7 @@ namespace Pika {
 			//	IsPrimary != IsPrimary;
 			//	vCameraComponent.m_IsPrimary = IsPrimary;
 			//}
-		
+
 			Camera::CameraProjectionMode CurrentProjectionMode = vCameraComponent.m_Camera.getProjectionMode();
 			int Index = static_cast<int>(CurrentProjectionMode);
 			const char* ProjectionModes[] = { "Othographic", "Perspective" };
