@@ -168,6 +168,7 @@ namespace Pika {
 		GLint MaxColorAttachments;
 		glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &MaxColorAttachments);
 
+		// 若不用glDrawBuffers会默认绘制到GL_COLOR_ATTACHMENT0,所以 =1 时不用管
 		if (m_ColorAttachments.size() > 1) {
 			if (m_ColorAttachments.size() > MaxColorAttachments) {
 				PK_CORE_WARN("OpenGLFramebuffer : Your device can support {0} color attachments, but you have {1}.",

@@ -66,13 +66,47 @@ namespace Pika {
 		glBindVertexArray(m_RendererID);
 		vVertexBuffer->bind();
 		const auto& Layout = vVertexBuffer->getLayout();
-		for (const auto& it : Layout) {
-			glVertexAttribPointer(m_VertexBufferElementIndex,
-				it.getComponentCount(), convertShaderDataTypeToOpenGLType(it.m_Type),
-				it.m_Normalized ? GL_TRUE : GL_FALSE,
-				Layout.getStride(), (void*)it.m_Offset);
-			glEnableVertexAttribArray(m_VertexBufferElementIndex);
-			m_VertexBufferElementIndex++;
+		for (const auto& Element : Layout) {
+			switch (Element.m_Type)
+			{
+			case ShaderDataType::Float:
+			case ShaderDataType::Float2:
+			case ShaderDataType::Float3:
+			case ShaderDataType::Float4:
+			{
+				glEnableVertexAttribArray(m_VertexBufferElementIndex);
+				glVertexAttribPointer(m_VertexBufferElementIndex,
+					Element.getComponentCount(), convertShaderDataTypeToOpenGLType(Element.m_Type),
+					Element.m_Normalized ? GL_TRUE : GL_FALSE,
+					Layout.getStride(), (void*)Element.m_Offset);
+				m_VertexBufferElementIndex++;
+				break;
+			}
+			case ShaderDataType::Int: 
+			case ShaderDataType::Int2:
+			case ShaderDataType::Int3:
+			case ShaderDataType::Int4:
+			case ShaderDataType::Bool:
+			{
+				glEnableVertexAttribArray(m_VertexBufferElementIndex);
+				glVertexAttribIPointer(m_VertexBufferElementIndex,
+					Element.getComponentCount(), convertShaderDataTypeToOpenGLType(Element.m_Type),
+					Layout.getStride(), (void*)Element.m_Offset);
+				m_VertexBufferElementIndex++;
+				break;
+			}
+			case ShaderDataType::Mat3:
+			case ShaderDataType::Mat4:
+			{
+				// TODO !!! Ã»¶®
+				break;
+			}
+			case ShaderDataType::None:
+			{
+				PK_CORE_ERROR("OpenGLVertexArray : Unknown shader data type!");
+				return;
+			}
+			}
 		}
 		m_VertexBuffers.emplace_back(vVertexBuffer);
 	}

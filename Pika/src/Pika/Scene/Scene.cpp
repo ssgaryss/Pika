@@ -29,11 +29,12 @@ namespace Pika
 			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
 			// TODO !
 			// TODO : 半透明物体需要集中在另一个batch渲染，否则无法blend
-			if (Transform.m_Rotation.x == 0 && Transform.m_Rotation.y == 0 && Transform.m_Rotation.z == 0)
-				Renderer2D::DrawQuad(Transform.m_Position, Transform.m_Scale, SpriteRenderer.m_Color);
-			else
-				Renderer2D::DrawRotatedQuad(Transform.m_Position, glm::vec2{ Transform.m_Scale.x,Transform.m_Scale.y },
-					Transform.m_Rotation.z, SpriteRenderer.m_Color);
+			//if (Transform.m_Rotation.x == 0 && Transform.m_Rotation.y == 0 && Transform.m_Rotation.z == 0)
+			//	Renderer2D::DrawQuad(Transform.m_Position, Transform.m_Scale, SpriteRenderer.m_Color);
+			//else
+			//	Renderer2D::DrawRotatedQuad(Transform.m_Position, glm::vec2{ Transform.m_Scale.x,Transform.m_Scale.y },
+			//		Transform.m_Rotation.z, SpriteRenderer.m_Color);
+			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
 		}
 	}
 	void Scene::onViewportResize(uint32_t vWidth, uint32_t vHeight)

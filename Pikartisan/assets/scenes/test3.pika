@@ -3,13 +3,13 @@ Scene:
   Entities:
     - Entity: 7897946546163
       TagComponent:
-        Tag: Yellow quad
+        Tag: Red quad
       TransformComponent:
-        Position: [0, 1, -0.800000012]
-        Rotation: [0, 0, 0.200000003]
+        Position: [0, 0, 0]
+        Rotation: [0, 0, 0]
         Scale: [1, 1, 1]
       SpriteRendererComponent:
-        Color: [0.891891897, 0.823884189, 0.323698193, 1]
+        Color: [1, 0.100000001, 0.100000001, 1]
     - Entity: 7897946546163
       TagComponent:
         Tag: Blue quad
@@ -18,13 +18,13 @@ Scene:
         Rotation: [0, 0, 4]
         Scale: [1, 1, 1]
       SpriteRendererComponent:
-        Color: [0.543820262, 0.857142866, 0.138996154, 1]
+        Color: [0.138996154, 0.632548809, 0.857142866, 1]
     - Entity: 7897946546163
       TagComponent:
-        Tag: Red quad
+        Tag: Yellow quad
       TransformComponent:
-        Position: [0, 0, 0]
-        Rotation: [0, 0, 0]
+        Position: [0, 1, -0.800000012]
+        Rotation: [0, 0, 0.200000003]
         Scale: [1, 1, 1]
       SpriteRendererComponent:
-        Color: [1, 0.100000001, 0.100000001, 1]
+        Color: [0.891891897, 0.823884189, 0.323698193, 1]

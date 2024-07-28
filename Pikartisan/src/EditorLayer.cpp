@@ -46,7 +46,9 @@ namespace Pika
 		m_Framebuffer = Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false });
 		m_ActiveScene = CreateRef<Scene>();
+		// Initialize Panels
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>(m_ActiveScene);
+		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 		//m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
 		//m_BulueQuad.addComponent<SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
 
@@ -132,13 +134,12 @@ namespace Pika
 		auto MousePos = ImGui::GetMousePos(); // ÆÁÄ»¾ø¶Ô×ø±ê
 		int EntityIDTextureX = static_cast<int>(MousePos.x - m_ViewportBounds[0].x);
 		int EntityIDTextureY = static_cast<int>(m_ViewportBounds[1].y - MousePos.y);
-		//PK_CORE_INFO("Mouse Position : {}, {}", MousePos.x, MousePos.y);
-		PK_CORE_INFO("Mouse Relative Position : {}, {}", EntityIDTextureX, EntityIDTextureY);
-		int EntityID = m_Framebuffer->readPixel(1, EntityIDTextureX, EntityIDTextureY);
-		PK_CORE_INFO("Entity ID : {}", EntityID);
+		if (EntityIDTextureX >= 0 && EntityIDTextureX < (int)m_ViewportSize.x && EntityIDTextureY >= 0 && EntityIDTextureY < (int)m_ViewportSize.y) {
+			int EntityID = m_Framebuffer->readPixel(1, EntityIDTextureX, EntityIDTextureY);
+			m_MouseHoveredEntity = EntityID == -1 ? Entity{} : Entity{ static_cast<entt::entity>(EntityID), m_ActiveScene.get() };
+		}
 
 		m_Framebuffer->unbind();
-
 	}
 
 	void EditorLayer::onImGuiRender()
@@ -243,16 +244,19 @@ namespace Pika
 
 		auto Statistics = Renderer2D::GetStatistics();
 		ImGui::Begin("Renderer statistics");
+		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) ? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
+		ImGui::Text("Mouse hovered entity : %s", MouseHoveredEntityName.c_str());
 		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
 		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
 		ImGui::Separator();
 		uintptr_t DepthID = static_cast<uintptr_t>(m_Framebuffer->getDepthStencilAttachmentRendererID());
-		ImGui::Image(reinterpret_cast<void*>(DepthID), { 384.0f, 256.0f }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		ImGui::Image(reinterpret_cast<ImTextureID>(DepthID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x)}, {0.0f,1.0f}, {1.0f,0.0f});
 		ImGui::Separator();
 		ImGui::End(); // Renderer statistics
 
-		// SceneHierarchyPanel
+		// Panels
 		m_SceneHierarchyPanel->onImGuiRender();
+		m_ContentBrowserPanel->onImGuiRender();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");
@@ -276,7 +280,7 @@ namespace Pika
 		
 		// TODO!
 		uintptr_t TextureID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID());
-		ImGui::Image(reinterpret_cast<void*>(TextureID), { m_ViewportSize.x, m_ViewportSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		ImGui::Image(reinterpret_cast<ImTextureID>(TextureID), { m_ViewportSize.x, m_ViewportSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
 
 		// Gizmos
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();

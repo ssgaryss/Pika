@@ -17,6 +17,8 @@ namespace Pika {
 		glm::vec2 m_TexCoord;
 		float m_TextureIndex = 0.0f;
 		float m_TilingFactor = 1.0f;
+		// TODO : Editor only
+		int m_EntityID;
 	};
 
 	struct Renderer2DData {
@@ -103,6 +105,7 @@ namespace Pika {
 			{Pika::ShaderDataType::Float2, "a_TexCoord"},
 			{Pika::ShaderDataType::Float, "a_TextureIndex"},
 			{Pika::ShaderDataType::Float, "a_TilingFactor"},
+			{Pika::ShaderDataType::Int, "a_EntityID"}
 		};
 		s_Data.m_QuadVertexBuffer->setLayout(QuadLayout);
 		s_Data.m_QuadVertexArray->addVertexBuffer(s_Data.m_QuadVertexBuffer);
@@ -257,6 +260,7 @@ namespace Pika {
 			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
 			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = 0;
 			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = 1.0f;
+			s_Data.m_pQuadVertexBufferPtr->m_EntityID = -1;
 			s_Data.m_pQuadVertexBufferPtr++;
 		}
 
@@ -291,6 +295,7 @@ namespace Pika {
 			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
 			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = TextureIndex;
 			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = vTilingFactor;
+			s_Data.m_pQuadVertexBufferPtr->m_EntityID = -1;
 			s_Data.m_pQuadVertexBufferPtr++;
 		}
 
@@ -325,6 +330,28 @@ namespace Pika {
 			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
 			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = TextureIndex;
 			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = vTilingFactor;
+			s_Data.m_pQuadVertexBufferPtr->m_EntityID = -1;
+			s_Data.m_pQuadVertexBufferPtr++;
+		}
+
+		s_Data.m_QuadIndexCount += 6;
+		s_Data.m_Statistics.m_QuadCount++;
+	}
+
+	void Renderer2D::DrawSprite(const glm::mat4& vTransform, const SpriteRendererComponent& vSprite, int vEntityID)
+	{
+		PK_PROFILE_FUNCTION();
+		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
+			NextBatch();
+
+		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
+		for (int i = 0; i < 4; ++i) {
+			s_Data.m_pQuadVertexBufferPtr->m_Position = vTransform * s_Data.m_QuadUnitVertex[i];
+			s_Data.m_pQuadVertexBufferPtr->m_Color = vSprite.m_Color;
+			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
+			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = 0;
+			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = 1.0f;
+			s_Data.m_pQuadVertexBufferPtr->m_EntityID = vEntityID;
 			s_Data.m_pQuadVertexBufferPtr++;
 		}
 
