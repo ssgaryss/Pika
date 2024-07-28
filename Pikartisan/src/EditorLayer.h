@@ -1,6 +1,7 @@
 #pragma once
 #include <Pika.h>
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 namespace Pika
 {
@@ -36,6 +37,7 @@ namespace Pika
 		std::vector<Ref<Scene>> m_Scenes; // TODO : Not use it yet(only one FBO for now)
 		// Panels
 		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel; // TODO : Mutiple Scenes
+		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 
 		// TODO : remove these!
 		Ref<Texture2D> m_TextureBackround;

@@ -169,7 +169,7 @@ namespace Pika {
 		ImGui::PopItemWidth(); // pop 第三个
 		ImGui::PopStyleVar();
 
-		ImGui::Columns(1); // 设置回默认的单列
+		ImGui::Columns(); // 设置回默认的单列
 		ImGui::PopID();
 	}
 

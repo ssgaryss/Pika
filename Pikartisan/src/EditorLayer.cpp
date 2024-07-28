@@ -46,7 +46,9 @@ namespace Pika
 		m_Framebuffer = Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false });
 		m_ActiveScene = CreateRef<Scene>();
+		// Initialize Panels
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>(m_ActiveScene);
+		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 		//m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
 		//m_BulueQuad.addComponent<SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
 
@@ -248,12 +250,13 @@ namespace Pika
 		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
 		ImGui::Separator();
 		uintptr_t DepthID = static_cast<uintptr_t>(m_Framebuffer->getDepthStencilAttachmentRendererID());
-		ImGui::Image(reinterpret_cast<void*>(DepthID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x)}, {0.0f,1.0f}, {1.0f,0.0f});
+		ImGui::Image(reinterpret_cast<ImTextureID>(DepthID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x)}, {0.0f,1.0f}, {1.0f,0.0f});
 		ImGui::Separator();
 		ImGui::End(); // Renderer statistics
 
-		// SceneHierarchyPanel
+		// Panels
 		m_SceneHierarchyPanel->onImGuiRender();
+		m_ContentBrowserPanel->onImGuiRender();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");
@@ -277,7 +280,7 @@ namespace Pika
 		
 		// TODO!
 		uintptr_t TextureID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID());
-		ImGui::Image(reinterpret_cast<void*>(TextureID), { m_ViewportSize.x, m_ViewportSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		ImGui::Image(reinterpret_cast<ImTextureID>(TextureID), { m_ViewportSize.x, m_ViewportSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
 
 		// Gizmos
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
