@@ -5,9 +5,9 @@ Scene:
       TagComponent:
         Tag: Red quad
       TransformComponent:
-        Position: [0, 0, 0]
-        Rotation: [0, 0, 0]
-        Scale: [1, 1, 1]
+        Position: [0.510380566, 0.217751861, 0]
+        Rotation: [0, 0, -0.934238851]
+        Scale: [0.537652671, 1.87107718, 1]
       SpriteRendererComponent:
         Color: [1, 0.100000001, 0.100000001, 1]
     - Entity: 7897946546163

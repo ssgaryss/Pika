@@ -215,25 +215,15 @@ namespace Pika
 				//if (ImGui::MenuItem("Close", NULL, false, dockspace_open != NULL))
 				//	dockspace_open = false;
 
-				// TODO!
-				if (ImGui::MenuItem("Open ...", "Ctrl + Shift + O")) {
-					// TODO : Use Serializer instead of SceneSceneSerializer
-					std::string Path = FileDialogs::OpenFile("Pika Scene\0*.pika\0");
-					if (!Path.empty()) {
-						m_ActiveScene = CreateRef<Scene>();
-						m_SceneHierarchyPanel->setContext(m_ActiveScene);
-						auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
-						Serializer->deserializeYAMLText(Path);
-					}
-				}
-				if (ImGui::MenuItem("Save as ...", "Ctrl + Shift + S")) {
-					// TODO : Use Serializer instead of SceneSceneSerializer
-					std::string Path = FileDialogs::SaveFile("Pika Scene\0*.pika\0");
-					if (!Path.empty()) {
-						auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
-						Serializer->serializeYAMLText(Path);
-					}
-				}
+				// File Menu
+				if (ImGui::MenuItem("New", "Ctrl + N"))
+					newScene();
+				if (ImGui::MenuItem("Open ...", "Ctrl + Shift + O"))
+					openScene();
+				if (ImGui::MenuItem("Save", "Ctrl + S"))
+					saveScene();
+				if (ImGui::MenuItem("Save as ...", "Ctrl + Shift + S"))
+					saveSceneAs();
 				if (ImGui::MenuItem("Exit"))
 					Application::GetInstance().close();
 				ImGui::EndMenu();
@@ -281,6 +271,11 @@ namespace Pika
 		// TODO!
 		uintptr_t TextureID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID());
 		ImGui::Image(reinterpret_cast<ImTextureID>(TextureID), { m_ViewportSize.x, m_ViewportSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		// 接收拖拽Scenes
+		if (ImGui::BeginDragDropTarget()) {
+
+			ImGui::EndDragDropTarget();
+		}
 
 		// Gizmos
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
@@ -331,6 +326,46 @@ namespace Pika
 		m_CameraController.onEvent(vEvent);
 		EventDispatcher Dispatcher(vEvent);
 		Dispatcher.dispatch<KeyPressedEvent>(std::bind(&EditorLayer::onKeyPressed, this, std::placeholders::_1));
+	}
+
+	void EditorLayer::newScene()
+	{
+		m_ActiveScene = CreateRef<Scene>();
+		m_SceneHierarchyPanel->setContext(m_ActiveScene);
+		m_ActiveScenePath = std::filesystem::path(); // 重置为空
+	}
+
+	void EditorLayer::openScene()
+	{
+		std::string Path = FileDialogs::OpenFile("Pika Scene\0*.pika\0"); // 两两一组，前面显示为显示过滤器名称，后面为实际后缀名
+		if (!Path.empty()) {
+			m_ActiveScene = CreateRef<Scene>();
+			m_SceneHierarchyPanel->setContext(m_ActiveScene);
+			auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
+			Serializer->deserializeYAMLText(Path);
+			m_ActiveScenePath = std::filesystem::path(Path); // 绝对路径
+		}
+	}
+
+	void EditorLayer::saveScene()
+	{
+		std::string	Path = m_ActiveScenePath.string();
+		if (!Path.empty()) {
+			auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
+			Serializer->serializeYAMLText(Path);
+		}
+		else {
+			saveSceneAs();
+		}
+	}
+
+	void EditorLayer::saveSceneAs()
+	{
+		std::string Path = FileDialogs::SaveFile("Pika Scene\0*.pika\0");
+		if (!Path.empty()) {
+			auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
+			Serializer->serializeYAMLText(Path);
+		}
 	}
 
 	bool EditorLayer::onKeyPressed(KeyPressedEvent& vEvent)
