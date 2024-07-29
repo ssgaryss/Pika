@@ -17,9 +17,10 @@ namespace Pika
 		void onImGuiRender() override;
 		void onEvent(Event& vEvent) override;
 	private:
-		// File menu
+		// Scene IOs
 		void newScene();
 		void openScene();
+		void openScene(const std::filesystem::path& vScenePath);
 		void saveScene();
 		void saveSceneAs();
 	private:

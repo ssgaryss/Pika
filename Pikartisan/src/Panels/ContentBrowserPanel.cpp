@@ -41,11 +41,12 @@ namespace Pika {
 			ImGui::BeginGroup();
 			uintptr_t Icon = DirectoryEntry.is_directory() ? DirectoryIcon : FileIcon;
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + IconPadding / 2.0f);
+			ImGui::PushID(Filename.c_str());
 			ImGui::ImageButton(reinterpret_cast<ImTextureID>(Icon), { IconSize, IconSize }, { 0,1 }, { 1,0 });
 			// 可直接拖拽UI
 			if (ImGui::BeginDragDropSource()) {
 				const wchar_t* ItemPath = Path.c_str();
-				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", ItemPath, wcslen(ItemPath) * sizeof(wchar_t));
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", ItemPath, (wcslen(ItemPath) + 1) * sizeof(wchar_t)); // +1包含终止符'\0'
 				ImGui::EndDragDropSource();
 			}
 
@@ -64,6 +65,7 @@ namespace Pika {
 				ImDrawList* DrawList = ImGui::GetWindowDrawList(); // ImGui的绘制API
 				DrawList->AddLine(TextStartPos, TextEndPos, IM_COL32(200, 200, 200, 255));
 			}
+			ImGui::PopID();
 			ImGui::EndGroup();
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
