@@ -113,6 +113,8 @@ namespace Pika {
 								Out << YAML::EndMap;
 							}
 						}
+						//TODO !!! Camera...
+
 						Out << YAML::EndMap;
 						});
 				}
@@ -145,7 +147,7 @@ namespace Pika {
 		{
 			Data = YAML::LoadFile(vFilePath);
 		}
-		catch (YAML::ParserException e)
+		catch (const YAML::ParserException& e)
 		{
 			PK_CORE_ERROR(R"(SceneSerializer : Failed to load .pika file at "{0}".)", vFilePath);
 			std::cerr << e.what() << std::endl;
@@ -187,6 +189,7 @@ namespace Pika {
 					auto& SRC = DeserializedEntity.addComponent<SpriteRendererComponent>();
 					SRC.m_Color = SpriteRendererComponentNode["Color"].as<glm::vec4>();
 				}
+				//TODO !!! Camera...
 			}
 		}
 

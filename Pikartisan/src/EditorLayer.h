@@ -17,6 +17,13 @@ namespace Pika
 		void onImGuiRender() override;
 		void onEvent(Event& vEvent) override;
 	private:
+		// Scene IOs
+		void newScene();
+		void openScene();
+		void openScene(const std::filesystem::path& vScenePath);
+		void saveScene();
+		void saveSceneAs();
+	private:
 		bool onKeyPressed(KeyPressedEvent& vEvent);
 	private:
 		// Viewport
@@ -33,6 +40,7 @@ namespace Pika
 		Ref<ShaderLibrary> m_ShaderLibrary;
 		Ref<Framebuffer> m_Framebuffer;
 		// Scenes and SceneHierarchyPanel
+		std::filesystem::path m_ActiveScenePath; // TODO : Delete! use project path
 		Ref<Scene> m_ActiveScene;
 		std::vector<Ref<Scene>> m_Scenes; // TODO : Not use it yet(only one FBO for now)
 		// Panels
