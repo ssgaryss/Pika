@@ -17,7 +17,7 @@ namespace Pika
 		void onImGuiRender() override;
 		void onEvent(Event& vEvent) override;
 	private:
-		// Scene IOs
+		// Scene Manipulations
 		void newScene();
 		void openScene();
 		void openScene(const std::filesystem::path& vScenePath);
@@ -25,6 +25,7 @@ namespace Pika
 		void saveSceneAs();
 	private:
 		bool onKeyPressed(KeyPressedEvent& vEvent);
+		bool onMousePressed(MouseButtonPressedEvent& vEvent);
 	private:
 		// Viewport
 		bool m_IsViewportFocus = false;
@@ -32,7 +33,7 @@ namespace Pika
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f }; // Viewport可用区域长宽
 		glm::vec2 m_ViewportBounds[2]; // Viewport可用区域的左上与右下点（屏幕绝对坐标）
 		// Gizmo
-		uint32_t m_GizmoType = 0;    // Translate = 1, Rotation = 2, Scale = 3
+		uint32_t m_GizmoType = 0;    // Translate = ImGuizmo::OPERATION::TRANSLATE = 7, Rotation = 120, Scale = 896
 		Entity m_MouseHoveredEntity; // 鼠标悬停的Entity
 	private:
 		// Renderer

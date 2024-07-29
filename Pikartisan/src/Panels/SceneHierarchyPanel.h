@@ -11,6 +11,7 @@ namespace Pika
 		SceneHierarchyPanel(const Ref<Scene>& vContext);
 		inline void setContext(const Ref<Scene>& vContext) { m_Context = vContext; m_SelectedEntity = {}; }
 		inline const Entity getSelectedEntity() const { return m_SelectedEntity; }
+		inline void setSelectedEntity(const Entity& vSelectedEntity) { m_SelectedEntity = vSelectedEntity; }
 
 		void onImGuiRender();
 	private:

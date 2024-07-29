@@ -20,7 +20,7 @@ namespace Pika {
 		PK_ASSERT(!s_pSingletonInstance, "Application already exists!");
 		s_pSingletonInstance = this;
 		m_Window = Scope<Window>(Window::Create(vApplicationSpecification.m_AppName));
-		m_Window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
+		m_Window->setEventCallback(std::bind_front(&Application::onEvent, this));
 		m_pImGuiLayer = new ImGuiLayer();
 		pushOverlay(m_pImGuiLayer);
 	}
@@ -30,13 +30,14 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 
 		EventDispatcher Dispatcher(vEvent);
-		Dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::onWindowCloseEvent, this, std::placeholders::_1));
-		Dispatcher.dispatch<WindowResizeEvent>(std::bind(&Application::onWindowResizeEvent, this, std::placeholders::_1));
+		Dispatcher.dispatch<WindowCloseEvent>(std::bind_front(&Application::onWindowCloseEvent, this));
+		Dispatcher.dispatch<WindowResizeEvent>(std::bind_front(&Application::onWindowResizeEvent, this));
 		//Dispatcher.dispatch<MouseMovedEvent>(std::bind(&Application::onMouseMovedEvent, this, std::placeholders::_1));
 		//PK_CORE_TRACE(vEvent.toString()); //trace all events
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it) {
-			if (vEvent.m_Handled) break;
+			if (vEvent.m_Handled) 
+				break;
 			(*it)->onEvent(vEvent);
 		}
 	}
@@ -97,7 +98,7 @@ namespace Pika {
 
 	bool Application::onMouseMovedEvent(MouseMovedEvent& vEvent)
 	{
-		// 用于测试
+		// TODO : 之前用于测试，可删除
 		float X = vEvent.getMouseX();
 		float Y = vEvent.getMouseY();
 		PK_CORE_INFO("Mouse Position : ( {}, {} )", X, Y);

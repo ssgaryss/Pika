@@ -43,7 +43,7 @@ namespace Pika {
 	void Camera2DController::onEvent(Event& vEvent)
 	{
 		EventDispatcher Dispatcher(vEvent);
-		Dispatcher.dispatch<MouseScrolledEvent>(std::bind(&Camera2DController::onMouseScrolledEvent, this, std::placeholders::_1));
+		Dispatcher.dispatch<MouseScrolledEvent>(std::bind_front(&Camera2DController::onMouseScrolledEvent, this));
 		//Dispatcher.dispatch<WindowResizeEvent>(std::bind(&Camera2DController::onWindowResizeEvent, this, std::placeholders::_1));
 
 	}
