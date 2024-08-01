@@ -171,6 +171,9 @@
     <ClInclude Include="src\Pika\Renderer\Camera2DController.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\EditorCamera.h">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Renderer\Framebuffer.h">
       <Filter>src\Pika\Renderer</Filter>
     </ClInclude>
@@ -1542,6 +1545,9 @@
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Renderer\Camera2DController.cpp">
+      <Filter>src\Pika\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\EditorCamera.cpp">
       <Filter>src\Pika\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Renderer\Framebuffer.cpp">

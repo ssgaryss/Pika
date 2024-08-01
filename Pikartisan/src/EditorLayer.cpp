@@ -3,7 +3,6 @@
 #include <ImGuizmo/ImGuizmo.h>
 #include "Pika/Utils/PlatformUtils.h"
 #include <glm/gtc/type_ptr.hpp>
-#define GLM_ENABLE_EXPERIMENTAL // 允许如glm::decomposed等函数使用
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 
