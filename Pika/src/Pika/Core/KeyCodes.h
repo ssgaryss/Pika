@@ -1,7 +1,9 @@
 #pragma once
+#include <string>
 #include <cstdint>
+#include <unordered_map>
 
-namespace Pika{
+namespace Pika {
 
 	namespace Key {
 

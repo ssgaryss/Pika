@@ -163,6 +163,7 @@
     <ClInclude Include="src\Pika\Core\Log.h" />
     <ClInclude Include="src\Pika\Core\MouseCodes.h" />
     <ClInclude Include="src\Pika\Core\Random.h" />
+    <ClInclude Include="src\Pika\Core\Shortcut.h" />
     <ClInclude Include="src\Pika\Core\Timer.h" />
     <ClInclude Include="src\Pika\Core\Timestep.h" />
     <ClInclude Include="src\Pika\Core\Window.h" />

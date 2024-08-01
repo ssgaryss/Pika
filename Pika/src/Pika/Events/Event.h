@@ -15,11 +15,11 @@ namespace Pika {
 	enum EventCategory
 	{
 		None = 0,
-		EventCategoryApplication = BIT(0),
-		EventCategoryInput = BIT(1),
-		EventCategoryKeyboard = BIT(2),
-		EventCategoryMouse = BIT(3),
-		EventCategoryMouseButton = BIT(4)
+		EventCategoryApplication = 1 << 0,
+		EventCategoryInput = 1 << 1,
+		EventCategoryKeyboard = 1 << 2,
+		EventCategoryMouse = 1 << 3,
+		EventCategoryMouseButton = 1 << 4
 	};
 
 #define EVENT_CLASS_TYPE(type)  inline static EventType getStaticType() { return EventType::##type; }\
