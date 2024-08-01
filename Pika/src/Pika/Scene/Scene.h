@@ -16,7 +16,7 @@ namespace Pika
 		Entity createEntity(const std::string& vName = "Untitled");
 		void destroyEntity(Entity vEntity);
 
-		void onUpdate(Timestep vTimestep);
+		void onUpdate(Timestep vTimestep); // TODO : Delete camera2D does not needed！
 
 		void onViewportResize(uint32_t vWidth, uint32_t vHeight); // 更新Scene和SceneCamera的Viewport
 
@@ -24,7 +24,7 @@ namespace Pika
 		// Scene data
 		entt::registry m_Registry;   // Entities
 		// TODO : Lighting & Camera
-		Ref<Camera> m_PrimaryCamera; // Camera
+		Ref<Camera> m_Camera; // Camera
 	private:
 		// Scene display
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0;

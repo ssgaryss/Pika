@@ -18,7 +18,7 @@ namespace Pika {
 	glm::vec2 Input::getMousePosition() {
 		auto* Window = reinterpret_cast<GLFWwindow*>(Application::GetInstance().getWindow().getNativeWindow());
 		double Xpos, Ypos;
-		glfwGetCursorPos(Window, &Xpos, &Ypos);
+		glfwGetCursorPos(Window, &Xpos, &Ypos); // ´°¿Ú×ø±êÏµ
 		return { static_cast<float>(Xpos), static_cast<float>(Ypos) };
 	}
 	float Input::getMouseX() {

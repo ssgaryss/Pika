@@ -80,6 +80,7 @@ namespace Pika
 			&& (m_ViewportSize.x != FS.m_Width || m_ViewportSize.y != FS.m_Height))
 		{
 			m_Framebuffer->resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+			m_EditorCamera.setViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			// TODO : EditorCamera and CameraController!
 			m_CameraController.onResize(m_ViewportSize.x, m_ViewportSize.y);
 		}
@@ -125,7 +126,10 @@ namespace Pika
 		Renderer2D::EndScene();
 #endif // 0
 
-		Renderer2D::BeginScene(m_CameraController);
+		//Renderer2D::BeginScene(m_CameraController);
+		//m_ActiveScene->onUpdate(vTimestep);
+		//Renderer2D::EndScene();
+		Renderer2D::BeginScene(m_EditorCamera);
 		m_ActiveScene->onUpdate(vTimestep);
 		Renderer2D::EndScene();
 

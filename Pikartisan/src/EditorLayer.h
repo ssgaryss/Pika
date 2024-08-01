@@ -1,5 +1,6 @@
 #pragma once
 #include <Pika.h>
+#include "Pika/Renderer/EditorCamera.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 
@@ -23,6 +24,11 @@ namespace Pika
 		void openScene(const std::filesystem::path& vScenePath);
 		void saveScene();
 		void saveSceneAs();
+		//// Scene Operations
+		//void onScenePlay();
+		//void onSceneStop();
+		//void onScenePause();
+		//void onSceneSimulate();
 	private:
 		bool onKeyPressed(KeyPressedEvent& vEvent);
 		bool onMousePressed(MouseButtonPressedEvent& vEvent);
@@ -37,6 +43,7 @@ namespace Pika
 		Entity m_MouseHoveredEntity; // Êó±êÐüÍ£µÄEntity
 	private:
 		// Renderer
+		EditorCamera m_EditorCamera = {};
 		Camera2DController m_CameraController;
 		Ref<ShaderLibrary> m_ShaderLibrary;
 		Ref<Framebuffer> m_Framebuffer;

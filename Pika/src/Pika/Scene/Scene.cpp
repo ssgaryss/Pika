@@ -37,6 +37,7 @@ namespace Pika
 			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
 		}
 	}
+
 	void Scene::onViewportResize(uint32_t vWidth, uint32_t vHeight)
 	{
 		if (m_SceneViewportWidth == vWidth && m_SceneViewportHeight == vHeight)
