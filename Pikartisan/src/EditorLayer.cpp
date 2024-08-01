@@ -3,7 +3,6 @@
 #include <ImGuizmo/ImGuizmo.h>
 #include "Pika/Utils/PlatformUtils.h"
 #include <glm/gtc/type_ptr.hpp>
-#define GLM_ENABLE_EXPERIMENTAL // 允许如glm::decomposed等函数使用
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 
@@ -81,6 +80,7 @@ namespace Pika
 			&& (m_ViewportSize.x != FS.m_Width || m_ViewportSize.y != FS.m_Height))
 		{
 			m_Framebuffer->resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+			m_EditorCamera.setViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			// TODO : EditorCamera and CameraController!
 			m_CameraController.onResize(m_ViewportSize.x, m_ViewportSize.y);
 		}
@@ -126,7 +126,10 @@ namespace Pika
 		Renderer2D::EndScene();
 #endif // 0
 
-		Renderer2D::BeginScene(m_CameraController);
+		//Renderer2D::BeginScene(m_CameraController);
+		//m_ActiveScene->onUpdate(vTimestep);
+		//Renderer2D::EndScene();
+		Renderer2D::BeginScene(m_EditorCamera);
 		m_ActiveScene->onUpdate(vTimestep);
 		Renderer2D::EndScene();
 
@@ -253,7 +256,7 @@ namespace Pika
 		// Viewport鼠标事件的block条件
 		m_IsViewportFocus = ImGui::IsWindowFocused();
 		m_IsViewportHovered = ImGui::IsWindowHovered();
-		Application::GetInstance().getImGuiLayer()->setBlockEvents(!m_IsViewportFocus || !m_IsViewportHovered);
+		Application::GetInstance().getImGuiLayer()->setBlockEvents(!m_IsViewportFocus || !m_IsViewportHovered); // ImGuiLayer默认是会Block事件的
 
 		// m_ViewportBounds
 		auto WindowContentMinPoint = ImGui::GetWindowContentRegionMin();  // ImGui相对坐标系（Viewport标志左下角才是Content开始点, 若隐藏则是（0， 0））
@@ -328,7 +331,8 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		m_CameraController.onEvent(vEvent);
 		EventDispatcher Dispatcher(vEvent);
-		Dispatcher.dispatch<KeyPressedEvent>(std::bind(&EditorLayer::onKeyPressed, this, std::placeholders::_1));
+		Dispatcher.dispatch<KeyPressedEvent>(std::bind_front(&EditorLayer::onKeyPressed, this));
+		Dispatcher.dispatch<MouseButtonPressedEvent>(std::bind_front(&EditorLayer::onMousePressed, this));
 	}
 
 	void EditorLayer::newScene()
@@ -398,30 +402,52 @@ namespace Pika
 
 	bool EditorLayer::onKeyPressed(KeyPressedEvent& vEvent)
 	{
+		using namespace Key;
 		switch (vEvent.getKeyCode())
 		{
-		case Key::KeyCode::D1:
+		case KeyCode::D1:
 		{
 			if (!ImGuizmo::IsUsing())
 				m_GizmoType = 0;
 			break;
 		}
-		case Key::KeyCode::D2:
+		case KeyCode::D2:
 		{
 			if (!ImGuizmo::IsUsing())
 				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 			break;
 		}
-		case Key::KeyCode::D3:
+		case KeyCode::D3:
 		{
 			if (!ImGuizmo::IsUsing())
 				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 			break;
 		}
-		case Key::KeyCode::D4:
+		case KeyCode::D4:
 		{
 			if (!ImGuizmo::IsUsing())
 				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			break;
+		}
+		default:
+			break;
+		}
+		return false;
+	}
+
+	bool EditorLayer::onMousePressed(MouseButtonPressedEvent& vEvent)
+	{
+		using namespace Mouse;
+		switch (vEvent.getMouseButton())
+		{
+		case MouseCode::ButtonLeft:
+		{
+			ImVec2 MouseScreenPos = ImGui::GetMousePos(); // 绝对坐标
+			ImVec2 MouseViewportPos = { MouseScreenPos.x - m_ViewportBounds[0].x, MouseScreenPos.y - m_ViewportBounds[0].y };
+			if (m_IsViewportHovered && m_IsViewportFocus) {
+				m_SceneHierarchyPanel->setSelectedEntity(m_MouseHoveredEntity);
+				m_GizmoType = m_GizmoType == 0 ? ImGuizmo::OPERATION::TRANSLATE : m_GizmoType;
+			}
 			break;
 		}
 		default:

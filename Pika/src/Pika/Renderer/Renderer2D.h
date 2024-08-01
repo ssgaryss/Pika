@@ -3,6 +3,7 @@
 #include "Camera2DController.h"
 #include "Texture.h"
 #include "SubTexture2D.h"
+#include "EditorCamera.h"
 #include "Pika/Scene/Components.h"
 #include <glm/glm.hpp>
 
@@ -15,6 +16,7 @@ namespace Pika
 		Renderer2D() = delete;
 		static void Init();
 		// TODO : BeginScene should begin with all scene data!
+		static void BeginScene(const EditorCamera& vEditorCamera);
 		static void BeginScene(const Camera& vCamera, const glm::mat4& vTramsform);
 		static void BeginScene(const Camera2DController& vCameraController);
 		static void EndScene();

@@ -121,6 +121,22 @@ namespace Pika {
 		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture;
 	}
 
+	void Renderer2D::BeginScene(const EditorCamera& vEditorCamera)
+	{
+		PK_PROFILE_FUNCTION();
+		s_Data.m_Camera2DData.m_ViewProjectionMatrix = vEditorCamera.getViewProjectionMatrix();
+		s_Data.m_QuadShader->bind();
+		// TODO : delete!!!
+		int32_t Textures[32]; //基于Shader中变量的数据
+		for (int32_t i = 0; i < 32; ++i)
+			Textures[i] = i;
+		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
+		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
+
+		ResetStatistics();
+		StartBatch();
+	}
+
 	void Renderer2D::BeginScene(const Camera& vCamera, const glm::mat4& vTramsform)
 	{
 		PK_PROFILE_FUNCTION();
