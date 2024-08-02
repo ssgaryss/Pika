@@ -23,7 +23,10 @@
 #include "Pika/Renderer/Texture.h"
 #include "Pika/Renderer/SubTexture2D.h"
 #include "Pika/Renderer/Framebuffer.h"
+#include "Pika/Renderer/Camera.h"
+#include "Pika/Renderer/Camera2D.h"
 #include "Pika/Renderer/Camera2DController.h"
+#include "Pika/Renderer/EditorCamera.h"
 //-----------------Scene-----------------
 #include "Pika/Scene/Scene.h"
 #include "Pika/Scene/Entity.h"

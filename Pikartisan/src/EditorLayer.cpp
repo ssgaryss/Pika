@@ -41,19 +41,19 @@ namespace Pika
 	void EditorLayer::onAttach()
 	{
 		PK_PROFILE_FUNCTION();
+		// Initialize Renderer2D
 		Renderer2D::Init();
 		m_Framebuffer = Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false });
+		// Initialize Scene
 		m_ActiveScene = CreateRef<Scene>();
+		// Initialize Shortcuts
+		initializeShortcutLibrary();
 		// Initialize Panels
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>(m_ActiveScene);
 		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
-		//m_BulueQuad = m_ActiveScene->createEntity("Blue quad");
-		//m_BulueQuad.addComponent<SpriteRendererComponent>(glm::vec4(0.1f, 0.1f, 1.0f, 1.0f));
 
-		//m_RedQuad = m_ActiveScene->createEntity("Red quad");
-		//m_RedQuad.addComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.1f, 0.1f, 1.0f));
-
+		// TODO : Delete!!!
 		m_TextureBackround = Texture2D::Create("assets/textures/board.png");
 		m_Texture2024 = Texture2D::Create("assets/textures/2024.png");
 		m_TextureRPGpack_sheet_2X = Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
@@ -219,13 +219,13 @@ namespace Pika
 				//	dockspace_open = false;
 
 				// File Menu
-				if (ImGui::MenuItem("New", "Ctrl + N"))
+				if (ImGui::MenuItem("New", m_ShortcutLibrary["New_Scene"].toString().c_str()))
 					newScene();
-				if (ImGui::MenuItem("Open ...", "Ctrl + Shift + O"))
+				if (ImGui::MenuItem("Open ...", m_ShortcutLibrary["Open_Scene"].toString().c_str()))
 					openScene();
-				if (ImGui::MenuItem("Save", "Ctrl + S"))
+				if (ImGui::MenuItem("Save", m_ShortcutLibrary["Save_Scene"].toString().c_str()))
 					saveScene();
-				if (ImGui::MenuItem("Save as ...", "Ctrl + Shift + S"))
+				if (ImGui::MenuItem("Save as ...", m_ShortcutLibrary["Save_Scene_As"].toString().c_str()))
 					saveSceneAs();
 				if (ImGui::MenuItem("Exit"))
 					Application::GetInstance().close();
@@ -303,15 +303,16 @@ namespace Pika
 			glm::vec3 Skew; // 切变
 			glm::vec4 Perspective; // 透视变换
 			if (m_GizmoType) {
-				ImGuizmo::Manipulate(glm::value_ptr(m_CameraController.getCamera().getViewMatrix()),
-					glm::value_ptr(m_CameraController.getCamera().getProjectionMatrix()),
+				// TODO : 变换Camera参数
+				ImGuizmo::Manipulate(glm::value_ptr(m_EditorCamera.getViewMatrix()),
+					glm::value_ptr(m_EditorCamera.getProjectionMatrix()),
 					static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::LOCAL, glm::value_ptr(TransformMatrix));
 			}
 
 			if (ImGuizmo::IsUsing()) {
 				// TODO : Math decompose function
 				bool Success = glm::decompose(TransformMatrix, Scale, Orientation, Translation, Skew, Perspective);
-				//PK_ASSERT(Success, "Fail to decompose TransformMatrix!");
+				PK_ASSERT(Success, "Fail to decompose TransformMatrix!");
 				if (Success) {
 					Transform.m_Position = Translation;
 					Transform.m_Rotation = glm::eulerAngles(Orientation);
@@ -349,7 +350,7 @@ namespace Pika
 			PK_CORE_WARN("EditorLayer : Try to open a Pika scene with null path.");
 			return;
 		}
-		
+
 		std::filesystem::path ScenePath(Path);
 		openScene(ScenePath);
 	}
@@ -400,37 +401,49 @@ namespace Pika
 		Serializer->serializeYAMLText(Path);
 	}
 
+	void EditorLayer::initializeShortcutLibrary()
+	{
+		using namespace Key;
+		// file中的快捷键
+		m_ShortcutLibrary.addShortcut({ "New_Scene", KeyCode::N, Shortcut::Modifier::Ctrl });
+		m_ShortcutLibrary.addShortcut({ "Open_Scene", KeyCode::O, Shortcut::Modifier::Ctrl | Shortcut::Modifier::Shift });
+		m_ShortcutLibrary.addShortcut({ "Save_Scene", KeyCode::S, Shortcut::Modifier::Ctrl });
+		m_ShortcutLibrary.addShortcut({ "Save_Scene_As", KeyCode::S, Shortcut::Modifier::Ctrl | Shortcut::Modifier::Shift });
+		// Gizmo状态切换键
+		m_ShortcutLibrary.addShortcut({ "Gizmo_None", KeyCode::Q });
+		m_ShortcutLibrary.addShortcut({ "Gizmo_Translate", KeyCode::W });
+		m_ShortcutLibrary.addShortcut({ "Gizmo_Rotate", KeyCode::E });
+		m_ShortcutLibrary.addShortcut({ "Gizmo_Scale", KeyCode::R });
+	}
+
 	bool EditorLayer::onKeyPressed(KeyPressedEvent& vEvent)
 	{
 		using namespace Key;
-		switch (vEvent.getKeyCode())
-		{
-		case KeyCode::D1:
-		{
+		// file中的快捷键
+		if (m_ShortcutLibrary["New_Scene"].IsHandleKeyEvent(vEvent))
+			newScene();
+		if (m_ShortcutLibrary["Open_Scene"].IsHandleKeyEvent(vEvent))
+			openScene();
+		if (m_ShortcutLibrary["Save_Scene"].IsHandleKeyEvent(vEvent))
+			saveScene();
+		if (m_ShortcutLibrary["Save_Scene_As"].IsHandleKeyEvent(vEvent))
+			saveSceneAs();
+		// Gizmo状态切换键
+		if (m_ShortcutLibrary["Gizmo_None"].IsHandleKeyEvent(vEvent)) {
 			if (!ImGuizmo::IsUsing())
 				m_GizmoType = 0;
-			break;
 		}
-		case KeyCode::D2:
-		{
+		if (m_ShortcutLibrary["Gizmo_Translate"].IsHandleKeyEvent(vEvent)) {
 			if (!ImGuizmo::IsUsing())
 				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-			break;
 		}
-		case KeyCode::D3:
-		{
+		if (m_ShortcutLibrary["Gizmo_Rotate"].IsHandleKeyEvent(vEvent)) {
 			if (!ImGuizmo::IsUsing())
 				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
-			break;
 		}
-		case KeyCode::D4:
-		{
+		if (m_ShortcutLibrary["Gizmo_Scale"].IsHandleKeyEvent(vEvent)) {
 			if (!ImGuizmo::IsUsing())
 				m_GizmoType = ImGuizmo::OPERATION::SCALE;
-			break;
-		}
-		default:
-			break;
 		}
 		return false;
 	}
@@ -444,7 +457,7 @@ namespace Pika
 		{
 			ImVec2 MouseScreenPos = ImGui::GetMousePos(); // 绝对坐标
 			ImVec2 MouseViewportPos = { MouseScreenPos.x - m_ViewportBounds[0].x, MouseScreenPos.y - m_ViewportBounds[0].y };
-			if (m_IsViewportHovered && m_IsViewportFocus) {
+			if (m_IsViewportHovered && m_IsViewportFocus && !ImGuizmo::IsOver()) {
 				m_SceneHierarchyPanel->setSelectedEntity(m_MouseHoveredEntity);
 				m_GizmoType = m_GizmoType == 0 ? ImGuizmo::OPERATION::TRANSLATE : m_GizmoType;
 			}

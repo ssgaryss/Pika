@@ -1,5 +1,6 @@
 #pragma once
 #include "KeyCodes.h"
+#include "Pika/Events/KeyboardEvent.h"
 #include <set>
 #include <string>
 #include <sstream>
@@ -138,37 +139,65 @@ namespace Pika {
 	class Shortcut
 	{
 	public:
-		enum class ModifierType {
+		using ModifierFlags = int;
+		enum Modifier : int {
 			None = 0,
 			Ctrl = 1 << 0,
 			Shift = 1 << 1,
 			Alt = 1 << 2
+			// TODO : Others
 		};
 	public:
 		Shortcut() = default;
-		Shortcut(const std::string& vName, Key::KeyCode vKey, std::function<void()> vAction, int vModifierFlags = 0)
-			: m_Name{ vName }, m_Key{ vKey }, m_Action{ vAction }, m_ModiferFlags{ vModifierFlags } {}
-		inline const std::string& getActionName() const { return m_Name; }
+		Shortcut(const std::string& vName, Key::KeyCode vKey, int vModifierFlags = 0)
+			: m_Name{ vName }, m_Key{ vKey }, m_ModiferFlags{ vModifierFlags } {}
+		inline const std::string& getName() const { return m_Name; }
 		inline std::string toString() const {
 			std::stringstream ss;
-			if (m_ModiferFlags & static_cast<int>(ModifierType::Ctrl)) ss << "Ctrl + ";
-			if (m_ModiferFlags & static_cast<int>(ModifierType::Shift)) ss << "Shift + ";
-			if (m_ModiferFlags & static_cast<int>(ModifierType::Alt)) ss << "Alt + ";
+			if (m_ModiferFlags & static_cast<int>(Modifier::Ctrl)) ss << "Ctrl + ";
+			if (m_ModiferFlags & static_cast<int>(Modifier::Shift)) ss << "Shift + ";
+			if (m_ModiferFlags & static_cast<int>(Modifier::Alt)) ss << "Alt + ";
 			ss << KeyCodeToString(m_Key);
 			return ss.str();
+		}
+		// TODO : 设计还需斟酌
+		inline bool IsHandleKeyEvent(const KeyPressedEvent& vEvent) { return isModifierPressed() && m_Key == vEvent.getKeyCode(); }  // 判断键盘事件
+
+		operator Key::KeyCode() const { return m_Key; }
+		operator bool() const {  // 直接轮询
+			using namespace Key;
+			bool IsKey = m_Key == KeyCode::None ? true : Input::isKeyPressed(m_Key);
+			return isModifierPressed() && IsKey;
+		}
+	private:
+		inline bool isModifierPressed() const {
+			using namespace Key;
+			if (!m_ModiferFlags) return true; // 若没有Modifer,Shortcut退化为单个Key
+			bool RequireControl = m_ModiferFlags & static_cast<int>(Modifier::Ctrl);
+			bool RequireShift = m_ModiferFlags & static_cast<int>(Modifier::Shift);
+			bool RequireAlt = m_ModiferFlags & static_cast<int>(Modifier::Alt);
+			bool IsControl = !RequireControl || Input::isKeyPressed(KeyCode::LeftControl) || Input::isKeyPressed(KeyCode::RightControl);
+			bool IsShift = !RequireShift || Input::isKeyPressed(KeyCode::LeftShift) || Input::isKeyPressed(KeyCode::RightShift);
+			bool IsAlt = !RequireAlt || Input::isKeyPressed(KeyCode::LeftAlt) || Input::isKeyPressed(KeyCode::RightAlt);
+			bool IsKey = m_Key == KeyCode::None ? true : Input::isKeyPressed(m_Key);
+			return IsControl && IsShift && IsAlt;
 		}
 	private:
 		std::string m_Name = "Untitled";
 		int m_ModiferFlags = 0;
-		Key::KeyCode m_Key = Key::KeyCode::Escape; // TODO : Just one key
-		std::function<void()> m_Action;
+		Key::KeyCode m_Key = Key::KeyCode::None; // TODO : Just one key
 	};
 
 	class ShortcutLibrary
 	{
 	public:
 		ShortcutLibrary() = default;
-		inline void addShortcut(const Shortcut& vShortcut) { m_Shortcuts[vShortcut.getActionName()] = vShortcut; }
+		ShortcutLibrary(std::initializer_list<std::pair<const std::string, Shortcut>> vShortcuts) // unordered_map只接受const std::string的ctor
+			: m_Shortcuts{ vShortcuts } {};
+		inline void addShortcut(const Shortcut& vShortcut) { m_Shortcuts[vShortcut.getName()] = vShortcut; }
+		inline void removeShortcut(const std::string& vName) { m_Shortcuts.erase(vName); }
+
+		Shortcut& operator[](const std::string& vName) { return m_Shortcuts[vName]; }
 	private:
 		std::unordered_map<std::string, Shortcut> m_Shortcuts;
 	};
