@@ -85,6 +85,8 @@ namespace Pika
 			m_CameraController.onResize(m_ViewportSize.x, m_ViewportSize.y);
 		}
 
+		m_EditorCamera.onUpdate(vTimestep);
+
 		// Debug !
 		//PK_CORE_INFO("FBO size: {}, {}", m_Framebuffer->getFramebufferSpecification().m_Width, m_Framebuffer->getFramebufferSpecification().m_Height);
 		//PK_CORE_INFO("Viewportsize : {}, {}", m_ViewportSize.x, m_ViewportSize.y);

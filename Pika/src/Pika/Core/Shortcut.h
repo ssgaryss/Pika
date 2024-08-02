@@ -1,5 +1,6 @@
 #pragma once
 #include "KeyCodes.h"
+#include "Input.h"
 #include "Pika/Events/KeyboardEvent.h"
 #include <set>
 #include <string>
@@ -166,7 +167,7 @@ namespace Pika {
 		operator Key::KeyCode() const { return m_Key; }
 		operator bool() const {  // 直接轮询
 			using namespace Key;
-			bool IsKey = m_Key == KeyCode::None ? true : Input::isKeyPressed(m_Key);
+			bool IsKey = m_Key == KeyCode::None ? false : Input::isKeyPressed(m_Key);  // m_Key必须对应一个键
 			return isModifierPressed() && IsKey;
 		}
 	private:
@@ -184,7 +185,7 @@ namespace Pika {
 		}
 	private:
 		std::string m_Name = "Untitled";
-		int m_ModiferFlags = 0;
+		ModifierFlags m_ModiferFlags = 0;
 		Key::KeyCode m_Key = Key::KeyCode::None; // TODO : Just one key
 	};
 
