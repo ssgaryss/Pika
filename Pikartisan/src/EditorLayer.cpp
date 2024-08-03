@@ -84,7 +84,7 @@ namespace Pika
 			// TODO : EditorCamera and CameraController!
 			m_CameraController.onResize(m_ViewportSize.x, m_ViewportSize.y);
 		}
-
+		// 更新EditorCamera内外参矩阵
 		m_EditorCamera.onUpdate(vTimestep);
 
 		// Debug !
@@ -289,7 +289,7 @@ namespace Pika
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
 		if (SelectedEntity) {
 			ImGuizmo::BeginFrame();
-			ImGuizmo::SetOrthographic(true); // 开启正交投影模式
+			ImGuizmo::SetOrthographic(false); // 关闭正交投影模式  // TODO!
 			ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
 
 			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
@@ -333,7 +333,8 @@ namespace Pika
 	void EditorLayer::onEvent(Event& vEvent)
 	{
 		PK_PROFILE_FUNCTION();
-		m_CameraController.onEvent(vEvent);
+		//m_CameraController.onEvent(vEvent);
+		m_EditorCamera.onEvent(vEvent);
 		EventDispatcher Dispatcher(vEvent);
 		Dispatcher.dispatch<KeyPressedEvent>(std::bind_front(&EditorLayer::onKeyPressed, this));
 		Dispatcher.dispatch<MouseButtonPressedEvent>(std::bind_front(&EditorLayer::onMousePressed, this));
@@ -417,6 +418,8 @@ namespace Pika
 		m_ShortcutLibrary.addShortcut({ "Gizmo_Translate", KeyCode::W });
 		m_ShortcutLibrary.addShortcut({ "Gizmo_Rotate", KeyCode::E });
 		m_ShortcutLibrary.addShortcut({ "Gizmo_Scale", KeyCode::R });
+		// EditorCamera Action
+		m_ShortcutLibrary.addShortcut({ "Focus_Entity", KeyCode::F });
 	}
 
 	bool EditorLayer::onKeyPressed(KeyPressedEvent& vEvent)
@@ -447,6 +450,11 @@ namespace Pika
 		if (m_ShortcutLibrary["Gizmo_Scale"].IsHandleKeyEvent(vEvent)) {
 			if (!ImGuizmo::IsUsing())
 				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+		}
+		// EditorCamera快捷键
+		if (m_ShortcutLibrary["Focus_Entity"].IsHandleKeyEvent(vEvent)) {
+			auto Entity = m_SceneHierarchyPanel->getSelectedEntity();
+			m_EditorCamera.setFocalPoint(Entity.getComponent<TransformComponent>().m_Position);
 		}
 		return false;
 	}

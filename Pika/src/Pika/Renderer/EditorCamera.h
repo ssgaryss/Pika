@@ -1,6 +1,7 @@
 #pragma once
 #include "Camera.h"
 #include "Pika/Events/Event.h"
+#include "Pika/Events/MouseEvent.h"
 #include "Pika/Core/Timestep.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -17,6 +18,8 @@ namespace Pika {
 		void onEvent(Event& vEvent);
 
 		void setViewportSize(float vWidth, float vHeight);
+		void setPosition(const glm::vec3& vPosition);
+		void setFocalPoint(const glm::vec3& vFocalPoint);
 
 		inline const glm::vec3& getPosition() const { return m_Position; }
 		inline float getPitch() const { return m_Pitch; }
@@ -26,22 +29,27 @@ namespace Pika {
 		inline glm::vec3 getUpDirection() const { return glm::rotate(getOrientation(), glm::vec3{ 0.0f, 1.0f, 0.0f }); }
 		inline glm::vec3 getRightDirection() const { return glm::rotate(getOrientation(), glm::vec3{ 1.0f, 0.0f, 0.0f }); }
 		inline glm::vec3 getForwardDirection() const { return glm::rotate(getOrientation(), glm::vec3{ 0.0f, 0.0f, -1.0f }); } // 满足OpenGL习惯，相机看向-z
-		inline glm::quat getOrientation() const { return glm::quat(glm::vec3(-m_Pitch, -m_Yaw, 0.0f)); } // 将世界坐标系转换到相机坐标系的四元数
+		inline glm::quat getOrientation() const { return glm::quat(glm::radians(glm::vec3(-m_Pitch, -m_Yaw, 0.0f))); } // 将世界坐标系转换到相机坐标系的四元数
 	private:
 		void updateCameraViewMatrix();
 		void updateCameraProjectionMatrix();
 		inline void updatePosition() { m_Position = m_FocalPoint - getForwardDirection() * m_Distance; }
+		inline void updateFocalPoint() { m_FocalPoint = m_Position + getForwardDirection() * m_Distance; }
 
-		void onMousePan(const glm::vec2& vDelta);
-		void onMouseRotate(const glm::vec2& vDelta);
-		void onMouseZoom(float vDelta);
+		void onKeyMove(Timestep vTimestep);                                         // w,a,s,d任意移动 
+		void onMousePan(const glm::vec2& vDelta);                 // 横向移动
+		void onMouseRotate(const glm::vec2& vDelta);              // 旋转,改变m_Yaw,m_Pitch
+		void onMouseZoom(float vDelta);                           // 改变Distance
+		bool onMouseScrollZoom(MouseScrolledEvent& vEvent);       // 改变FOV
 
 		std::pair<float, float> getPanSpeed() const;     // 横向移动速度（x方向，y方向）
 		float getRotationSpeed() const;                  // Yaw, Pitch 的速度
+		float getMoveSpeed() const;                      // Move速度
 		float getZoomSpeed() const;                      // Zoom速度,随着m_Distance值变化而变化(相机位置越接近光心速度越小)
 	private:
-		// Viewport相关
+		// Mouse相关
 		glm::vec2 m_MousePosition = { 0.0f, 0.0f };      // 记录上一个时刻鼠标位置
+		// Viewport相关
 		float m_ViewportWidth = 1000.0f, m_ViewportHeight = 1000.0f;
 		// 外参
 		glm::vec3 m_Position = { 0.0f, 0.0f, 10.0f };    // 由m_FocalPoint和m_Distance计算得出,可由外部控制器改变位置
