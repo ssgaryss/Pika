@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneCamera.h"
+#include "Pika/Core/UUID.h"
 #include <string>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -8,14 +9,27 @@
 namespace Pika
 {
 
+	struct IDComponent
+	{
+		UUID m_ID;
+
+		IDComponent() = default;
+		IDComponent(const UUID& vUUID)
+			: m_ID{ vUUID } {}
+		IDComponent(const std::string& vUUID)
+			: m_ID{ vUUID } {}
+		IDComponent(const IDComponent&) = default;
+		operator UUID() const { return m_ID; }
+	};
+
 	struct TagComponent
 	{
 		std::string m_Tag;
 
 		TagComponent() = default;
-		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string& vTag)
 			: m_Tag{ vTag } {}
+		TagComponent(const TagComponent&) = default;
 
 		operator std::string() const { return m_Tag; }
 		operator const char* () const { return m_Tag.c_str(); }

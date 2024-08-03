@@ -1,21 +1,21 @@
 Scene:
   Name: Untitled
   Entities:
-    - Entity: 7897946546163
+    - Entity: "{34B79143-4B9D-4B40-9713-06465164015E}"
       TagComponent:
-        Tag: Red quad
+        Tag: Blue entity
       TransformComponent:
-        Position: [0, 0, 0]
-        Rotation: [0, 0, 0]
+        Position: [-0.136640728, 0.988695264, 0.0277087856]
+        Rotation: [0.387135148, 2.22719312, -26.9599972]
+        Scale: [1, 2.95913148, 0.999999881]
+      SpriteRendererComponent:
+        Color: [0.227724686, 0.604574144, 0.776061773, 1]
+    - Entity: "{86881D51-D8BB-4FEB-960A-BA7FC5E5FD3E}"
+      TagComponent:
+        Tag: Red entity
+      TransformComponent:
+        Position: [0.946073651, -0.214516044, 0]
+        Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
       SpriteRendererComponent:
-        Color: [1, 0.100000001, 0.100000001, 1]
-    - Entity: 7897946546163
-      TagComponent:
-        Tag: Blue quad
-      TransformComponent:
-        Position: [0, 1.39999998, 0]
-        Rotation: [0, -0.100000001, 0.600000024]
-        Scale: [1, 1, 1]
-      SpriteRendererComponent:
-        Color: [0.100000001, 0.100000001, 1, 1]
+        Color: [0.806949794, 0.0997003764, 0.0997003764, 1]

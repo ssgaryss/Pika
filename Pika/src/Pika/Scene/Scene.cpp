@@ -10,9 +10,29 @@ namespace Pika
 	Entity Scene::createEntity(const std::string& vName)
 	{
 		Entity Entity{ m_Registry.create(), this };
-		// TODO : UUID
+		Entity.addComponent<IDComponent>();
 		auto& Tag = Entity.addComponent<TagComponent>(vName);
-		Tag.m_Tag = vName.empty() ? "Entity" : vName;
+		Tag.m_Tag = vName.empty() ? "Untitled" : vName;
+		Entity.addComponent<TransformComponent>();
+		return Entity;
+	}
+
+	Entity Scene::createEntityWithUUID(UUID vUUID, const std::string& vName)
+	{
+		Entity Entity{ m_Registry.create(), this };
+		Entity.addComponent<IDComponent>(vUUID);
+		auto& Tag = Entity.addComponent<TagComponent>(vName);
+		Tag.m_Tag = vName.empty() ? "Untitled" : vName;
+		Entity.addComponent<TransformComponent>();
+		return Entity;
+	}
+
+	Entity Scene::createEntityWithUUIDString(const std::string& vUUID, const std::string& vName)
+	{
+		Entity Entity{ m_Registry.create(), this };
+		Entity.addComponent<IDComponent>(vUUID);
+		auto& Tag = Entity.addComponent<TagComponent>(vName);
+		Tag.m_Tag = vName.empty() ? "Untitled" : vName;
 		Entity.addComponent<TransformComponent>();
 		return Entity;
 	}
