@@ -288,6 +288,7 @@ namespace Pika
 		// Gizmos
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
 		if (SelectedEntity) {
+			ImGuizmo::BeginFrame();
 			ImGuizmo::SetOrthographic(true); // 开启正交投影模式
 			ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
 
@@ -459,10 +460,11 @@ namespace Pika
 		{
 			ImVec2 MouseScreenPos = ImGui::GetMousePos(); // 绝对坐标
 			ImVec2 MouseViewportPos = { MouseScreenPos.x - m_ViewportBounds[0].x, MouseScreenPos.y - m_ViewportBounds[0].y };
-			if (m_IsViewportHovered && m_IsViewportFocus && !ImGuizmo::IsOver()) {
+			if (m_IsViewportHovered && m_IsViewportFocus && (!m_SceneHierarchyPanel->getSelectedEntity() || !ImGuizmo::IsOver())) {
 				m_SceneHierarchyPanel->setSelectedEntity(m_MouseHoveredEntity);
 				m_GizmoType = m_GizmoType == 0 ? ImGuizmo::OPERATION::TRANSLATE : m_GizmoType;
 			}
+
 			break;
 		}
 		default:
