@@ -17,19 +17,19 @@ namespace Pika {
 
 	class KeyPressedEvent : public KeyEvent {
 	public:
-		KeyPressedEvent(const Key::KeyCode vKeyCode, int vRepeatCount) :
-			KeyEvent{ vKeyCode }, m_RepeatCount{ vRepeatCount } {}
-		inline int getRepeatCount() const { return m_RepeatCount; }
+		KeyPressedEvent(const Key::KeyCode vKeyCode, bool vIsRepeat = false) :
+			KeyEvent{ vKeyCode }, m_IsRepeat{ vIsRepeat } {}
+		inline bool isRepeat() const { return m_IsRepeat; }
 
 		inline std::string toString() const override {
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << static_cast<uint16_t>(m_KeyCode) << " (" << m_RepeatCount << " repeats)";
+			ss << "KeyPressedEvent: " << static_cast<uint16_t>(m_KeyCode) << " (" << m_IsRepeat << " repeats)";
 			return ss.str();
 		}
 
 		EVENT_CLASS_TYPE(KeyPressed)
 	private:
-		int m_RepeatCount;
+		bool m_IsRepeat;
 	};
 
 	class KeyReleasedEvent : public KeyEvent

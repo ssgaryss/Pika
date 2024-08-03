@@ -206,6 +206,7 @@
     <ClInclude Include="src\Pika\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Pika\Utils\PlatformUtils.h" />
     <ClInclude Include="src\pkpch.h" />
+    <ClInclude Include="src\Pika\Core\UUID.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -665,6 +666,7 @@
     <ClCompile Include="src\pkpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Pika\Core\UUID.cpp" />
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>

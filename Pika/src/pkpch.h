@@ -10,6 +10,7 @@
 #include <random>
 #include <limits>
 #include <utility>
+#include <math.h>
 
 //data structure
 #include <optional>

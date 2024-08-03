@@ -117,7 +117,7 @@ namespace Pika {
 					{
 					case GLFW_PRESS:
 					{
-						KeyPressedEvent Event(GLFWToPikaKeyCode(key), 0);
+						KeyPressedEvent Event(GLFWToPikaKeyCode(key));
 						Data.eventCallBack(Event);
 						break;
 					}

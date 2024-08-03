@@ -1,6 +1,7 @@
 #pragma once
 #include "Pika/Core/Timestep.h"
 #include "Pika/Renderer/Camera.h"
+#include "Pika/Core/UUID.h"
 #include <entt.h>
 
 namespace Pika
@@ -14,6 +15,8 @@ namespace Pika
 		~Scene() = default; // TODO : For now!
 
 		Entity createEntity(const std::string& vName = "Untitled");
+		Entity createEntityWithUUID(UUID vUUID, const std::string& vName = "Untitled");
+		Entity createEntityWithUUIDString(const std::string& vUUID, const std::string& vName = "Untitled");
 		void destroyEntity(Entity vEntity);
 
 		void onUpdate(Timestep vTimestep); // TODO : Delete camera2D does not needed£¡

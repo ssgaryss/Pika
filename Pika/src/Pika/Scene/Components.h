@@ -1,20 +1,35 @@
 #pragma once
 #include "SceneCamera.h"
+#include "Pika/Core/UUID.h"
 #include <string>
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Pika
 {
+
+	struct IDComponent
+	{
+		UUID m_ID;
+
+		IDComponent() = default;
+		IDComponent(const UUID& vUUID)
+			: m_ID{ vUUID } {}
+		IDComponent(const std::string& vUUID)
+			: m_ID{ vUUID } {}
+		IDComponent(const IDComponent&) = default;
+		operator UUID() const { return m_ID; }
+	};
 
 	struct TagComponent
 	{
 		std::string m_Tag;
 
 		TagComponent() = default;
-		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string& vTag)
 			: m_Tag{ vTag } {}
+		TagComponent(const TagComponent&) = default;
 
 		operator std::string() const { return m_Tag; }
 		operator const char* () const { return m_Tag.c_str(); }
@@ -31,10 +46,9 @@ namespace Pika
 			: m_Position{ vPosition } {}
 		TransformComponent(const TransformComponent&) = default;
 
-		// TODO : refractor rotation!
 		operator glm::mat4() const {
 			return glm::translate(glm::mat4(1.0f), m_Position) *
-				glm::rotate(glm::mat4(1.0f), m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)) *
+				glm::toMat4(glm::quat(glm::radians(m_Rotation))) *
 				glm::scale(glm::mat4(1.0f), m_Scale);
 		}
 	};

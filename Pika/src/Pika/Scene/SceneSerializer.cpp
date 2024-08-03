@@ -4,6 +4,7 @@
 #include "Components.h"
 #include <yaml-cpp/yaml.h>
 
+
 // TODO : yaml对于glm数据类型输入流运算符重载，暂时放这
 namespace YAML {
 
@@ -31,7 +32,7 @@ namespace YAML {
 	template<>
 	struct convert<glm::vec4>
 	{
-		static Node encode(const glm::vec4& rhs) { 
+		static Node encode(const glm::vec4& rhs) {
 			Node node;
 			node.push_back(rhs.x);
 			node.push_back(rhs.y);
@@ -51,14 +52,14 @@ namespace YAML {
 		}
 	};
 
-	YAML::Emitter& operator<<(YAML::Emitter& vOstream, glm::vec3 vData) {
+	YAML::Emitter& operator<<(YAML::Emitter& vOstream, const glm::vec3& vData) {
 		vOstream << YAML::Flow << YAML::BeginSeq;
 		vOstream << vData.x << vData.y << vData.z;
 		vOstream << YAML::EndSeq;
 		return vOstream;
 	}
 
-	YAML::Emitter& operator<<(YAML::Emitter& vOstream, glm::vec4 vData) {
+	YAML::Emitter& operator<<(YAML::Emitter& vOstream, const glm::vec4& vData) {
 		vOstream << YAML::Flow << YAML::BeginSeq;
 		vOstream << vData.x << vData.y << vData.z << vData.w;
 		vOstream << YAML::EndSeq;
@@ -85,11 +86,12 @@ namespace Pika {
 				Out << YAML::Key << "Name" << YAML::Value << SceneName;
 				Out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // 所有Entities
 				{
-					// TODO : Tag -> UUID
-					m_Scene->m_Registry.view<TagComponent>().each([&Out, this](auto vEntity, auto& vTagComponent) {
+					m_Scene->m_Registry.view<IDComponent>().each([&Out, this](auto vEntity, auto& vTagComponent) {
 						Entity Entity{ vEntity, m_Scene.get() };
 						Out << YAML::BeginMap; // 每个Entity
-						Out << YAML::Key << "Entity" << YAML::Value << "7897946546163";
+						if (Entity.hasComponent<IDComponent>()) {
+							Out << YAML::Key << "Entity" << YAML::Value << Entity.getComponent<IDComponent>().m_ID;
+						}
 						if (Entity.hasComponent<TagComponent>()) {
 							Out << YAML::Key << "TagComponent" << YAML::Value << YAML::BeginMap;
 							{
@@ -126,7 +128,7 @@ namespace Pika {
 
 		// Write in file
 		std::ofstream FileOut(vFilePath, std::ios_base::out | std::ios_base::trunc);
-		PK_CORE_INFO(R"(SceneSerializer : Try to serialize .pika file at "{0}" ...)", vFilePath);
+		PK_CORE_TRACE(R"(SceneSerializer : Try to serialize .pika file at "{0}" ...)", vFilePath);
 		if (!FileOut.is_open()) {
 			PK_CORE_ERROR(R"(SceneSerializer : Fail to open yaml file at "{0}".)", vFilePath);
 			return;
@@ -159,7 +161,7 @@ namespace Pika {
 			return false;
 		}
 
-		PK_CORE_INFO(R"(SceneSerializer : Try to deserialize .pika file at "{0}" ...)", vFilePath);
+		PK_CORE_TRACE(R"(SceneSerializer : Try to deserialize .pika file at "{0}" ...)", vFilePath);
 		auto SceneNode = Data["Scene"];
 		// Name
 		std::string SceneName = SceneNode["Name"].as<std::string>(); // TODO!
@@ -167,14 +169,14 @@ namespace Pika {
 		YAML::Node Entities = SceneNode["Entities"];
 		if (Entities) {
 			for (auto Entity : Entities) {
-				uint64_t UUID = Entity["Entity"].as<uint64_t>(); // TODO!
+				auto UUIDString = Entity["Entity"].as<std::string>();
 				std::string EntityName;
-				if(Entity["TagComponent"]){
+				if (Entity["TagComponent"]) {
 					auto TagComponentNode = Entity["TagComponent"];
 					EntityName = TagComponentNode["Tag"].as<std::string>();
 				}
-				auto DeserializedEntity = m_Scene->createEntity(EntityName); 
-				PK_CORE_INFO("Deserialized entity with ID = {0}, name = {1}", UUID, EntityName);
+				auto DeserializedEntity = m_Scene->createEntityWithUUIDString(UUIDString, EntityName);
+				PK_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", UUIDString, EntityName);
 
 				if (Entity["TransformComponent"]) {
 					auto TransformComponentNode = Entity["TransformComponent"];
