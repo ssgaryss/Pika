@@ -67,14 +67,12 @@ namespace Pika {
 	{
 		m_Position = vPosition;
 		updateFocalPoint();
-		updateCameraViewMatrix();
 	}
 
 	void EditorCamera::setFocalPoint(const glm::vec3& vFocalPoint)
 	{
 		m_FocalPoint = vFocalPoint;
 		updatePosition();
-		updateCameraViewMatrix();
 	}
 
 	void EditorCamera::updateCameraViewMatrix()
