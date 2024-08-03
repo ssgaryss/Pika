@@ -298,7 +298,7 @@ namespace Pika
 
 			auto& Transform = SelectedEntity.getComponent<TransformComponent>();
 			glm::mat4 TransformMatrix = glm::translate(glm::mat4(1.0f), Transform.m_Position) *
-				glm::rotate(glm::mat4(1.0f), Transform.m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)) *
+				glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) *
 				glm::scale(glm::mat4(1.0f), Transform.m_Scale);
 			glm::vec3 Scale = Transform.m_Scale;
 			glm::quat Orientation = glm::quat(Transform.m_Rotation);
@@ -318,7 +318,7 @@ namespace Pika
 				PK_ASSERT(Success, "Fail to decompose TransformMatrix!");
 				if (Success) {
 					Transform.m_Position = Translation;
-					Transform.m_Rotation = glm::eulerAngles(Orientation);
+					Transform.m_Rotation = glm::degrees(glm::eulerAngles(Orientation));
 					Transform.m_Scale = Scale;
 				}
 			}

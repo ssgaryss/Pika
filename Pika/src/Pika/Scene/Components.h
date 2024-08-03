@@ -2,6 +2,7 @@
 #include "SceneCamera.h"
 #include <string>
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Pika
@@ -31,10 +32,9 @@ namespace Pika
 			: m_Position{ vPosition } {}
 		TransformComponent(const TransformComponent&) = default;
 
-		// TODO : refractor rotation!
 		operator glm::mat4() const {
 			return glm::translate(glm::mat4(1.0f), m_Position) *
-				glm::rotate(glm::mat4(1.0f), m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)) *
+				glm::toMat4(glm::quat(glm::radians(m_Rotation))) *
 				glm::scale(glm::mat4(1.0f), m_Scale);
 		}
 	};

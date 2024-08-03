@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 
 namespace Pika {
@@ -215,28 +216,28 @@ namespace Pika {
 		DrawQuad(Transform, vTexture, vTilingFactor, vTintColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const glm::vec4& vColor)
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const glm::vec4& vColor)
 	{
 		DrawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const glm::vec4& vColor)
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const glm::vec4& vColor)
 	{
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
-			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::toMat4(glm::quat(glm::radians(vRotation))) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
 		DrawQuad(Transform, vColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
 		DrawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vTexture, vTilingFactor, vTintColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
-			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::toMat4(glm::quat(glm::radians(vRotation))) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
 		DrawQuad(Transform, vTexture, vTilingFactor, vTintColor);
 	}
@@ -252,13 +253,13 @@ namespace Pika {
 		DrawQuad(Transform, vSubTexture, vTilingFactor, vTintColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, float vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
 		DrawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vSubTexture, vTilingFactor, vTintColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, float vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
-			glm::rotate(glm::mat4(1.0f), vRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::toMat4(glm::quat(glm::radians(vRotation))) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
 		DrawQuad(Transform, vSubTexture, vTilingFactor, vTintColor);
 	}
