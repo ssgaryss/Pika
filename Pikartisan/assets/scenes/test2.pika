@@ -1,33 +1,13 @@
 Scene:
   Name: Untitled
   Entities:
-    - Entity: "{34921A31-B31E-4A2C-AE7A-B6B4920DBEDA}"
+    - Entity: "{36727C12-0660-4F32-B0BA-B9291E538E65}"
       TagComponent:
-        Tag: Empty entity
+        Tag: Camera
       TransformComponent:
-        Position: [1.26797915, -2.23730946, 0]
+        Position: [0, -0.621848643, 4.08232737]
         Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
-      SpriteRendererComponent:
-        Color: [0.729729772, 0.727858663, 0.245121583, 1]
-    - Entity: "{C0A3254B-BDD3-431F-994C-F1E183B2D904}"
-      TagComponent:
-        Tag: Empty entity
-      TransformComponent:
-        Position: [1.33991313, 0, 0]
-        Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
-      SpriteRendererComponent:
-        Color: [0.325978994, 0.760617733, 0.523999691, 1]
-    - Entity: "{0269005D-C663-4E2C-B846-CE62C5CE685C}"
-      TagComponent:
-        Tag: Empty entity
-      TransformComponent:
-        Position: [-1.05676174, -1.68922544, 0]
-        Rotation: [1.77522933, -41.9235497, -19.9519062]
-        Scale: [1.95047915, 2.42321229, 0.99999994]
-      SpriteRendererComponent:
-        Color: [0.258791596, 0.586652696, 0.598455608, 1]
+        Scale: [0.00100000005, 1, 1]
     - Entity: "{84619B17-F102-43DD-8A75-A0CD3E177939}"
       TagComponent:
         Tag: Empty entity
@@ -37,3 +17,30 @@ Scene:
         Scale: [1, 1, 1]
       SpriteRendererComponent:
         Color: [1, 1, 1, 1]
+    - Entity: "{0269005D-C663-4E2C-B846-CE62C5CE685C}"
+      TagComponent:
+        Tag: Empty entity
+      TransformComponent:
+        Position: [-1.05676174, -1.68922544, 0]
+        Rotation: [1.77522933, -41.9235497, -19.9519062]
+        Scale: [1.95047891, 2.42321229, 0.99999994]
+      SpriteRendererComponent:
+        Color: [0.258791596, 0.586652696, 0.598455608, 1]
+    - Entity: "{C0A3254B-BDD3-431F-994C-F1E183B2D904}"
+      TagComponent:
+        Tag: Empty entity
+      TransformComponent:
+        Position: [1.33991313, 0, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      SpriteRendererComponent:
+        Color: [0.325978994, 0.760617733, 0.523999691, 1]
+    - Entity: "{34921A31-B31E-4A2C-AE7A-B6B4920DBEDA}"
+      TagComponent:
+        Tag: Empty entity
+      TransformComponent:
+        Position: [1.26797915, -2.23730946, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      SpriteRendererComponent:
+        Color: [0.729729772, 0.727858663, 0.245121583, 1]

@@ -17,7 +17,7 @@ namespace Pika {
 
 		if (m_Context) {
 			// TODO : Tag -> UUID
-			m_Context->m_Registry.view<TagComponent>().each([this](auto vEntity, auto& vTagComponent) {
+			m_Context->m_Registry.view<IDComponent>().each([this](auto vEntity, auto& vTagComponent) {
 				Entity Entity(vEntity, m_Context.get());
 				drawEntityNode(Entity);
 				});
@@ -55,13 +55,14 @@ namespace Pika {
 		};
 
 		bool Opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)vEntity, TreeNodeFlags, Tag);
-		// ×ó»÷EntityÑ¡ÖÐ
-		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+		// ×ó¼üµ¥»÷Ñ¡ÖÐEntity
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			m_SelectedEntity = vEntity;
-		}
-		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+		// TODO : ×ó¼üË«»÷Focus
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
 			ImGui::OpenPopup(std::format("EntitySettings##{0}", (uint32_t)vEntity).c_str());
-		}
+
 		if (ImGui::BeginPopup(std::format("EntitySettings##{0}", (uint32_t)vEntity).c_str())) {
 			if (ImGui::MenuItem("Delete")) {
 				m_Context->destroyEntity(vEntity);
