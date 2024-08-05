@@ -28,5 +28,4 @@ namespace Pika {
 		return getMousePosition().y;
 	}
 
-
 }

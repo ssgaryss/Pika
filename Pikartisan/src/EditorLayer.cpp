@@ -273,7 +273,6 @@ namespace Pika
 		if (m_ViewportSize.x != ViewportPanelSize.x || m_ViewportSize.y != ViewportPanelSize.y)
 			m_ViewportSize = { ViewportPanelSize.x, ViewportPanelSize.y };
 
-		// TODO!
 		uintptr_t TextureID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID());
 		ImGui::Image(reinterpret_cast<ImTextureID>(TextureID), { m_ViewportSize.x, m_ViewportSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
 		// 接收拖拽Scenes
@@ -284,22 +283,20 @@ namespace Pika
 			}
 			ImGui::EndDragDropTarget();
 		}
-
 		// Gizmos
+		ImGuizmo::BeginFrame();
+		ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
+		ImGuizmo::SetOrthographic(m_EditorCamera.isOthograhic()); // TODO! : CameraComponent情况
+		ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
+			m_ViewportBounds[1].x - m_ViewportBounds[0].x,
+			m_ViewportBounds[1].y - m_ViewportBounds[0].y); // ImGuizmo的绘制区域
+		ImGuizmo::DrawGrid(glm::value_ptr(m_EditorCamera.getViewMatrix()), glm::value_ptr(m_EditorCamera.getProjectionMatrix()),
+			glm::value_ptr(glm::mat4(1.0f)), 100.0f);
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
 		if (SelectedEntity) {
-			ImGuizmo::BeginFrame();
-			ImGuizmo::SetOrthographic(false); // 关闭正交投影模式  // TODO!
-			ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
-
-			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
-				m_ViewportBounds[1].x - m_ViewportBounds[0].x,
-				m_ViewportBounds[1].y - m_ViewportBounds[0].y); // ImGuizmo的绘制区域
 
 			auto& Transform = SelectedEntity.getComponent<TransformComponent>();
-			glm::mat4 TransformMatrix = glm::translate(glm::mat4(1.0f), Transform.m_Position) *
-				glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) *
-				glm::scale(glm::mat4(1.0f), Transform.m_Scale);
+			glm::mat4 TransformMatrix = Transform;
 			glm::vec3 Scale = Transform.m_Scale;
 			glm::quat Orientation = glm::quat(Transform.m_Rotation);
 			glm::vec3 Translation = Transform.m_Position;
@@ -469,8 +466,10 @@ namespace Pika
 			ImVec2 MouseScreenPos = ImGui::GetMousePos(); // 绝对坐标
 			ImVec2 MouseViewportPos = { MouseScreenPos.x - m_ViewportBounds[0].x, MouseScreenPos.y - m_ViewportBounds[0].y };
 			if (m_IsViewportHovered && m_IsViewportFocus && (!m_SceneHierarchyPanel->getSelectedEntity() || !ImGuizmo::IsOver())) {
-				m_SceneHierarchyPanel->setSelectedEntity(m_MouseHoveredEntity);
-				m_GizmoType = m_GizmoType == 0 ? ImGuizmo::OPERATION::TRANSLATE : m_GizmoType;
+				if (!Input::isKeyPressed(Key::KeyCode::LeftAlt) && !Input::isKeyPressed(Key::KeyCode::RightAlt)) { // TODO : 避免和EditorCmara冲突，须重构
+					m_SceneHierarchyPanel->setSelectedEntity(m_MouseHoveredEntity);
+					m_GizmoType = m_GizmoType == 0 ? ImGuizmo::OPERATION::TRANSLATE : m_GizmoType;
+				}
 			}
 
 			break;
