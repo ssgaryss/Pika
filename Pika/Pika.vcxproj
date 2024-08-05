@@ -166,6 +166,7 @@
     <ClInclude Include="src\Pika\Core\Shortcut.h" />
     <ClInclude Include="src\Pika\Core\Timer.h" />
     <ClInclude Include="src\Pika\Core\Timestep.h" />
+    <ClInclude Include="src\Pika\Core\UUID.h" />
     <ClInclude Include="src\Pika\Core\Window.h" />
     <ClInclude Include="src\Pika\Debug\Instrumentor.h" />
     <ClInclude Include="src\Pika\Events\ApplicationEvent.h" />
@@ -206,7 +207,6 @@
     <ClInclude Include="src\Pika\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Pika\Utils\PlatformUtils.h" />
     <ClInclude Include="src\pkpch.h" />
-    <ClInclude Include="src\Pika\Core\UUID.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -631,6 +631,7 @@
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
     <ClCompile Include="src\Pika\Core\Log.cpp" />
     <ClCompile Include="src\Pika\Core\Random.cpp" />
+    <ClCompile Include="src\Pika\Core\UUID.cpp" />
     <ClCompile Include="src\Pika\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Pika\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Pika\Math\Math.cpp" />
@@ -666,7 +667,6 @@
     <ClCompile Include="src\pkpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Pika\Core\UUID.cpp" />
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>

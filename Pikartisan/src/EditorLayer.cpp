@@ -284,16 +284,14 @@ namespace Pika
 			ImGui::EndDragDropTarget();
 		}
 		// Gizmos
-		ImGuizmo::BeginFrame();
-		ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
-		ImGuizmo::SetOrthographic(m_EditorCamera.isOthograhic()); // TODO! : CameraComponent情况
-		ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
-			m_ViewportBounds[1].x - m_ViewportBounds[0].x,
-			m_ViewportBounds[1].y - m_ViewportBounds[0].y); // ImGuizmo的绘制区域
-		ImGuizmo::DrawGrid(glm::value_ptr(m_EditorCamera.getViewMatrix()), glm::value_ptr(m_EditorCamera.getProjectionMatrix()),
-			glm::value_ptr(glm::mat4(1.0f)), 100.0f);
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
 		if (SelectedEntity) {
+			ImGuizmo::BeginFrame();	
+			ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
+			ImGuizmo::SetOrthographic(m_EditorCamera.isOthograhic()); // TODO! : CameraComponent情况
+			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
+				m_ViewportBounds[1].x - m_ViewportBounds[0].x,
+				m_ViewportBounds[1].y - m_ViewportBounds[0].y); // ImGuizmo的绘制区域
 
 			auto& Transform = SelectedEntity.getComponent<TransformComponent>();
 			glm::mat4 TransformMatrix = Transform;
