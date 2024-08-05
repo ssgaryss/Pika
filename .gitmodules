@@ -17,3 +17,6 @@
 [submodule "Pika/vendor/ImGuizmo"]
 	path = Pika/vendor/ImGuizmo
 	url = git@github.com:ssgaryss/ImGuizmo.git
+[submodule "Pika/vendor/Box2D"]
+	path = Pika/vendor/Box2D
+	url = git@github.com:ssgaryss/box2d.git

@@ -31,7 +31,8 @@ project "Pika"
 		"%{includeDir.stb_image}",
 		"%{includeDir.entt}",
 		"%{includeDir.yaml_cpp}",
-		"%{includeDir.ImGuizmo}"
+		"%{includeDir.ImGuizmo}",
+		"%{includeDir.Box2D}"
 	}
 
 	links
@@ -41,7 +42,8 @@ project "Pika"
 		"ImGui",
 		"yaml-cpp",
 		"opengl32.lib",
-		"ImGuizmo"
+		"ImGuizmo",
+		"Box2D"
 	}
 
 	defines
@@ -61,10 +63,10 @@ project "Pika"
 			-- "PK_BUILD_DLL" --(Pika is a static lib instead of dll now)
 		}
 
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
-		}
+		-- postbuildcommands  -- for dll copy !
+		-- {
+		-- 	("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
+		-- }
 
 	filter "configurations:Debug"
 		defines "PIKA_DEBUG"
