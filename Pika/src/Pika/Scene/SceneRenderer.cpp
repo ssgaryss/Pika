@@ -49,14 +49,14 @@ namespace Pika {
 
 	void SceneRenderer::initialize()
 	{
-		switch (m_RendererType)
+		switch (m_Scene->getSceneType())
 		{
-		case Pika::SceneRenderer::Renderer2D:
+		case Pika::Scene::SceneType::Scene2D:
 		{
 			Renderer2D::Initialize();
 			break;
 		}
-		case Pika::SceneRenderer::Renderer3D:
+		case Pika::Scene::SceneType::Scene3D:
 		{
 			Renderer3D::Initialize();
 			break;

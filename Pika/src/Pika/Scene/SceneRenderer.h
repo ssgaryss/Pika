@@ -24,11 +24,6 @@ namespace Pika {
 
 		void resize(uint32_t vWidth, uint32_t vHeight); // resize FBO
 	private:
-		enum RendererType {
-			Renderer2D = 0,
-			Renderer3D = 1
-		};
-		RendererType m_RendererType = Renderer2D; // TODO : 3D
 		void initialize();
 	private:
 		Ref<Scene> m_Scene;

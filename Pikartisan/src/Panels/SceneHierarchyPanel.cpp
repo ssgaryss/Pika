@@ -203,6 +203,19 @@ namespace Pika {
 					m_SelectedEntity.addComponent<CameraComponent>();
 				}
 			}
+			// Only 2D
+			if (m_Context->getSceneType() == Scene::SceneType::Scene2D) {
+				if (!m_SelectedEntity.hasComponent<Rigidbody2DComponent>()) {
+					if (ImGui::MenuItem("Rigidbody2D Component")) {
+						m_SelectedEntity.addComponent<Rigidbody2DComponent>();
+					}
+				}
+				if (!m_SelectedEntity.hasComponent<BoxCollider2DComponent>()) {
+					if (ImGui::MenuItem("BoxCollider2D Component")) {
+						m_SelectedEntity.addComponent<BoxCollider2DComponent>();
+					}
+				}
+			}
 			ImGui::EndPopup();
 		}
 		ImGui::PopItemWidth();
@@ -249,6 +262,29 @@ namespace Pika {
 				ImGui::DragFloat("##PerspectiveFar", &PerspectiveFar);
 			}
 			});
+
+		// Only 2D 
+		if (m_Context->getSceneType() == Scene::SceneType::Scene2D) {
+			drawEntityComponent<Rigidbody2DComponent>("BoxCollider2D", vEntity, [](auto& vRigidbody2DComponent) {
+				Rigidbody2DComponent::RigidbodyType CurrentRigidbodyType = vRigidbody2DComponent.m_Type;
+				int Index = static_cast<int>(CurrentRigidbodyType);
+				const char* RigidbodyType[] = { "Static", "Dynamic","Kinematic" };
+				if (ImGui::Combo("##RigidbodyType", &Index, RigidbodyType, IM_ARRAYSIZE(RigidbodyType))) {
+					vRigidbody2DComponent.m_Type = static_cast<Rigidbody2DComponent::RigidbodyType>(Index);
+				}
+				ImGui::Checkbox("Fixed Rotation", &vRigidbody2DComponent.m_IsFixedRotation);
+				});
+
+			drawEntityComponent<BoxCollider2DComponent>("BoxCollider2D", vEntity, [](auto& vBoxCollider2DComponent) {
+				ImGui::DragFloat2("Offset", glm::value_ptr(vBoxCollider2DComponent.m_Offset));
+				ImGui::DragFloat2("Size", glm::value_ptr(vBoxCollider2DComponent.m_Size));
+				ImGui::DragFloat("Density", &vBoxCollider2DComponent.m_Density);
+				ImGui::DragFloat("Friction", &vBoxCollider2DComponent.m_Friction);
+				ImGui::DragFloat("Restitution", &vBoxCollider2DComponent.m_Restitution);
+				ImGui::DragFloat("RestitutionThreshold", &vBoxCollider2DComponent.m_RestitutionThreshold);
+				});
+
+		}
 
 	}
 

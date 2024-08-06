@@ -47,6 +47,11 @@ namespace Pika
 		// Editor暂时就是静态场景,没有更新
 	}
 
+	void Scene::onUpdateRuntime(Timestep vTimestep)
+	{
+		// TODO!!!
+	}
+
 	void Scene::onViewportResize(uint32_t vWidth, uint32_t vHeight)
 	{
 		if (m_SceneViewportWidth == vWidth && m_SceneViewportHeight == vHeight)
