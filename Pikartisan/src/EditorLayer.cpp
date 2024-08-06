@@ -69,34 +69,6 @@ namespace Pika
 
 	void EditorLayer::onUpdate(Timestep vTimestep)
 	{
-		switch (m_SceneState)
-		{
-		case Pika::EditorLayer::SceneState::Edit:
-		{
-			onUpdateEditor(vTimestep);
-			break;
-		}
-		case Pika::EditorLayer::SceneState::Play:
-		{
-			onUpdateRuntime(vTimestep);
-			break;
-		}
-		case Pika::EditorLayer::SceneState::Simulate:
-		{
-			onUpdateSimulation(vTimestep);
-			break;
-		}
-		default:
-		{
-			PK_CORE_ERROR("EditorLayer : Unknown Scene Mode !");
-			break;
-		}
-		}
-		onUpdateEditor(vTimestep);
-	}
-
-	void EditorLayer::onUpdateEditor(Timestep vTimestep)
-	{
 		PK_PROFILE_FUNCTION();
 
 		// 更新Scene和Scene中所有Cameras的ViewportSize
@@ -109,16 +81,6 @@ namespace Pika
 			m_Framebuffer->resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_EditorCamera.setViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 		}
-		// 更新EditorCamera内外参矩阵
-		if (m_IsViewportFocus)
-			m_EditorCamera.onUpdate(vTimestep);
-
-		// Debug !
-		//PK_CORE_INFO("FBO size: {}, {}", m_Framebuffer->getFramebufferSpecification().m_Width, m_Framebuffer->getFramebufferSpecification().m_Height);
-		//PK_CORE_INFO("Viewportsize : {}, {}", m_ViewportSize.x, m_ViewportSize.y);
-		//PK_CORE_INFO("ViewportBounds : {}, {}", m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-		//PK_CORE_INFO("m_ViewportBounds[0] : {}, {}", m_ViewportBounds[0].x, m_ViewportBounds[0].y);
-		//PK_CORE_INFO("m_ViewportBounds[1] : {}, {}", m_ViewportBounds[1].x, m_ViewportBounds[1].y);
 
 		{
 			PK_PROFILE_SCOPE("Renderer Prep");
@@ -160,6 +122,24 @@ namespace Pika
 		m_ActiveScene->onUpdate(vTimestep);
 		Renderer2D::EndScene();
 
+		switch (m_SceneState)
+		{
+		case Pika::EditorLayer::SceneState::Edit:
+		{
+			if (m_IsViewportFocus)
+				m_EditorCamera.onUpdate(vTimestep);
+			break;
+		}
+		case Pika::EditorLayer::SceneState::Play:
+		{
+			break;
+		}
+		case Pika::EditorLayer::SceneState::Simulate:
+		{
+			break;
+		}
+		}
+
 		// 计算鼠标在FBO中EntityID texture的坐标
 		auto MousePos = ImGui::GetMousePos(); // 屏幕绝对坐标
 		int EntityIDTextureX = static_cast<int>(MousePos.x - m_ViewportBounds[0].x);
@@ -170,16 +150,6 @@ namespace Pika
 		}
 
 		m_Framebuffer->unbind();
-	}
-
-	void EditorLayer::onUpdateRuntime(Timestep vTimestep)
-	{
-		// TODO
-	}
-
-	void EditorLayer::onUpdateSimulation(Timestep vTimestep)
-	{
-		// TODO
 	}
 
 	void EditorLayer::onImGuiRender()

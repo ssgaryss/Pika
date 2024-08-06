@@ -27,7 +27,7 @@ namespace Pika
 		// Scene data
 		entt::registry m_Registry;   // Entities
 		// TODO : Lighting & Camera
-		Ref<Camera> m_Camera; // Camera
+		Ref<Camera> m_PrimaryCamera; // Camera
 	private:
 		// Scene display
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0;

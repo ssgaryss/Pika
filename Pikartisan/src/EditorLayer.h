@@ -15,9 +15,6 @@ namespace Pika
 		void onDetach() override;
 
 		void onUpdate(Timestep vTimestep) override;
-		void onUpdateEditor(Timestep vTimestep);
-		void onUpdateRuntime(Timestep vTimestep);
-		void onUpdateSimulation(Timestep vTimestep);
 
 		void onImGuiRender() override;
 		void onEvent(Event& vEvent) override;
@@ -28,11 +25,11 @@ namespace Pika
 		void openScene(const std::filesystem::path& vScenePath);
 		void saveScene();
 		void saveSceneAs();
-		//// Scene Operations
-		//void onScenePlay();
-		//void onSceneStop();
-		//void onScenePause();
-		//void onSceneSimulate();
+		// Scene Operations
+		void onScenePlay();
+		void onSceneStop();
+		void onScenePause();
+		void onSceneSimulate();
 	private:
 		// Shortcuts
 		void initializeShortcutLibrary();          // 初始化快捷键  TODO : 有Project序列化后读取Project中包含快捷键设置
@@ -65,7 +62,8 @@ namespace Pika
 		// Scenes and SceneHierarchyPanel
 		std::filesystem::path m_ActiveScenePath; // TODO : Delete! use project path
 		Ref<Scene> m_ActiveScene;
-		std::vector<Ref<Scene>> m_Scenes; // TODO : Not use it yet(only one FBO for now)
+		Ref<SceneRenderer> m_Renderer;    // TODO : Not use it yet !
+		std::vector<Ref<Scene>> m_Scenes; // TODO : Not use it yet !(only one FBO for now)
 		// Panels
 		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel; // TODO : Mutiple Scenes
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;

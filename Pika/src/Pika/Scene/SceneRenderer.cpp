@@ -4,12 +4,27 @@
 #include "Pika/Renderer/Renderer3D.h"
 
 namespace Pika {
-	SceneRenderer::SceneRenderer(const Ref<Scene>& vScene)
+
+	SceneRenderer::SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer)
+		: m_Scene{ vScene }, m_Framebuffer{ vFramebuffer }
+	{
+		initialize();
+	}
+
+	void SceneRenderer::beginRender(const Camera& vCamera)
+	{
+
+	}
+
+	void SceneRenderer::endRender()
 	{
 	}
-	void SceneRenderer::render(const Camera& vCamera)
+
+	void SceneRenderer::resize(uint32_t vWidth, uint32_t vHeight)
 	{
+		m_Framebuffer->resize(vWidth, vHeight);
 	}
+
 	void SceneRenderer::initialize()
 	{
 		switch (m_RendererType)

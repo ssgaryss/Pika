@@ -10,9 +10,15 @@ namespace Pika {
 	{
 	public:
 		SceneRenderer() = default;
-		SceneRenderer(const Ref<Scene>& vScene);
+		SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer);
 
-		void render(const Camera& vCamera);
+		void beginRender(const Camera& vCamera);
+		void endRender();
+
+		inline void setScene(const Ref<Scene>& vScene) { m_Scene = vScene; }
+		inline void setFramebuffer(const Ref<Framebuffer>& vFramebuffer) { m_Framebuffer = vFramebuffer; }
+
+		void resize(uint32_t vWidth, uint32_t vHeight); // resize FBO
 	private:
 		enum RendererType {
 			Renderer2D = 0,
@@ -22,7 +28,7 @@ namespace Pika {
 		void initialize();
 	private:
 		Ref<Scene> m_Scene;
-		Scope<Framebuffer> m_Framebuffer;
+		Ref<Framebuffer> m_Framebuffer;
 		Ref<ShaderLibrary> m_ShaderLibray; // TODO : 自己创建的Shaders
 	};
 
