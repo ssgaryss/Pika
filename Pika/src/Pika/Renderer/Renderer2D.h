@@ -14,11 +14,11 @@ namespace Pika
 	{
 	public:
 		Renderer2D() = delete;
-		static void Init();
+		static void Initialize();
 		// TODO : BeginScene should begin with all scene data!
 		static void BeginScene(const EditorCamera& vEditorCamera);
 		static void BeginScene(const Camera& vCamera, const glm::mat4& vTramsform);
-		static void BeginScene(const Camera2DController& vCameraController);
+		static void BeginScene(const Camera2DController& vCameraController);  // TODO : Delete !
 		static void EndScene();
 		static void Flush();
 

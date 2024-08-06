@@ -32,7 +32,7 @@ Sandbox2D::Sandbox2D()
 void Sandbox2D::onAttach()
 {
 	PK_PROFILE_FUNCTION();
-	Pika::Renderer2D::Init();
+	Pika::Renderer2D::Initialize();
 
 	m_TextureBackround = Pika::Texture2D::Create("assets/textures/board.png");
 	m_Texture2024 = Pika::Texture2D::Create("assets/textures/2024.png");
@@ -67,8 +67,6 @@ void Sandbox2D::onUpdate(Pika::Timestep vTimestep)
 	Pika::Renderer2D::DrawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
 	Pika::Renderer2D::DrawQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f });
 	Pika::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.2f, 0.5f }, { 0.5f, 0.5f, 1.0f, 1.0f });
-	Pika::Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f }, { 0.5f, 0.5f }, glm::radians(Rotation), { 1.0f, 0.0f, 1.0f, 1.0f });
-	Pika::Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f, 0.1f }, { 0.5f, 0.5f }, glm::radians(Rotation), m_Texture2024);
 	int num = 0;
 	for (int i = 0; i < 20; ++i) {
 		for (int j = 0; j < 30; ++j) {

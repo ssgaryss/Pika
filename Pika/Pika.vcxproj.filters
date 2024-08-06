@@ -111,6 +111,9 @@
     <ClInclude Include="src\Pika\Core\Timestep.h">
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Core\UUID.h">
+      <Filter>src\Pika\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Core\Window.h">
       <Filter>src\Pika\Core</Filter>
     </ClInclude>
@@ -1482,7 +1485,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Core\UUID.h" />
+    <ClInclude Include="src\Pika\Scene\SceneRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1498,6 +1501,9 @@
       <Filter>src\Pika\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Core\Random.cpp">
+      <Filter>src\Pika\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pika\Core\UUID.cpp">
       <Filter>src\Pika\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\ImGui\ImGuiBuild.cpp">
@@ -1602,6 +1608,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Core\UUID.cpp" />
+    <ClCompile Include="src\Pika\Scene\SceneRenderer.cpp" />
   </ItemGroup>
 </Project>

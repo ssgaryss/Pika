@@ -24,6 +24,7 @@ namespace Pika {
 
 	void EditorCamera::onUpdate(Timestep vTimestep)
 	{
+		// TODO : 这里并没有用Shortcut无法更改按键
 		if (Input::isKeyPressed(Key::KeyCode::LeftAlt) || Input::isKeyPressed(Key::KeyCode::RightAlt)) {
 			const glm::vec2 MousePosition = Input::getMousePosition();
 			glm::vec2 Delta = (MousePosition - m_MousePosition) * 0.03f;

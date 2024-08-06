@@ -6,9 +6,9 @@ namespace Pika {
 
 	Scope<Camera2D> Renderer3D::s_Camera{ std::make_unique<Camera2D>(-1.0f, 1.0f, -1.0f, 1.0f) };
 
-	void Renderer3D::Init()
+	void Renderer3D::Initialize()
 	{
-		RenderCommand::Init();
+		RenderCommand::Initialize();
 	}
 
 	void Renderer3D::BeginScene()

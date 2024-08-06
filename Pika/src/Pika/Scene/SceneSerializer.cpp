@@ -100,22 +100,43 @@ namespace Pika {
 							}
 						}
 						if (Entity.hasComponent<TransformComponent>()) {
+							auto& Transform = Entity.getComponent<TransformComponent>();
 							Out << YAML::Key << "TransformComponent" << YAML::Value << YAML::BeginMap;
 							{
-								Out << YAML::Key << "Position" << YAML::Value << Entity.getComponent<TransformComponent>().m_Position;
-								Out << YAML::Key << "Rotation" << YAML::Value << Entity.getComponent<TransformComponent>().m_Rotation;
-								Out << YAML::Key << "Scale" << YAML::Value << Entity.getComponent<TransformComponent>().m_Scale;
+								Out << YAML::Key << "Position" << YAML::Value << Transform.m_Position;
+								Out << YAML::Key << "Rotation" << YAML::Value << Transform.m_Rotation;
+								Out << YAML::Key << "Scale" << YAML::Value << Transform.m_Scale;
 								Out << YAML::EndMap;
 							}
 						}
 						if (Entity.hasComponent<SpriteRendererComponent>()) {
+							auto& SpriteRenderer = Entity.getComponent<SpriteRendererComponent>();
 							Out << YAML::Key << "SpriteRendererComponent" << YAML::Value << YAML::BeginMap;
 							{
-								Out << YAML::Key << "Color" << YAML::Value << Entity.getComponent<SpriteRendererComponent>().m_Color;
+								Out << YAML::Key << "Color" << YAML::Value << SpriteRenderer.m_Color;
 								Out << YAML::EndMap;
 							}
 						}
-						//TODO !!! Camera...
+						if (Entity.hasComponent<CameraComponent>()) {
+							Out << YAML::Key << "CameraComponent" << YAML::Value << YAML::BeginMap;
+							{
+								auto& Camera = Entity.getComponent<CameraComponent>();
+								Out << YAML::Key << "Camera" << YAML::Value << YAML::BeginMap;
+								{
+									Out << YAML::Key << "ProjectionMode" << YAML::Value << static_cast<int>(Camera.m_Camera.getProjectionMode());
+									Out << YAML::Key << "OthographicSize" << YAML::Value << Camera.m_Camera.getOthographicSize();
+									Out << YAML::Key << "OthographicNear" << YAML::Value << Camera.m_Camera.getOthographicNear();
+									Out << YAML::Key << "OthographicFar" << YAML::Value << Camera.m_Camera.getOthographicFar();
+									Out << YAML::Key << "PerspectiveFOV" << YAML::Value << Camera.m_Camera.getPerspectiveFOV();
+									Out << YAML::Key << "PerspectiveNear" << YAML::Value << Camera.m_Camera.getPerspectiveNear();
+									Out << YAML::Key << "getPerspectiveFar" << YAML::Value << Camera.m_Camera.getPerspectiveFar();
+									Out << YAML::Key << "AspectRatio" << YAML::Value << Camera.m_Camera.getAspectRatio();
+								}
+								Out << YAML::EndMap;
+								Out << YAML::Key << "IsFixedAspectRatio" << YAML::Value << Camera.m_IsFixedAspectRatio;
+								Out << YAML::EndMap;
+							}
+						}
 
 						Out << YAML::EndMap;
 						});
@@ -191,7 +212,12 @@ namespace Pika {
 					auto& SRC = DeserializedEntity.addComponent<SpriteRendererComponent>();
 					SRC.m_Color = SpriteRendererComponentNode["Color"].as<glm::vec4>();
 				}
-				//TODO !!! Camera...
+
+				if (Entity["CameraComponent"]) {
+					auto CameraComponentNode = Entity["CameraComponent"];
+					auto& SRC = DeserializedEntity.addComponent<CameraComponent>();
+					// TODO!
+				}
 			}
 		}
 

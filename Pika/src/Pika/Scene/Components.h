@@ -73,6 +73,34 @@ namespace Pika
 		CameraComponent(const CameraComponent&) = default;
 	};
 
+	struct Rigidbody2DComponent
+	{
+		enum class RigidbodyType {
+			Static = 0,
+			Dynamic,
+			Kinematic
+		};
+		RigidbodyType m_Type = RigidbodyType::Static;
+		bool m_IsFixedRotation = false;
+
+		Rigidbody2DComponent() = default;
+		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
+	};
+
+	struct BoxCollider2DComponent
+	{
+		glm::vec2 m_Offset{ 0.0f,0.0f };
+		glm::vec2 m_Size{ 0.5f,0.5f };
+		// TODO : Move to physics material
+		float m_Density = 1.0f;
+		float m_Friction = 0.5f;
+		float m_Restitution = 0.0f;
+		float m_RestitutionThreshold = 0.5f;
+
+		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
+	};
+
 	struct NativeScriptComponent {
 		// TODO
 	};

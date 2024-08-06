@@ -7,6 +7,7 @@
 
 namespace Pika
 {
+	// 暂时没有使用！！！
 
 	struct Camera2DBounds {
 		float m_Left, m_Right;

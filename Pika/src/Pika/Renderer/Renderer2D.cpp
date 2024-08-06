@@ -37,7 +37,7 @@ namespace Pika {
 		QuadVertexData* m_pQuadVertexBufferPtr = nullptr;
 
 		//Textures
-		friend void Renderer2D::Init();
+		friend void Renderer2D::Initialize();
 		uint32_t getMaxTextureSlots() const { return m_MaxTextureSlots; }
 		std::optional<uint32_t> findTextureIndex(const Ref<Texture2D>& vTexture) {  // 已存在Texture则返回其index
 			for (uint32_t i = 1; i < m_TextureIndex; ++i) {
@@ -71,11 +71,11 @@ namespace Pika {
 
 	static Renderer2DData s_Data;
 
-	void Renderer2D::Init()
+	void Renderer2D::Initialize()
 	{
 		PK_PROFILE_FUNCTION();
 
-		RenderCommand::Init();
+		RenderCommand::Initialize();
 		s_Data.m_QuadUnitVertex[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.m_QuadUnitVertex[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.m_QuadUnitVertex[2] = { 0.5f,  0.5f, 0.0f, 1.0f };

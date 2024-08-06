@@ -5,7 +5,7 @@
 
 namespace Pika
 {
-	void OpenGLRendererAPI::init()
+	void OpenGLRendererAPI::Initialize()
 	{
 		PK_PROFILE_FUNCTION();
 

@@ -21,6 +21,7 @@ namespace Pika {
 		void setPosition(const glm::vec3& vPosition);
 		void setFocalPoint(const glm::vec3& vFocalPoint);
 
+		inline bool isOthograhic() const { return m_ProjectionMode == CameraProjectionMode::Othographic; }
 		inline const glm::vec3& getPosition() const { return m_Position; }
 		inline float getPitch() const { return m_Pitch; }
 		inline float getYaw() const { return m_Yaw; }
@@ -36,7 +37,7 @@ namespace Pika {
 		inline void updatePosition() { m_Position = m_FocalPoint - getForwardDirection() * m_Distance; }
 		inline void updateFocalPoint() { m_FocalPoint = m_Position + getForwardDirection() * m_Distance; }
 
-		void onKeyMove(Timestep vTimestep);                                         // w,a,s,d任意移动 
+		void onKeyMove(Timestep vTimestep);                       // w,a,s,d任意移动 
 		void onMousePan(const glm::vec2& vDelta);                 // 横向移动
 		void onMouseRotate(const glm::vec2& vDelta);              // 旋转,改变m_Yaw,m_Pitch
 		void onMouseZoom(float vDelta);                           // 改变Distance

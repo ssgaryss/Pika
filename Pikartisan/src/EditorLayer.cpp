@@ -33,8 +33,7 @@ namespace Pika
 		"000000000000000000000000000000";
 
 	EditorLayer::EditorLayer()
-		: Layer{ "EditorLayer" }, m_CameraController{ 1920.0f / 1080.0f },
-		m_ShaderLibrary{ CreateRef<ShaderLibrary>() }
+		: Layer{ "EditorLayer" }
 	{
 	}
 
@@ -42,11 +41,14 @@ namespace Pika
 	{
 		PK_PROFILE_FUNCTION();
 		// Initialize Renderer2D
-		Renderer2D::Init();
-		m_Framebuffer = Framebuffer::Create({ 1920, 1080, 1,
-			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false });
+		Renderer2D::Initialize();
 		// Initialize Scene
 		m_ActiveScene = CreateRef<Scene>();
+		// Initialize Scene Renderer
+		m_Renderer = CreateRef<SceneRenderer>();
+		m_Renderer->setScene(m_ActiveScene);
+		m_Renderer->setFramebuffer(Framebuffer::Create({ 1920, 1080, 1,
+			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false }));
 		// Initialize Shortcuts
 		initializeShortcutLibrary();
 		// Initialize Panels
@@ -75,35 +77,19 @@ namespace Pika
 		// 更新Scene和Scene中所有Cameras的ViewportSize
 		m_ActiveScene->onViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		// 更新FBO、EditorCamera和CameraController的Size，使其大小与Viewport保持一致
-		if (const FramebufferSpecification& FS = m_Framebuffer->getFramebufferSpecification();
+		if (const FramebufferSpecification& FS = m_Renderer->getFramebuffer()->getFramebufferSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f
 			&& (m_ViewportSize.x != FS.m_Width || m_ViewportSize.y != FS.m_Height))
 		{
-			m_Framebuffer->resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+			m_Renderer->getFramebuffer()->resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_EditorCamera.setViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-			// TODO : EditorCamera and CameraController!
-			m_CameraController.onResize(m_ViewportSize.x, m_ViewportSize.y);
-		}
-		// 更新EditorCamera内外参矩阵
-		m_EditorCamera.onUpdate(vTimestep);
-
-		// Debug !
-		//PK_CORE_INFO("FBO size: {}, {}", m_Framebuffer->getFramebufferSpecification().m_Width, m_Framebuffer->getFramebufferSpecification().m_Height);
-		//PK_CORE_INFO("Viewportsize : {}, {}", m_ViewportSize.x, m_ViewportSize.y);
-		//PK_CORE_INFO("ViewportBounds : {}, {}", m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-		//PK_CORE_INFO("m_ViewportBounds[0] : {}, {}", m_ViewportBounds[0].x, m_ViewportBounds[0].y);
-		//PK_CORE_INFO("m_ViewportBounds[1] : {}, {}", m_ViewportBounds[1].x, m_ViewportBounds[1].y);
-
-		{
-			PK_PROFILE_SCOPE("Renderer Prep");
-			m_Framebuffer->bind();
-			RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-			RenderCommand::Clear(); // 会影响所有FBO中的Texture而非一个
-			m_Framebuffer->clearAttachment(1, -1); // 所有EntityID其余区域赋值-1
 		}
 
-		if (m_IsViewportFocus)
-			m_CameraController.onUpdate(vTimestep);
+		m_Renderer->beginFrame();
+		RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+		RenderCommand::Clear(); // 会影响所有FBO中的Texture而非一个
+		m_Renderer->getFramebuffer()->clearAttachment(1, -1); // 所有EntityID其余区域赋值-1
+
 #if 0
 		Renderer2D::BeginScene(m_CameraController);
 		Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 20.0f, 20.0f }, m_TextureBackround, 10.0f);
@@ -126,25 +112,42 @@ namespace Pika
 
 		Rotation += glm::radians(10.0f);
 		Renderer2D::EndScene();
-#endif // 0
 
 		//Renderer2D::BeginScene(m_CameraController);
 		//m_ActiveScene->onUpdate(vTimestep);
 		//Renderer2D::EndScene();
-		Renderer2D::BeginScene(m_EditorCamera);
-		m_ActiveScene->onUpdate(vTimestep);
-		Renderer2D::EndScene();
+#endif // 0
+
+		switch (m_SceneState)
+		{
+		case Pika::EditorLayer::SceneState::Edit:
+		{
+			if (m_IsViewportFocus)
+				m_EditorCamera.onUpdate(vTimestep);
+			m_ActiveScene->onUpdateEditor(vTimestep);
+			m_Renderer->render(m_EditorCamera);
+			break;
+		}
+		case Pika::EditorLayer::SceneState::Play:
+		{
+			break;
+		}
+		case Pika::EditorLayer::SceneState::Simulate:
+		{
+			break;
+		}
+		}
 
 		// 计算鼠标在FBO中EntityID texture的坐标
 		auto MousePos = ImGui::GetMousePos(); // 屏幕绝对坐标
 		int EntityIDTextureX = static_cast<int>(MousePos.x - m_ViewportBounds[0].x);
 		int EntityIDTextureY = static_cast<int>(m_ViewportBounds[1].y - MousePos.y);
 		if (EntityIDTextureX >= 0 && EntityIDTextureX < (int)m_ViewportSize.x && EntityIDTextureY >= 0 && EntityIDTextureY < (int)m_ViewportSize.y) {
-			int EntityID = m_Framebuffer->readPixel(1, EntityIDTextureX, EntityIDTextureY);
+			int EntityID = m_Renderer->getFramebuffer()->readPixel(1, EntityIDTextureX, EntityIDTextureY);
 			m_MouseHoveredEntity = EntityID == -1 ? Entity{} : Entity{ static_cast<entt::entity>(EntityID), m_ActiveScene.get() };
 		}
 
-		m_Framebuffer->unbind();
+		m_Renderer->endFrame();
 	}
 
 	void EditorLayer::onImGuiRender()
@@ -244,7 +247,7 @@ namespace Pika
 		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
 		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
 		ImGui::Separator();
-		uintptr_t DepthID = static_cast<uintptr_t>(m_Framebuffer->getDepthStencilAttachmentRendererID());
+		uintptr_t DepthID = static_cast<uintptr_t>(m_Renderer->getFramebuffer()->getDepthStencilAttachmentRendererID());
 		ImGui::Image(reinterpret_cast<ImTextureID>(DepthID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x) }, { 0.0f,1.0f }, { 1.0f,0.0f });
 		ImGui::Separator();
 		ImGui::End(); // Renderer statistics
@@ -273,8 +276,7 @@ namespace Pika
 		if (m_ViewportSize.x != ViewportPanelSize.x || m_ViewportSize.y != ViewportPanelSize.y)
 			m_ViewportSize = { ViewportPanelSize.x, ViewportPanelSize.y };
 
-		// TODO!
-		uintptr_t TextureID = static_cast<uintptr_t>(m_Framebuffer->getColorAttachmentRendererID());
+		uintptr_t TextureID = static_cast<uintptr_t>(m_Renderer->getFramebuffer()->getColorAttachmentRendererID());
 		ImGui::Image(reinterpret_cast<ImTextureID>(TextureID), { m_ViewportSize.x, m_ViewportSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
 		// 接收拖拽Scenes
 		if (ImGui::BeginDragDropTarget()) {
@@ -284,22 +286,18 @@ namespace Pika
 			}
 			ImGui::EndDragDropTarget();
 		}
-
 		// Gizmos
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
 		if (SelectedEntity) {
 			ImGuizmo::BeginFrame();
-			ImGuizmo::SetOrthographic(false); // 关闭正交投影模式  // TODO!
 			ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
-
+			ImGuizmo::SetOrthographic(m_EditorCamera.isOthograhic()); // TODO! : CameraComponent情况
 			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
 				m_ViewportBounds[1].x - m_ViewportBounds[0].x,
 				m_ViewportBounds[1].y - m_ViewportBounds[0].y); // ImGuizmo的绘制区域
 
 			auto& Transform = SelectedEntity.getComponent<TransformComponent>();
-			glm::mat4 TransformMatrix = glm::translate(glm::mat4(1.0f), Transform.m_Position) *
-				glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) *
-				glm::scale(glm::mat4(1.0f), Transform.m_Scale);
+			glm::mat4 TransformMatrix = Transform;
 			glm::vec3 Scale = Transform.m_Scale;
 			glm::quat Orientation = glm::quat(Transform.m_Rotation);
 			glm::vec3 Translation = Transform.m_Position;
@@ -374,6 +372,7 @@ namespace Pika
 
 		m_ActiveScene = CreateRef<Scene>();
 		m_SceneHierarchyPanel->setContext(m_ActiveScene);
+		m_Renderer->setScene(m_ActiveScene);
 		auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
 		Serializer->deserializeYAMLText(Path);
 		m_ActiveScenePath = std::filesystem::path(Path); // 绝对路径
@@ -469,8 +468,10 @@ namespace Pika
 			ImVec2 MouseScreenPos = ImGui::GetMousePos(); // 绝对坐标
 			ImVec2 MouseViewportPos = { MouseScreenPos.x - m_ViewportBounds[0].x, MouseScreenPos.y - m_ViewportBounds[0].y };
 			if (m_IsViewportHovered && m_IsViewportFocus && (!m_SceneHierarchyPanel->getSelectedEntity() || !ImGuizmo::IsOver())) {
-				m_SceneHierarchyPanel->setSelectedEntity(m_MouseHoveredEntity);
-				m_GizmoType = m_GizmoType == 0 ? ImGuizmo::OPERATION::TRANSLATE : m_GizmoType;
+				if (!Input::isKeyPressed(Key::KeyCode::LeftAlt) && !Input::isKeyPressed(Key::KeyCode::RightAlt)) { // TODO : 避免和EditorCmara冲突，须重构
+					m_SceneHierarchyPanel->setSelectedEntity(m_MouseHoveredEntity);
+					m_GizmoType = m_GizmoType == 0 ? ImGuizmo::OPERATION::TRANSLATE : m_GizmoType;
+				}
 			}
 
 			break;

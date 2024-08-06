@@ -5,7 +5,8 @@
 
 namespace Pika
 {
-
+	// 暂时没有使用！！！
+	
 	//In 2D mode, camera can only move at the plan where z = 0.0f, Up is +y direction and face to -z direction
 	static const float s_Z = 0.0f;
 	static const glm::vec3 s_Direction = glm::vec3(0.0f, 0.0f, -1.0f);

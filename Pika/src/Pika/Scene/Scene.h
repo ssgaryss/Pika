@@ -11,6 +11,11 @@ namespace Pika
 	class Scene
 	{
 	public:
+		enum class SceneType {
+			Scene2D = 0,
+			Scene3D = 1
+		};
+	public:
 		Scene() = default;
 		~Scene() = default; // TODO : For now!
 
@@ -19,20 +24,27 @@ namespace Pika
 		Entity createEntityWithUUIDString(const std::string& vUUID, const std::string& vName = "Untitled");
 		void destroyEntity(Entity vEntity);
 
-		void onUpdate(Timestep vTimestep); // TODO : Delete camera2D does not needed！
+		void onUpdateEditor(Timestep vTimestep);
+		void onUpdateRuntime(Timestep vTimestep);
 
 		void onViewportResize(uint32_t vWidth, uint32_t vHeight); // 更新Scene和SceneCamera的Viewport
 
+		inline Ref<Camera> getPrimaryCamera() const { return m_PrimaryCamera; }
+		inline SceneType getSceneType() const { return m_SceneType; }
+		inline void setSceneType(SceneType vSceneType) { m_SceneType = vSceneType; }
 	private:
 		// Scene data
 		entt::registry m_Registry;   // Entities
 		// TODO : Lighting & Camera
-		Ref<Camera> m_Camera; // Camera
+		Ref<Camera> m_PrimaryCamera; // Camera
 	private:
+		// Scene type
+		SceneType m_SceneType = SceneType::Scene2D; // TODO : 3D
 		// Scene display
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0;
 
 		friend class Entity;
+		friend class SceneRenderer;
 		friend class SceneHierarchyPanel;
 		friend class SceneSerializer;
 	};

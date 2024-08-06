@@ -10,7 +10,7 @@ namespace Pika {
     {
     }
 
-    void OpenGLContext::init()
+    void OpenGLContext::Initialize()
     {
         PK_PROFILE_FUNCTION();
 
