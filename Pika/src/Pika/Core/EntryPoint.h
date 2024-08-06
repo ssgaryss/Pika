@@ -7,7 +7,7 @@ extern Pika::Application* Pika::createApplication();
 
 int main(int argc, char** argv)
 {
-	Pika::Log::init();
+	Pika::Log::Initialize();
 
 	PK_PROFILE_BEGIN_SESSION("Startup", "PikaProfile-Startup.json");
 	auto app{ Pika::createApplication() };

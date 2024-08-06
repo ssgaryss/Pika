@@ -12,7 +12,7 @@ namespace Pika
 	{
 	public:
 		Renderer3D() = delete;
-		static void Init();
+		static void Initialize();
 		static void BeginScene();
 		static void Submit(const Shader* vShader, const VertexArray* vData, const glm::mat4 vTransform = glm::mat4(1.0f)); //submit Scene info
 		static void EndScene();

@@ -33,8 +33,7 @@ namespace Pika
 		"000000000000000000000000000000";
 
 	EditorLayer::EditorLayer()
-		: Layer{ "EditorLayer" }, m_CameraController{ 1920.0f / 1080.0f },
-		m_ShaderLibrary{ CreateRef<ShaderLibrary>() }
+		: Layer{ "EditorLayer" }, m_ShaderLibrary{ CreateRef<ShaderLibrary>() }
 	{
 	}
 
@@ -42,7 +41,7 @@ namespace Pika
 	{
 		PK_PROFILE_FUNCTION();
 		// Initialize Renderer2D
-		Renderer2D::Init();
+		Renderer2D::Initialize();
 		m_Framebuffer = Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false });
 		// Initialize Scene
@@ -70,6 +69,34 @@ namespace Pika
 
 	void EditorLayer::onUpdate(Timestep vTimestep)
 	{
+		switch (m_SceneState)
+		{
+		case Pika::EditorLayer::SceneState::Edit:
+		{
+			onUpdateEditor(vTimestep);
+			break;
+		}
+		case Pika::EditorLayer::SceneState::Play:
+		{
+			onUpdateRuntime(vTimestep);
+			break;
+		}
+		case Pika::EditorLayer::SceneState::Simulate:
+		{
+			onUpdateSimulation(vTimestep);
+			break;
+		}
+		default:
+		{
+			PK_CORE_ERROR("EditorLayer : Unknown Scene Mode !");
+			break;
+		}
+		}
+		onUpdateEditor(vTimestep);
+	}
+
+	void EditorLayer::onUpdateEditor(Timestep vTimestep)
+	{
 		PK_PROFILE_FUNCTION();
 
 		// 更新Scene和Scene中所有Cameras的ViewportSize
@@ -81,11 +108,10 @@ namespace Pika
 		{
 			m_Framebuffer->resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_EditorCamera.setViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-			// TODO : EditorCamera and CameraController!
-			m_CameraController.onResize(m_ViewportSize.x, m_ViewportSize.y);
 		}
 		// 更新EditorCamera内外参矩阵
-		m_EditorCamera.onUpdate(vTimestep);
+		if (m_IsViewportFocus)
+			m_EditorCamera.onUpdate(vTimestep);
 
 		// Debug !
 		//PK_CORE_INFO("FBO size: {}, {}", m_Framebuffer->getFramebufferSpecification().m_Width, m_Framebuffer->getFramebufferSpecification().m_Height);
@@ -102,8 +128,6 @@ namespace Pika
 			m_Framebuffer->clearAttachment(1, -1); // 所有EntityID其余区域赋值-1
 		}
 
-		if (m_IsViewportFocus)
-			m_CameraController.onUpdate(vTimestep);
 #if 0
 		Renderer2D::BeginScene(m_CameraController);
 		Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 20.0f, 20.0f }, m_TextureBackround, 10.0f);
@@ -126,11 +150,12 @@ namespace Pika
 
 		Rotation += glm::radians(10.0f);
 		Renderer2D::EndScene();
-#endif // 0
 
 		//Renderer2D::BeginScene(m_CameraController);
 		//m_ActiveScene->onUpdate(vTimestep);
 		//Renderer2D::EndScene();
+#endif // 0
+
 		Renderer2D::BeginScene(m_EditorCamera);
 		m_ActiveScene->onUpdate(vTimestep);
 		Renderer2D::EndScene();
@@ -145,6 +170,16 @@ namespace Pika
 		}
 
 		m_Framebuffer->unbind();
+	}
+
+	void EditorLayer::onUpdateRuntime(Timestep vTimestep)
+	{
+		// TODO
+	}
+
+	void EditorLayer::onUpdateSimulation(Timestep vTimestep)
+	{
+		// TODO
 	}
 
 	void EditorLayer::onImGuiRender()

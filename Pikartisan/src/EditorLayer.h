@@ -13,7 +13,12 @@ namespace Pika
 		~EditorLayer() = default;
 		void onAttach() override;
 		void onDetach() override;
+
 		void onUpdate(Timestep vTimestep) override;
+		void onUpdateEditor(Timestep vTimestep);
+		void onUpdateRuntime(Timestep vTimestep);
+		void onUpdateSimulation(Timestep vTimestep);
+
 		void onImGuiRender() override;
 		void onEvent(Event& vEvent) override;
 	private:
@@ -35,6 +40,13 @@ namespace Pika
 		bool onKeyPressed(KeyPressedEvent& vEvent);
 		bool onMousePressed(MouseButtonPressedEvent& vEvent);
 	private:
+		enum class SceneState {
+			Edit = 0,
+			Play = 1,
+			Simulate = 2
+		};
+		SceneState m_SceneState = SceneState::Edit;
+	private:
 		// Viewport
 		bool m_IsViewportFocus = false;
 		bool m_IsViewportHovered = false;
@@ -48,9 +60,8 @@ namespace Pika
 	private:
 		// Renderer
 		EditorCamera m_EditorCamera = {};
-		Camera2DController m_CameraController;
-		Ref<ShaderLibrary> m_ShaderLibrary;
-		Ref<Framebuffer> m_Framebuffer;
+		Ref<ShaderLibrary> m_ShaderLibrary;      // TODO : SceneRenderer
+		Ref<Framebuffer> m_Framebuffer;          // TODO : SceneRenderer
 		// Scenes and SceneHierarchyPanel
 		std::filesystem::path m_ActiveScenePath; // TODO : Delete! use project path
 		Ref<Scene> m_ActiveScene;

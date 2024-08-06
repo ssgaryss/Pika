@@ -7,7 +7,7 @@ namespace Pika {
 	{
 	public:
 		Random() = delete;
-		inline static void Init() {
+		inline static void Initialize() {
 			s_RandomEngine.seed(std::random_device()());
 		}
 		inline static float GetFloat() {

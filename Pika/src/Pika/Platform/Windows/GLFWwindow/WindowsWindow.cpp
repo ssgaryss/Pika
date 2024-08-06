@@ -29,7 +29,7 @@ namespace Pika {
 
 	WindowsWindow::WindowsWindow(const WindowProps& vWindowProps)
 	{
-		init(vWindowProps);
+		Initialize(vWindowProps);
 	}
 	WindowsWindow::~WindowsWindow()
 	{
@@ -63,7 +63,7 @@ namespace Pika {
 		return m_Data.m_VSync;
 	}
 
-	void WindowsWindow::init(const WindowProps& vWindowProps)
+	void WindowsWindow::Initialize(const WindowProps& vWindowProps)
 	{
 		PK_PROFILE_FUNCTION();
 
@@ -85,7 +85,7 @@ namespace Pika {
 
 			m_pContext = GraphicsContext::Create(m_pWindow);
 			PK_ASSERT(m_pContext, "WindowsWindow : m_pContext is nullptr!");
-			m_pContext->init();
+			m_pContext->Initialize();
 
 			glfwSetWindowUserPointer(m_pWindow, &m_Data);
 			setVSync(true);

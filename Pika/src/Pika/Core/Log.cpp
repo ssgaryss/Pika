@@ -5,7 +5,7 @@ namespace Pika {
 	std::shared_ptr<spdlog::logger> Log::s_pCoreLogger;	  
 	std::shared_ptr<spdlog::logger> Log::s_pClientLogger; 
 
-	void Log::init()
+	void Log::Initialize()
 	{
 		spdlog::set_pattern("%^[%T] %n: %v%$");
 		s_pCoreLogger = spdlog::stdout_color_mt("Pika");

@@ -9,7 +9,7 @@ namespace Pika {
 	class Log
 	{
 	public:
-		static void init(); // initialize Logger
+		static void Initialize(); // initialize Logger
 		inline static std::shared_ptr<spdlog::logger>& getCoreLogger() { return s_pCoreLogger; };
 		inline static std::shared_ptr<spdlog::logger>& getClientLogger() { return s_pClientLogger; }; 
 	private:
