@@ -11,13 +11,35 @@ namespace Pika {
 		initialize();
 	}
 
-	void SceneRenderer::beginRender(const Camera& vCamera)
+	void SceneRenderer::beginFrame()
 	{
-
+		m_Framebuffer->bind();
 	}
 
-	void SceneRenderer::endRender()
+	void SceneRenderer::endFrame()
 	{
+		m_Framebuffer->unbind();
+	}
+
+	void SceneRenderer::render()
+	{
+		// TODO
+		auto View = m_Scene->m_Registry.group<TransformComponent, SpriteRendererComponent>();
+		for (auto& Entity : View) {
+			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
+			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
+		}
+	}
+
+	void SceneRenderer::render(const EditorCamera& vEditorCamera)
+	{
+		Renderer2D::BeginScene(vEditorCamera);  // TODO : Renderer3D
+		auto View = m_Scene->m_Registry.group<TransformComponent, SpriteRendererComponent>();
+		for (auto& Entity : View) {
+			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
+			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
+		}
+		Renderer2D::EndScene();
 	}
 
 	void SceneRenderer::resize(uint32_t vWidth, uint32_t vHeight)

@@ -1,8 +1,8 @@
 #pragma once
 #include "Scene.h"
-#include "Pika/Renderer/Camera.h"
 #include "Pika/Renderer/Framebuffer.h"
 #include "Pika/Renderer/Shader.h"
+#include "Pika/Renderer/EditorCamera.h"
 
 namespace Pika {
 
@@ -12,9 +12,13 @@ namespace Pika {
 		SceneRenderer() = default;
 		SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer);
 
-		void beginRender(const Camera& vCamera);
-		void endRender();
+		void beginFrame();
+		void endFrame();
+		void render(); // render with primary camera
+		void render(const EditorCamera& vEditorCamera); // render with other camera
 
+		inline const Ref<Framebuffer>& getFramebuffer() const { return m_Framebuffer; }
+		inline const Ref<Scene>& getScene() const { return m_Scene; }
 		inline void setScene(const Ref<Scene>& vScene) { m_Scene = vScene; }
 		inline void setFramebuffer(const Ref<Framebuffer>& vFramebuffer) { m_Framebuffer = vFramebuffer; }
 
@@ -24,7 +28,7 @@ namespace Pika {
 			Renderer2D = 0,
 			Renderer3D = 1
 		};
-		RendererType m_RendererType = RendererType::Renderer2D; // TODO : 3D
+		RendererType m_RendererType = Renderer2D; // TODO : 3D
 		void initialize();
 	private:
 		Ref<Scene> m_Scene;

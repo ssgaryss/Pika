@@ -19,10 +19,11 @@ namespace Pika
 		Entity createEntityWithUUIDString(const std::string& vUUID, const std::string& vName = "Untitled");
 		void destroyEntity(Entity vEntity);
 
-		void onUpdate(Timestep vTimestep); // TODO : Delete camera2D does not needed！
+		void onUpdateEditor(Timestep vTimestep); // TODO : Delete camera2D does not needed！
 
 		void onViewportResize(uint32_t vWidth, uint32_t vHeight); // 更新Scene和SceneCamera的Viewport
 
+		inline Ref<Camera> getPrimaryCamera() const { return m_PrimaryCamera; }
 	private:
 		// Scene data
 		entt::registry m_Registry;   // Entities
@@ -33,6 +34,7 @@ namespace Pika
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0;
 
 		friend class Entity;
+		friend class SceneRenderer;
 		friend class SceneHierarchyPanel;
 		friend class SceneSerializer;
 	};

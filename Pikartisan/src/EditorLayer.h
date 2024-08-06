@@ -57,12 +57,10 @@ namespace Pika
 	private:
 		// Renderer
 		EditorCamera m_EditorCamera = {};
-		Ref<ShaderLibrary> m_ShaderLibrary;      // TODO : SceneRenderer
-		Ref<Framebuffer> m_Framebuffer;          // TODO : SceneRenderer
+		Ref<SceneRenderer> m_Renderer;
 		// Scenes and SceneHierarchyPanel
 		std::filesystem::path m_ActiveScenePath; // TODO : Delete! use project path
 		Ref<Scene> m_ActiveScene;
-		Ref<SceneRenderer> m_Renderer;    // TODO : Not use it yet !
 		std::vector<Ref<Scene>> m_Scenes; // TODO : Not use it yet !(only one FBO for now)
 		// Panels
 		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel; // TODO : Mutiple Scenes
