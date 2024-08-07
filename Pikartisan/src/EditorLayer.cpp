@@ -49,6 +49,7 @@ namespace Pika
 		m_Renderer->setContext(m_ActiveScene);
 		m_Renderer->setFramebuffer(Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false }));
+		m_Renderer->initialize();
 		// Initialize Shortcuts
 		initializeShortcutLibrary();
 		// Initialize Panels

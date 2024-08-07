@@ -57,6 +57,11 @@ namespace Pika {
 		};
 
 		bool Opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)vEntity, TreeNodeFlags, Tag);
+		if (ImGui::BeginDragDropSource()) {
+			//ImGui::SetDragDropPayload("SceneCamera",)
+			ImGui::EndDragDropSource();
+		}
+
 		// ×ó¼üµ¥»÷Ñ¡ÖÐEntity
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			m_SelectedEntity = vEntity;

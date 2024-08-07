@@ -8,7 +8,6 @@ namespace Pika {
 	SceneRenderer::SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer)
 		: m_Context{ vScene }, m_Framebuffer{ vFramebuffer }
 	{
-		initialize();
 	}
 
 	void SceneRenderer::beginFrame()

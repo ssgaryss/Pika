@@ -41,20 +41,20 @@ namespace Pika {
 
 		if (HasPlayButton) {
 			if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(PlayButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
-
+				m_Context->m_SceneState = Scene::SceneState::Play;
 			}
+			ImGui::SameLine();
 		}
-		ImGui::SameLine();
 		if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(StepButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
-
+			// TODO!
 		}
 		ImGui::SameLine();
 		if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(SimulateButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
-
+			m_Context->m_SceneState = Scene::SceneState::Simulate;
 		}
 		ImGui::SameLine();
 		if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(StopButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
-
+			m_Context->m_SceneState = Scene::SceneState::Edit;
 		}
 		ImGui::End();
 		ImGui::PopStyleVar(2);

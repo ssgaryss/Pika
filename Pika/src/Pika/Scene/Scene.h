@@ -46,6 +46,7 @@ namespace Pika
 	private:
 		std::string m_SceneName = "Untitled";
 		entt::registry m_Registry;                                    // Entities
+		std::unordered_map<UUID, entt::entity> m_EntityMap;           // UUID -> Entity
 		SceneType m_SceneType = SceneType::Scene2D;                   // Scene Type
 		SceneState m_SceneState = SceneState::Edit;                   // Scene State
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0; // Scene Display

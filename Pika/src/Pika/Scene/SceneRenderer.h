@@ -13,10 +13,12 @@ namespace Pika {
 		SceneRenderer() = default;
 		SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer);
 
+		void initialize();  // ≥ı ºªØRenderer
 		void beginFrame();
 		void endFrame();
-		void render(); // render with primary camera
-		void render(const EditorCamera& vEditorCamera); // render with other camera
+
+		void render();                                  // render with primary camera
+		void render(const EditorCamera& vEditorCamera); // render with EditorCamera
 
 		inline const Ref<Scene>& getContext() const { return m_Context; }
 		inline void setContext(const Ref<Scene>& vScene) { m_Context = vScene; }
@@ -27,8 +29,6 @@ namespace Pika {
 		inline std::vector<std::string> getAllCameras() const;
 
 		void resize(uint32_t vWidth, uint32_t vHeight); // resize FBO
-	private:
-		void initialize();
 	private:
 		Ref<Scene> m_Context;
 		Ref<Framebuffer> m_Framebuffer;
