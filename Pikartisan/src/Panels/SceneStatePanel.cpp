@@ -1,4 +1,5 @@
 #include "SceneStatePanel.h"
+#include <imgui/imgui.h>
 
 namespace Pika {
 
@@ -15,6 +16,12 @@ namespace Pika {
 		: SceneStatePanel()
 	{
 		m_Context = vScene;
+	}
+
+	void SceneStatePanel::onImGuiRender()
+	{
+		ImGui::Begin("##SceneStatePanel");
+		ImGui::End();
 	}
 
 }

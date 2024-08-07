@@ -9,6 +9,8 @@ namespace Pika {
 		SceneStatePanel();
 		SceneStatePanel(const Ref<Scene>& vScene);
 
+		void onImGuiRender();
+
 		inline void setContext(Ref<Scene> vScene) { m_Context = vScene; }
 		inline Scene::SceneState getSceneState() const { return m_Context->m_SceneState; }
 		inline void setSceneState(Scene::SceneState vSceneState) { m_Context->m_SceneState = vSceneState; }

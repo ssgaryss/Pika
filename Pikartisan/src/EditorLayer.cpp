@@ -238,6 +238,12 @@ namespace Pika
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Window")) {
+				ImGui::Checkbox("Scene Hierarchy Panel##Window", m_SceneHierarchyPanel->getIsShowSceneHirarchy());
+				ImGui::Checkbox("Content Browser Panel##Window", m_ContentBrowserPanel->getIsShowContentBrowser());
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
 		}
 
@@ -256,6 +262,7 @@ namespace Pika
 		// Panels
 		m_SceneHierarchyPanel->onImGuiRender();
 		m_ContentBrowserPanel->onImGuiRender();
+		m_SceneStatePanel->onImGuiRender();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");

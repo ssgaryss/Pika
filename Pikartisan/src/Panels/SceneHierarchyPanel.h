@@ -12,6 +12,7 @@ namespace Pika
 		inline void setContext(const Ref<Scene>& vContext) { m_Context = vContext; m_SelectedEntity = {}; }
 		inline const Entity getSelectedEntity() const { return m_SelectedEntity; }
 		inline void setSelectedEntity(const Entity& vSelectedEntity) { m_SelectedEntity = vSelectedEntity; }
+		inline bool* getIsShowSceneHirarchy() { return &m_IsShowSceneHirarchy; }
 
 		void onImGuiRender();
 	private:
@@ -20,6 +21,7 @@ namespace Pika
 	private:
 		Ref<Scene> m_Context = nullptr; // Scene data
 		Entity m_SelectedEntity;
+		bool m_IsShowSceneHirarchy = true;
 	};
 
 }
