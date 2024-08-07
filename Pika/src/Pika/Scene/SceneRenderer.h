@@ -18,15 +18,15 @@ namespace Pika {
 		void render(const EditorCamera& vEditorCamera); // render with other camera
 
 		inline const Ref<Framebuffer>& getFramebuffer() const { return m_Framebuffer; }
-		inline const Ref<Scene>& getScene() const { return m_Scene; }
-		inline void setScene(const Ref<Scene>& vScene) { m_Scene = vScene; }
+		inline const Ref<Scene>& getScene() const { return m_Context; }
+		inline void setContext(const Ref<Scene>& vScene) { m_Context = vScene; }
 		inline void setFramebuffer(const Ref<Framebuffer>& vFramebuffer) { m_Framebuffer = vFramebuffer; }
 
 		void resize(uint32_t vWidth, uint32_t vHeight); // resize FBO
 	private:
 		void initialize();
 	private:
-		Ref<Scene> m_Scene;
+		Ref<Scene> m_Context;
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<ShaderLibrary> m_ShaderLibray; // TODO : 自己创建的Shaders
 	};

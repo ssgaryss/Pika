@@ -46,7 +46,7 @@ namespace Pika
 		m_ActiveScene = CreateRef<Scene>();
 		// Initialize Scene Renderer
 		m_Renderer = CreateRef<SceneRenderer>();
-		m_Renderer->setScene(m_ActiveScene);
+		m_Renderer->setContext(m_ActiveScene);
 		m_Renderer->setFramebuffer(Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false }));
 		// Initialize Shortcuts
@@ -54,6 +54,7 @@ namespace Pika
 		// Initialize Panels
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>(m_ActiveScene);
 		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+		m_SceneStatePanel = CreateScope<SceneStatePanel>(m_ActiveScene);
 
 		// TODO : Delete!!!
 		m_TextureBackround = Texture2D::Create("assets/textures/board.png");
@@ -118,21 +119,21 @@ namespace Pika
 		//Renderer2D::EndScene();
 #endif // 0
 
-		switch (m_SceneState)
+		m_ActiveScene->onUpdate(vTimestep);
+		switch (m_SceneStatePanel->getSceneState())
 		{
-		case Pika::EditorLayer::SceneState::Edit:
+		case Pika::Scene::SceneState::Edit:
 		{
 			if (m_IsViewportFocus)
 				m_EditorCamera.onUpdate(vTimestep);
-			m_ActiveScene->onUpdateEditor(vTimestep);
 			m_Renderer->render(m_EditorCamera);
 			break;
 		}
-		case Pika::EditorLayer::SceneState::Play:
+		case Pika::Scene::SceneState::Play:
 		{
 			break;
 		}
-		case Pika::EditorLayer::SceneState::Simulate:
+		case Pika::Scene::SceneState::Simulate:
 		{
 			break;
 		}
@@ -372,7 +373,8 @@ namespace Pika
 
 		m_ActiveScene = CreateRef<Scene>();
 		m_SceneHierarchyPanel->setContext(m_ActiveScene);
-		m_Renderer->setScene(m_ActiveScene);
+		m_SceneStatePanel->setContext(m_ActiveScene);
+		m_Renderer->setContext(m_ActiveScene);
 		auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
 		Serializer->deserializeYAMLText(Path);
 		m_ActiveScenePath = std::filesystem::path(Path); // ¾ø¶ÔÂ·¾¶

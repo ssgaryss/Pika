@@ -42,12 +42,39 @@ namespace Pika
 		m_Registry.destroy(vEntity);
 	}
 
+	void Scene::onUpdate(Timestep vTimestep)
+	{
+		switch (m_SceneState)
+		{
+		case Pika::Scene::SceneState::Edit:
+		{
+			onUpdateEditor(vTimestep);
+			break;
+		}
+		case Pika::Scene::SceneState::Play:
+		{
+			onUpdateRuntime(vTimestep);
+			break;
+		}
+		case Pika::Scene::SceneState::Simulate:
+		{
+			onUpdateSimulation(vTimestep);
+			break;
+		}
+		}
+	}
+
 	void Scene::onUpdateEditor(Timestep vTimestep)
 	{
 		// Editor暂时就是静态场景,没有更新
 	}
 
 	void Scene::onUpdateRuntime(Timestep vTimestep)
+	{
+		// TODO!!!
+	}
+
+	void Scene::onUpdateSimulation(Timestep vTimestep)
 	{
 		// TODO!!!
 	}

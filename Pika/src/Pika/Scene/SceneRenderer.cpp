@@ -6,7 +6,7 @@
 namespace Pika {
 
 	SceneRenderer::SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer)
-		: m_Scene{ vScene }, m_Framebuffer{ vFramebuffer }
+		: m_Context{ vScene }, m_Framebuffer{ vFramebuffer }
 	{
 		initialize();
 	}
@@ -24,7 +24,7 @@ namespace Pika {
 	void SceneRenderer::render()
 	{
 		// TODO
-		auto View = m_Scene->m_Registry.group<TransformComponent, SpriteRendererComponent>();
+		auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
 		for (auto& Entity : View) {
 			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
 			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
@@ -34,7 +34,7 @@ namespace Pika {
 	void SceneRenderer::render(const EditorCamera& vEditorCamera)
 	{
 		Renderer2D::BeginScene(vEditorCamera);  // TODO : Renderer3D
-		auto View = m_Scene->m_Registry.group<TransformComponent, SpriteRendererComponent>();
+		auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
 		for (auto& Entity : View) {
 			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
 			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
@@ -49,7 +49,7 @@ namespace Pika {
 
 	void SceneRenderer::initialize()
 	{
-		switch (m_Scene->getSceneType())
+		switch (m_Context->getSceneType())
 		{
 		case Pika::Scene::SceneType::Scene2D:
 		{
