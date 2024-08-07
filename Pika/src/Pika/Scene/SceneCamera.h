@@ -13,6 +13,7 @@ namespace Pika
 		void setPerspective(float vPerspectiveFOV, float vPerspectiveNear, float vPerspectiveFar);
 		void setViewportSize(uint32_t vWidth, uint32_t vHeight);
 		inline float getAspectRatio() const { return m_AspectRatio; }
+		inline void setAspectRatio(float vAspectRatio) { m_AspectRatio = vAspectRatio; updateCameraProjectionMatrix(); }
 		// Othographic
 		inline float getOthographicSize() const { return m_OthographicSize; }
 		inline void setOthographicSize(float vOthographicSize) { m_OthographicSize = vOthographicSize; updateCameraProjectionMatrix(); }

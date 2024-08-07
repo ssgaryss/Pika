@@ -10,14 +10,14 @@ Scene:
         Scale: [0.00100000005, 1, 1]
       CameraComponent:
         Camera:
-          ProjectionMode: 1
+          ProjectionMode: 0
           OthographicSize: 10
           OthographicNear: -1
           OthographicFar: 1
           PerspectiveFOV: 45
           PerspectiveNear: 0.100000001
-          getPerspectiveFar: 100
-          AspectRatio: 1
+          PerspectiveFar: 100
+          AspectRatio: 1.30888033
         IsFixedAspectRatio: false
     - Entity: "{84619B17-F102-43DD-8A75-A0CD3E177939}"
       TagComponent:

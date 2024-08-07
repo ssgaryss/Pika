@@ -129,7 +129,7 @@ namespace Pika {
 									Out << YAML::Key << "OthographicFar" << YAML::Value << Camera.m_Camera.getOthographicFar();
 									Out << YAML::Key << "PerspectiveFOV" << YAML::Value << Camera.m_Camera.getPerspectiveFOV();
 									Out << YAML::Key << "PerspectiveNear" << YAML::Value << Camera.m_Camera.getPerspectiveNear();
-									Out << YAML::Key << "getPerspectiveFar" << YAML::Value << Camera.m_Camera.getPerspectiveFar();
+									Out << YAML::Key << "PerspectiveFar" << YAML::Value << Camera.m_Camera.getPerspectiveFar();
 									Out << YAML::Key << "AspectRatio" << YAML::Value << Camera.m_Camera.getAspectRatio();
 								}
 								Out << YAML::EndMap;
@@ -215,8 +215,17 @@ namespace Pika {
 
 				if (Entity["CameraComponent"]) {
 					auto CameraComponentNode = Entity["CameraComponent"];
-					auto& SRC = DeserializedEntity.addComponent<CameraComponent>();
-					// TODO!
+					auto CameraNode = CameraComponentNode["Camera"];
+					auto& CC = DeserializedEntity.addComponent<CameraComponent>();
+					CC.m_Camera.setProjectionMode(static_cast<Camera::CameraProjectionMode>(CameraNode["ProjectionMode"].as<int>()));
+					CC.m_Camera.setOthographicSize(CameraNode["OthographicSize"].as<float>());
+					CC.m_Camera.setOthographicNear(CameraNode["OthographicNear"].as<float>());
+					CC.m_Camera.setOthographicFar(CameraNode["OthographicFar"].as<float>());
+					CC.m_Camera.setPerspectiveFOV(CameraNode["PerspectiveFOV"].as<float>());
+					CC.m_Camera.setPerspectiveNear(CameraNode["PerspectiveNear"].as<float>());
+					CC.m_Camera.setPerspectiveFar(CameraNode["PerspectiveFar"].as<float>());
+					CC.m_Camera.setAspectRatio(CameraNode["AspectRatio"].as<float>());
+					CC.m_IsFixedAspectRatio = CameraComponentNode["IsFixedAspectRatio"].as<bool>();
 				}
 			}
 		}
