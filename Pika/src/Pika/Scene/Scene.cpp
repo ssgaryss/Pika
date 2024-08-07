@@ -37,7 +37,7 @@ namespace Pika
 		return Entity;
 	}
 
-	void Scene::destroyEntity(Entity vEntity)
+	void Scene::destroyEntity(const Entity& vEntity)
 	{
 		m_Registry.destroy(vEntity);
 	}

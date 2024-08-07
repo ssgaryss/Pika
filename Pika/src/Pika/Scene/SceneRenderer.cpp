@@ -42,6 +42,16 @@ namespace Pika {
 		Renderer2D::EndScene();
 	}
 
+	inline std::vector<std::string> SceneRenderer::getAllCameras() const
+	{
+		auto View = m_Context->m_Registry.group<CameraComponent, TransformComponent>();
+		for (auto& Entity : View) {
+			auto [Camera, Transform] = View.get<CameraComponent, TransformComponent>(Entity);
+
+		}
+		return std::vector<std::string>();
+	}
+
 	void SceneRenderer::resize(uint32_t vWidth, uint32_t vHeight)
 	{
 		m_Framebuffer->resize(vWidth, vHeight);

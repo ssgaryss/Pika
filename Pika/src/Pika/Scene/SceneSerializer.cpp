@@ -76,7 +76,7 @@ namespace Pika {
 
 	void SceneSerializer::serializeYAMLText(const std::string& vFilePath)
 	{
-		std::string SceneName = "Untitled"; // TODO : Scene name!
+		std::string SceneName = m_Scene->getSceneName();
 		YAML::Emitter Out;
 
 		Out << YAML::BeginMap; // Ã¿¸öScene
@@ -185,7 +185,8 @@ namespace Pika {
 		PK_CORE_TRACE(R"(SceneSerializer : Try to deserialize .pika file at "{0}" ...)", vFilePath);
 		auto SceneNode = Data["Scene"];
 		// Name
-		std::string SceneName = SceneNode["Name"].as<std::string>(); // TODO!
+		std::string SceneName = SceneNode["Name"].as<std::string>();
+		m_Scene->setSceneName(SceneName);
 		// Entities
 		YAML::Node Entities = SceneNode["Entities"];
 		if (Entities) {

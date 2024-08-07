@@ -131,7 +131,6 @@ namespace Pika
 		}
 		case Pika::Scene::SceneState::Play:
 		{
-			// TODO!
 			break;
 		}
 		case Pika::Scene::SceneState::Simulate:
@@ -252,8 +251,9 @@ namespace Pika
 			ImGui::EndMenuBar();
 		}
 
-		auto Statistics = Renderer2D::GetStatistics();
+		// Statistics Panel
 		ImGui::Begin("Renderer statistics");
+		auto Statistics = Renderer2D::GetStatistics();
 		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) ? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
 		ImGui::Text("Mouse hovered entity : %s", MouseHoveredEntityName.c_str());
 		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
@@ -263,6 +263,51 @@ namespace Pika
 		ImGui::Image(reinterpret_cast<ImTextureID>(DepthID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x) }, { 0.0f,1.0f }, { 1.0f,0.0f });
 		ImGui::Separator();
 		ImGui::End(); // Renderer statistics
+
+		// Scene Renderer Panel
+		ImGui::Begin("Scene Renderer Settings");
+		if (m_ActiveScene) {
+			auto& Context = m_Renderer->getContext();
+			if (Context) {
+				ImGui::Text("Scene Name : ");
+				ImGui::SameLine();
+				static char Buffer[256];
+				memset(Buffer, 0, sizeof(Buffer));
+				strcpy_s(Buffer, Context->getSceneName().c_str());
+				if (ImGui::InputText("##SceneName", Buffer, sizeof(Buffer)))
+					Context->setSceneName(std::string(Buffer));
+				ImGui::Text("Scene Type : ");
+				ImGui::SameLine();
+				const char* SceneTypeName[] = { "2D Scene", "3D Scene" };
+				ImGui::Text(SceneTypeName[static_cast<int>(Context->getSceneType())]);
+				const char* SceneModeName[] = { "Edit Mode", "Play Mode", "Simulate Mode" };
+				ImGui::Text("Scene State : ");
+				ImGui::SameLine();
+				ImGui::Text(SceneModeName[static_cast<int>(m_SceneStatePanel->getSceneState())]);
+				ImGui::Text("Primary Camera : ");
+				ImGui::SameLine();
+				static std::vector<std::string> Cameras = { "Item 1", "Item 2", "Item 3" };
+				static int currentItem = 0;
+				// Combo ¿ªÊ¼
+				if (ImGui::BeginCombo("##PrimaryCamera", Cameras[currentItem].c_str()))
+				{
+					for (int i = 0; i < Cameras.size(); ++i)
+					{
+						bool isSelected = (currentItem == i);
+						if (ImGui::Selectable(Cameras[i].c_str(), isSelected))
+						{
+							currentItem = i;
+						}
+						if (isSelected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+			}
+		}
+		ImGui::End();
 
 		// Panels
 		m_SceneHierarchyPanel->onImGuiRender();

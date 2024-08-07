@@ -23,18 +23,20 @@ namespace Pika
 		};
 	public:
 		Scene() = default;
-		~Scene() = default; // TODO : For now!
+		Scene(const std::string& vName)
+			: m_SceneName{ vName } {};
 
 		Entity createEntity(const std::string& vName = "Untitled");
 		Entity createEntityWithUUID(UUID vUUID, const std::string& vName = "Untitled");
 		Entity createEntityWithUUIDString(const std::string& vUUID, const std::string& vName = "Untitled");
-		void destroyEntity(Entity vEntity);
+		void destroyEntity(const Entity& vEntity);
 
 		void onUpdate(Timestep vTiemstep);
 
 		void onViewportResize(uint32_t vWidth, uint32_t vHeight); // 更新Scene和SceneCamera的Viewport
 
-		inline Ref<Camera> getPrimaryCamera() const { return m_PrimaryCamera; }
+		inline const std::string& getSceneName() const { return m_SceneName; }
+		inline void setSceneName(const std::string& vName) { m_SceneName = vName; }
 		inline SceneType getSceneType() const { return m_SceneType; }
 		inline void setSceneType(SceneType vSceneType) { m_SceneType = vSceneType; }
 	private:
@@ -42,15 +44,11 @@ namespace Pika
 		void onUpdateRuntime(Timestep vTimestep);     // SceneState::Play
 		void onUpdateSimulation(Timestep vTimestep);  // SceneState::Simulate
 	private:
-		// Scene Data
-		entt::registry m_Registry;   // Entities
-		Ref<Camera> m_PrimaryCamera; // Camera
-		// Scene Type
-		SceneType m_SceneType = SceneType::Scene2D; // TODO : 3D
-		// Scene State
-		SceneState m_SceneState = SceneState::Edit; // 只由SceneStatePanel改变
-		// Scene Display
-		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0;
+		std::string m_SceneName = "Untitled";
+		entt::registry m_Registry;                                    // Entities
+		SceneType m_SceneType = SceneType::Scene2D;                   // Scene Type
+		SceneState m_SceneState = SceneState::Edit;                   // Scene State
+		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0; // Scene Display
 
 		friend class Entity;
 		friend class SceneRenderer;
