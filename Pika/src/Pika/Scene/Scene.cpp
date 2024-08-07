@@ -19,6 +19,8 @@ namespace Pika
 		auto& Tag = Entity.addComponent<TagComponent>(vName);
 		Tag.m_Tag = vName.empty() ? "Untitled" : vName;
 		Entity.addComponent<TransformComponent>();
+
+		m_EntityMap[vUUID] = Entity;
 		return Entity;
 	}
 
@@ -27,9 +29,10 @@ namespace Pika
 		return createEntityWithUUID(UUID(vUUID), vName);
 	}
 
-	void Scene::destroyEntity(const Entity& vEntity)
+	void Scene::destroyEntity(Entity& vEntity)
 	{
 		m_Registry.destroy(vEntity);
+		m_EntityMap.erase(vEntity.getUUID());
 	}
 
 	void Scene::onUpdate(Timestep vTimestep)
@@ -86,4 +89,21 @@ namespace Pika
 			}
 		}
 	}
+
+	Entity Scene::getEntityByUUID(const UUID& vUUID)
+	{
+		return Entity{ m_EntityMap[vUUID], this };
+	}
+
+	Entity Scene::getEntityByName(std::string_view vName)
+	{
+		auto View = m_Registry.view<TagComponent>();
+		for (const auto& Entity : View) {
+			const TagComponent& TC = View.get<TagComponent>(Entity);
+			if (TC.m_Tag == vName)
+				return Pika::Entity{ Entity, this };
+		}
+		return Entity{};
+	}
+
 }

@@ -29,11 +29,14 @@ namespace Pika
 		Entity createEntity(const std::string& vName = "Untitled");
 		Entity createEntityWithUUID(UUID vUUID, const std::string& vName = "Untitled");
 		Entity createEntityWithUUIDString(const std::string& vUUID, const std::string& vName = "Untitled");
-		void destroyEntity(const Entity& vEntity);
+		void destroyEntity(Entity& vEntity);
 
 		void onUpdate(Timestep vTiemstep);
 
 		void onViewportResize(uint32_t vWidth, uint32_t vHeight); // 更新Scene和SceneCamera的Viewport
+
+		Entity getEntityByUUID(const UUID& vUUID);
+		Entity getEntityByName(std::string_view vName); // 若有重名返回找到的第一个
 
 		inline const std::string& getSceneName() const { return m_SceneName; }
 		inline void setSceneName(const std::string& vName) { m_SceneName = vName; }

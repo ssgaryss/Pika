@@ -22,12 +22,18 @@ namespace Pika {
 
 	void SceneRenderer::render()
 	{
-		// TODO
+		if (!m_PrimaryCamera)
+			return;
+		const auto& TC = m_PrimaryCamera.getComponent<TransformComponent>();
+		const auto& ViewMatrix = glm::inverse(glm::translate(glm::mat4(1.0f), TC.m_Position) *
+			glm::toMat4(glm::quat(glm::radians(TC.m_Rotation))));
+		Renderer2D::BeginScene(m_PrimaryCamera.getComponent<CameraComponent>().m_Camera, ViewMatrix);
 		auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
 		for (auto& Entity : View) {
 			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
 			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
 		}
+		Renderer2D::EndScene();
 	}
 
 	void SceneRenderer::render(const EditorCamera& vEditorCamera)

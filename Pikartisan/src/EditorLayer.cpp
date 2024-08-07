@@ -77,7 +77,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 
 		// 更新Scene和Scene中所有Cameras的ViewportSize
-		m_ActiveScene->onViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+		m_Renderer->getContext()->onViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		// 更新FBO、EditorCamera和CameraController的Size，使其大小与Viewport保持一致
 		if (const FramebufferSpecification& FS = m_Renderer->getFramebuffer()->getFramebufferSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f
@@ -132,6 +132,7 @@ namespace Pika
 		}
 		case Pika::Scene::SceneState::Play:
 		{
+			m_Renderer->render();
 			break;
 		}
 		case Pika::Scene::SceneState::Simulate:
@@ -287,24 +288,19 @@ namespace Pika
 				ImGui::Text(SceneModeName[static_cast<int>(m_SceneStatePanel->getSceneState())]);
 				ImGui::Text("Primary Camera : ");
 				ImGui::SameLine();
-				static std::vector<std::string> Cameras = { "Item 1", "Item 2", "Item 3" };
-				static int currentItem = 0;
-				// Combo 开始
-				if (ImGui::BeginCombo("##PrimaryCamera", Cameras[currentItem].c_str()))
-				{
-					for (int i = 0; i < Cameras.size(); ++i)
-					{
-						bool isSelected = (currentItem == i);
-						if (ImGui::Selectable(Cameras[i].c_str(), isSelected))
-						{
-							currentItem = i;
-						}
-						if (isSelected)
-						{
-							ImGui::SetItemDefaultFocus();
+				static std::string PrimaryCameraName = "None";
+				ImGui::Button(PrimaryCameraName.c_str());
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("SCENE_CAMERA")) { // 对应ContentBrowserPanel中
+						const UUID& ID = *reinterpret_cast<const UUID*>(Payload->Data);
+						Entity PrimaryCamera = m_Renderer->getContext()->getEntityByUUID(ID);
+						if(PrimaryCamera.hasComponent<CameraComponent>()){
+							m_Renderer->setPrimaryCamera(PrimaryCamera);
+							std::string CameraName = PrimaryCamera.getComponent<TagComponent>().m_Tag;
+							PrimaryCameraName = CameraName;
 						}
 					}
-					ImGui::EndCombo();
+					ImGui::EndDragDropTarget();
 				}
 			}
 		}

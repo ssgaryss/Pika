@@ -138,10 +138,10 @@ namespace Pika {
 		StartBatch();
 	}
 
-	void Renderer2D::BeginScene(const Camera& vCamera, const glm::mat4& vTramsform)
+	void Renderer2D::BeginScene(const Camera& vCamera, const glm::mat4& vViewMatrix)
 	{
 		PK_PROFILE_FUNCTION();
-		s_Data.m_Camera2DData.m_ViewProjectionMatrix = vCamera.getProjectionMatrix() * glm::inverse(vTramsform);
+		s_Data.m_Camera2DData.m_ViewProjectionMatrix = vCamera.getProjectionMatrix() * vViewMatrix;
 		s_Data.m_QuadShader->bind();
 		// TODO : delete!!!
 		int32_t Textures[32]; //基于Shader中变量的数据

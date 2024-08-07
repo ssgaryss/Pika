@@ -58,7 +58,8 @@ namespace Pika {
 
 		bool Opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)vEntity, TreeNodeFlags, Tag);
 		if (ImGui::BeginDragDropSource()) {
-			//ImGui::SetDragDropPayload("SceneCamera",)
+			const UUID& ID = vEntity.getUUID();
+			ImGui::SetDragDropPayload("SCENE_CAMERA", &ID, sizeof(ID));
 			ImGui::EndDragDropSource();
 		}
 
@@ -238,13 +239,6 @@ namespace Pika {
 			});
 
 		drawEntityComponent<CameraComponent>("Camera", vEntity, [](auto& vCameraComponent) {
-			//TODO!
-			//bool IsPrimary = m_Context->;
-			//if (ImGui::Checkbox("##IsPrimary", &IsPrimary)) {
-			//	IsPrimary != IsPrimary;
-			//	vCameraComponent.m_IsPrimary = IsPrimary;
-			//}
-
 			Camera::CameraProjectionMode CurrentProjectionMode = vCameraComponent.m_Camera.getProjectionMode();
 			int Index = static_cast<int>(CurrentProjectionMode);
 			const char* ProjectionModes[] = { "Othographic", "Perspective" };
@@ -259,6 +253,7 @@ namespace Pika {
 				ImGui::DragFloat("##OthographicSize", &OthographicSize);
 				ImGui::DragFloat("##OthographicNear", &OthographicNear);
 				ImGui::DragFloat("##OthographicFar", &OthographicFar);
+				vCameraComponent.m_Camera.setOthographic(OthographicSize, OthographicNear, OthographicFar);
 			}
 			else if (CurrentProjectionMode == Camera::CameraProjectionMode::Perspective) {
 				float PerspectiveFOV = vCameraComponent.m_Camera.getPerspectiveFOV();
@@ -267,6 +262,7 @@ namespace Pika {
 				ImGui::DragFloat("##PerspectiveFOV", &PerspectiveFOV);
 				ImGui::DragFloat("##PerspectiveNear", &PerspectiveNear);
 				ImGui::DragFloat("##PerspectiveFar", &PerspectiveFar);
+				vCameraComponent.m_Camera.setPerspective(PerspectiveFOV, PerspectiveNear, PerspectiveFar);
 			}
 			});
 

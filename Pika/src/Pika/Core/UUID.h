@@ -16,6 +16,13 @@ namespace Pika {
 		std::string toString() const;
 		operator std::string() const { return toString(); }
 		operator GUID() const { return m_UUID; }
+
+		bool operator==(const UUID& vOther) const {
+			return m_UUID.Data1 == vOther.m_UUID.Data1 &&
+				m_UUID.Data2 == vOther.m_UUID.Data2 &&
+				m_UUID.Data3 == vOther.m_UUID.Data3 &&
+				std::memcmp(m_UUID.Data4, vOther.m_UUID.Data4, 8) == 0;
+		}
 	private:
 		GUID m_UUID = {};  // Universe Unique Identifier
 	};
