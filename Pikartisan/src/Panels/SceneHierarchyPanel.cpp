@@ -245,40 +245,58 @@ namespace Pika {
 			if (ImGui::Combo("##ProjectionMode", &Index, ProjectionModes, IM_ARRAYSIZE(ProjectionModes))) {
 				vCameraComponent.m_Camera.setProjectionMode(static_cast<Camera::CameraProjectionMode>(Index));
 			}
-
+			ImGui::Columns(2);
+			ImGui::SetColumnWidth(0, 125.0f);
 			if (CurrentProjectionMode == Camera::CameraProjectionMode::Othographic) {
 				float OthographicSize = vCameraComponent.m_Camera.getOthographicSize();
 				float OthographicNear = vCameraComponent.m_Camera.getOthographicNear();
 				float OthographicFar = vCameraComponent.m_Camera.getOthographicFar();
-				ImGui::DragFloat("##OthographicSize", &OthographicSize);
-				ImGui::DragFloat("##OthographicNear", &OthographicNear);
-				ImGui::DragFloat("##OthographicFar", &OthographicFar);
+				ImGui::Text("Othographic Size");
+				ImGui::NextColumn();
+				ImGui::DragFloat("##OthographicSize", &OthographicSize, 0.1f, 0.1f, 1000.0f);
+				ImGui::NextColumn();
+				ImGui::Text("Othographic Near");
+				ImGui::NextColumn();
+				ImGui::DragFloat("##OthographicNear", &OthographicNear, 0.1f, 0.1f, OthographicFar - 0.5f);
+				ImGui::NextColumn();
+				ImGui::Text("Othographic Far");
+				ImGui::NextColumn();
+				ImGui::DragFloat("##OthographicFar", &OthographicFar, 0.1f, OthographicNear + 0.5f, 100000.0f);
 				vCameraComponent.m_Camera.setOthographic(OthographicSize, OthographicNear, OthographicFar);
 			}
 			else if (CurrentProjectionMode == Camera::CameraProjectionMode::Perspective) {
 				float PerspectiveFOV = vCameraComponent.m_Camera.getPerspectiveFOV();
 				float PerspectiveNear = vCameraComponent.m_Camera.getPerspectiveNear();
 				float PerspectiveFar = vCameraComponent.m_Camera.getPerspectiveFar();
-				ImGui::DragFloat("##PerspectiveFOV", &PerspectiveFOV);
-				ImGui::DragFloat("##PerspectiveNear", &PerspectiveNear);
-				ImGui::DragFloat("##PerspectiveFar", &PerspectiveFar);
+				ImGui::Text("Perspective FOV");
+				ImGui::NextColumn();
+				ImGui::DragFloat("##PerspectiveFOV", &PerspectiveFOV, 0.1f, 10.0f, 150.0f);
+				ImGui::NextColumn();
+				ImGui::Text("Perspective Near");
+				ImGui::NextColumn();
+				ImGui::DragFloat("##PerspectiveNear", &PerspectiveNear, 0.1f, 0.1f, PerspectiveFar - 0.5f);
+				ImGui::NextColumn();
+				ImGui::Text("Perspective Far");
+				ImGui::NextColumn();
+				ImGui::DragFloat("##PerspectiveFar", &PerspectiveFar, 0.1f, PerspectiveNear + 0.5f, 100000.0f);
 				vCameraComponent.m_Camera.setPerspective(PerspectiveFOV, PerspectiveNear, PerspectiveFar);
 			}
+			ImGui::Columns();
 			});
 
 		// Only 2D 
 		if (m_Context->getSceneType() == Scene::SceneType::Scene2D) {
-			drawEntityComponent<Rigidbody2DComponent>("BoxCollider2D", vEntity, [](auto& vRigidbody2DComponent) {
+			drawEntityComponent<Rigidbody2DComponent>("Rigidbody2D Component", vEntity, [](auto& vRigidbody2DComponent) {
 				Rigidbody2DComponent::RigidbodyType CurrentRigidbodyType = vRigidbody2DComponent.m_Type;
 				int Index = static_cast<int>(CurrentRigidbodyType);
-				const char* RigidbodyType[] = { "Static", "Dynamic","Kinematic" };
+				const char* RigidbodyType[] = { "Static", "Kinematic", "Dynamic" };
 				if (ImGui::Combo("##RigidbodyType", &Index, RigidbodyType, IM_ARRAYSIZE(RigidbodyType))) {
 					vRigidbody2DComponent.m_Type = static_cast<Rigidbody2DComponent::RigidbodyType>(Index);
 				}
 				ImGui::Checkbox("Fixed Rotation", &vRigidbody2DComponent.m_IsFixedRotation);
 				});
 
-			drawEntityComponent<BoxCollider2DComponent>("BoxCollider2D", vEntity, [](auto& vBoxCollider2DComponent) {
+			drawEntityComponent<BoxCollider2DComponent>("BoxCollider2D Component", vEntity, [](auto& vBoxCollider2DComponent) {
 				ImGui::DragFloat2("Offset", glm::value_ptr(vBoxCollider2DComponent.m_Offset));
 				ImGui::DragFloat2("Size", glm::value_ptr(vBoxCollider2DComponent.m_Size));
 				ImGui::DragFloat("Density", &vBoxCollider2DComponent.m_Density);

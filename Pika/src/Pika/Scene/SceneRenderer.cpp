@@ -29,9 +29,9 @@ namespace Pika {
 			glm::toMat4(glm::quat(glm::radians(TC.m_Rotation))));
 		Renderer2D::BeginScene(m_PrimaryCamera.getComponent<CameraComponent>().m_Camera, ViewMatrix);
 		auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
-		for (auto& Entity : View) {
-			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
-			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
+		for (const auto& Entt : View) {
+			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entt); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
+			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entt));
 		}
 		Renderer2D::EndScene();
 	}
@@ -40,9 +40,9 @@ namespace Pika {
 	{
 		Renderer2D::BeginScene(vEditorCamera);  // TODO : Renderer3D
 		auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
-		for (auto& Entity : View) {
-			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
-			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
+		for (const auto& Entt : View) {
+			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entt); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
+			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entt));
 		}
 		Renderer2D::EndScene();
 	}
@@ -50,8 +50,8 @@ namespace Pika {
 	inline std::vector<std::string> SceneRenderer::getAllCameras() const
 	{
 		auto View = m_Context->m_Registry.group<CameraComponent, TransformComponent>();
-		for (auto& Entity : View) {
-			auto [Camera, Transform] = View.get<CameraComponent, TransformComponent>(Entity);
+		for (const auto& Entt : View) {
+			auto [Camera, Transform] = View.get<CameraComponent, TransformComponent>(Entt);
 
 		}
 		return std::vector<std::string>();

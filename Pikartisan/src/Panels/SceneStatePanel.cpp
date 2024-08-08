@@ -41,7 +41,10 @@ namespace Pika {
 
 		if (HasPlayButton) {
 			if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(PlayButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
-				m_Context->m_SceneState = Scene::SceneState::Play;
+				if (getSceneState() != Scene::SceneState::Play) {
+					m_Context->m_SceneState = Scene::SceneState::Play;
+					m_Context->onRuntimeBegin();
+				}
 			}
 			ImGui::SameLine();
 		}
@@ -55,6 +58,9 @@ namespace Pika {
 		ImGui::SameLine();
 		if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(StopButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
 			m_Context->m_SceneState = Scene::SceneState::Edit;
+			if (getSceneState() == Scene::SceneState::Play) {
+				m_Context->onRuntimeEnd();
+			}
 		}
 		ImGui::End();
 		ImGui::PopStyleVar(2);
