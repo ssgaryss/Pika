@@ -16,8 +16,6 @@ namespace Pika
 		IDComponent() = default;
 		IDComponent(const UUID& vUUID)
 			: m_ID{ vUUID } {}
-		IDComponent(const std::string& vUUID)
-			: m_ID{ vUUID } {}
 		IDComponent(const IDComponent&) = default;
 		operator UUID() const { return m_ID; }
 	};

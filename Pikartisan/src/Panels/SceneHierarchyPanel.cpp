@@ -13,36 +13,38 @@ namespace Pika {
 
 	void SceneHierarchyPanel::onImGuiRender()
 	{
-		ImGui::Begin("Scene Hierarchy");
+		if (m_IsShowSceneHirarchy) {
+			ImGui::Begin("Scene Hierarchy", &m_IsShowSceneHirarchy);
 
-		if (m_Context) {
-			// TODO : Tag -> UUID
-			m_Context->m_Registry.view<IDComponent>().each([this](auto vEntity, auto& vTagComponent) {
-				Entity Entity(vEntity, m_Context.get());
-				drawEntityNode(Entity);
-				});
+			if (m_Context) {
+				// TODO : Tag -> UUID
+				m_Context->m_Registry.view<IDComponent>().each([this](auto vEntity, auto& vTagComponent) {
+					Entity Entity(vEntity, m_Context.get());
+					drawEntityNode(Entity);
+					});
 
-			// 左键空白区域取消选中
-			if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
-				m_SelectedEntity = {};
+				// 左键空白区域取消选中
+				if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
+					m_SelectedEntity = {};
 
-			// 右键空白区域弹出菜单
-			if (ImGui::BeginPopupContextWindow("Create entity", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
-				if (ImGui::MenuItem("Create empty entity"))
-					m_Context->createEntity("Empty entity");
-				ImGui::EndPopup();
+				// 右键空白区域弹出菜单
+				if (ImGui::BeginPopupContextWindow("Create entity", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
+					if (ImGui::MenuItem("Create empty entity"))
+						m_Context->createEntity("Empty entity");
+					ImGui::EndPopup();
+				}
+
+			}
+			ImGui::End();
+
+			ImGui::Begin("Properties");
+			if (m_SelectedEntity) {
+				drawEntityComponents(m_SelectedEntity);
+				ImGui::Separator();
 			}
 
+			ImGui::End();
 		}
-		ImGui::End();
-
-		ImGui::Begin("Properties");
-		if (m_SelectedEntity) {
-			drawEntityComponents(m_SelectedEntity);
-			ImGui::Separator();
-		}
-
-		ImGui::End();
 	}
 
 	void SceneHierarchyPanel::drawEntityNode(Entity vEntity)
@@ -55,6 +57,12 @@ namespace Pika {
 		};
 
 		bool Opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)vEntity, TreeNodeFlags, Tag);
+		if (ImGui::BeginDragDropSource()) {
+			const UUID& ID = vEntity.getUUID();
+			ImGui::SetDragDropPayload("SCENE_CAMERA", &ID, sizeof(ID));
+			ImGui::EndDragDropSource();
+		}
+
 		// 左键单击选中Entity
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			m_SelectedEntity = vEntity;
@@ -231,13 +239,6 @@ namespace Pika {
 			});
 
 		drawEntityComponent<CameraComponent>("Camera", vEntity, [](auto& vCameraComponent) {
-			//TODO!
-			//bool IsPrimary = m_Context->;
-			//if (ImGui::Checkbox("##IsPrimary", &IsPrimary)) {
-			//	IsPrimary != IsPrimary;
-			//	vCameraComponent.m_IsPrimary = IsPrimary;
-			//}
-
 			Camera::CameraProjectionMode CurrentProjectionMode = vCameraComponent.m_Camera.getProjectionMode();
 			int Index = static_cast<int>(CurrentProjectionMode);
 			const char* ProjectionModes[] = { "Othographic", "Perspective" };
@@ -252,6 +253,7 @@ namespace Pika {
 				ImGui::DragFloat("##OthographicSize", &OthographicSize);
 				ImGui::DragFloat("##OthographicNear", &OthographicNear);
 				ImGui::DragFloat("##OthographicFar", &OthographicFar);
+				vCameraComponent.m_Camera.setOthographic(OthographicSize, OthographicNear, OthographicFar);
 			}
 			else if (CurrentProjectionMode == Camera::CameraProjectionMode::Perspective) {
 				float PerspectiveFOV = vCameraComponent.m_Camera.getPerspectiveFOV();
@@ -260,6 +262,7 @@ namespace Pika {
 				ImGui::DragFloat("##PerspectiveFOV", &PerspectiveFOV);
 				ImGui::DragFloat("##PerspectiveNear", &PerspectiveNear);
 				ImGui::DragFloat("##PerspectiveFar", &PerspectiveFar);
+				vCameraComponent.m_Camera.setPerspective(PerspectiveFOV, PerspectiveNear, PerspectiveFar);
 			}
 			});
 

@@ -46,14 +46,16 @@ namespace Pika
 		m_ActiveScene = CreateRef<Scene>();
 		// Initialize Scene Renderer
 		m_Renderer = CreateRef<SceneRenderer>();
-		m_Renderer->setScene(m_ActiveScene);
+		m_Renderer->setContext(m_ActiveScene);
 		m_Renderer->setFramebuffer(Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false }));
+		m_Renderer->initialize();
 		// Initialize Shortcuts
 		initializeShortcutLibrary();
 		// Initialize Panels
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>(m_ActiveScene);
 		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+		m_SceneStatePanel = CreateScope<SceneStatePanel>(m_ActiveScene);
 
 		// TODO : Delete!!!
 		m_TextureBackround = Texture2D::Create("assets/textures/board.png");
@@ -75,7 +77,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 
 		// 更新Scene和Scene中所有Cameras的ViewportSize
-		m_ActiveScene->onViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+		m_Renderer->getContext()->onViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		// 更新FBO、EditorCamera和CameraController的Size，使其大小与Viewport保持一致
 		if (const FramebufferSpecification& FS = m_Renderer->getFramebuffer()->getFramebufferSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f
@@ -118,22 +120,24 @@ namespace Pika
 		//Renderer2D::EndScene();
 #endif // 0
 
-		switch (m_SceneState)
+		m_ActiveScene->onUpdate(vTimestep);
+		switch (m_SceneStatePanel->getSceneState())
 		{
-		case Pika::EditorLayer::SceneState::Edit:
+		case Pika::Scene::SceneState::Edit:
 		{
 			if (m_IsViewportFocus)
 				m_EditorCamera.onUpdate(vTimestep);
-			m_ActiveScene->onUpdateEditor(vTimestep);
 			m_Renderer->render(m_EditorCamera);
 			break;
 		}
-		case Pika::EditorLayer::SceneState::Play:
+		case Pika::Scene::SceneState::Play:
 		{
+			m_Renderer->render();
 			break;
 		}
-		case Pika::EditorLayer::SceneState::Simulate:
+		case Pika::Scene::SceneState::Simulate:
 		{
+			// TODO!
 			break;
 		}
 		}
@@ -206,23 +210,6 @@ namespace Pika
 		{
 			if (ImGui::BeginMenu("Files"))
 			{
-				//// Disabling fullscreen would allow the window to be moved to the front of other windows,
-				//// which we can't undo at the moment without finer window depth/z control.
-				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-				//ImGui::MenuItem("Padding", NULL, &opt_padding);
-				//ImGui::Separator();
-
-				//if (ImGui::MenuItem("Flag: NoDockingOverCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingOverCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingOverCentralNode; }
-				//if (ImGui::MenuItem("Flag: NoDockingSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingSplit; }
-				//if (ImGui::MenuItem("Flag: NoUndocking", "", (dockspace_flags & ImGuiDockNodeFlags_NoUndocking) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoUndocking; }
-				//if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-				//if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-				//if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-				//ImGui::Separator();
-
-				//if (ImGui::MenuItem("Close", NULL, false, dockspace_open != NULL))
-				//	dockspace_open = false;
-
 				// File Menu
 				if (ImGui::MenuItem("New", m_ShortcutLibrary["New_Scene"].toString().c_str()))
 					newScene();
@@ -237,11 +224,38 @@ namespace Pika
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Window")) {
+				ImGui::Checkbox("Scene Hierarchy Panel##Window", m_SceneHierarchyPanel->getIsShowSceneHirarchy());
+				ImGui::Checkbox("Content Browser Panel##Window", m_ContentBrowserPanel->getIsShowContentBrowser());
+				ImGui::EndMenu();
+			}
+
+			//if (ImGui::BeginMenu("ImGui Settings")) {
+			//	// Disabling fullscreen would allow the window to be moved to the front of other windows,
+			//	// which we can't undo at the moment without finer window depth/z control.
+			//	ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
+			//	ImGui::MenuItem("Padding", NULL, &opt_padding);
+			//	ImGui::Separator();
+
+			//	if (ImGui::MenuItem("Flag: NoDockingOverCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingOverCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingOverCentralNode; }
+			//	if (ImGui::MenuItem("Flag: NoDockingSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingSplit; }
+			//	if (ImGui::MenuItem("Flag: NoUndocking", "", (dockspace_flags & ImGuiDockNodeFlags_NoUndocking) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoUndocking; }
+			//	if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
+			//	if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
+			//	if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
+			//	ImGui::Separator();
+
+			//	if (ImGui::MenuItem("Close", NULL, false, dockspace_open != NULL))
+			//		dockspace_open = false;
+			//	ImGui::EndMenu();
+			//}
+
 			ImGui::EndMenuBar();
 		}
 
-		auto Statistics = Renderer2D::GetStatistics();
+		// Statistics Panel
 		ImGui::Begin("Renderer statistics");
+		auto Statistics = Renderer2D::GetStatistics();
 		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) ? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
 		ImGui::Text("Mouse hovered entity : %s", MouseHoveredEntityName.c_str());
 		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
@@ -252,9 +266,50 @@ namespace Pika
 		ImGui::Separator();
 		ImGui::End(); // Renderer statistics
 
+		// Scene Renderer Panel
+		ImGui::Begin("Scene Renderer Settings");
+		if (m_ActiveScene) {
+			auto& Context = m_Renderer->getContext();
+			if (Context) {
+				ImGui::Text("Scene Name : ");
+				ImGui::SameLine();
+				static char Buffer[256];
+				memset(Buffer, 0, sizeof(Buffer));
+				strcpy_s(Buffer, Context->getSceneName().c_str());
+				if (ImGui::InputText("##SceneName", Buffer, sizeof(Buffer)))
+					Context->setSceneName(std::string(Buffer));
+				ImGui::Text("Scene Type : ");
+				ImGui::SameLine();
+				const char* SceneTypeName[] = { "2D Scene", "3D Scene" };
+				ImGui::Text(SceneTypeName[static_cast<int>(Context->getSceneType())]);
+				const char* SceneModeName[] = { "Edit Mode", "Play Mode", "Simulate Mode" };
+				ImGui::Text("Scene State : ");
+				ImGui::SameLine();
+				ImGui::Text(SceneModeName[static_cast<int>(m_SceneStatePanel->getSceneState())]);
+				ImGui::Text("Primary Camera : ");
+				ImGui::SameLine();
+				static std::string PrimaryCameraName = "None";
+				ImGui::Button(PrimaryCameraName.c_str());
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("SCENE_CAMERA")) { // 对应ContentBrowserPanel中
+						const UUID& ID = *reinterpret_cast<const UUID*>(Payload->Data);
+						Entity PrimaryCamera = m_Renderer->getContext()->getEntityByUUID(ID);
+						if(PrimaryCamera.hasComponent<CameraComponent>()){
+							m_Renderer->setPrimaryCamera(PrimaryCamera);
+							std::string CameraName = PrimaryCamera.getComponent<TagComponent>().m_Tag;
+							PrimaryCameraName = CameraName;
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+			}
+		}
+		ImGui::End();
+
 		// Panels
 		m_SceneHierarchyPanel->onImGuiRender();
 		m_ContentBrowserPanel->onImGuiRender();
+		m_SceneStatePanel->onImGuiRender();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");
@@ -372,7 +427,8 @@ namespace Pika
 
 		m_ActiveScene = CreateRef<Scene>();
 		m_SceneHierarchyPanel->setContext(m_ActiveScene);
-		m_Renderer->setScene(m_ActiveScene);
+		m_SceneStatePanel->setContext(m_ActiveScene);
+		m_Renderer->setContext(m_ActiveScene);
 		auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
 		Serializer->deserializeYAMLText(Path);
 		m_ActiveScenePath = std::filesystem::path(Path); // 绝对路径

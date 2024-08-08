@@ -8,6 +8,9 @@ namespace Pika {
 	{
 	public:
 		ContentBrowserPanel();
+
+		inline bool* getIsShowContentBrowser() { return &m_IsShowContentBrowser; }
+
 		void onImGuiRender();
 	private:
 		std::filesystem::path m_BaseDirectory;
@@ -15,6 +18,7 @@ namespace Pika {
 		// Icons
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_DirectoryIcon;
+		bool m_IsShowContentBrowser = true;
 	};
 
 }

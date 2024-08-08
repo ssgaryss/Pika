@@ -1,5 +1,5 @@
 Scene:
-  Name: Untitled
+  Name: Named Scene
   Entities:
     - Entity: "{34921A31-B31E-4A2C-AE7A-B6B4920DBEDA}"
       TagComponent:
@@ -44,3 +44,14 @@ Scene:
         Position: [0, -0.621848643, 4.08232737]
         Rotation: [0, -0, 0]
         Scale: [0.00100000005, 1, 1]
+      CameraComponent:
+        Camera:
+          ProjectionMode: 0
+          OthographicSize: 10
+          OthographicNear: -1
+          OthographicFar: 1
+          PerspectiveFOV: 45
+          PerspectiveNear: 0.100000001
+          PerspectiveFar: 100
+          AspectRatio: 1.63504827
+        IsFixedAspectRatio: false

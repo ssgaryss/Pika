@@ -2,6 +2,7 @@
 #include <Pika.h>
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
+#include "Panels/SceneStatePanel.h"
 
 namespace Pika
 {
@@ -37,13 +38,6 @@ namespace Pika
 		bool onKeyPressed(KeyPressedEvent& vEvent);
 		bool onMousePressed(MouseButtonPressedEvent& vEvent);
 	private:
-		enum class SceneState {
-			Edit = 0,
-			Play = 1,
-			Simulate = 2
-		};
-		SceneState m_SceneState = SceneState::Edit;
-	private:
 		// Viewport
 		bool m_IsViewportFocus = false;
 		bool m_IsViewportHovered = false;
@@ -63,8 +57,9 @@ namespace Pika
 		Ref<Scene> m_ActiveScene;
 		std::vector<Ref<Scene>> m_Scenes; // TODO : Not use it yet !(only one FBO for now)
 		// Panels
-		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel; // TODO : Mutiple Scenes
+		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
+		Scope<SceneStatePanel> m_SceneStatePanel;
 
 		// TODO : remove these!
 		Ref<Texture2D> m_TextureBackround;

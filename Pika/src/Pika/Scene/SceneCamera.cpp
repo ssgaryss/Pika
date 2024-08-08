@@ -27,8 +27,7 @@ namespace Pika {
 
 	void SceneCamera::setViewportSize(uint32_t vWidth, uint32_t vHeight)
 	{
-		m_AspectRatio = static_cast<float>(vWidth) / static_cast<float>(vHeight);
-		updateCameraProjectionMatrix();
+		setAspectRatio(static_cast<float>(vWidth) / static_cast<float>(vHeight));
 	}
 
 	void SceneCamera::updateCameraProjectionMatrix()

@@ -9,12 +9,7 @@ namespace Pika
 
 	Entity Scene::createEntity(const std::string& vName)
 	{
-		Entity Entity{ m_Registry.create(), this };
-		Entity.addComponent<IDComponent>();
-		auto& Tag = Entity.addComponent<TagComponent>(vName);
-		Tag.m_Tag = vName.empty() ? "Untitled" : vName;
-		Entity.addComponent<TransformComponent>();
-		return Entity;
+		return createEntityWithUUID(UUID(), vName);
 	}
 
 	Entity Scene::createEntityWithUUID(UUID vUUID, const std::string& vName)
@@ -24,22 +19,42 @@ namespace Pika
 		auto& Tag = Entity.addComponent<TagComponent>(vName);
 		Tag.m_Tag = vName.empty() ? "Untitled" : vName;
 		Entity.addComponent<TransformComponent>();
+
+		m_EntityMap[vUUID] = Entity;
 		return Entity;
 	}
 
 	Entity Scene::createEntityWithUUIDString(const std::string& vUUID, const std::string& vName)
 	{
-		Entity Entity{ m_Registry.create(), this };
-		Entity.addComponent<IDComponent>(vUUID);
-		auto& Tag = Entity.addComponent<TagComponent>(vName);
-		Tag.m_Tag = vName.empty() ? "Untitled" : vName;
-		Entity.addComponent<TransformComponent>();
-		return Entity;
+		return createEntityWithUUID(UUID(vUUID), vName);
 	}
 
-	void Scene::destroyEntity(Entity vEntity)
+	void Scene::destroyEntity(Entity& vEntity)
 	{
 		m_Registry.destroy(vEntity);
+		m_EntityMap.erase(vEntity.getUUID());
+	}
+
+	void Scene::onUpdate(Timestep vTimestep)
+	{
+		switch (m_SceneState)
+		{
+		case Pika::Scene::SceneState::Edit:
+		{
+			onUpdateEditor(vTimestep);
+			break;
+		}
+		case Pika::Scene::SceneState::Play:
+		{
+			onUpdateRuntime(vTimestep);
+			break;
+		}
+		case Pika::Scene::SceneState::Simulate:
+		{
+			onUpdateSimulation(vTimestep);
+			break;
+		}
+		}
 	}
 
 	void Scene::onUpdateEditor(Timestep vTimestep)
@@ -48,6 +63,11 @@ namespace Pika
 	}
 
 	void Scene::onUpdateRuntime(Timestep vTimestep)
+	{
+		// TODO!!!
+	}
+
+	void Scene::onUpdateSimulation(Timestep vTimestep)
 	{
 		// TODO!!!
 	}
@@ -69,4 +89,21 @@ namespace Pika
 			}
 		}
 	}
+
+	Entity Scene::getEntityByUUID(const UUID& vUUID)
+	{
+		return Entity{ m_EntityMap[vUUID], this };
+	}
+
+	Entity Scene::getEntityByName(std::string_view vName)
+	{
+		auto View = m_Registry.view<TagComponent>();
+		for (const auto& Entity : View) {
+			const TagComponent& TC = View.get<TagComponent>(Entity);
+			if (TC.m_Tag == vName)
+				return Pika::Entity{ Entity, this };
+		}
+		return Entity{};
+	}
+
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "Components.h"
 #include <entt.h>
 
 namespace Pika
@@ -41,6 +42,9 @@ namespace Pika
 			PK_CORE_ASSERT(hasComponent<T>(), "Entity : Remove a component which is not exist!");
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
+
+		inline const UUID& getUUID() { return getComponent<IDComponent>().m_ID; }
+		inline const std::string& getName() { return getComponent<TagComponent>().m_Tag; }
 
 		operator bool() const { return m_EntityHandle != entt::null; }
 		operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }

@@ -6,9 +6,8 @@
 namespace Pika {
 
 	SceneRenderer::SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer)
-		: m_Scene{ vScene }, m_Framebuffer{ vFramebuffer }
+		: m_Context{ vScene }, m_Framebuffer{ vFramebuffer }
 	{
-		initialize();
 	}
 
 	void SceneRenderer::beginFrame()
@@ -23,23 +22,39 @@ namespace Pika {
 
 	void SceneRenderer::render()
 	{
-		// TODO
-		auto View = m_Scene->m_Registry.group<TransformComponent, SpriteRendererComponent>();
-		for (auto& Entity : View) {
-			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
-			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
-		}
-	}
-
-	void SceneRenderer::render(const EditorCamera& vEditorCamera)
-	{
-		Renderer2D::BeginScene(vEditorCamera);  // TODO : Renderer3D
-		auto View = m_Scene->m_Registry.group<TransformComponent, SpriteRendererComponent>();
+		if (!m_PrimaryCamera)
+			return;
+		const auto& TC = m_PrimaryCamera.getComponent<TransformComponent>();
+		const auto& ViewMatrix = glm::inverse(glm::translate(glm::mat4(1.0f), TC.m_Position) *
+			glm::toMat4(glm::quat(glm::radians(TC.m_Rotation))));
+		Renderer2D::BeginScene(m_PrimaryCamera.getComponent<CameraComponent>().m_Camera, ViewMatrix);
+		auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
 		for (auto& Entity : View) {
 			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
 			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
 		}
 		Renderer2D::EndScene();
+	}
+
+	void SceneRenderer::render(const EditorCamera& vEditorCamera)
+	{
+		Renderer2D::BeginScene(vEditorCamera);  // TODO : Renderer3D
+		auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
+		for (auto& Entity : View) {
+			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entity); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
+			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entity));
+		}
+		Renderer2D::EndScene();
+	}
+
+	inline std::vector<std::string> SceneRenderer::getAllCameras() const
+	{
+		auto View = m_Context->m_Registry.group<CameraComponent, TransformComponent>();
+		for (auto& Entity : View) {
+			auto [Camera, Transform] = View.get<CameraComponent, TransformComponent>(Entity);
+
+		}
+		return std::vector<std::string>();
 	}
 
 	void SceneRenderer::resize(uint32_t vWidth, uint32_t vHeight)
@@ -49,7 +64,7 @@ namespace Pika {
 
 	void SceneRenderer::initialize()
 	{
-		switch (m_Scene->getSceneType())
+		switch (m_Context->getSceneType())
 		{
 		case Pika::Scene::SceneType::Scene2D:
 		{
