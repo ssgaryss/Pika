@@ -343,7 +343,7 @@ namespace Pika
 		}
 		// Gizmos
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
-		if (SelectedEntity) {
+		if (SelectedEntity && m_SceneStatePanel->getSceneState() == Scene::SceneState::Edit) {
 			ImGuizmo::BeginFrame();
 			ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
 			ImGuizmo::SetOrthographic(m_EditorCamera.isOthograhic()); // TODO! : CameraComponent情况

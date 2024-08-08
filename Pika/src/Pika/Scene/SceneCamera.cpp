@@ -45,7 +45,7 @@ namespace Pika {
 		}
 		case CameraProjectionMode::Perspective:
 		{
-			m_ProjectionMatrix = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+			m_ProjectionMatrix = glm::perspective(glm::radians(m_PerspectiveFOV), m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
 			return;
 		}
 		}

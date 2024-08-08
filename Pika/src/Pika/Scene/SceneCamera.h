@@ -37,9 +37,9 @@ namespace Pika
 		CameraProjectionMode m_ProjectionMode = CameraProjectionMode::Othographic;
 		// Othographic
 		float m_OthographicSize = 10.0f; // йс©з Height / 2
-		float m_OthographicNear = -1.0f, m_OthographicFar = 1.0f;
+		float m_OthographicNear = 0.1f, m_OthographicFar = 100.0f;
 		// Perspective
-		float m_PerspectiveFOV = 45.0f;
+		float m_PerspectiveFOV = 90.0f;
 		float m_PerspectiveNear = 0.1f, m_PerspectiveFar = 100.0f;
 
 		float m_AspectRatio = 1.0f;
