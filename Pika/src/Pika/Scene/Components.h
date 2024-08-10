@@ -75,11 +75,13 @@ namespace Pika
 	{
 		enum class RigidbodyType {
 			Static = 0,
-			Dynamic,
-			Kinematic
+			Kinematic,
+			Dynamic
 		};
 		RigidbodyType m_Type = RigidbodyType::Static;
 		bool m_IsFixedRotation = false;
+
+		void* m_RuntimeBody = nullptr; // 记录Play模式的b2Body
 
 		Rigidbody2DComponent() = default;
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
@@ -89,11 +91,14 @@ namespace Pika
 	{
 		glm::vec2 m_Offset{ 0.0f,0.0f };
 		glm::vec2 m_Size{ 0.5f,0.5f };
+
 		// TODO : Move to physics material
 		float m_Density = 1.0f;
 		float m_Friction = 0.5f;
 		float m_Restitution = 0.0f;
 		float m_RestitutionThreshold = 0.5f;
+
+		void* m_RuntimeFixture = nullptr;  // 暂时没用到
 
 		BoxCollider2DComponent() = default;
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;

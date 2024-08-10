@@ -66,7 +66,7 @@ namespace Pika {
 		float m_OthographicSize = 10.0f; // 视口 Height / 2
 		float m_OthographicNear = 0.1f, m_OthographicFar = 100.0f;
 		// Perspective
-		float m_PerspectiveFOV = 45.0f;  // Zoom我没有通过改变FOV实现，而是改变m_Distance间接改变摄像机位置来实现类似效果 
+		float m_PerspectiveFOV = 90.0f;  // Zoom我没有通过改变FOV实现，而是改变m_Distance间接改变摄像机位置来实现类似效果 
 		float m_PerspectiveNear = 0.1f, m_PerspectiveFar = 100.0f;
 
 	};

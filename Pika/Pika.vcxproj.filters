@@ -225,6 +225,9 @@
     <ClInclude Include="src\Pika\Scene\SceneCamera.h">
       <Filter>src\Pika\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Scene\SceneRenderer.h">
+      <Filter>src\Pika\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Scene\SceneSerializer.h">
       <Filter>src\Pika\Scene</Filter>
     </ClInclude>
@@ -1485,7 +1488,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Scene\SceneRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1599,6 +1601,9 @@
     <ClCompile Include="src\Pika\Scene\SceneCamera.cpp">
       <Filter>src\Pika\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Scene\SceneRenderer.cpp">
+      <Filter>src\Pika\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\Scene\SceneSerializer.cpp">
       <Filter>src\Pika\Scene</Filter>
     </ClCompile>
@@ -1608,6 +1613,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Scene\SceneRenderer.cpp" />
   </ItemGroup>
 </Project>

@@ -143,7 +143,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Pika\Scene\SceneRenderer.h" />
     <ClInclude Include="src\Pika.h" />
     <ClInclude Include="src\Pika\Core\Application.h" />
     <ClInclude Include="src\Pika\Core\Base.h" />
@@ -196,6 +195,7 @@
     <ClInclude Include="src\Pika\Scene\Entity.h" />
     <ClInclude Include="src\Pika\Scene\Scene.h" />
     <ClInclude Include="src\Pika\Scene\SceneCamera.h" />
+    <ClInclude Include="src\Pika\Scene\SceneRenderer.h" />
     <ClInclude Include="src\Pika\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Pika\Utils\PlatformUtils.h" />
     <ClInclude Include="src\pkpch.h" />
@@ -618,7 +618,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Pika\Scene\SceneRenderer.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
@@ -656,6 +655,7 @@
     <ClCompile Include="src\Pika\Scene\Entity.cpp" />
     <ClCompile Include="src\Pika\Scene\Scene.cpp" />
     <ClCompile Include="src\Pika\Scene\SceneCamera.cpp" />
+    <ClCompile Include="src\Pika\Scene\SceneRenderer.cpp" />
     <ClCompile Include="src\Pika\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\pkpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

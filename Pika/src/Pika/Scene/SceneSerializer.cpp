@@ -9,6 +9,25 @@
 namespace YAML {
 
 	template<>
+	struct convert<glm::vec2>
+	{
+		static Node encode(const glm::vec2& rhs) {
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::vec2& rhs) {
+			if (!node.IsSequence() || node.size() != 2)
+				return false;
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			return true;
+		}
+	};
+
+	template<>
 	struct convert<glm::vec3>
 	{
 		static Node encode(const glm::vec3& rhs) {
@@ -51,6 +70,13 @@ namespace YAML {
 			return true;
 		}
 	};
+
+	YAML::Emitter& operator<<(YAML::Emitter& vOstream, const glm::vec2& vData) {
+		vOstream << YAML::Flow << YAML::BeginSeq;
+		vOstream << vData.x << vData.y;
+		vOstream << YAML::EndSeq;
+		return vOstream;
+	}
 
 	YAML::Emitter& operator<<(YAML::Emitter& vOstream, const glm::vec3& vData) {
 		vOstream << YAML::Flow << YAML::BeginSeq;
@@ -96,8 +122,8 @@ namespace Pika {
 							Out << YAML::Key << "TagComponent" << YAML::Value << YAML::BeginMap;
 							{
 								Out << YAML::Key << "Tag" << YAML::Value << Entity.getComponent<TagComponent>().m_Tag;
-								Out << YAML::EndMap;
 							}
+							Out << YAML::EndMap;
 						}
 						if (Entity.hasComponent<TransformComponent>()) {
 							auto& Transform = Entity.getComponent<TransformComponent>();
@@ -106,8 +132,8 @@ namespace Pika {
 								Out << YAML::Key << "Position" << YAML::Value << Transform.m_Position;
 								Out << YAML::Key << "Rotation" << YAML::Value << Transform.m_Rotation;
 								Out << YAML::Key << "Scale" << YAML::Value << Transform.m_Scale;
-								Out << YAML::EndMap;
 							}
+							Out << YAML::EndMap;
 						}
 						if (Entity.hasComponent<SpriteRendererComponent>()) {
 							auto& SpriteRenderer = Entity.getComponent<SpriteRendererComponent>();
@@ -134,8 +160,30 @@ namespace Pika {
 								}
 								Out << YAML::EndMap;
 								Out << YAML::Key << "IsFixedAspectRatio" << YAML::Value << Camera.m_IsFixedAspectRatio;
-								Out << YAML::EndMap;
 							}
+							Out << YAML::EndMap;
+						}
+						if (Entity.hasComponent<Rigidbody2DComponent>()) {
+							Out << YAML::Key << "Rigidbody2DComponent" << YAML::Value << YAML::BeginMap;
+							{
+								auto& Rigidbody2D = Entity.getComponent<Rigidbody2DComponent>();
+								Out << YAML::Key << "RigidbodyType" << YAML::Value << static_cast<int>(Rigidbody2D.m_Type);
+								Out << YAML::Key << "IsFixedRotation" << YAML::Value << Rigidbody2D.m_IsFixedRotation;
+							}
+							Out << YAML::EndMap;
+						}
+						if (Entity.hasComponent<BoxCollider2DComponent>()) {
+							Out << YAML::Key << "BoxCollider2DComponent" << YAML::Value << YAML::BeginMap;
+							{
+								auto& BoxCollider2D = Entity.getComponent<BoxCollider2DComponent>();
+								Out << YAML::Key << "Offset" << YAML::Value << BoxCollider2D.m_Offset;
+								Out << YAML::Key << "Size" << YAML::Value << BoxCollider2D.m_Size;
+								Out << YAML::Key << "Density" << YAML::Value << BoxCollider2D.m_Density;
+								Out << YAML::Key << "Friction" << YAML::Value << BoxCollider2D.m_Friction;
+								Out << YAML::Key << "Restitution" << YAML::Value << BoxCollider2D.m_Restitution;
+								Out << YAML::Key << "RestitutionThreshold" << YAML::Value << BoxCollider2D.m_RestitutionThreshold;
+							}
+							Out << YAML::EndMap;
 						}
 
 						Out << YAML::EndMap;
@@ -227,6 +275,24 @@ namespace Pika {
 					CC.m_Camera.setPerspectiveFar(CameraNode["PerspectiveFar"].as<float>());
 					CC.m_Camera.setAspectRatio(CameraNode["AspectRatio"].as<float>());
 					CC.m_IsFixedAspectRatio = CameraComponentNode["IsFixedAspectRatio"].as<bool>();
+				}
+
+				if (Entity["Rigidbody2DComponent"]) {
+					auto Rigidbody2DComponentNode = Entity["Rigidbody2DComponent"];
+					auto& SRC = DeserializedEntity.addComponent<Rigidbody2DComponent>();
+					SRC.m_Type = static_cast<Rigidbody2DComponent::RigidbodyType>(Rigidbody2DComponentNode["RigidbodyType"].as<int>());
+					SRC.m_IsFixedRotation = Rigidbody2DComponentNode["IsFixedRotation"].as<bool>();
+				}
+
+				if (Entity["BoxCollider2DComponent"]) {
+					auto BoxCollider2DComponentNode = Entity["BoxCollider2DComponent"];
+					auto& SRC = DeserializedEntity.addComponent<BoxCollider2DComponent>();
+					SRC.m_Offset = BoxCollider2DComponentNode["Offset"].as<glm::vec2>();
+					SRC.m_Size = BoxCollider2DComponentNode["Size"].as<glm::vec2>();
+					SRC.m_Density = BoxCollider2DComponentNode["Density"].as<float>();
+					SRC.m_Friction = BoxCollider2DComponentNode["Friction"].as<float>();
+					SRC.m_Restitution = BoxCollider2DComponentNode["Restitution"].as<float>();
+					SRC.m_RestitutionThreshold = BoxCollider2DComponentNode["RestitutionThreshold"].as<float>();
 				}
 			}
 		}

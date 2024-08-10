@@ -4,6 +4,8 @@
 #include "Pika/Core/UUID.h"
 #include <entt.h>
 
+class b2World;
+
 namespace Pika
 {
 	class Entity; // Forward declaration to prevent recursive references
@@ -43,9 +45,19 @@ namespace Pika
 		inline SceneType getSceneType() const { return m_SceneType; }
 		inline void setSceneType(SceneType vSceneType) { m_SceneType = vSceneType; }
 	private:
-		void onUpdateEditor(Timestep vTimestep);      // SceneState::Edit
-		void onUpdateRuntime(Timestep vTimestep);     // SceneState::Play
-		void onUpdateSimulation(Timestep vTimestep);  // SceneState::Simulate
+		void onUpdateEditor(Timestep vTimestep);        // SceneState::Edit
+		void onUpdateRuntime(Timestep vTimestep);       // SceneState::Play
+		void onUpdateSimulation(Timestep vTimestep);    // SceneState::Simulate
+	private:
+		void onRuntimeBegin();
+		void onRuntimeEnd();
+		void onPhysics2DBegin();  // ¹¹Ôìm_Physics2DWorld
+		void onPhysics2DEnd();    // Îö¹¹m_Physics2DWorld
+
+		// TODO!
+		//void onSimulationBegin();
+		//void onSimulationEnd();
+
 	private:
 		std::string m_SceneName = "Untitled";
 		entt::registry m_Registry;                                    // Entities
@@ -53,6 +65,7 @@ namespace Pika
 		SceneType m_SceneType = SceneType::Scene2D;                   // Scene Type
 		SceneState m_SceneState = SceneState::Edit;                   // Scene State
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0; // Scene Display
+		Ref<b2World> m_Physics2DWorld = nullptr;                      // Physics 2D World
 
 		friend class Entity;
 		friend class SceneRenderer;
