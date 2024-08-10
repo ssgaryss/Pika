@@ -288,17 +288,18 @@ namespace Pika
 				ImGui::Text(SceneModeName[static_cast<int>(m_SceneStatePanel->getSceneState())]);
 				ImGui::Text("Primary Camera : ");
 				ImGui::SameLine();
-				static std::string PrimaryCameraName = "None";
+				std::string CameraName = "";
+				Entity PrimaryCamera = m_Renderer->getPrimaryCamera();
+				if (PrimaryCamera && PrimaryCamera.hasComponent<CameraComponent>()) {
+					m_Renderer->setPrimaryCamera(PrimaryCamera);
+					CameraName = PrimaryCamera.getComponent<TagComponent>().m_Tag;
+				}
+				std::string PrimaryCameraName = CameraName == "" ? "None" : CameraName;
 				ImGui::Button(PrimaryCameraName.c_str());
 				if (ImGui::BeginDragDropTarget()) {
 					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("SCENE_CAMERA")) { // ∂‘”¶ContentBrowserPanel÷–
 						const UUID& ID = *reinterpret_cast<const UUID*>(Payload->Data);
-						Entity PrimaryCamera = m_Renderer->getContext()->getEntityByUUID(ID);
-						if(PrimaryCamera.hasComponent<CameraComponent>()){
-							m_Renderer->setPrimaryCamera(PrimaryCamera);
-							std::string CameraName = PrimaryCamera.getComponent<TagComponent>().m_Tag;
-							PrimaryCameraName = CameraName;
-						}
+						m_Renderer->setPrimaryCamera(m_Renderer->getContext()->getEntityByUUID(ID));
 					}
 					ImGui::EndDragDropTarget();
 				}
