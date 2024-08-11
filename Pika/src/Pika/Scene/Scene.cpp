@@ -79,7 +79,7 @@ namespace Pika
 			auto& Position = Body->GetPosition();
 			TC.m_Position.x = Position.x;
 			TC.m_Position.y = Position.y;
-			TC.m_Rotation.z = Body->GetAngle();
+			TC.m_Rotation.z = glm::degrees(Body->GetAngle());
 		}
 	}
 
@@ -124,7 +124,7 @@ namespace Pika
 				auto& BC2DC = Entity.getComponent<BoxCollider2DComponent>();
 				b2PolygonShape BoxShape;
 				BoxShape.SetAsBox(BC2DC.m_Size.x * TC.m_Scale.x, BC2DC.m_Size.y * TC.m_Scale.y,
-					b2Vec2{ BC2DC.m_Offset.x, BC2DC.m_Offset.y }, glm::radians(TC.m_Rotation.z));
+					b2Vec2{ BC2DC.m_Offset.x, BC2DC.m_Offset.y }, 0.0f);
 
 				b2FixtureDef BoxFixtureDef;
 				BoxFixtureDef.shape = &BoxShape;
