@@ -16,7 +16,7 @@ namespace Pika {
 		glm::vec3 m_Position;
 		glm::vec4 m_Color;
 		glm::vec2 m_TexCoord;
-		float m_TextureIndex = 0.0f;
+		int m_TextureIndex = 0;
 		float m_TilingFactor = 1.0f;
 		// TODO : Editor only
 		int m_EntityID;
@@ -104,7 +104,7 @@ namespace Pika {
 			{Pika::ShaderDataType::Float3, "a_Position"},
 			{Pika::ShaderDataType::Float4, "a_Color"},
 			{Pika::ShaderDataType::Float2, "a_TexCoord"},
-			{Pika::ShaderDataType::Float, "a_TextureIndex"},
+			{Pika::ShaderDataType::Int, "a_TextureIndex"},
 			{Pika::ShaderDataType::Float, "a_TilingFactor"},
 			{Pika::ShaderDataType::Int, "a_EntityID"}
 		};
@@ -293,15 +293,14 @@ namespace Pika {
 
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
 
-		float TextureIndex = static_cast<float>(s_Data.findTextureIndex(vTexture).value_or(0.0f));
-		if (TextureIndex == 0.0f) {
+		int TextureIndex = static_cast<int>(s_Data.findTextureIndex(vTexture).value_or(0));
+		if (TextureIndex == 0) {
 			if (s_Data.m_TextureIndex >= s_Data.getMaxTextureSlots()) {
 				NextBatch();
-				TextureIndex = static_cast<float>(s_Data.addTexture(vTexture).value());
 			}
 			auto Success = s_Data.addTexture(vTexture);
 			if (Success.has_value())
-				TextureIndex = static_cast<float>(Success.value());
+				TextureIndex = static_cast<int>(Success.value());
 			else
 				PK_CORE_ERROR(R"(Renderer2D : Fail to add texture(ID = {0}) to slots)", vTexture->getRendererID());
 		}
@@ -328,15 +327,14 @@ namespace Pika {
 
 		auto Texture = vSubTexture->getTexture();
 		auto TexCoord = vSubTexture->getTextureCoordinates();
-		float TextureIndex = static_cast<float>(s_Data.findTextureIndex(Texture).value_or(0.0f));
-		if (TextureIndex == 0.0f) {
+		int TextureIndex = static_cast<int>(s_Data.findTextureIndex(Texture).value_or(0));
+		if (TextureIndex == 0) {
 			if (s_Data.m_TextureIndex >= s_Data.getMaxTextureSlots()) {
 				NextBatch();
-				TextureIndex = static_cast<float>(s_Data.addTexture(Texture).value());
 			}
 			auto Success = s_Data.addTexture(Texture);
 			if (Success.has_value())
-				TextureIndex = static_cast<float>(Success.value());
+				TextureIndex = static_cast<int>(Success.value());
 			else
 				PK_CORE_ERROR(R"(Renderer2D : Fail to add texture(ID = {0}) to slots)", Texture->getRendererID());
 		}
@@ -362,11 +360,26 @@ namespace Pika {
 			NextBatch();
 
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
+
+		int TextureIndex = 0;
+		if (vSprite.m_Texture) {
+			TextureIndex = static_cast<int>(s_Data.findTextureIndex(vSprite.m_Texture).value_or(0));
+			if (TextureIndex == 0) {
+				if (s_Data.m_TextureIndex >= s_Data.getMaxTextureSlots()) {
+					NextBatch();
+				}
+				auto Success = s_Data.addTexture(vSprite.m_Texture);
+				if (Success.has_value())
+					TextureIndex = static_cast<int>(Success.value());
+				else
+					PK_CORE_ERROR(R"(Renderer2D : Fail to add texture(ID = {0}) to slots)", vSprite.m_Texture->getRendererID());
+			}
+		}
 		for (int i = 0; i < 4; ++i) {
 			s_Data.m_pQuadVertexBufferPtr->m_Position = vTransform * s_Data.m_QuadUnitVertex[i];
 			s_Data.m_pQuadVertexBufferPtr->m_Color = vSprite.m_Color;
 			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
-			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = 0;
+			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = TextureIndex;
 			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = 1.0f;
 			s_Data.m_pQuadVertexBufferPtr->m_EntityID = vEntityID;
 			s_Data.m_pQuadVertexBufferPtr++;

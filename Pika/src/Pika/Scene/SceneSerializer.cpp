@@ -135,14 +135,6 @@ namespace Pika {
 							}
 							Out << YAML::EndMap;
 						}
-						if (Entity.hasComponent<SpriteRendererComponent>()) {
-							auto& SpriteRenderer = Entity.getComponent<SpriteRendererComponent>();
-							Out << YAML::Key << "SpriteRendererComponent" << YAML::Value << YAML::BeginMap;
-							{
-								Out << YAML::Key << "Color" << YAML::Value << SpriteRenderer.m_Color;
-								Out << YAML::EndMap;
-							}
-						}
 						if (Entity.hasComponent<CameraComponent>()) {
 							Out << YAML::Key << "CameraComponent" << YAML::Value << YAML::BeginMap;
 							{
@@ -160,6 +152,15 @@ namespace Pika {
 								}
 								Out << YAML::EndMap;
 								Out << YAML::Key << "IsFixedAspectRatio" << YAML::Value << Camera.m_IsFixedAspectRatio;
+							}
+							Out << YAML::EndMap;
+						}
+						if (Entity.hasComponent<SpriteRendererComponent>()) {
+							auto& SpriteRenderer = Entity.getComponent<SpriteRendererComponent>();
+							Out << YAML::Key << "SpriteRendererComponent" << YAML::Value << YAML::BeginMap;
+							{
+								Out << YAML::Key << "Color" << YAML::Value << SpriteRenderer.m_Color;
+								Out << YAML::Key << "Texture" << YAML::Value << (SpriteRenderer.m_Texture ? SpriteRenderer.m_Texture->getPath().string() : "None");
 							}
 							Out << YAML::EndMap;
 						}
@@ -256,12 +257,6 @@ namespace Pika {
 					TC.m_Scale = TransformComponentNode["Scale"].as<glm::vec3>();
 				}
 
-				if (Entity["SpriteRendererComponent"]) {
-					auto SpriteRendererComponentNode = Entity["SpriteRendererComponent"];
-					auto& SRC = DeserializedEntity.addComponent<SpriteRendererComponent>();
-					SRC.m_Color = SpriteRendererComponentNode["Color"].as<glm::vec4>();
-				}
-
 				if (Entity["CameraComponent"]) {
 					auto CameraComponentNode = Entity["CameraComponent"];
 					auto CameraNode = CameraComponentNode["Camera"];
@@ -275,6 +270,14 @@ namespace Pika {
 					CC.m_Camera.setPerspectiveFar(CameraNode["PerspectiveFar"].as<float>());
 					CC.m_Camera.setAspectRatio(CameraNode["AspectRatio"].as<float>());
 					CC.m_IsFixedAspectRatio = CameraComponentNode["IsFixedAspectRatio"].as<bool>();
+				}
+
+				if (Entity["SpriteRendererComponent"]) {
+					auto SpriteRendererComponentNode = Entity["SpriteRendererComponent"];
+					auto& SRC = DeserializedEntity.addComponent<SpriteRendererComponent>();
+					SRC.m_Color = SpriteRendererComponentNode["Color"].as<glm::vec4>();
+					const auto& TexturePath = SpriteRendererComponentNode["Texture"].as<std::string>();
+					SRC.m_Texture = TexturePath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(TexturePath));
 				}
 
 				if (Entity["Rigidbody2DComponent"]) {

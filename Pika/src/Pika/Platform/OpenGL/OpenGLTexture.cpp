@@ -24,7 +24,7 @@ namespace Pika {
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& vPath, bool vRequiredMips)
+	OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& vPath, bool vRequiredMips)
 		: m_Path{ vPath }, m_RequiredMips{ vRequiredMips }
 	{
 		PK_PROFILE_FUNCTION();
@@ -73,15 +73,14 @@ namespace Pika {
 		glBindTextureUnit(vSlot, 0);
 	}
 
-	void OpenGLTexture2D::loadTexture(const std::string& vPath)
+	void OpenGLTexture2D::loadTexture(const std::filesystem::path& vPath)
 	{
 		PK_PROFILE_FUNCTION();
 
 		int Width, Height, Channels;
 		stbi_set_flip_vertically_on_load(true);
-		stbi_uc* Data = stbi_load(vPath.c_str(), &Width, &Height, &Channels, 0); //0 means desired channels = Channels
-		PK_CORE_ASSERT(Data, "Texture Loading is failed!");
-		if (!Data) throw std::runtime_error("Path : " + vPath);
+		stbi_uc* Data = stbi_load(vPath.string().c_str(), &Width, &Height, &Channels, 0); // 0 means desired channels = Channels
+		if (!Data) throw std::runtime_error("Path : " + vPath.string());
 		m_Width = Width;
 		m_Height = Height;
 
@@ -115,7 +114,7 @@ namespace Pika {
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, DataFormat, GL_UNSIGNED_BYTE, Data);
 
 		stbi_image_free(Data);
-		PK_CORE_INFO("OpenGLTexture2D : Success to load a texture at {0}.", vPath);
+		PK_CORE_INFO("OpenGLTexture2D : Success to load a texture at {0}.", vPath.string());
 	}
 
 }

@@ -23,8 +23,7 @@ namespace Pika {
 		return nullptr;
 	}
 
-
-	Ref<Texture2D> Texture2D::Create(const std::string& vPath)
+	Ref<Texture2D> Texture2D::Create(const std::filesystem::path& vPath, bool vRequiredMips)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -33,7 +32,7 @@ namespace Pika {
 			return nullptr;
 #ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
-			return CreateRef<OpenGLTexture2D>(vPath);
+			return CreateRef<OpenGLTexture2D>(vPath, vRequiredMips);
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "Shader: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;

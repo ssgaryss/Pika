@@ -9,12 +9,12 @@ namespace Pika
 	{
 	public:
 		OpenGLTexture2D(const TextureSpecification& vTextureSpecification);
-		OpenGLTexture2D(const std::string& vPath, bool vRequiredMips = true);
+		OpenGLTexture2D(const std::filesystem::path& vPath, bool vRequiredMips = true);
 		~OpenGLTexture2D();
 		inline uint32_t getWidth() const override { return m_Width; }
 		inline uint32_t getHeight() const override { return m_Height; }
 		inline uint32_t getRendererID() const override { return m_RendererID; }
-		inline const std::string& getPath() const override { return m_Path; }
+		inline const std::filesystem::path& getPath() const override { return m_Path; }
 		inline bool getIsLoaded() const override { return m_IsLoaded; }
 		void setData(void* vData, uint32_t vSize) override;
 
@@ -24,13 +24,13 @@ namespace Pika
 			return m_RendererID == dynamic_cast<const OpenGLTexture2D&>(rhs).getRendererID();
 		}
 	private:
-		void loadTexture(const std::string& vPath);
+		void loadTexture(const std::filesystem::path& vPath);
 	private:
 		uint32_t m_RendererID = 0;
-		uint32_t m_Width;
-		uint32_t m_Height;
+		uint32_t m_Width = 0;
+		uint32_t m_Height = 0;
 
-		std::string m_Path;
+		std::filesystem::path m_Path;
 		bool m_RequiredMips = true;
 		bool m_IsLoaded = false;
 		GLenum m_InternalFormat, m_DataFormat; // InternalFormat : GPU side, DataFormat : CPU side

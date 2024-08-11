@@ -1,80 +1,6 @@
 Scene:
   Name: Named Scene
   Entities:
-    - Entity: "{34921A31-B31E-4A2C-AE7A-B6B4920DBEDA}"
-      TagComponent:
-        Tag: Empty entity
-      TransformComponent:
-        Position: [1.26797915, -2.23730946, 0]
-        Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
-      SpriteRendererComponent:
-        Color: [0.729729772, 0.727858663, 0.245121583, 1]
-      Rigidbody2DComponent:
-        RigidbodyType: 0
-        IsFixedRotation: false
-      BoxCollider2DComponent:
-        Offset: [0, 0]
-        Size: [0.5, 0.5]
-        Density: 1
-        Friction: 0.5
-        Restitution: 0
-        RestitutionThreshold: 0.5
-    - Entity: "{C0A3254B-BDD3-431F-994C-F1E183B2D904}"
-      TagComponent:
-        Tag: Empty entity
-      TransformComponent:
-        Position: [1.33991313, 0.157644987, 0]
-        Rotation: [0, -0, 1.90109731e-07]
-        Scale: [1, 1, 1]
-      SpriteRendererComponent:
-        Color: [0.325978994, 0.760617733, 0.523999691, 1]
-      Rigidbody2DComponent:
-        RigidbodyType: 2
-        IsFixedRotation: false
-      BoxCollider2DComponent:
-        Offset: [0, 0]
-        Size: [0.5, 0.5]
-        Density: 1
-        Friction: 0.5
-        Restitution: 0
-        RestitutionThreshold: 0.5
-    - Entity: "{0269005D-C663-4E2C-B846-CE62C5CE685C}"
-      TagComponent:
-        Tag: Empty entity
-      TransformComponent:
-        Position: [-1.05676174, -1.68922544, 0]
-        Rotation: [1.77522933, -41.9235497, -19.9519062]
-        Scale: [1.95047891, 2.42321229, 0.99999994]
-      SpriteRendererComponent:
-        Color: [0.258791596, 0.586652696, 0.598455608, 1]
-    - Entity: "{84619B17-F102-43DD-8A75-A0CD3E177939}"
-      TagComponent:
-        Tag: Empty entity
-      TransformComponent:
-        Position: [0, 0, 4.90799999]
-        Rotation: [-2.70855403, -4.0456214, -26.6003075]
-        Scale: [1, 0.999999881, 1]
-      SpriteRendererComponent:
-        Color: [1, 1, 1, 1]
-    - Entity: "{36727C12-0660-4F32-B0BA-B9291E538E65}"
-      TagComponent:
-        Tag: Camera
-      TransformComponent:
-        Position: [0, -0.621848643, 8.08199978]
-        Rotation: [0, -0, 0]
-        Scale: [0.00100000005, 1, 1]
-      CameraComponent:
-        Camera:
-          ProjectionMode: 1
-          OthographicSize: 10
-          OthographicNear: 0.100000001
-          OthographicFar: 100
-          PerspectiveFOV: 90
-          PerspectiveNear: 0.100000001
-          PerspectiveFar: 100
-          AspectRatio: 1.6112026
-        IsFixedAspectRatio: false
     - Entity: "{8091ED1C-8F17-4272-B76D-DEF1D8CACF34}"
       TagComponent:
         Tag: CameraB
@@ -93,3 +19,91 @@ Scene:
           PerspectiveFar: 100
           AspectRatio: 1.6112026
         IsFixedAspectRatio: false
+    - Entity: "{36727C12-0660-4F32-B0BA-B9291E538E65}"
+      TagComponent:
+        Tag: Camera
+      TransformComponent:
+        Position: [0, -0.621848643, 8.08199978]
+        Rotation: [0, -0, 0]
+        Scale: [0.00100000005, 1, 1]
+      CameraComponent:
+        Camera:
+          ProjectionMode: 1
+          OthographicSize: 10
+          OthographicNear: 0.100000001
+          OthographicFar: 100
+          PerspectiveFOV: 90
+          PerspectiveNear: 0.100000001
+          PerspectiveFar: 100
+          AspectRatio: 1.6112026
+        IsFixedAspectRatio: false
+    - Entity: "{84619B17-F102-43DD-8A75-A0CD3E177939}"
+      TagComponent:
+        Tag: Empty entity
+      TransformComponent:
+        Position: [-0.0200090408, -0.00657863915, 4.90764713]
+        Rotation: [-2.70855403, -4.0456214, -26.6003075]
+        Scale: [1, 0.999999881, 1]
+      SpriteRendererComponent:
+        Color: [1, 1, 1, 1]
+        Texture: None
+      Rigidbody2DComponent:
+        RigidbodyType: 2
+        IsFixedRotation: false
+      BoxCollider2DComponent:
+        Offset: [0, 0]
+        Size: [0.5, 0.5]
+        Density: 1
+        Friction: 0.5
+        Restitution: 0
+        RestitutionThreshold: 0.5
+    - Entity: "{0269005D-C663-4E2C-B846-CE62C5CE685C}"
+      TagComponent:
+        Tag: Empty entity
+      TransformComponent:
+        Position: [-3.56803656, -1.33764052, 0.169056594]
+        Rotation: [1.77522933, -41.9235497, -19.9519062]
+        Scale: [1.95047891, 2.42321229, 0.99999994]
+      SpriteRendererComponent:
+        Color: [0.258791596, 0.586652696, 0.598455608, 1]
+        Texture: None
+    - Entity: "{C0A3254B-BDD3-431F-994C-F1E183B2D904}"
+      TagComponent:
+        Tag: Ground
+      TransformComponent:
+        Position: [-0.373497307, -4.42225981, 0]
+        Rotation: [0, -0, 14.2842445]
+        Scale: [24.9999981, 1, 1]
+      SpriteRendererComponent:
+        Color: [0.325978994, 0.760617733, 0.523999691, 1]
+        Texture: None
+      Rigidbody2DComponent:
+        RigidbodyType: 0
+        IsFixedRotation: false
+      BoxCollider2DComponent:
+        Offset: [0, 0]
+        Size: [12.5, 0.5]
+        Density: 1
+        Friction: 0.5
+        Restitution: 0
+        RestitutionThreshold: 0.5
+    - Entity: "{34921A31-B31E-4A2C-AE7A-B6B4920DBEDA}"
+      TagComponent:
+        Tag: Empty entity
+      TransformComponent:
+        Position: [3.50156426, 0.590668201, 4.65661232e-10]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      SpriteRendererComponent:
+        Color: [1, 1, 1, 1]
+        Texture: assets\textures\Female adventurer\PNG\Poses\character_femaleAdventurer_attack0.png
+      Rigidbody2DComponent:
+        RigidbodyType: 2
+        IsFixedRotation: false
+      BoxCollider2DComponent:
+        Offset: [0, 0]
+        Size: [0.5, 0.5]
+        Density: 1
+        Friction: 0.5
+        Restitution: 0
+        RestitutionThreshold: 0.5

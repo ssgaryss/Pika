@@ -234,9 +234,6 @@ namespace Pika {
 			drawVec3Control("Scale", vTransformComponent.m_Scale, 1.0f);
 			});
 
-		drawEntityComponent<SpriteRendererComponent>("Sprite Renderer", vEntity, [](auto& vSpriteRendererComponent) {
-			ImGui::ColorEdit4("##Color", glm::value_ptr(vSpriteRendererComponent.m_Color));
-			});
 
 		drawEntityComponent<CameraComponent>("Camera", vEntity, [](auto& vCameraComponent) {
 			Camera::CameraProjectionMode CurrentProjectionMode = vCameraComponent.m_Camera.getProjectionMode();
@@ -286,6 +283,25 @@ namespace Pika {
 
 		// Only 2D 
 		if (m_Context->getSceneType() == Scene::SceneType::Scene2D) {
+			drawEntityComponent<SpriteRendererComponent>("Sprite Renderer", vEntity, [](auto& vSpriteRendererComponent) {
+				static Ref<Texture2D> DefaultTexture = Texture2D::Create("resources/icons/ComponentPanel/DefaultTexture.png");
+				uintptr_t Texture = vSpriteRendererComponent.m_Texture ? static_cast<uintptr_t>(vSpriteRendererComponent.m_Texture->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
+
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 });
+				ImGui::ImageButton(reinterpret_cast<ImTextureID>(Texture), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ∂‘”¶ContentBrowserPanel÷–
+						std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+						vSpriteRendererComponent.m_Texture = Texture2D::Create(Path);
+					}
+					ImGui::EndDragDropTarget();
+				}
+				ImGui::SameLine();
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15.0f);
+				ImGui::Text("Texture");
+				ImGui::PopStyleVar();
+				ImGui::ColorEdit4("##Color", glm::value_ptr(vSpriteRendererComponent.m_Color));
+				});
 			drawEntityComponent<Rigidbody2DComponent>("Rigidbody2D Component", vEntity, [](auto& vRigidbody2DComponent) {
 				Rigidbody2DComponent::RigidbodyType CurrentRigidbodyType = vRigidbody2DComponent.m_Type;
 				int Index = static_cast<int>(CurrentRigidbodyType);
