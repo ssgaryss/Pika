@@ -10,6 +10,7 @@ namespace Pika
 	public:
 		OpenGLTexture2D(const TextureSpecification& vTextureSpecification);
 		OpenGLTexture2D(const std::string& vPath, bool vRequiredMips = true);
+		OpenGLTexture2D(const std::filesystem::path& vPath, bool vRequiredMips = true);
 		~OpenGLTexture2D();
 		inline uint32_t getWidth() const override { return m_Width; }
 		inline uint32_t getHeight() const override { return m_Height; }

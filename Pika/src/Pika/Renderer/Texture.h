@@ -34,7 +34,7 @@ namespace Pika
 	{
 	public:
 		static Ref<Texture2D> Create(const TextureSpecification& vTextureSpecification);
-		static Ref<Texture2D> Create(const std::string& vPath);
+		static Ref<Texture2D> Create(const std::filesystem::path& vPath, bool vRequiredMips = true);
 	};
 
 }

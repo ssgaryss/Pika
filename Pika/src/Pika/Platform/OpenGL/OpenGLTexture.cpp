@@ -40,6 +40,11 @@ namespace Pika {
 		}
 	}
 
+	OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& vPath, bool vRequiredMips)
+		: OpenGLTexture2D(vPath.string(), vRequiredMips)
+	{
+	}
+
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
 		PK_PROFILE_FUNCTION();
@@ -79,8 +84,7 @@ namespace Pika {
 
 		int Width, Height, Channels;
 		stbi_set_flip_vertically_on_load(true);
-		stbi_uc* Data = stbi_load(vPath.c_str(), &Width, &Height, &Channels, 0); //0 means desired channels = Channels
-		PK_CORE_ASSERT(Data, "Texture Loading is failed!");
+		stbi_uc* Data = stbi_load(vPath.c_str(), &Width, &Height, &Channels, 0); // 0 means desired channels = Channels
 		if (!Data) throw std::runtime_error("Path : " + vPath);
 		m_Width = Width;
 		m_Height = Height;

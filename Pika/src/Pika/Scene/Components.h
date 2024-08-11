@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneCamera.h"
 #include "Pika/Core/UUID.h"
+#include "Pika/Renderer/Texture.h"
 #include <string>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -54,7 +55,7 @@ namespace Pika
 	struct SpriteRendererComponent
 	{
 		glm::vec4 m_Color{ 1.0f, 1.0f, 1.0f, 1.0f };
-		// TODO : texuture!
+		Ref<Texture2D> m_Texture = nullptr;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const glm::vec4& vColor)
