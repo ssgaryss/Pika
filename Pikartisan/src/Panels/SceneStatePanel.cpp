@@ -22,12 +22,13 @@ namespace Pika {
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));  // Padding = 2.0f
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+		ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 }); // 透明部分不显示
 		ImGui::Begin("SceneStatePanel", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
 		ImVec2 ContentRegionSize = ImGui::GetContentRegionAvail();
 		ImVec2 CursorPosition = ImGui::GetCursorPos();
 		float ButtonSize = ContentRegionSize.y - 4.0f; // 上下Padding均为2.0f
 		ImVec2 ButtonsSize = { 4 * ButtonSize + 5 * 5.0f, ButtonSize };
-		ImGui::SetCursorPos({ (ContentRegionSize.x - ButtonsSize.x) / 2.0f, 0.0f });
+		ImGui::SetCursorPos({ (ContentRegionSize.x - ButtonsSize.x) / 2.0f, ImGui::GetCursorPosY() });
 
 		uintptr_t PlayButton = static_cast<uintptr_t>(m_PlayButton->getRendererID());
 		uintptr_t PauseButton = static_cast<uintptr_t>(m_PauseButton->getRendererID());
@@ -63,6 +64,7 @@ namespace Pika {
 			}
 		}
 		ImGui::End();
+		ImGui::PopStyleColor();
 		ImGui::PopStyleVar(2);
 	}
 
