@@ -47,10 +47,12 @@ namespace Pika
 	private:
 		void onUpdateEditor(Timestep vTimestep);        // SceneState::Edit
 		void onUpdateRuntime(Timestep vTimestep);       // SceneState::Play
-		void onUpdateSimulation(Timestep vTimestep);    // SceneState::Simulate
-	private:
 		void onRuntimeBegin();
 		void onRuntimeEnd();
+		void onUpdateSimulation(Timestep vTimestep);    // SceneState::Simulate
+		void onSimulationBegin();
+		void onSimulationEnd();
+	private:
 		void onPhysics2DBegin();  // ¹¹Ôìm_Physics2DWorld
 		void onPhysics2DEnd();    // Îö¹¹m_Physics2DWorld
 

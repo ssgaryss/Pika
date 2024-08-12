@@ -65,6 +65,7 @@ namespace Pika
 
 	void Scene::onUpdateRuntime(Timestep vTimestep)
 	{
+		// TODO : 暂时和Simulation一致，因为没有C#代码控制
 		constexpr int32_t VelocityIterations = 6;
 		constexpr int32_t PositionIterations = 6;
 		m_Physics2DWorld->Step(vTimestep, VelocityIterations, PositionIterations);
@@ -85,7 +86,32 @@ namespace Pika
 
 	void Scene::onUpdateSimulation(Timestep vTimestep)
 	{
-		// TODO!!!
+		constexpr int32_t VelocityIterations = 6;
+		constexpr int32_t PositionIterations = 6;
+		m_Physics2DWorld->Step(vTimestep, VelocityIterations, PositionIterations);
+
+		auto View = m_Registry.view<Rigidbody2DComponent>();
+		for (const auto& Entt : View) {
+			Entity Entity{ Entt, this };
+			auto& TC = Entity.getComponent<TransformComponent>();
+			auto& R2DC = Entity.getComponent<Rigidbody2DComponent>();
+
+			b2Body* Body = reinterpret_cast<b2Body*>(R2DC.m_RuntimeBody);
+			auto& Position = Body->GetPosition();
+			TC.m_Position.x = Position.x;
+			TC.m_Position.y = Position.y;
+			TC.m_Rotation.z = glm::degrees(Body->GetAngle());
+		}
+	}
+
+	void Scene::onSimulationBegin()
+	{
+		onPhysics2DBegin();
+	}
+
+	void Scene::onSimulationEnd()
+	{
+		onPhysics2DEnd();
 	}
 
 	void Scene::onRuntimeBegin()
@@ -139,16 +165,7 @@ namespace Pika
 
 	void Scene::onPhysics2DEnd()
 	{
-		m_Physics2DWorld = nullptr;
-		auto View = m_Registry.view<Rigidbody2DComponent, BoxCollider2DComponent>();
-		for (const auto& Entt : View) {
-			auto& R2DC = View.get<Rigidbody2DComponent>(Entt);
-			auto& BC2DC = View.get<BoxCollider2DComponent>(Entt);
-			delete R2DC.m_RuntimeBody;
-			R2DC.m_RuntimeBody = nullptr;
-			delete BC2DC.m_RuntimeFixture;
-			BC2DC.m_RuntimeFixture = nullptr;
-		}
+		m_Physics2DWorld.reset();
 	}
 
 	void Scene::onViewportResize(uint32_t vWidth, uint32_t vHeight)
