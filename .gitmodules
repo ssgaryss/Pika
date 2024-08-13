@@ -1,9 +1,3 @@
-[submodule "Pika/vendor/spdlog"]
-	path = Pika/vendor/spdlog
-	url = https://github.com/gabime/spdlog
-[submodule "Pika/vendor/glm"]
-	path = Pika/vendor/glm
-	url = https://github.com/g-truc/glm.git
 [submodule "Pika/vendor/imgui"]
 	path = Pika/vendor/imgui
 	url = git@github.com:ssgaryss/imgui.git
@@ -20,3 +14,9 @@
 [submodule "Pika/vendor/Box2D"]
 	path = Pika/vendor/Box2D
 	url = git@github.com:ssgaryss/box2d.git
+[submodule "Pika/vendor/glm"]
+	path = Pika/vendor/glm
+	url = git@github.com:ssgaryss/glm.git
+[submodule "Pika/vendor/spdlog"]
+	path = Pika/vendor/spdlog
+	url = git@github.com:ssgaryss/spdlog.git
