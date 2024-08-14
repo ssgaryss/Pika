@@ -47,12 +47,14 @@ namespace Pika
 		}
 		case Pika::Scene::SceneState::Play:
 		{
-			onUpdateRuntime(vTimestep);
+			if (!m_IsPaused)
+				onUpdateRuntime(vTimestep);
 			break;
 		}
 		case Pika::Scene::SceneState::Simulate:
 		{
-			onUpdateSimulation(vTimestep);
+			if (!m_IsPaused)
+				onUpdateSimulation(vTimestep);
 			break;
 		}
 		}

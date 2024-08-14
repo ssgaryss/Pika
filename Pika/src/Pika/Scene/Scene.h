@@ -66,6 +66,7 @@ namespace Pika
 		std::unordered_map<UUID, entt::entity> m_EntityMap;           // UUID -> Entity
 		SceneType m_SceneType = SceneType::Scene2D;                   // Scene Type
 		SceneState m_SceneState = SceneState::Edit;                   // Scene State
+		bool m_IsPaused = false;                                      // Play & Simulation
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0; // Scene Display
 		Ref<b2World> m_Physics2DWorld = nullptr;                      // Physics 2D World
 

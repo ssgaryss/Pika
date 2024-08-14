@@ -35,31 +35,47 @@ namespace Pika {
 		uintptr_t SimulateButton = static_cast<uintptr_t>(m_SimulateButton->getRendererID());
 		uintptr_t StopButton = static_cast<uintptr_t>(m_StopButton->getRendererID());
 		uintptr_t StepButton = static_cast<uintptr_t>(m_StepButton->getRendererID());
-		bool HasPlayButton = getSceneState() == Scene::SceneState::Edit || getSceneState() == Scene::SceneState::Play;
-		bool HasPauseButton = getSceneState() != Scene::SceneState::Edit;
-		bool HasSimulateButton = false; // TODO!
-		bool HasStepButton = false;     // TODO!
+		bool HasPlayButton = getSceneState() == Scene::SceneState::Edit || (getSceneState() != Scene::SceneState::Edit && IsPaused());
+		bool HasPauseButton = getSceneState() != Scene::SceneState::Edit && !IsPaused();
+		bool HasSimulateButton = getSceneState() == Scene::SceneState::Edit || getSceneState() == Scene::SceneState::Simulate;
+		bool HasStopButton = getSceneState() != Scene::SceneState::Edit;
+		bool HasStepButton = getSceneState() == Scene::SceneState::Play || getSceneState() == Scene::SceneState::Simulate;
 
 		if (HasPlayButton) {
 			if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(PlayButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
-				if (getSceneState() != Scene::SceneState::Play) {
+				if (getSceneState() == Scene::SceneState::Edit) {
 					setSceneState(Scene::SceneState::Play);
 					m_Context->onRuntimeBegin();
+				}
+				else {
+					m_Context->m_IsPaused = false;
 				}
 			}
 			ImGui::SameLine();
 		}
-		if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(StepButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
-			// TODO!
-		}
-		ImGui::SameLine();
-		if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(SimulateButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
-			if (getSceneState() == Scene::SceneState::Edit) {
-				setSceneState(Scene::SceneState::Simulate);
-				m_Context->onSimulationBegin();
+		if (HasPauseButton) {
+			if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(PauseButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
+				if (getSceneState() != Scene::SceneState::Edit) {
+					m_Context->m_IsPaused = true;
+				}
 			}
+			ImGui::SameLine();
 		}
-		ImGui::SameLine();
+		if (HasStepButton)
+		{
+			if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(StepButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
+				// TODO!
+			}
+			ImGui::SameLine();
+		}if (HasSimulateButton) {
+			if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(SimulateButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
+				if (getSceneState() == Scene::SceneState::Edit) {
+					setSceneState(Scene::SceneState::Simulate);
+					m_Context->onSimulationBegin();
+				}
+			}
+			ImGui::SameLine();
+		}
 		if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(StopButton), { ButtonSize, ButtonSize }, { 0,1 }, { 1,0 })) {
 			if (getSceneState() == Scene::SceneState::Play) {
 				m_Context->onRuntimeEnd();
