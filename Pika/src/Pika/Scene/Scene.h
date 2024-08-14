@@ -47,10 +47,12 @@ namespace Pika
 	private:
 		void onUpdateEditor(Timestep vTimestep);        // SceneState::Edit
 		void onUpdateRuntime(Timestep vTimestep);       // SceneState::Play
-		void onUpdateSimulation(Timestep vTimestep);    // SceneState::Simulate
-	private:
 		void onRuntimeBegin();
 		void onRuntimeEnd();
+		void onUpdateSimulation(Timestep vTimestep);    // SceneState::Simulate
+		void onSimulationBegin();
+		void onSimulationEnd();
+	private:
 		void onPhysics2DBegin();  // ¹¹Ôìm_Physics2DWorld
 		void onPhysics2DEnd();    // Îö¹¹m_Physics2DWorld
 
@@ -64,6 +66,7 @@ namespace Pika
 		std::unordered_map<UUID, entt::entity> m_EntityMap;           // UUID -> Entity
 		SceneType m_SceneType = SceneType::Scene2D;                   // Scene Type
 		SceneState m_SceneState = SceneState::Edit;                   // Scene State
+		bool m_IsPaused = false;                                      // Play & Simulation
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0; // Scene Display
 		Ref<b2World> m_Physics2DWorld = nullptr;                      // Physics 2D World
 

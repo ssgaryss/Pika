@@ -137,7 +137,9 @@ namespace Pika
 		}
 		case Pika::Scene::SceneState::Simulate:
 		{
-			// TODO!
+			if (m_IsViewportFocus)
+				m_EditorCamera.onUpdate(vTimestep);
+			m_Renderer->render(m_EditorCamera);
 			break;
 		}
 		}
@@ -336,8 +338,13 @@ namespace Pika
 		// 接收拖拽Scenes
 		if (ImGui::BeginDragDropTarget()) {
 			if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
-				const wchar_t* Path = reinterpret_cast<const wchar_t*>(Payload->Data);
-				openScene(Path);
+				std::filesystem::path Path = reinterpret_cast<const wchar_t*>(Payload->Data);
+				if (Path.extension().string() == ".pika")
+					openScene(Path);
+				if (Path.extension().string() == ".png") {
+					if (m_MouseHoveredEntity && m_MouseHoveredEntity.hasComponent<SpriteRendererComponent>())
+						m_MouseHoveredEntity.getComponent<SpriteRendererComponent>().m_Texture = Texture2D::Create(Path);
+				}
 			}
 			ImGui::EndDragDropTarget();
 		}

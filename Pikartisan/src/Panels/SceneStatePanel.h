@@ -13,7 +13,12 @@ namespace Pika {
 
 		inline void setContext(Ref<Scene> vScene) { m_Context = vScene; }
 		inline Scene::SceneState getSceneState() const { return m_Context->m_SceneState; }
-		inline void setSceneState(Scene::SceneState vSceneState) { m_Context->m_SceneState = vSceneState; }
+		inline void setSceneState(Scene::SceneState vSceneState) { 
+			m_Context->m_SceneState = vSceneState; 
+			if (vSceneState == Scene::SceneState::Edit)
+				m_Context->m_IsPaused = false;
+		}
+		inline bool IsPaused() const { return m_Context->m_IsPaused; }
 	private:
 		Ref<Scene> m_Context = nullptr;
 	private:
@@ -21,7 +26,7 @@ namespace Pika {
 		Ref<Texture2D> m_PauseButton;
 		Ref<Texture2D> m_SimulateButton;
 		Ref<Texture2D> m_StopButton;
-		Ref<Texture2D> m_StepButton;  // TODO : Not using it !
+		Ref<Texture2D> m_StepButton;
 	};
 
 }

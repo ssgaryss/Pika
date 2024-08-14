@@ -70,9 +70,9 @@ namespace Pika
 			case Pika::ShaderDataType::Int4:
 				return 4;
 			case Pika::ShaderDataType::Mat3:
-				return 3 * 3;
+				return 3; // 3¸övec3
 			case Pika::ShaderDataType::Mat4:
-				return 4 * 4;
+				return 4; // 4¸övec4
 			case Pika::ShaderDataType::Bool:
 				return 1;
 			}
