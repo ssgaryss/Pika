@@ -78,7 +78,7 @@ namespace Pika {
 				glVertexAttribPointer(m_VertexBufferElementIndex,
 					Element.getComponentCount(), convertShaderDataTypeToOpenGLType(Element.m_Type),
 					Element.m_Normalized ? GL_TRUE : GL_FALSE,
-					Layout.getStride(), (void*)Element.m_Offset);
+					Layout.getStride(), (const void*)Element.m_Offset);
 				m_VertexBufferElementIndex++;
 				break;
 			}
@@ -91,14 +91,23 @@ namespace Pika {
 				glEnableVertexAttribArray(m_VertexBufferElementIndex);
 				glVertexAttribIPointer(m_VertexBufferElementIndex,
 					Element.getComponentCount(), convertShaderDataTypeToOpenGLType(Element.m_Type),
-					Layout.getStride(), (void*)Element.m_Offset);
+					Layout.getStride(), (const void*)Element.m_Offset);
 				m_VertexBufferElementIndex++;
 				break;
 			}
 			case ShaderDataType::Mat3:
 			case ShaderDataType::Mat4:
 			{
-				// TODO !!! 没懂
+				uint8_t Count = Element.getComponentCount(); // Count × Count
+				for (uint8_t i = 0; i < Count; ++i) {
+					glEnableVertexAttribArray(m_VertexBufferElementIndex);
+					glVertexAttribPointer(m_VertexBufferElementIndex,
+						Count, convertShaderDataTypeToOpenGLType(Element.m_Type),
+						Element.m_Normalized ? GL_TRUE : GL_FALSE,
+						Layout.getStride(), (const void*)(Element.m_Offset + sizeof(float) * Count * i));
+					glVertexAttribDivisor(m_VertexBufferElementIndex, 1);  // 一般情况下每个VAO共享一个Mat值
+					m_VertexBufferElementIndex++;
+				}
 				break;
 			}
 			case ShaderDataType::None:
