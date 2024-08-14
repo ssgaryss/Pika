@@ -17,7 +17,7 @@ namespace Pika {
 		void beginFrame();
 		void endFrame();
 
-		void render();                                  // render with primary camera
+		void render();   // TODO : render(Camera)       // render with primary camera
 		void render(const EditorCamera& vEditorCamera); // render with EditorCamera
 
 		inline const Ref<Scene>& getContext() const { return m_Context; }
@@ -33,7 +33,7 @@ namespace Pika {
 		Ref<Scene> m_Context;
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<ShaderLibrary> m_ShaderLibray; // TODO : 自己创建的Shaders
-		Entity m_PrimaryCamera = {};            // Primary Camera In Play Mode
+		Entity m_PrimaryCamera = {};       // TOD0 : Renderer Should not own camera
 		
 	};
 
