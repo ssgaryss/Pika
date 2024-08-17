@@ -22,6 +22,7 @@ namespace Pika
 		static void EndScene();
 		static void Flush();
 
+		// Quad
 		static void DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec4& vColor);
 		static void DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec4& vColor);
 		static void DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
@@ -41,7 +42,11 @@ namespace Pika
 		static void DrawQuad(const glm::mat4& vTransform, const Ref<Texture2D>& vTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
 		static void DrawQuad(const glm::mat4& vTransform, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
 
+		// Line
+		static void DrawLine(const glm::vec2& vPosition, const glm::vec4& vColor);
+
 		static void DrawSprite(const glm::mat4& vTransform, const SpriteRendererComponent& vSprite, int vEntityID = -1);
+		//static void DrawBoxCollider(const)
 
 		struct Statistics {
 			uint32_t m_DrawCalls = 0;

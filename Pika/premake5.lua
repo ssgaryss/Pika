@@ -32,7 +32,8 @@ project "Pika"
 		"%{includeDir.entt}",
 		"%{includeDir.yaml_cpp}",
 		"%{includeDir.ImGuizmo}",
-		"%{includeDir.Box2D}"
+		"%{includeDir.Box2D}",
+		"%{includeDir.assimp}"
 	}
 
 	links
@@ -43,7 +44,8 @@ project "Pika"
 		"yaml-cpp",
 		"opengl32.lib",
 		"ImGuizmo",
-		"Box2D"
+		"Box2D",
+		"assimp"
 	}
 
 	defines

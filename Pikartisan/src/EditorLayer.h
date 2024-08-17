@@ -26,11 +26,6 @@ namespace Pika
 		void openScene(const std::filesystem::path& vScenePath);
 		void saveScene();
 		void saveSceneAs();
-		// Scene Operations
-		void onScenePlay();
-		void onSceneStop();
-		void onScenePause();
-		void onSceneSimulate();
 	private:
 		// Shortcuts
 		void initializeShortcutLibrary();          // 初始化快捷键  TODO : 有Project序列化后读取Project中包含快捷键设置

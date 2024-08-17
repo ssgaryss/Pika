@@ -22,19 +22,38 @@ namespace Pika {
 		int m_EntityID;
 	};
 
+	struct LineVertexData
+	{
+		glm::vec3 m_Position;
+		glm::vec4 m_Color;
+
+		int m_EntityID;
+	};
+
 	struct Renderer2DData {
 		static const uint32_t s_MaxQuadsPerBatch = MAX_QUADS_PER_BATCH;
 		static const uint32_t s_MaxVerticesPerBatch = s_MaxQuadsPerBatch * 4;
 		static const uint32_t s_MaxIndicesPerBatch = s_MaxQuadsPerBatch * 6;
 
-		uint32_t m_QuadIndexCount = 0;
+		// Quad
 		Ref<VertexArray> m_QuadVertexArray;
 		Ref<VertexBuffer> m_QuadVertexBuffer;
 		Ref<Shader> m_QuadShader;
 		glm::vec4 m_QuadUnitVertex[4];
 
+		uint32_t m_QuadIndexCount = 0;
 		QuadVertexData* m_pQuadVertexBufferBase = nullptr;
 		QuadVertexData* m_pQuadVertexBufferPtr = nullptr;
+
+		// Line
+		Ref<VertexArray> m_LineVertexArray;
+		Ref<VertexBuffer> m_LineVertexBuffer;
+		Ref<Shader> m_LineShader;
+		float m_LineWidth = 2.0f;
+
+		uint32_t m_LineIndexCount = 0;
+		LineVertexData* m_pLineVertexBufferBase = nullptr;
+		LineVertexData* m_pLineVertexBufferPtr = nullptr;
 
 		//Textures
 		friend void Renderer2D::Initialize();
@@ -65,6 +84,11 @@ namespace Pika {
 		Camera2DData m_Camera2DData;
 
 		Renderer2D::Statistics m_Statistics; // Record the renderer states
+	public:
+		~Renderer2DData() {
+			delete[] m_pQuadVertexBufferBase;
+			delete[] m_pLineVertexBufferBase;
+		}
 	private:
 		uint32_t m_MaxTextureSlots = 32; // Only can be reset by Renderer2D::Init()
 	};
@@ -76,6 +100,8 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 
 		RenderCommand::Initialize();
+
+		// Quad
 		s_Data.m_QuadUnitVertex[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.m_QuadUnitVertex[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.m_QuadUnitVertex[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
@@ -95,12 +121,12 @@ namespace Pika {
 				Offset += 4;
 			}
 		}
-		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(QuadIndicesPerBatch, s_Data.s_MaxIndicesPerBatch);
+		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(QuadIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
 		s_Data.m_QuadVertexArray->setIndexBuffer(pIndexBuffer);
 		delete[] QuadIndicesPerBatch;
 
-		s_Data.m_QuadVertexBuffer = VertexBuffer::Create(s_Data.s_MaxVerticesPerBatch * sizeof(QuadVertexData));
-		Pika::BufferLayout QuadLayout = {
+		s_Data.m_QuadVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxVerticesPerBatch * sizeof(QuadVertexData));
+		BufferLayout QuadLayout = {
 			{Pika::ShaderDataType::Float3, "a_Position"},
 			{Pika::ShaderDataType::Float4, "a_Color"},
 			{Pika::ShaderDataType::Float2, "a_TexCoord"},
@@ -112,8 +138,23 @@ namespace Pika {
 		s_Data.m_QuadVertexArray->addVertexBuffer(s_Data.m_QuadVertexBuffer);
 		s_Data.m_QuadShader = Shader::Create("assets/shaders/Renderer2D/DefaultQuadShader.glsl");
 
-		s_Data.m_pQuadVertexBufferBase = new QuadVertexData[s_Data.s_MaxVerticesPerBatch];
+		s_Data.m_pQuadVertexBufferBase = new QuadVertexData[Renderer2DData::s_MaxVerticesPerBatch];
 
+		// Line
+		s_Data.m_LineVertexArray = VertexArray::Create();
+		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxVerticesPerBatch * sizeof(LineVertexData));
+		BufferLayout LineLayout = {
+			{Pika::ShaderDataType::Float3, "a_Position"},
+			{Pika::ShaderDataType::Float4, "a_Color"},
+			{Pika::ShaderDataType::Int, "a_EntityID"}
+		};
+		s_Data.m_LineVertexBuffer->setLayout(LineLayout);
+		s_Data.m_LineVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
+		s_Data.m_LineShader = Shader::Create("assets/shaders/Renderer2D/DefaultLineShader.glsl");
+
+		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer2DData::s_MaxVerticesPerBatch];
+
+		// Default texture
 		s_Data.m_MaxTextureSlots = RenderCommand::getAvailableTextureSlots();
 		TextureSpecification TS;
 		s_Data.m_WhiteTexture = Texture2D::Create(TS);
