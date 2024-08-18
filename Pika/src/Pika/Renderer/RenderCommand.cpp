@@ -32,6 +32,11 @@ namespace Pika {
 		s_RendererAPI->drawIndexed(vVertexArray, vIndexCount);
 	}
 
+	void RenderCommand::DrawLines(const VertexArray* vVertexArray, uint32_t vIndexCount)
+	{
+		s_RendererAPI->drawLines(vVertexArray, vIndexCount);
+	}
+
 	uint32_t RenderCommand::getAvailableTextureSlots()
 	{
 		return s_RendererAPI->getAvailableTextureSlots();

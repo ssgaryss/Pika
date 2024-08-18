@@ -43,7 +43,7 @@ namespace Pika
 		static void DrawQuad(const glm::mat4& vTransform, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
 
 		// Line
-		static void DrawLine(const glm::vec2& vPosition, const glm::vec4& vColor);
+		static void DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor = glm::vec4(1.0f));
 
 		static void DrawSprite(const glm::mat4& vTransform, const SpriteRendererComponent& vSprite, int vEntityID = -1);
 		//static void DrawBoxCollider(const)
@@ -51,8 +51,10 @@ namespace Pika
 		struct Statistics {
 			uint32_t m_DrawCalls = 0;
 			uint32_t m_QuadCount = 0;
+			uint32_t m_LineCount = 0;
 			uint32_t getDrawCalls() const { return m_DrawCalls; }
 			uint32_t getQuadCount() const { return m_QuadCount; }
+			uint32_t getLineCount() const { return m_LineCount; }
 		};
 		static void ResetStatistics();
 		static Statistics GetStatistics();

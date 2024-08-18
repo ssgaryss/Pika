@@ -121,8 +121,8 @@ namespace Pika {
 				Offset += 4;
 			}
 		}
-		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(QuadIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
-		s_Data.m_QuadVertexArray->setIndexBuffer(pIndexBuffer);
+		Ref<IndexBuffer> pQuadIndexBuffer = IndexBuffer::Create(QuadIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
+		s_Data.m_QuadVertexArray->setIndexBuffer(pQuadIndexBuffer);
 		delete[] QuadIndicesPerBatch;
 
 		s_Data.m_QuadVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxVerticesPerBatch * sizeof(QuadVertexData));
@@ -142,6 +142,16 @@ namespace Pika {
 
 		// Line
 		s_Data.m_LineVertexArray = VertexArray::Create();
+		uint32_t* LineIndicesPerBatch = new uint32_t[s_Data.s_MaxIndicesPerBatch];
+		{
+			for (uint32_t i = 0; i < s_Data.s_MaxIndicesPerBatch; i++) {
+				LineIndicesPerBatch[i] = i;
+			}
+		}
+		Ref<IndexBuffer> pLineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
+		s_Data.m_LineVertexArray->setIndexBuffer(pLineIndexBuffer);
+		delete[] LineIndicesPerBatch;
+
 		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxVerticesPerBatch * sizeof(LineVertexData));
 		BufferLayout LineLayout = {
 			{Pika::ShaderDataType::Float3, "a_Position"},
@@ -220,17 +230,31 @@ namespace Pika {
 	void Renderer2D::Flush()
 	{
 		PK_PROFILE_FUNCTION();
-		// Set Buffer Data
-		ptrdiff_t BatchElementNums = s_Data.m_pQuadVertexBufferPtr - s_Data.m_pQuadVertexBufferBase;
-		uint32_t Size = static_cast<uint32_t>(BatchElementNums) * sizeof(QuadVertexData);
-		s_Data.m_QuadVertexBuffer->setData(s_Data.m_pQuadVertexBufferBase, Size);
-		// Bind all textures to slots
-		for (uint32_t i = 0; i < s_Data.m_TextureIndex; ++i)
-			s_Data.m_TextureSlots[i]->bind(i);
+		// Quads
+		if (s_Data.m_QuadIndexCount) {
+			// Set Buffer Data
+			ptrdiff_t BatchElementNums = s_Data.m_pQuadVertexBufferPtr - s_Data.m_pQuadVertexBufferBase;
+			uint32_t Size = static_cast<uint32_t>(BatchElementNums) * sizeof(QuadVertexData);
+			s_Data.m_QuadVertexBuffer->setData(s_Data.m_pQuadVertexBufferBase, Size);
+			// Bind all textures to slots
+			for (uint32_t i = 0; i < s_Data.m_TextureIndex; ++i)
+				s_Data.m_TextureSlots[i]->bind(i);
 
-		s_Data.m_QuadShader->bind();
-		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get(), s_Data.m_QuadIndexCount);
-		s_Data.m_Statistics.m_DrawCalls++;
+			s_Data.m_QuadShader->bind();
+			RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get(), s_Data.m_QuadIndexCount);
+			s_Data.m_Statistics.m_DrawCalls++;
+		}
+		// Lines
+		if (s_Data.m_LineIndexCount) {
+			// Set Buffer Data
+			ptrdiff_t BatchElementNums = s_Data.m_pLineVertexBufferPtr - s_Data.m_pLineVertexBufferBase;
+			uint32_t Size = static_cast<uint32_t>(BatchElementNums) * sizeof(LineVertexData);
+			s_Data.m_QuadVertexBuffer->setData(s_Data.m_pLineVertexBufferBase, Size);
+
+			s_Data.m_LineShader->bind();
+			RenderCommand::DrawLines(s_Data.m_LineVertexArray.get(), s_Data.m_LineIndexCount);
+			s_Data.m_Statistics.m_DrawCalls++;
+		}
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec4& vColor)
@@ -394,6 +418,26 @@ namespace Pika {
 		s_Data.m_Statistics.m_QuadCount++;
 	}
 
+	void Renderer2D::DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor)
+	{
+		PK_PROFILE_FUNCTION();
+		if (s_Data.m_LineIndexCount >= s_Data.s_MaxIndicesPerBatch)
+			NextBatch();
+
+		s_Data.m_pLineVertexBufferPtr->m_Position = vStartPosition;
+		s_Data.m_pLineVertexBufferPtr->m_Color = vColor;
+		s_Data.m_pLineVertexBufferPtr->m_EntityID = -1;
+		s_Data.m_pLineVertexBufferPtr++;
+
+		s_Data.m_pLineVertexBufferPtr->m_Position = vEndPosition;
+		s_Data.m_pLineVertexBufferPtr->m_Color = vColor;
+		s_Data.m_pLineVertexBufferPtr->m_EntityID = -1;
+		s_Data.m_pLineVertexBufferPtr++;
+
+		s_Data.m_LineIndexCount += 2;
+		s_Data.m_Statistics.m_LineCount++;
+	}
+
 	void Renderer2D::DrawSprite(const glm::mat4& vTransform, const SpriteRendererComponent& vSprite, int vEntityID)
 	{
 		PK_PROFILE_FUNCTION();
@@ -442,9 +486,13 @@ namespace Pika {
 
 	void Renderer2D::StartBatch()
 	{
-
+		// Quad
 		s_Data.m_QuadIndexCount = 0;
 		s_Data.m_pQuadVertexBufferPtr = s_Data.m_pQuadVertexBufferBase;
+
+		// Line
+		s_Data.m_LineIndexCount = 0;
+		s_Data.m_pLineVertexBufferPtr = s_Data.m_pLineVertexBufferBase;
 
 		s_Data.m_TextureIndex = 1;
 	}
