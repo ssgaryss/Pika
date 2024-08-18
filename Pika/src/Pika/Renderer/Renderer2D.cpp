@@ -50,7 +50,7 @@ namespace Pika {
 		Ref<VertexArray> m_LineVertexArray;
 		Ref<VertexBuffer> m_LineVertexBuffer;
 		Ref<Shader> m_LineShader;
-		float m_LineThickness = 2.0f;
+		float m_LineThickness = 0.5f;
 
 		uint32_t m_LineIndexCount = 0;
 		LineVertexData* m_pLineVertexBufferBase = nullptr;
@@ -439,6 +439,30 @@ namespace Pika {
 
 		s_Data.m_LineIndexCount += 2;
 		s_Data.m_Statistics.m_LineCount++;
+	}
+
+	void Renderer2D::DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor, float vInterval)
+	{
+		if (vSize < 0.0f || vInterval < 0.0f)
+			return;
+		uint32_t NumsOfLines = static_cast<uint32_t>(vSize / vInterval);
+		glm::vec3 StartPositionHorizontal = { -vSize, -(float)NumsOfLines * vInterval, 0.0f };
+		glm::vec3 EndPositionHorizontal = { vSize, -(float)NumsOfLines * vInterval, 0.0f };
+		glm::vec3 StartPositionVertical = { -(float)NumsOfLines * vInterval, -vSize, 0.0f };
+		glm::vec3 EndPositionVertical = { -(float)NumsOfLines * vInterval, vSize, 0.0f };
+		for (uint32_t i = 0; i < NumsOfLines * 2 + 1; ++i) {
+			glm::vec3 horizontalOffset = glm::vec3{ 0.0f, vInterval * i, 0.0f };
+			glm::vec3 verticalOffset = glm::vec3{ vInterval * i, 0.0f, 0.0f };
+
+			glm::vec4 TransformedStartHorizontal = vIdentityMatrix * glm::vec4(StartPositionHorizontal + horizontalOffset, 1.0f);
+			glm::vec4 TransformedEndHorizontal = vIdentityMatrix * glm::vec4(EndPositionHorizontal + horizontalOffset, 1.0f);
+
+			glm::vec4 TransformedStartVertical = vIdentityMatrix * glm::vec4(StartPositionVertical + verticalOffset, 1.0f);
+			glm::vec4 TransformedEndVertical = vIdentityMatrix * glm::vec4(EndPositionVertical + verticalOffset, 1.0f);
+
+			DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
+			DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
+		}
 	}
 
 	void Renderer2D::DrawSprite(const glm::mat4& vTransform, const SpriteRendererComponent& vSprite, int vEntityID)

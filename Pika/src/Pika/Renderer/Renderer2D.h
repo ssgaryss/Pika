@@ -31,7 +31,7 @@ namespace Pika
 		static void DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const glm::vec4& vColor);
 		static void DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
 		static void DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
-		
+
 		static void DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
 		static void DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
 		static void DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
@@ -45,6 +45,7 @@ namespace Pika
 		static void SetLineThickness(float vThickness);
 		static float GetLineThickness();
 		static void DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor = glm::vec4(1.0f));
+		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f); // vIdentityMatrix默认为单位矩阵即在平面XOY,vSize为中心到边的距离
 
 		static void DrawSprite(const glm::mat4& vTransform, const SpriteRendererComponent& vSprite, int vEntityID = -1);
 		//static void DrawBoxCollider(const)

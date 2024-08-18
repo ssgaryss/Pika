@@ -39,24 +39,14 @@ namespace Pika {
 	void SceneRenderer::render(const EditorCamera& vEditorCamera)
 	{
 		Renderer2D::BeginScene(vEditorCamera);  // TODO : Renderer3D
-		Renderer2D::DrawLine({ -5.0f, -5.0f, 0.0f }, { 5.0f, 5.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f });
-		Renderer2D::DrawLine({ -5.0f, 5.0f, 0.0f }, { 5.0f, -5.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f });
+		if (m_Settings.m_ShowGrid)
+			Renderer2D::DrawGrid(glm::mat4(1.0f), 100.5f);
 		auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
 		for (const auto& Entt : View) {
 			auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entt); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
 			Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entt));
 		}
 		Renderer2D::EndScene();
-	}
-
-	inline std::vector<std::string> SceneRenderer::getAllCameras() const
-	{
-		auto View = m_Context->m_Registry.group<CameraComponent, TransformComponent>();
-		for (const auto& Entt : View) {
-			auto [Camera, Transform] = View.get<CameraComponent, TransformComponent>(Entt);
-
-		}
-		return std::vector<std::string>();
 	}
 
 	void SceneRenderer::resize(uint32_t vWidth, uint32_t vHeight)
