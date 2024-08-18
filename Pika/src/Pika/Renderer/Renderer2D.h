@@ -18,7 +18,6 @@ namespace Pika
 		// TODO : BeginScene should begin with all scene data!
 		static void BeginScene(const EditorCamera& vEditorCamera);
 		static void BeginScene(const Camera& vCamera, const glm::mat4& vTramsform);
-		static void BeginScene(const Camera2DController& vCameraController);  // TODO : Delete !
 		static void EndScene();
 		static void Flush();
 
@@ -43,6 +42,8 @@ namespace Pika
 		static void DrawQuad(const glm::mat4& vTransform, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor = 1.0f, const glm::vec4& vTintColor = glm::vec4(1.0f));
 
 		// Line
+		static void SetLineThickness(float vThickness);
+		static float GetLineThickness();
 		static void DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor = glm::vec4(1.0f));
 
 		static void DrawSprite(const glm::mat4& vTransform, const SpriteRendererComponent& vSprite, int vEntityID = -1);

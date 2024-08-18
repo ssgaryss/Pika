@@ -50,7 +50,7 @@ namespace Pika {
 		Ref<VertexArray> m_LineVertexArray;
 		Ref<VertexBuffer> m_LineVertexBuffer;
 		Ref<Shader> m_LineShader;
-		float m_LineWidth = 2.0f;
+		float m_LineThickness = 2.0f;
 
 		uint32_t m_LineIndexCount = 0;
 		LineVertexData* m_pLineVertexBufferBase = nullptr;
@@ -110,10 +110,11 @@ namespace Pika {
 		s_Data.m_QuadUnitVertex[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
 		s_Data.m_QuadVertexArray = VertexArray::Create();
-		uint32_t* QuadIndicesPerBatch = new uint32_t[s_Data.s_MaxIndicesPerBatch];
+		s_Data.m_QuadVertexArray->bind();
+		uint32_t* QuadIndicesPerBatch = new uint32_t[Renderer2DData::s_MaxIndicesPerBatch];
 		{
 			uint32_t Offset = 0;
-			for (uint32_t i = 0; i < s_Data.s_MaxIndicesPerBatch; i += 6) {
+			for (uint32_t i = 0; i < Renderer2DData::s_MaxIndicesPerBatch; i += 6) {
 				QuadIndicesPerBatch[i + 0] = Offset + 0;
 				QuadIndicesPerBatch[i + 1] = Offset + 1;
 				QuadIndicesPerBatch[i + 2] = Offset + 2;
@@ -141,12 +142,14 @@ namespace Pika {
 		s_Data.m_QuadShader = Shader::Create("assets/shaders/Renderer2D/DefaultQuadShader.glsl");
 
 		s_Data.m_pQuadVertexBufferBase = new QuadVertexData[Renderer2DData::s_MaxVerticesPerBatch];
+		s_Data.m_QuadVertexArray->unbind();
 
 		// Line
 		s_Data.m_LineVertexArray = VertexArray::Create();
-		uint32_t* LineIndicesPerBatch = new uint32_t[s_Data.s_MaxIndicesPerBatch];
+		s_Data.m_LineVertexArray->bind();
+		uint32_t* LineIndicesPerBatch = new uint32_t[Renderer2DData::s_MaxIndicesPerBatch];
 		{
-			for (uint32_t i = 0; i < s_Data.s_MaxIndicesPerBatch; i++) {
+			for (uint32_t i = 0; i < Renderer2DData::s_MaxIndicesPerBatch; i++) {
 				LineIndicesPerBatch[i] = i;
 			}
 		}
@@ -165,6 +168,7 @@ namespace Pika {
 		s_Data.m_LineShader = Shader::Create("assets/shaders/Renderer2D/DefaultLineShader.glsl");
 
 		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer2DData::s_MaxVerticesPerBatch];
+		s_Data.m_LineVertexArray->unbind();
 
 		// Default texture
 		s_Data.m_MaxTextureSlots = RenderCommand::getAvailableTextureSlots();
@@ -188,7 +192,6 @@ namespace Pika {
 		for (int32_t i = 0; i < 32; ++i)
 			Textures[i] = i;
 		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
-		//s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_CameraData.m_ViewProjectionMatrix);
 
 		ResetStatistics();
 		StartBatch();
@@ -199,22 +202,6 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 		s_Data.m_CameraData.m_ViewProjectionMatrix = vCamera.getProjectionMatrix() * vViewMatrix;
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
-		s_Data.m_QuadShader->bind();
-		// TODO : delete!!!
-		int32_t Textures[32]; //基于Shader中变量的数据
-		for (int32_t i = 0; i < 32; ++i)
-			Textures[i] = i;
-		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
-
-		ResetStatistics();
-		StartBatch();
-	}
-
-	void Renderer2D::BeginScene(const Camera2DController& vCameraController)
-	{
-		PK_PROFILE_FUNCTION();
-		s_Data.m_CameraData.m_ViewProjectionMatrix = vCameraController.getCamera().getViewProjectionMatrix();
-		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_CameraData.m_ViewProjectionMatrix);
 		s_Data.m_QuadShader->bind();
 		// TODO : delete!!!
 		int32_t Textures[32]; //基于Shader中变量的数据
@@ -249,17 +236,18 @@ namespace Pika {
 			RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get(), s_Data.m_QuadIndexCount);
 			s_Data.m_Statistics.m_DrawCalls++;
 		}
-		//// Lines
-		//if (s_Data.m_LineIndexCount) {
-		//	// Set Buffer Data
-		//	ptrdiff_t BatchElementNums = s_Data.m_pLineVertexBufferPtr - s_Data.m_pLineVertexBufferBase;
-		//	uint32_t Size = static_cast<uint32_t>(BatchElementNums) * sizeof(LineVertexData);
-		//	s_Data.m_QuadVertexBuffer->setData(s_Data.m_pLineVertexBufferBase, Size);
+		// Lines
+		if (s_Data.m_LineIndexCount) {
+			// Set Buffer Data
+			ptrdiff_t BatchElementNums = s_Data.m_pLineVertexBufferPtr - s_Data.m_pLineVertexBufferBase;
+			uint32_t Size = static_cast<uint32_t>(BatchElementNums) * sizeof(LineVertexData);
+			s_Data.m_LineVertexBuffer->setData(s_Data.m_pLineVertexBufferBase, Size);
 
-		//	s_Data.m_LineShader->bind();
-		//	RenderCommand::DrawLines(s_Data.m_LineVertexArray.get(), s_Data.m_LineIndexCount);
-		//	s_Data.m_Statistics.m_DrawCalls++;
-		//}
+			s_Data.m_LineShader->bind();
+			RenderCommand::SetLineThickness(s_Data.m_LineThickness);
+			RenderCommand::DrawLines(s_Data.m_LineVertexArray.get(), s_Data.m_LineIndexCount);
+			s_Data.m_Statistics.m_DrawCalls++;
+		}
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec4& vColor)
@@ -337,7 +325,7 @@ namespace Pika {
 	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const glm::vec4& vColor)
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxIndicesPerBatch)
 			NextBatch();
 
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
@@ -358,7 +346,7 @@ namespace Pika {
 	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxIndicesPerBatch)
 			NextBatch();
 
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
@@ -392,7 +380,7 @@ namespace Pika {
 	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxIndicesPerBatch)
 			NextBatch();
 
 		auto Texture = vSubTexture->getTexture();
@@ -423,10 +411,20 @@ namespace Pika {
 		s_Data.m_Statistics.m_QuadCount++;
 	}
 
+	void Renderer2D::SetLineThickness(float vThickness)
+	{
+		s_Data.m_LineThickness = vThickness;
+	}
+
+	float Renderer2D::GetLineThickness()
+	{
+		return s_Data.m_LineThickness;
+	}
+
 	void Renderer2D::DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor)
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_LineIndexCount >= s_Data.s_MaxIndicesPerBatch)
+		if (s_Data.m_LineIndexCount >= Renderer2DData::s_MaxIndicesPerBatch)
 			NextBatch();
 
 		s_Data.m_pLineVertexBufferPtr->m_Position = vStartPosition;
@@ -446,7 +444,7 @@ namespace Pika {
 	void Renderer2D::DrawSprite(const glm::mat4& vTransform, const SpriteRendererComponent& vSprite, int vEntityID)
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_QuadIndexCount >= s_Data.s_MaxIndicesPerBatch)
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxIndicesPerBatch)
 			NextBatch();
 
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };

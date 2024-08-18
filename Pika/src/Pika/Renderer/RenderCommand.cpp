@@ -37,6 +37,11 @@ namespace Pika {
 		s_RendererAPI->drawLines(vVertexArray, vIndexCount);
 	}
 
+	void RenderCommand::SetLineThickness(float vThickness)
+	{
+		s_RendererAPI->setLineThickness(vThickness);
+	}
+
 	uint32_t RenderCommand::getAvailableTextureSlots()
 	{
 		return s_RendererAPI->getAvailableTextureSlots();

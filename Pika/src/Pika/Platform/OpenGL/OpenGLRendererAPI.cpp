@@ -51,8 +51,13 @@ namespace Pika
 		vVertexArray->bind();
 		// vIndexCount不能超过VAO的IndexBuffer最大限制
 		uint32_t Count = std::clamp(vIndexCount, 0u, vVertexArray->getIndexBuffer()->getCount());
-		glDrawElements(GL_LINE, Count, GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_LINES, Count, GL_UNSIGNED_INT, nullptr);
 		vVertexArray->unbind();
+	}
+
+	void OpenGLRendererAPI::setLineThickness(float vThickness)
+	{
+		glLineWidth(vThickness);
 	}
 
 	uint32_t OpenGLRendererAPI::getAvailableTextureSlots()
