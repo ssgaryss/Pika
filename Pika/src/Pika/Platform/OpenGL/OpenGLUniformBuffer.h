@@ -7,7 +7,7 @@ namespace Pika {
 	{
 	public:
 		OpenGLUniformBuffer(uint32_t vSize, uint32_t vBinding);
-		~OpenGLUniformBuffer() = default;
+		~OpenGLUniformBuffer();
 
 		void setData(const void* vData, uint32_t vSize, uint32_t vOffset = 0) override;
 	private:

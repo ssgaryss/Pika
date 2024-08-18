@@ -4,6 +4,7 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "UniformBuffer.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
@@ -78,10 +79,11 @@ namespace Pika {
 		uint32_t m_TextureIndex = 1;
 
 
-		struct Camera2DData {
+		struct CameraData {
 			glm::mat4 m_ViewProjectionMatrix = glm::mat4(1.0f);
 		};
-		Camera2DData m_Camera2DData;
+		CameraData m_CameraData;
+		Ref<UniformBuffer> m_CameraDataUniformBuffer;
 
 		Renderer2D::Statistics m_Statistics; // Record the renderer states
 	public:
@@ -130,9 +132,9 @@ namespace Pika {
 			{Pika::ShaderDataType::Float3, "a_Position"},
 			{Pika::ShaderDataType::Float4, "a_Color"},
 			{Pika::ShaderDataType::Float2, "a_TexCoord"},
-			{Pika::ShaderDataType::Int, "a_TextureIndex"},
-			{Pika::ShaderDataType::Float, "a_TilingFactor"},
-			{Pika::ShaderDataType::Int, "a_EntityID"}
+			{Pika::ShaderDataType::Int,    "a_TextureIndex"},
+			{Pika::ShaderDataType::Float,  "a_TilingFactor"},
+			{Pika::ShaderDataType::Int,    "a_EntityID"}
 		};
 		s_Data.m_QuadVertexBuffer->setLayout(QuadLayout);
 		s_Data.m_QuadVertexArray->addVertexBuffer(s_Data.m_QuadVertexBuffer);
@@ -156,7 +158,7 @@ namespace Pika {
 		BufferLayout LineLayout = {
 			{Pika::ShaderDataType::Float3, "a_Position"},
 			{Pika::ShaderDataType::Float4, "a_Color"},
-			{Pika::ShaderDataType::Int, "a_EntityID"}
+			{Pika::ShaderDataType::Int,    "a_EntityID"}
 		};
 		s_Data.m_LineVertexBuffer->setLayout(LineLayout);
 		s_Data.m_LineVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
@@ -171,19 +173,22 @@ namespace Pika {
 		uint32_t Data = 0xffffffff;
 		s_Data.m_WhiteTexture->setData(&Data, sizeof(Data));
 		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture;
+
+		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0); // glsl中binding = 0
 	}
 
 	void Renderer2D::BeginScene(const EditorCamera& vEditorCamera)
 	{
 		PK_PROFILE_FUNCTION();
-		s_Data.m_Camera2DData.m_ViewProjectionMatrix = vEditorCamera.getViewProjectionMatrix();
+		s_Data.m_CameraData.m_ViewProjectionMatrix = vEditorCamera.getViewProjectionMatrix();
+		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
 		s_Data.m_QuadShader->bind();
 		// TODO : delete!!!
 		int32_t Textures[32]; //基于Shader中变量的数据
 		for (int32_t i = 0; i < 32; ++i)
 			Textures[i] = i;
 		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
-		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
+		//s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_CameraData.m_ViewProjectionMatrix);
 
 		ResetStatistics();
 		StartBatch();
@@ -192,14 +197,14 @@ namespace Pika {
 	void Renderer2D::BeginScene(const Camera& vCamera, const glm::mat4& vViewMatrix)
 	{
 		PK_PROFILE_FUNCTION();
-		s_Data.m_Camera2DData.m_ViewProjectionMatrix = vCamera.getProjectionMatrix() * vViewMatrix;
+		s_Data.m_CameraData.m_ViewProjectionMatrix = vCamera.getProjectionMatrix() * vViewMatrix;
+		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
 		s_Data.m_QuadShader->bind();
 		// TODO : delete!!!
 		int32_t Textures[32]; //基于Shader中变量的数据
 		for (int32_t i = 0; i < 32; ++i)
 			Textures[i] = i;
 		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
-		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
 
 		ResetStatistics();
 		StartBatch();
@@ -208,14 +213,14 @@ namespace Pika {
 	void Renderer2D::BeginScene(const Camera2DController& vCameraController)
 	{
 		PK_PROFILE_FUNCTION();
-		s_Data.m_Camera2DData.m_ViewProjectionMatrix = vCameraController.getCamera().getViewProjectionMatrix();
+		s_Data.m_CameraData.m_ViewProjectionMatrix = vCameraController.getCamera().getViewProjectionMatrix();
+		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_CameraData.m_ViewProjectionMatrix);
 		s_Data.m_QuadShader->bind();
 		// TODO : delete!!!
 		int32_t Textures[32]; //基于Shader中变量的数据
 		for (int32_t i = 0; i < 32; ++i)
 			Textures[i] = i;
 		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
-		s_Data.m_QuadShader->setMat4("u_ViewProjectionMatrix", s_Data.m_Camera2DData.m_ViewProjectionMatrix);
 
 		ResetStatistics();
 		StartBatch();
@@ -244,17 +249,17 @@ namespace Pika {
 			RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray.get(), s_Data.m_QuadIndexCount);
 			s_Data.m_Statistics.m_DrawCalls++;
 		}
-		// Lines
-		if (s_Data.m_LineIndexCount) {
-			// Set Buffer Data
-			ptrdiff_t BatchElementNums = s_Data.m_pLineVertexBufferPtr - s_Data.m_pLineVertexBufferBase;
-			uint32_t Size = static_cast<uint32_t>(BatchElementNums) * sizeof(LineVertexData);
-			s_Data.m_QuadVertexBuffer->setData(s_Data.m_pLineVertexBufferBase, Size);
+		//// Lines
+		//if (s_Data.m_LineIndexCount) {
+		//	// Set Buffer Data
+		//	ptrdiff_t BatchElementNums = s_Data.m_pLineVertexBufferPtr - s_Data.m_pLineVertexBufferBase;
+		//	uint32_t Size = static_cast<uint32_t>(BatchElementNums) * sizeof(LineVertexData);
+		//	s_Data.m_QuadVertexBuffer->setData(s_Data.m_pLineVertexBufferBase, Size);
 
-			s_Data.m_LineShader->bind();
-			RenderCommand::DrawLines(s_Data.m_LineVertexArray.get(), s_Data.m_LineIndexCount);
-			s_Data.m_Statistics.m_DrawCalls++;
-		}
+		//	s_Data.m_LineShader->bind();
+		//	RenderCommand::DrawLines(s_Data.m_LineVertexArray.get(), s_Data.m_LineIndexCount);
+		//	s_Data.m_Statistics.m_DrawCalls++;
+		//}
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec4& vColor)

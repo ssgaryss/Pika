@@ -39,8 +39,8 @@ namespace Pika {
 	void SceneRenderer::render(const EditorCamera& vEditorCamera)
 	{
 		Renderer2D::BeginScene(vEditorCamera);  // TODO : Renderer3D
-		Renderer2D::DrawLine({ -5.0f, -5.0f, 0.0f }, { 5.0f, 5.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f });
-		Renderer2D::DrawLine({ -5.0f, 5.0f, 0.0f }, { 5.0f, -5.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f });
+		//Renderer2D::DrawLine({ -5.0f, -5.0f, 0.0f }, { 5.0f, 5.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f });
+		//Renderer2D::DrawLine({ -5.0f, 5.0f, 0.0f }, { 5.0f, -5.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f });
 
 		auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
 		for (const auto& Entt : View) {

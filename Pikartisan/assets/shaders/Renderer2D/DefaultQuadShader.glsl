@@ -13,7 +13,10 @@ out flat int v_TextureIndex;
 out float v_TilingFactor;
 out flat int v_EntityID;
 
-uniform mat4 u_ViewProjectionMatrix;
+layout(std140, binding = 0) uniform CameraData
+{
+	mat4 u_ViewProjectionMatrix;
+};
 
 void main() {
 	v_Color = a_Color;
