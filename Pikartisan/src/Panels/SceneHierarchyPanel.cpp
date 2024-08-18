@@ -109,8 +109,10 @@ namespace Pika {
 			}
 			bool IsRemoved = false;
 			if (ImGui::BeginPopup(std::format("ComponentSettings##{0}", vName).c_str())) {
-				if (ImGui::MenuItem("Delete"))
-					IsRemoved = true;
+				if(!std::is_same<T, TransformComponent>::value && !std::is_same<T, TagComponent>::value){
+					if (ImGui::MenuItem("Delete"))
+						IsRemoved = true;
+				}
 				ImGui::EndPopup();
 			}
 

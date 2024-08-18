@@ -1,5 +1,6 @@
 Scene:
   Name: Untitled
+  SceneType: Scene2D
   Entities:
     - Entity: "{34B79143-4B9D-4B40-9713-06465164015E}"
       TagComponent:

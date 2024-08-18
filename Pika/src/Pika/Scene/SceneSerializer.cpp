@@ -144,6 +144,27 @@ namespace Pika {
 			return Rigidbody2DComponent::RigidbodyType::Static;
 		}
 
+		static std::string SceneTypeToString(Scene::SceneType vType) {
+			using namespace std::string_literals;
+			switch (vType)
+			{
+			case Pika::Scene::SceneType::Scene2D:
+				return "Scene2D"s;
+			case Pika::Scene::SceneType::Scene3D:
+				return "Scene3D"s;
+			}			
+			PK_CORE_WARN("SceneSerializer : Unknown Scene Type !");
+			return ""s;
+		}
+
+		static Scene::SceneType StringToSceneType(const std::string& vString) {
+			using namespace std::string_literals;
+			if (vString == "Scene2D"s) return Scene::SceneType::Scene2D;
+			if (vString == "Scene3D"s) return Scene::SceneType::Scene3D;
+			PK_CORE_WARN("SceneSerializer : Unknown Scene Type !");
+			return Scene::SceneType::Scene2D;
+		}
+
 	}
 
 	SceneSerializer::SceneSerializer(const Ref<Scene>& vScene)
@@ -159,6 +180,7 @@ namespace Pika {
 			Out << YAML::Key << "Scene" << YAML::Value << YAML::BeginMap;
 			{
 				Out << YAML::Key << "Name" << YAML::Value << SceneName;
+				Out << YAML::Key << "SceneType" << YAML::Value << Utils::SceneTypeToString(m_Scene->getSceneType());
 				Out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // ËùÓÐEntities
 				{
 					m_Scene->m_Registry.view<IDComponent>().each([&Out, this](auto vEntity, auto& vTagComponent) {
@@ -285,6 +307,7 @@ namespace Pika {
 		// Name
 		std::string SceneName = SceneNode["Name"].as<std::string>();
 		m_Scene->setSceneName(SceneName);
+		m_Scene->setSceneType(Utils::StringToSceneType(SceneNode["SceneType"].as<std::string>()));
 		// Entities
 		YAML::Node Entities = SceneNode["Entities"];
 		if (Entities) {

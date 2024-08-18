@@ -163,7 +163,7 @@ namespace Pika
 		static bool opt_fullscreen = true;
 		static bool opt_padding = false;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-		
+
 		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
 		// because it would be confusing to have two docking targets within each others.
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -404,9 +404,29 @@ namespace Pika
 
 	void EditorLayer::newScene()
 	{
-		m_ActiveScene = CreateRef<Scene>();
-		m_SceneHierarchyPanel->setContext(m_ActiveScene);
-		m_ActiveScenePath = std::filesystem::path(); // 重置为空
+		ImGui::OpenPopup("ChooseSceneType");
+		if (ImGui::BeginPopupModal("ChooseSceneType")) {
+			static char Buffer[256];
+			memset(Buffer, 0, sizeof(Buffer));
+			strcpy_s(Buffer, "Untitled");
+			ImGui::InputText("##SceneType", Buffer, sizeof(Buffer));
+			static std::string CurrentSceneType = "Scene 2D";
+			if (ImGui::BeginCombo("Select Scene Type", CurrentSceneType.c_str())) {
+				if (ImGui::Selectable("Scene2D", CurrentSceneType == "Scene 2D"))
+					CurrentSceneType = "Scene 2D";
+				if (ImGui::Selectable("Scene3D", CurrentSceneType == "Scene 3D"))
+					CurrentSceneType = "Scene 3D";
+			}
+			if (ImGui::Button("Confirm")) {
+				if (CurrentSceneType == "Scene 2D")
+					m_ActiveScene = CreateRef<Scene>(Buffer, Scene::SceneType::Scene2D);
+				else if (CurrentSceneType == "Scene 3D")
+					m_ActiveScene = CreateRef<Scene>(Buffer, Scene::SceneType::Scene3D);
+				m_SceneHierarchyPanel->setContext(m_ActiveScene);
+				m_ActiveScenePath = std::filesystem::path(); // 重置为空
+			}
+			ImGui::EndPopup();
+		}
 	}
 
 	void EditorLayer::openScene()
