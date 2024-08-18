@@ -10,6 +10,11 @@ namespace Pika {
 	class SceneRenderer
 	{
 	public:
+		struct RendererSettings
+		{
+			bool m_ShowGrid = true;
+		};
+	public:
 		SceneRenderer() = default;
 		SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer);
 
@@ -17,7 +22,7 @@ namespace Pika {
 		void beginFrame();
 		void endFrame();
 
-		void render();                                  // render with primary camera
+		void render();   // TODO : render(Camera)       // render with primary camera
 		void render(const EditorCamera& vEditorCamera); // render with EditorCamera
 
 		inline const Ref<Scene>& getContext() const { return m_Context; }
@@ -26,14 +31,18 @@ namespace Pika {
 		inline void setFramebuffer(const Ref<Framebuffer>& vFramebuffer) { m_Framebuffer = vFramebuffer; }
 		inline const Entity& getPrimaryCamera() const { return m_PrimaryCamera; }
 		inline void setPrimaryCamera(const Entity& vCamera) { m_PrimaryCamera = vCamera; }
-		inline std::vector<std::string> getAllCameras() const;
+
+		// Settings
+		inline bool* showGrid() { return &m_Settings.m_ShowGrid; }
+
 
 		void resize(uint32_t vWidth, uint32_t vHeight); // resize FBO
 	private:
+		RendererSettings m_Settings;
 		Ref<Scene> m_Context;
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<ShaderLibrary> m_ShaderLibray; // TODO : 自己创建的Shaders
-		Entity m_PrimaryCamera = {};            // Primary Camera In Play Mode
+		Entity m_PrimaryCamera = {};       // TOD0 : Renderer Should not own camera
 		
 	};
 

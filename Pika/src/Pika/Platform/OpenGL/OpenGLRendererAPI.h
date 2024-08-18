@@ -12,6 +12,8 @@ namespace Pika
 		void setClearColor() override;
 		void setClearColor(Color vColor) override;
 		void drawIndexed(const VertexArray* vVertexArray, uint32_t vIndexCount = UINT_MAX) override;
+		void drawLines(const VertexArray* vVertexArray, uint32_t vIndexCount = UINT_MAX) override;
+		void setLineThickness(float vThickness) override;
 		uint32_t getAvailableTextureSlots() override;
 	};
 }

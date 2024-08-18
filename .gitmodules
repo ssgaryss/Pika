@@ -20,3 +20,6 @@
 [submodule "Pika/vendor/spdlog"]
 	path = Pika/vendor/spdlog
 	url = git@github.com:ssgaryss/spdlog.git
+[submodule "Pika/vendor/assimp"]
+	path = Pika/vendor/assimp
+	url = git@github.com:ssgaryss/assimp.git

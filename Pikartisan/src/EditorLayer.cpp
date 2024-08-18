@@ -119,7 +119,6 @@ namespace Pika
 		//m_ActiveScene->onUpdate(vTimestep);
 		//Renderer2D::EndScene();
 #endif // 0
-
 		m_ActiveScene->onUpdate(vTimestep);
 		switch (m_SceneStatePanel->getSceneState())
 		{
@@ -164,7 +163,7 @@ namespace Pika
 		static bool opt_fullscreen = true;
 		static bool opt_padding = false;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
+		
 		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
 		// because it would be confusing to have two docking targets within each others.
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -213,13 +212,13 @@ namespace Pika
 			if (ImGui::BeginMenu("Files"))
 			{
 				// File Menu
-				if (ImGui::MenuItem("New", m_ShortcutLibrary["New_Scene"].toString().c_str()))
+				if (ImGui::MenuItem("New Scene", m_ShortcutLibrary["New_Scene"].toString().c_str()))
 					newScene();
-				if (ImGui::MenuItem("Open ...", m_ShortcutLibrary["Open_Scene"].toString().c_str()))
+				if (ImGui::MenuItem("Open Scene...", m_ShortcutLibrary["Open_Scene"].toString().c_str()))
 					openScene();
-				if (ImGui::MenuItem("Save", m_ShortcutLibrary["Save_Scene"].toString().c_str()))
+				if (ImGui::MenuItem("Save Scene", m_ShortcutLibrary["Save_Scene"].toString().c_str()))
 					saveScene();
-				if (ImGui::MenuItem("Save as ...", m_ShortcutLibrary["Save_Scene_As"].toString().c_str()))
+				if (ImGui::MenuItem("Save Scene as ...", m_ShortcutLibrary["Save_Scene_As"].toString().c_str()))
 					saveSceneAs();
 				if (ImGui::MenuItem("Exit"))
 					Application::GetInstance().close();
@@ -262,6 +261,7 @@ namespace Pika
 		ImGui::Text("Mouse hovered entity : %s", MouseHoveredEntityName.c_str());
 		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
 		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
+		ImGui::Text("LineCount : %d", Statistics.getLineCount());
 		ImGui::Separator();
 		uintptr_t DepthID = static_cast<uintptr_t>(m_Renderer->getFramebuffer()->getDepthStencilAttachmentRendererID());
 		ImGui::Image(reinterpret_cast<ImTextureID>(DepthID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x) }, { 0.0f,1.0f }, { 1.0f,0.0f });
@@ -304,6 +304,8 @@ namespace Pika
 					}
 					ImGui::EndDragDropTarget();
 				}
+				ImGui::Separator();
+				ImGui::Checkbox("Show Grid", m_Renderer->showGrid());
 			}
 		}
 		ImGui::End();
@@ -353,7 +355,7 @@ namespace Pika
 		if (SelectedEntity && m_SceneStatePanel->getSceneState() == Scene::SceneState::Edit) {
 			ImGuizmo::BeginFrame();
 			ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
-			ImGuizmo::SetOrthographic(m_EditorCamera.isOthograhic()); // TODO! : CameraComponent情况
+			ImGuizmo::SetOrthographic(m_EditorCamera.isOthograhic());
 			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
 				m_ViewportBounds[1].x - m_ViewportBounds[0].x,
 				m_ViewportBounds[1].y - m_ViewportBounds[0].y); // ImGuizmo的绘制区域

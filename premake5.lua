@@ -20,6 +20,7 @@ group "Dependencies"
 	include "Pika/vendor/yaml-cpp"
 	include "Pika/vendor/ImGuizmo"
 	include "Pika/vendor/Box2D"
+	include "Pika/vendor/assimp"
 group ""
 
 group "Core"

@@ -1488,6 +1488,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Renderer\UniformBuffer.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLUniformBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1613,5 +1615,7 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Renderer\UniformBuffer.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
   </ItemGroup>
 </Project>

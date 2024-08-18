@@ -44,6 +44,22 @@ namespace Pika
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	void OpenGLRendererAPI::drawLines(const VertexArray* vVertexArray, uint32_t vIndexCount)
+	{
+		PK_PROFILE_FUNCTION();
+
+		vVertexArray->bind();
+		// vIndexCount不能超过VAO的IndexBuffer最大限制
+		uint32_t Count = std::clamp(vIndexCount, 0u, vVertexArray->getIndexBuffer()->getCount());
+		glDrawElements(GL_LINES, Count, GL_UNSIGNED_INT, nullptr);
+		vVertexArray->unbind();
+	}
+
+	void OpenGLRendererAPI::setLineThickness(float vThickness)
+	{
+		glLineWidth(vThickness);
+	}
+
 	uint32_t OpenGLRendererAPI::getAvailableTextureSlots()
 	{
 		GLint maxTextureUnits = 0;
