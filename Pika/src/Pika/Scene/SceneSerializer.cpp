@@ -97,6 +97,55 @@ namespace YAML {
 
 namespace Pika {
 
+	namespace Utils {
+
+		static std::string CameraProjectionModeToString(Camera::CameraProjectionMode vMode) {
+			using namespace std::string_literals;
+			switch (vMode)
+			{
+			case Pika::Camera::CameraProjectionMode::Othographic:
+				return "Othographic"s;
+			case Pika::Camera::CameraProjectionMode::Perspective:
+				return "Perspective"s;
+			}
+			PK_CORE_WARN("SceneSerializer : Unknown Camera Projection Mode !");
+			return ""s;
+		}
+
+		static Camera::CameraProjectionMode StringToCameraProjectionMode(const std::string& vString) {
+			using namespace std::string_literals;
+			if (vString == "Othographic"s) return Camera::CameraProjectionMode::Othographic;
+			if (vString == "Perspective"s) return Camera::CameraProjectionMode::Perspective;
+			PK_CORE_WARN("SceneSerializer : Unknown Camera Projection Mode !");
+			return Camera::CameraProjectionMode::Othographic;
+		}
+
+		static std::string RigidbodyTypeToString(Rigidbody2DComponent::RigidbodyType vType) {
+			using namespace std::string_literals;
+			switch (vType)
+			{
+			case Pika::Rigidbody2DComponent::RigidbodyType::Static:
+				return "Static"s;
+			case Pika::Rigidbody2DComponent::RigidbodyType::Kinematic:
+				return "Kinematic"s;
+			case Pika::Rigidbody2DComponent::RigidbodyType::Dynamic:
+				return "Dynamic"s;
+			}
+			PK_CORE_WARN("SceneSerializer : Unknown Rigidbody Type Mode !");
+			return ""s;
+		}
+
+		static Rigidbody2DComponent::RigidbodyType StringToRigidbodyType(const std::string& vString) {
+			using namespace std::string_literals;
+			if (vString == "Static"s) return Rigidbody2DComponent::RigidbodyType::Static;
+			if (vString == "Kinematic"s) return Rigidbody2DComponent::RigidbodyType::Kinematic;
+			if (vString == "Dynamic"s) return Rigidbody2DComponent::RigidbodyType::Dynamic;
+			PK_CORE_WARN("SceneSerializer : Unknown Camera Projection Mode !");
+			return Rigidbody2DComponent::RigidbodyType::Static;
+		}
+
+	}
+
 	SceneSerializer::SceneSerializer(const Ref<Scene>& vScene)
 		: m_Scene{ vScene } {}
 
@@ -141,7 +190,7 @@ namespace Pika {
 								auto& Camera = Entity.getComponent<CameraComponent>();
 								Out << YAML::Key << "Camera" << YAML::Value << YAML::BeginMap;
 								{
-									Out << YAML::Key << "ProjectionMode" << YAML::Value << static_cast<int>(Camera.m_Camera.getProjectionMode());
+									Out << YAML::Key << "ProjectionMode" << YAML::Value << Utils::CameraProjectionModeToString(Camera.m_Camera.getProjectionMode());
 									Out << YAML::Key << "OthographicSize" << YAML::Value << Camera.m_Camera.getOthographicSize();
 									Out << YAML::Key << "OthographicNear" << YAML::Value << Camera.m_Camera.getOthographicNear();
 									Out << YAML::Key << "OthographicFar" << YAML::Value << Camera.m_Camera.getOthographicFar();
@@ -168,7 +217,7 @@ namespace Pika {
 							Out << YAML::Key << "Rigidbody2DComponent" << YAML::Value << YAML::BeginMap;
 							{
 								auto& Rigidbody2D = Entity.getComponent<Rigidbody2DComponent>();
-								Out << YAML::Key << "RigidbodyType" << YAML::Value << static_cast<int>(Rigidbody2D.m_Type);
+								Out << YAML::Key << "RigidbodyType" << YAML::Value << Utils::RigidbodyTypeToString(Rigidbody2D.m_Type);
 								Out << YAML::Key << "IsFixedRotation" << YAML::Value << Rigidbody2D.m_IsFixedRotation;
 							}
 							Out << YAML::EndMap;
@@ -261,7 +310,7 @@ namespace Pika {
 					auto CameraComponentNode = Entity["CameraComponent"];
 					auto CameraNode = CameraComponentNode["Camera"];
 					auto& CC = DeserializedEntity.addComponent<CameraComponent>();
-					CC.m_Camera.setProjectionMode(static_cast<Camera::CameraProjectionMode>(CameraNode["ProjectionMode"].as<int>()));
+					CC.m_Camera.setProjectionMode(Utils::StringToCameraProjectionMode(CameraNode["ProjectionMode"].as<std::string>()));
 					CC.m_Camera.setOthographicSize(CameraNode["OthographicSize"].as<float>());
 					CC.m_Camera.setOthographicNear(CameraNode["OthographicNear"].as<float>());
 					CC.m_Camera.setOthographicFar(CameraNode["OthographicFar"].as<float>());
@@ -283,7 +332,7 @@ namespace Pika {
 				if (Entity["Rigidbody2DComponent"]) {
 					auto Rigidbody2DComponentNode = Entity["Rigidbody2DComponent"];
 					auto& SRC = DeserializedEntity.addComponent<Rigidbody2DComponent>();
-					SRC.m_Type = static_cast<Rigidbody2DComponent::RigidbodyType>(Rigidbody2DComponentNode["RigidbodyType"].as<int>());
+					SRC.m_Type = Utils::StringToRigidbodyType(Rigidbody2DComponentNode["RigidbodyType"].as<std::string>());
 					SRC.m_IsFixedRotation = Rigidbody2DComponentNode["IsFixedRotation"].as<bool>();
 				}
 

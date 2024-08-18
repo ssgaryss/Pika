@@ -5,14 +5,14 @@ Scene:
       TagComponent:
         Tag: Empty entity
       TransformComponent:
-        Position: [3.50156426, 0.590668201, 4.65661232e-10]
+        Position: [3.50156426, 0.590668201, 4.6566126e-10]
         Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
       SpriteRendererComponent:
         Color: [1, 1, 1, 1]
         Texture: assets\textures\Female adventurer\PNG\Poses\character_femaleAdventurer_attack0.png
       Rigidbody2DComponent:
-        RigidbodyType: 2
+        RigidbodyType: Dynamic
         IsFixedRotation: false
       BoxCollider2DComponent:
         Offset: [0, 0]
@@ -32,7 +32,7 @@ Scene:
         Color: [0.325978994, 0.760617733, 0.523999691, 1]
         Texture: None
       Rigidbody2DComponent:
-        RigidbodyType: 0
+        RigidbodyType: Static
         IsFixedRotation: false
       BoxCollider2DComponent:
         Offset: [0, 0]
@@ -55,14 +55,14 @@ Scene:
       TagComponent:
         Tag: Empty entity
       TransformComponent:
-        Position: [0, 0, 0]
+        Position: [-1.17208618e-10, 5.86944868e-11, -9.27114635e-12]
         Rotation: [-2.70855403, -4.0456214, -26.6003075]
         Scale: [1, 0.999999881, 1]
       SpriteRendererComponent:
         Color: [1, 1, 1, 1]
         Texture: None
       Rigidbody2DComponent:
-        RigidbodyType: 2
+        RigidbodyType: Dynamic
         IsFixedRotation: false
       BoxCollider2DComponent:
         Offset: [0, 0]
@@ -80,7 +80,7 @@ Scene:
         Scale: [0.00100000005, 1, 1]
       CameraComponent:
         Camera:
-          ProjectionMode: 1
+          ProjectionMode: Othographic
           OthographicSize: 10
           OthographicNear: 0.100000001
           OthographicFar: 100
@@ -98,7 +98,7 @@ Scene:
         Scale: [0.999999762, 0.999999881, 0.999999881]
       CameraComponent:
         Camera:
-          ProjectionMode: 1
+          ProjectionMode: Othographic
           OthographicSize: 10
           OthographicNear: 0.100000001
           OthographicFar: 100
