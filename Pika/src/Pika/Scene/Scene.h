@@ -27,6 +27,8 @@ namespace Pika
 		Scene() = default;
 		Scene(const std::string& vName)
 			: m_SceneName{ vName } {};
+		Scene(const std::string& vName, SceneType vType)
+			: m_SceneName{ vName }, m_SceneType{ vType } {}
 
 		Entity createEntity(const std::string& vName = "Untitled");
 		Entity createEntityWithUUID(UUID vUUID, const std::string& vName = "Untitled");

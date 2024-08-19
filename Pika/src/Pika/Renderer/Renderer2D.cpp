@@ -14,24 +14,25 @@ namespace Pika {
 #define MAX_QUADS_PER_BATCH 10000 // for now
 
 	struct QuadVertexData {
-		glm::vec3 m_Position;
-		glm::vec4 m_Color;
-		glm::vec2 m_TexCoord;
+		glm::vec3 m_Position = glm::vec3(0.0f);
+		glm::vec4 m_Color = glm::vec4(1.0f);
+		glm::vec2 m_TexCoord = glm::vec2(0.0f);
 		int m_TextureIndex = 0;
 		float m_TilingFactor = 1.0f;
 		// TODO : Editor only
-		int m_EntityID;
+		int m_EntityID = -1;
 	};
 
 	struct LineVertexData
 	{
-		glm::vec3 m_Position;
-		glm::vec4 m_Color;
+		glm::vec3 m_Position = glm::vec3(0.0f);
+		glm::vec4 m_Color = glm::vec4(1.0f);
 
-		int m_EntityID;
+		int m_EntityID = -1;
 	};
 
 	struct Renderer2DData {
+	public:
 		static const uint32_t s_MaxQuadsPerBatch = MAX_QUADS_PER_BATCH;
 		static const uint32_t s_MaxVerticesPerBatch = s_MaxQuadsPerBatch * 4;
 		static const uint32_t s_MaxIndicesPerBatch = s_MaxQuadsPerBatch * 6;
@@ -40,7 +41,13 @@ namespace Pika {
 		Ref<VertexArray> m_QuadVertexArray;
 		Ref<VertexBuffer> m_QuadVertexBuffer;
 		Ref<Shader> m_QuadShader;
-		glm::vec4 m_QuadUnitVertex[4];
+		glm::vec4 m_QuadUnitVertex[4] =
+		{
+			{ -0.5f, -0.5f, 0.0f, 1.0f },
+			{ 0.5f, -0.5f, 0.0f, 1.0f },
+			{ 0.5f,  0.5f, 0.0f, 1.0f },
+			{ -0.5f,  0.5f, 0.0f, 1.0f }
+		};
 
 		uint32_t m_QuadIndexCount = 0;
 		QuadVertexData* m_pQuadVertexBufferBase = nullptr;
@@ -104,11 +111,6 @@ namespace Pika {
 		RenderCommand::Initialize();
 
 		// Quad
-		s_Data.m_QuadUnitVertex[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
-		s_Data.m_QuadUnitVertex[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
-		s_Data.m_QuadUnitVertex[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
-		s_Data.m_QuadUnitVertex[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
-
 		s_Data.m_QuadVertexArray = VertexArray::Create();
 		s_Data.m_QuadVertexArray->bind();
 		uint32_t* QuadIndicesPerBatch = new uint32_t[Renderer2DData::s_MaxIndicesPerBatch];

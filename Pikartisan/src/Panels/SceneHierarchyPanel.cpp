@@ -79,6 +79,7 @@ namespace Pika {
 			}
 			ImGui::EndPopup();
 		}
+		ImGui::SetItemTooltip("Right-click to open popup");
 
 		if (Opened) {
 			// TODO : Child Entity need to be added!
@@ -109,10 +110,13 @@ namespace Pika {
 			}
 			bool IsRemoved = false;
 			if (ImGui::BeginPopup(std::format("ComponentSettings##{0}", vName).c_str())) {
-				if (ImGui::MenuItem("Delete"))
-					IsRemoved = true;
+				if (!std::is_same<T, TransformComponent>::value && !std::is_same<T, TagComponent>::value) {
+					if (ImGui::MenuItem("Delete"))
+						IsRemoved = true;
+				}
 				ImGui::EndPopup();
 			}
+			ImGui::SetItemTooltip("Right-click to open popup");
 
 			if (Opened) {
 				vFunction(Component);
@@ -201,11 +205,6 @@ namespace Pika {
 		if (ImGui::Button("Add component"))
 			ImGui::OpenPopup("AddComponent");
 		if (ImGui::BeginPopup("AddComponent")) {
-			if (!m_SelectedEntity.hasComponent<SpriteRendererComponent>()) {
-				if (ImGui::MenuItem("Sprite Renderer Component")) {
-					m_SelectedEntity.addComponent<SpriteRendererComponent>();
-				}
-			}
 			if (!m_SelectedEntity.hasComponent<CameraComponent>()) {
 				if (ImGui::MenuItem("Camera Component")) {
 					m_SelectedEntity.addComponent<CameraComponent>();
@@ -213,6 +212,11 @@ namespace Pika {
 			}
 			// Only 2D
 			if (m_Context->getSceneType() == Scene::SceneType::Scene2D) {
+				if (!m_SelectedEntity.hasComponent<SpriteRendererComponent>()) {
+					if (ImGui::MenuItem("Sprite Renderer Component")) {
+						m_SelectedEntity.addComponent<SpriteRendererComponent>();
+					}
+				}
 				if (!m_SelectedEntity.hasComponent<Rigidbody2DComponent>()) {
 					if (ImGui::MenuItem("Rigidbody2D Component")) {
 						m_SelectedEntity.addComponent<Rigidbody2DComponent>();

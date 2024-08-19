@@ -21,11 +21,16 @@ namespace Pika
 		void onEvent(Event& vEvent) override;
 	private:
 		// Scene Manipulations
-		void newScene();
+		void newScene(const std::string& vName = "Untitled", Scene::SceneType vType = Scene::SceneType::Scene2D);
 		void openScene();
 		void openScene(const std::filesystem::path& vScenePath);
 		void saveScene();
 		void saveSceneAs();
+	private:
+		// Some temporary panels
+		bool m_IsShowDemoPanel = false;
+		bool m_IsShowNewScenePanel = false;
+		void ShowNewScenePanel(bool* vIsShow);
 	private:
 		// Shortcuts
 		void initializeShortcutLibrary();          // 初始化快捷键  TODO : 有Project序列化后读取Project中包含快捷键设置
@@ -62,6 +67,7 @@ namespace Pika
 		Ref<Texture2D> m_TextureRPGpack_sheet_2X;
 		Ref<SubTexture2D> m_TextureTree;
 		Ref<SubTexture2D> m_TextureWater, m_TextureGround;
+		Ref<Texture2D> m_EnvironmentMap;
 
 		// TODO : Delete!
 		float Rotation = 0.0f; //for now

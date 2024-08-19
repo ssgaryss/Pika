@@ -1,16 +1,7 @@
 Scene:
   Name: Untitled
+  SceneType: Scene2D
   Entities:
-    - Entity: "{86881D51-D8BB-4FEB-960A-BA7FC5E5FD3E}"
-      TagComponent:
-        Tag: Red entity
-      TransformComponent:
-        Position: [0.946073651, -0.214516044, 0]
-        Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
-      SpriteRendererComponent:
-        Color: [0.806949794, 0.0997003764, 0.0997003764, 1]
-        Texture: None
     - Entity: "{34B79143-4B9D-4B40-9713-06465164015E}"
       TagComponent:
         Tag: Blue entity
@@ -20,4 +11,14 @@ Scene:
         Scale: [1, 2.95913148, 0.999999881]
       SpriteRendererComponent:
         Color: [0.227724686, 0.604574144, 0.776061773, 1]
+        Texture: None
+    - Entity: "{86881D51-D8BB-4FEB-960A-BA7FC5E5FD3E}"
+      TagComponent:
+        Tag: Red entity
+      TransformComponent:
+        Position: [0.946073651, -0.214516044, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      SpriteRendererComponent:
+        Color: [0.806949794, 0.0997003764, 0.0997003764, 1]
         Texture: None

@@ -1,31 +1,212 @@
 #include "pkpch.h"
 #include "Renderer3D.h"
 #include "RenderCommand.h"
+#include "Shader.h"
+#include "UniformBuffer.h"
 
 namespace Pika {
 
-	Scope<Camera2D> Renderer3D::s_Camera{ std::make_unique<Camera2D>(-1.0f, 1.0f, -1.0f, 1.0f) };
+#define MAX_MESHES_PER_BATCH 10000 // for now
+
+	struct LineVertexData
+	{
+		glm::vec3 m_Position = glm::vec3(0.0f);
+		glm::vec4 m_Color = glm::vec4(1.0f);
+
+		int m_EntityID = -1;
+	};
+
+	struct Renderer3DData
+	{
+	public:
+		// TODO : Change it
+		static const uint32_t s_MaxQuadsPerBatch = MAX_MESHES_PER_BATCH;
+		static const uint32_t s_MaxVerticesPerBatch = s_MaxQuadsPerBatch * 3;
+		static const uint32_t s_MaxIndicesPerBatch = s_MaxQuadsPerBatch * 3;
+
+		// Mesh
+		Ref<Shader> m_MeshShader;
+
+		// Line
+		Ref<VertexArray> m_LineVertexArray;
+		Ref<VertexBuffer> m_LineVertexBuffer;
+		Ref<Shader> m_LineShader;
+		float m_LineThickness = 0.5f;
+
+		uint32_t m_LineIndexCount = 0;
+		LineVertexData* m_pLineVertexBufferBase = nullptr;
+		LineVertexData* m_pLineVertexBufferPtr = nullptr;
+
+		struct CameraData {
+			glm::mat4 m_ViewProjectionMatrix = glm::mat4(1.0f);
+		};
+		CameraData m_CameraData;
+		Ref<UniformBuffer> m_CameraDataUniformBuffer;
+
+		Renderer3D::Statistics m_Statistics; // Record the renderer states
+	public:
+		~Renderer3DData() {
+			delete[] m_pLineVertexBufferBase;
+		}
+	};
+
+	static Renderer3DData s_Data;
 
 	void Renderer3D::Initialize()
 	{
+		PK_PROFILE_FUNCTION();
+
 		RenderCommand::Initialize();
+
+		s_Data.m_MeshShader = Shader::Create("assets/shaders/Renderer3D/DefaultMeshShader.glsl");
+	
+		// Line
+		s_Data.m_LineVertexArray = VertexArray::Create();
+		s_Data.m_LineVertexArray->bind();
+		uint32_t* LineIndicesPerBatch = new uint32_t[Renderer3DData::s_MaxIndicesPerBatch];
+		{
+			for (uint32_t i = 0; i < Renderer3DData::s_MaxIndicesPerBatch; i++) {
+				LineIndicesPerBatch[i] = i;
+			}
+		}
+		Ref<IndexBuffer> pLineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer3DData::s_MaxIndicesPerBatch);
+		s_Data.m_LineVertexArray->setIndexBuffer(pLineIndexBuffer);
+		delete[] LineIndicesPerBatch;
+
+		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer3DData::s_MaxVerticesPerBatch * sizeof(LineVertexData));
+		BufferLayout LineLayout = {
+			{Pika::ShaderDataType::Float3, "a_Position"},
+			{Pika::ShaderDataType::Float4, "a_Color"},
+			{Pika::ShaderDataType::Int,    "a_EntityID"}
+		};
+		s_Data.m_LineVertexBuffer->setLayout(LineLayout);
+		s_Data.m_LineVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
+		s_Data.m_LineShader = Shader::Create("assets/shaders/Renderer3D/DefaultLineShader.glsl");
+
+		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer3DData::s_MaxVerticesPerBatch];
+		s_Data.m_LineVertexArray->unbind();
+
+		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 1); // glslÖÐbinding = 1
 	}
 
-	void Renderer3D::BeginScene()
+	void Renderer3D::BeginScene(const EditorCamera& vEditorCamera)
 	{
+		PK_PROFILE_FUNCTION();
+		s_Data.m_CameraData.m_ViewProjectionMatrix = vEditorCamera.getViewProjectionMatrix();
+		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
+		
+		ResetStatistics();
+		StartBatch();
 	}
 
-	void Renderer3D::Submit(const Shader* vShader, const VertexArray* vData, const glm::mat4 vTransform)
+	void Renderer3D::BeginScene(const Camera& vCamera, const glm::mat4& vTramsform)
 	{
-		vShader->bind();
-		vData->bind();
-		vShader->setMat4("u_ViewProjectionMatrix", s_Camera->getViewProjectionMatrix());
-		vShader->setMat4("u_Transform", vTransform);
-		RenderCommand::DrawIndexed(vData);
+		PK_PROFILE_FUNCTION();
+		// TODO !
+
+		ResetStatistics();
+		StartBatch();
 	}
 
 	void Renderer3D::EndScene()
 	{
+		PK_PROFILE_FUNCTION();
+		Flush();
+	}
+
+	void Renderer3D::Flush()
+	{
+		PK_PROFILE_FUNCTION();
+
+		// Lines
+		if (s_Data.m_LineIndexCount) {
+			// Set Buffer Data
+			ptrdiff_t BatchElementNums = s_Data.m_pLineVertexBufferPtr - s_Data.m_pLineVertexBufferBase;
+			uint32_t Size = static_cast<uint32_t>(BatchElementNums) * sizeof(LineVertexData);
+			s_Data.m_LineVertexBuffer->setData(s_Data.m_pLineVertexBufferBase, Size);
+
+			s_Data.m_LineShader->bind();
+			RenderCommand::SetLineThickness(s_Data.m_LineThickness);
+			RenderCommand::DrawLines(s_Data.m_LineVertexArray.get(), s_Data.m_LineIndexCount);
+			s_Data.m_Statistics.m_DrawCalls++;
+		}
+	}
+
+	void Renderer3D::SetLineThickness(float vThickness)
+	{
+		s_Data.m_LineThickness = vThickness;
+	}
+
+	float Renderer3D::GetLineThickness()
+	{
+		return s_Data.m_LineThickness;
+	}
+
+	void Renderer3D::DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor)
+	{
+		PK_PROFILE_FUNCTION();
+		if (s_Data.m_LineIndexCount >= Renderer3DData::s_MaxIndicesPerBatch)
+			NextBatch();
+
+		s_Data.m_pLineVertexBufferPtr->m_Position = vStartPosition;
+		s_Data.m_pLineVertexBufferPtr->m_Color = vColor;
+		s_Data.m_pLineVertexBufferPtr->m_EntityID = -1;
+		s_Data.m_pLineVertexBufferPtr++;
+
+		s_Data.m_pLineVertexBufferPtr->m_Position = vEndPosition;
+		s_Data.m_pLineVertexBufferPtr->m_Color = vColor;
+		s_Data.m_pLineVertexBufferPtr->m_EntityID = -1;
+		s_Data.m_pLineVertexBufferPtr++;
+
+		s_Data.m_LineIndexCount += 2;
+		s_Data.m_Statistics.m_LineCount++;
+	}
+
+	void Renderer3D::DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor, float vInterval)
+	{
+		if (vSize < 0.0f || vInterval < 0.0f)
+			return;
+		uint32_t NumsOfLines = static_cast<uint32_t>(vSize / vInterval);
+		glm::vec3 StartPositionHorizontal = { -vSize, -(float)NumsOfLines * vInterval, 0.0f };
+		glm::vec3 EndPositionHorizontal = { vSize, -(float)NumsOfLines * vInterval, 0.0f };
+		glm::vec3 StartPositionVertical = { -(float)NumsOfLines * vInterval, -vSize, 0.0f };
+		glm::vec3 EndPositionVertical = { -(float)NumsOfLines * vInterval, vSize, 0.0f };
+		for (uint32_t i = 0; i < NumsOfLines * 2 + 1; ++i) {
+			glm::vec3 horizontalOffset = glm::vec3{ 0.0f, vInterval * i, 0.0f };
+			glm::vec3 verticalOffset = glm::vec3{ vInterval * i, 0.0f, 0.0f };
+
+			glm::vec4 TransformedStartHorizontal = vIdentityMatrix * glm::vec4(StartPositionHorizontal + horizontalOffset, 1.0f);
+			glm::vec4 TransformedEndHorizontal = vIdentityMatrix * glm::vec4(EndPositionHorizontal + horizontalOffset, 1.0f);
+
+			glm::vec4 TransformedStartVertical = vIdentityMatrix * glm::vec4(StartPositionVertical + verticalOffset, 1.0f);
+			glm::vec4 TransformedEndVertical = vIdentityMatrix * glm::vec4(EndPositionVertical + verticalOffset, 1.0f);
+
+			DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
+			DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
+		}
+	}
+
+	void Renderer3D::ResetStatistics()
+	{
+		std::memset(&s_Data.m_Statistics, 0, sizeof(Statistics));
+	}
+
+	Renderer3D::Statistics Renderer3D::GetStatistics()
+	{
+		return s_Data.m_Statistics;
+	}
+
+	void Renderer3D::StartBatch()
+	{
+		// Line
+		s_Data.m_LineIndexCount = 0;
+		s_Data.m_pLineVertexBufferPtr = s_Data.m_pLineVertexBufferBase;
+	}
+
+	void Renderer3D::NextBatch()
+	{
+		Flush();
+		StartBatch();
 	}
 
 }

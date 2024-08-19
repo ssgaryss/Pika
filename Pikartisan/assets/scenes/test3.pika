@@ -1,5 +1,6 @@
 Scene:
   Name: Untitled
+  SceneType: Scene2D
   Entities:
     - Entity: "{00F903FD-7B8F-45B5-9C38-8DDDD55DE49B}"
       TagComponent:
@@ -12,7 +13,7 @@ Scene:
         Color: [1, 1, 1, 1]
         Texture: assets\textures\Female adventurer\PNG\Poses\character_femaleAdventurer_attackKick.png
       Rigidbody2DComponent:
-        RigidbodyType: 2
+        RigidbodyType: Dynamic
         IsFixedRotation: false
       BoxCollider2DComponent:
         Offset: [0, 0]
@@ -30,14 +31,14 @@ Scene:
         Scale: [1, 1, 1]
       CameraComponent:
         Camera:
-          ProjectionMode: 0
+          ProjectionMode: Othographic
           OthographicSize: 10
           OthographicNear: 0.100000001
           OthographicFar: 100
           PerspectiveFOV: 90
           PerspectiveNear: 0.100000001
           PerspectiveFar: 100
-          AspectRatio: 1.6112026
+          AspectRatio: 1.41051137
         IsFixedAspectRatio: false
     - Entity: "{6968F511-2787-4ED2-A399-B16F3BBCD586}"
       TagComponent:
@@ -50,7 +51,7 @@ Scene:
         Color: [1, 1, 1, 1]
         Texture: None
       Rigidbody2DComponent:
-        RigidbodyType: 0
+        RigidbodyType: Static
         IsFixedRotation: false
       BoxCollider2DComponent:
         Offset: [0, 0]
