@@ -1,8 +1,7 @@
 #pragma once
 
-#include "VertexArray.h"
-#include "Shader.h"
-#include "Camera2D.h"
+#include "Camera.h"
+#include "EditorCamera.h"
 
 namespace Pika
 {
@@ -13,18 +12,32 @@ namespace Pika
 	public:
 		Renderer3D() = delete;
 		static void Initialize();
-		static void BeginScene();
-		static void Submit(const Shader* vShader, const VertexArray* vData, const glm::mat4 vTransform = glm::mat4(1.0f)); //submit Scene info
+		static void BeginScene(const EditorCamera& vEditorCamera);
+		static void BeginScene(const Camera& vCamera, const glm::mat4& vTramsform);
+		//static void DrawMesh(const Mesh& vMesh);
 		static void EndScene();
+		static void Flush();
 
-		//TODO : !!!!
-		static Scope<Camera2D> s_Camera;
-	private:
-		struct SceneDate
-		{
-			glm::mat4 ViewProjectionMatrix;
+		// Line
+		static void SetLineThickness(float vThickness);
+		static float GetLineThickness();
+		static void DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor = glm::vec4(1.0f));
+		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f);
+
+		struct Statistics {
+			uint32_t m_DrawCalls = 0;
+			uint32_t m_MeshCount = 0;
+			uint32_t m_LineCount = 0;
+			uint32_t getDrawCalls() const { return m_DrawCalls; }
+			uint32_t getMeshCount() const { return m_MeshCount; }
+			uint32_t getLineCount() const { return m_LineCount; }
 		};
-		static Scope<SceneDate> m_SceneData;
+
+		static void ResetStatistics();
+		static Statistics GetStatistics();
+	private:
+		static void StartBatch();
+		static void NextBatch();
 	};
 
 }

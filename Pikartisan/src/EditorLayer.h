@@ -67,6 +67,7 @@ namespace Pika
 		Ref<Texture2D> m_TextureRPGpack_sheet_2X;
 		Ref<SubTexture2D> m_TextureTree;
 		Ref<SubTexture2D> m_TextureWater, m_TextureGround;
+		Ref<Texture2D> m_EnvironmentMap;
 
 		// TODO : Delete!
 		float Rotation = 0.0f; //for now

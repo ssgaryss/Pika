@@ -42,7 +42,8 @@ namespace Pika {
 		}
 		case Scene::SceneType::Scene3D:
 		{
-			PK_CORE_ERROR("No 3d play mode yet");
+			// TODO
+			//PK_CORE_ERROR("No 3d play mode yet");
 			return;
 		}
 		}
@@ -54,7 +55,7 @@ namespace Pika {
 		{
 		case Scene::SceneType::Scene2D:
 		{
-			Renderer2D::BeginScene(vEditorCamera);  // TODO : Renderer3D
+			Renderer2D::BeginScene(vEditorCamera);
 			if (m_Settings.m_ShowGrid)
 				Renderer2D::DrawGrid(glm::mat4(1.0f), 100.5f);
 			auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
@@ -67,7 +68,12 @@ namespace Pika {
 		}
 		case Scene::SceneType::Scene3D:
 		{
-			PK_CORE_ERROR("No 3d yet");
+			Renderer3D::BeginScene(vEditorCamera);
+			if (m_Settings.m_ShowGrid)
+				Renderer3D::DrawGrid(glm::mat4(1.0f), 100.5f);
+			// TODO !
+			Renderer3D::EndScene();
+			return;
 			return;
 		}
 		}

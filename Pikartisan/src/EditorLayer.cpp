@@ -40,8 +40,7 @@ namespace Pika
 	void EditorLayer::onAttach()
 	{
 		PK_PROFILE_FUNCTION();
-		// Initialize Renderer2D
-		Renderer2D::Initialize();
+
 		// Initialize Scene
 		m_ActiveScene = CreateRef<Scene>();
 		// Initialize Scene Renderer
@@ -50,6 +49,7 @@ namespace Pika
 		m_Renderer->setFramebuffer(Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false }));
 		m_Renderer->initialize();
+
 		// Initialize Shortcuts
 		initializeShortcutLibrary();
 		// Initialize Panels
@@ -65,6 +65,8 @@ namespace Pika
 		m_TextureTree = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
 		m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
 		m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
+		// TODO
+		//m_EnvironmentMap = Texture2D::Create("assets/environment_maps/evening_road_01_puresky_8k.hdr");
 	}
 
 	void EditorLayer::onDetach()
@@ -414,6 +416,7 @@ namespace Pika
 		m_SceneHierarchyPanel->setContext(m_ActiveScene);
 		m_SceneStatePanel->setContext(m_ActiveScene);
 		m_Renderer->setContext(m_ActiveScene);
+		m_Renderer->initialize();
 		m_ActiveScenePath = std::filesystem::path(); // 重置为空
 	}
 
@@ -445,10 +448,11 @@ namespace Pika
 		m_ActiveScene = CreateRef<Scene>();
 		m_SceneHierarchyPanel->setContext(m_ActiveScene);
 		m_SceneStatePanel->setContext(m_ActiveScene);
-		m_Renderer->setContext(m_ActiveScene);
 		auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
 		Serializer->deserializeYAMLText(Path);
 		m_ActiveScenePath = std::filesystem::path(Path); // 绝对路径
+		m_Renderer->setContext(m_ActiveScene);
+		m_Renderer->initialize();   // 要在deserialize之后才会确定SceneType
 
 	}
 
