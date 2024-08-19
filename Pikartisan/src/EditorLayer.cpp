@@ -159,6 +159,10 @@ namespace Pika
 	{
 		PK_PROFILE_FUNCTION();
 
+		// Temporary Panels
+		if (m_IsShowDemoPanel) ImGui::ShowDemoWindow(&m_IsShowDemoPanel);
+		if (m_IsShowNewScenePanel) ShowNewScenePanel(&m_IsShowNewScenePanel);
+
 		static bool dockspace_open = true;
 		static bool opt_fullscreen = true;
 		static bool opt_padding = false;
@@ -213,7 +217,7 @@ namespace Pika
 			{
 				// File Menu
 				if (ImGui::MenuItem("New Scene", m_ShortcutLibrary["New_Scene"].toString().c_str()))
-					newScene();
+					m_IsShowNewScenePanel = true;
 				if (ImGui::MenuItem("Open Scene...", m_ShortcutLibrary["Open_Scene"].toString().c_str()))
 					openScene();
 				if (ImGui::MenuItem("Save Scene", m_ShortcutLibrary["Save_Scene"].toString().c_str()))
@@ -223,11 +227,13 @@ namespace Pika
 				if (ImGui::MenuItem("Exit"))
 					Application::GetInstance().close();
 				ImGui::EndMenu();
+
 			}
 
 			if (ImGui::BeginMenu("Window")) {
 				ImGui::Checkbox("Scene Hierarchy Panel##Window", m_SceneHierarchyPanel->getIsShowSceneHirarchy());
 				ImGui::Checkbox("Content Browser Panel##Window", m_ContentBrowserPanel->getIsShowContentBrowser());
+				ImGui::Checkbox("Show Demo Panel##Window", &m_IsShowDemoPanel);
 				ImGui::EndMenu();
 			}
 
@@ -402,31 +408,13 @@ namespace Pika
 		Dispatcher.dispatch<MouseButtonPressedEvent>(std::bind_front(&EditorLayer::onMousePressed, this));
 	}
 
-	void EditorLayer::newScene()
+	void EditorLayer::newScene(const std::string& vName, Scene::SceneType vType)
 	{
-		ImGui::OpenPopup("ChooseSceneType");
-		if (ImGui::BeginPopupModal("ChooseSceneType")) {
-			static char Buffer[256];
-			memset(Buffer, 0, sizeof(Buffer));
-			strcpy_s(Buffer, "Untitled");
-			ImGui::InputText("##SceneType", Buffer, sizeof(Buffer));
-			static std::string CurrentSceneType = "Scene 2D";
-			if (ImGui::BeginCombo("Select Scene Type", CurrentSceneType.c_str())) {
-				if (ImGui::Selectable("Scene2D", CurrentSceneType == "Scene 2D"))
-					CurrentSceneType = "Scene 2D";
-				if (ImGui::Selectable("Scene3D", CurrentSceneType == "Scene 3D"))
-					CurrentSceneType = "Scene 3D";
-			}
-			if (ImGui::Button("Confirm")) {
-				if (CurrentSceneType == "Scene 2D")
-					m_ActiveScene = CreateRef<Scene>(Buffer, Scene::SceneType::Scene2D);
-				else if (CurrentSceneType == "Scene 3D")
-					m_ActiveScene = CreateRef<Scene>(Buffer, Scene::SceneType::Scene3D);
-				m_SceneHierarchyPanel->setContext(m_ActiveScene);
-				m_ActiveScenePath = std::filesystem::path(); // 重置为空
-			}
-			ImGui::EndPopup();
-		}
+		m_ActiveScene = CreateRef<Scene>(vName, vType);
+		m_SceneHierarchyPanel->setContext(m_ActiveScene);
+		m_SceneStatePanel->setContext(m_ActiveScene);
+		m_Renderer->setContext(m_ActiveScene);
+		m_ActiveScenePath = std::filesystem::path(); // 重置为空
 	}
 
 	void EditorLayer::openScene()
@@ -489,6 +477,52 @@ namespace Pika
 		Serializer->serializeYAMLText(Path);
 	}
 
+	void EditorLayer::ShowNewScenePanel(bool* vIsShow)
+	{
+		ImVec2 Center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos(Center, ImGuiCond_Appearing, { 0.5f, 0.5f });
+		ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+		static ImVec2 Padding{ 80.0f, 30.0f };
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Padding);
+		if (!ImGui::Begin("Scene Settings", vIsShow))
+		{
+			ImGui::End();
+			return;
+		}
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, 100.0f);
+		ImGui::Text("Scene Name : ");
+		ImGui::NextColumn();
+		static char Buffer[256] = "Untitled";
+		ImGui::InputText("##SceneType", Buffer, sizeof(Buffer));
+
+		ImGui::NextColumn();
+		ImGui::Text("Scene Type : ");
+		ImGui::NextColumn();
+		static std::string CurrentSceneType = "Scene 2D";
+		if (ImGui::BeginCombo("##SelectSceneType", CurrentSceneType.c_str())) {
+			if (ImGui::Selectable("Scene2D", CurrentSceneType == "Scene 2D"))
+				CurrentSceneType = "Scene 2D";
+			if (ImGui::Selectable("Scene3D", CurrentSceneType == "Scene 3D"))
+				CurrentSceneType = "Scene 3D";
+			ImGui::EndCombo();
+		}
+		ImGui::Columns();
+
+		static ImVec2 ButtonSize{ 70.0f, 0.0f };
+		ImGui::SetCursorPos({ ImGui::GetContentRegionAvail().x / 2.0f - ButtonSize.x + Padding.x, ImGui::GetCursorPosY() + 30.0f});
+		if (ImGui::Button("Confirm", ButtonSize)) {
+			auto SceneType = CurrentSceneType == "Scene 2D" ? Scene::SceneType::Scene2D : Scene::SceneType::Scene3D;
+			newScene(std::string(Buffer), SceneType);
+			*vIsShow = false;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ButtonSize))
+			*vIsShow = false;
+		ImGui::End();
+		ImGui::PopStyleVar();
+	}
+
 	void EditorLayer::initializeShortcutLibrary()
 	{
 		using namespace Key;
@@ -511,7 +545,7 @@ namespace Pika
 		using namespace Key;
 		// file中的快捷键
 		if (m_ShortcutLibrary["New_Scene"].IsHandleKeyEvent(vEvent))
-			newScene();
+			m_IsShowNewScenePanel = true;
 		if (m_ShortcutLibrary["Open_Scene"].IsHandleKeyEvent(vEvent))
 			openScene();
 		if (m_ShortcutLibrary["Save_Scene"].IsHandleKeyEvent(vEvent))
