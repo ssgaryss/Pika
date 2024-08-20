@@ -59,7 +59,7 @@ namespace Pika {
 		RenderCommand::Initialize();
 
 		s_Data.m_MeshShader = Shader::Create("assets/shaders/Renderer3D/DefaultMeshShader.glsl");
-	
+
 		// Line
 		s_Data.m_LineVertexArray = VertexArray::Create();
 		s_Data.m_LineVertexArray->bind();
@@ -94,7 +94,7 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 		s_Data.m_CameraData.m_ViewProjectionMatrix = vEditorCamera.getViewProjectionMatrix();
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
-		
+
 		ResetStatistics();
 		StartBatch();
 	}
@@ -174,15 +174,27 @@ namespace Pika {
 		for (uint32_t i = 0; i < NumsOfLines * 2 + 1; ++i) {
 			glm::vec3 horizontalOffset = glm::vec3{ 0.0f, vInterval * i, 0.0f };
 			glm::vec3 verticalOffset = glm::vec3{ vInterval * i, 0.0f, 0.0f };
+			if (vIdentityMatrix != glm::mat4(1.0f)) {
+				glm::vec4 TransformedStartHorizontal = vIdentityMatrix * glm::vec4(StartPositionHorizontal + horizontalOffset, 1.0f);
+				glm::vec4 TransformedEndHorizontal = vIdentityMatrix * glm::vec4(EndPositionHorizontal + horizontalOffset, 1.0f);
 
-			glm::vec4 TransformedStartHorizontal = vIdentityMatrix * glm::vec4(StartPositionHorizontal + horizontalOffset, 1.0f);
-			glm::vec4 TransformedEndHorizontal = vIdentityMatrix * glm::vec4(EndPositionHorizontal + horizontalOffset, 1.0f);
+				glm::vec4 TransformedStartVertical = vIdentityMatrix * glm::vec4(StartPositionVertical + verticalOffset, 1.0f);
+				glm::vec4 TransformedEndVertical = vIdentityMatrix * glm::vec4(EndPositionVertical + verticalOffset, 1.0f);
 
-			glm::vec4 TransformedStartVertical = vIdentityMatrix * glm::vec4(StartPositionVertical + verticalOffset, 1.0f);
-			glm::vec4 TransformedEndVertical = vIdentityMatrix * glm::vec4(EndPositionVertical + verticalOffset, 1.0f);
+				DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
+				DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
+			}
+			else {
+				glm::vec4 TransformedStartHorizontal = glm::vec4(StartPositionHorizontal + horizontalOffset, 1.0f);
+				glm::vec4 TransformedEndHorizontal = glm::vec4(EndPositionHorizontal + horizontalOffset, 1.0f);
 
-			DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
-			DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
+				glm::vec4 TransformedStartVertical = glm::vec4(StartPositionVertical + verticalOffset, 1.0f);
+				glm::vec4 TransformedEndVertical = glm::vec4(EndPositionVertical + verticalOffset, 1.0f);
+
+				DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
+				DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
+			}
+
 		}
 	}
 

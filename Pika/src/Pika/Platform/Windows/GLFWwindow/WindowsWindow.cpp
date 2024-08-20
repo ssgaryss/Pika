@@ -42,7 +42,7 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 
 		glfwPollEvents();
-		m_pContext->swapBuffer();
+		m_Context->swapBuffer();
 	}
 
 	void WindowsWindow::setVSync(bool vEnable)
@@ -83,9 +83,9 @@ namespace Pika {
 			m_pWindow = glfwCreateWindow(static_cast<int>(vWindowProps.m_Width), static_cast<int>(vWindowProps.m_Height),
 				vWindowProps.m_Title.c_str(), nullptr, nullptr);
 
-			m_pContext = GraphicsContext::Create(m_pWindow);
-			PK_ASSERT(m_pContext, "WindowsWindow : m_pContext is nullptr!");
-			m_pContext->Initialize();
+			m_Context = GraphicsContext::Create(m_pWindow);
+			PK_ASSERT(m_Context, "WindowsWindow : m_pContext is nullptr!");
+			m_Context->Initialize();
 
 			glfwSetWindowUserPointer(m_pWindow, &m_Data);
 			setVSync(true);

@@ -43,7 +43,11 @@ in flat int v_EntityID;
 uniform sampler2D u_Textures[32];
 
 void main() {
-	o_FragmentColor = texture(u_Textures[v_TextureIndex], v_TexCoord * v_TilingFactor) * v_Color;
 	o_EntityID = v_EntityID;
+	vec4 Color = texture(u_Textures[v_TextureIndex], v_TexCoord * v_TilingFactor) * v_Color;
+	float AlphaThreshold = 0.1;
+	if (Color.a < AlphaThreshold) // 不要透明部分
+		discard;
+	o_FragmentColor = Color;
 }
 #FRAGMENT_END()

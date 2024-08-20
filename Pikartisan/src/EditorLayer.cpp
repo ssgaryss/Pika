@@ -65,8 +65,6 @@ namespace Pika
 		m_TextureTree = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
 		m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
 		m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
-		// TODO
-		//m_EnvironmentMap = Texture2D::Create("assets/environment_maps/evening_road_01_puresky_8k.hdr");
 	}
 
 	void EditorLayer::onDetach()
@@ -77,6 +75,7 @@ namespace Pika
 	void EditorLayer::onUpdate(Timestep vTimestep)
 	{
 		PK_PROFILE_FUNCTION();
+		m_LastFrameTime = vTimestep;
 
 		// 更新Scene和Scene中所有Cameras的ViewportSize
 		m_Renderer->getContext()->onViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
@@ -270,6 +269,23 @@ namespace Pika
 		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
 		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
 		ImGui::Text("LineCount : %d", Statistics.getLineCount());
+		ImGui::Separator();
+		const auto ContextInformation = reinterpret_cast<const GraphicsContext::GraphicsContextInformation*>(Application::GetInstance().getWindow().getContextInformation());
+		ImGui::Columns(2, nullptr, false);
+		ImGui::SetColumnWidth(0, 80.0f);
+		ImGui::Text("Vendor : ", ContextInformation->m_Vendor.c_str());
+		ImGui::NextColumn();
+		ImGui::Text(ContextInformation->m_Vendor.c_str());
+		ImGui::NextColumn();
+		ImGui::Text("Renderer : ");
+		ImGui::NextColumn();
+		ImGui::Text(ContextInformation->m_Renderer.c_str());
+		ImGui::NextColumn();
+		ImGui::Text("Version : ");
+		ImGui::NextColumn();
+		ImGui::Text(ContextInformation->m_Version.c_str());
+		ImGui::Columns();
+		ImGui::Text("Frame Time : %.2f ms", m_LastFrameTime.getMiliseconds());
 		ImGui::Separator();
 		uintptr_t DepthID = static_cast<uintptr_t>(m_Renderer->getFramebuffer()->getDepthStencilAttachmentRendererID());
 		ImGui::Image(reinterpret_cast<ImTextureID>(DepthID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x) }, { 0.0f,1.0f }, { 1.0f,0.0f });
@@ -493,7 +509,7 @@ namespace Pika
 			ImGui::End();
 			return;
 		}
-		ImGui::Columns(2);
+		ImGui::Columns(2, nullptr, false);
 		ImGui::SetColumnWidth(0, 100.0f);
 		ImGui::Text("Scene Name : ");
 		ImGui::NextColumn();
@@ -514,7 +530,7 @@ namespace Pika
 		ImGui::Columns();
 
 		static ImVec2 ButtonSize{ 70.0f, 0.0f };
-		ImGui::SetCursorPos({ ImGui::GetContentRegionAvail().x / 2.0f - ButtonSize.x + Padding.x, ImGui::GetCursorPosY() + 30.0f});
+		ImGui::SetCursorPos({ ImGui::GetContentRegionAvail().x / 2.0f - ButtonSize.x + Padding.x, ImGui::GetCursorPosY() + 30.0f });
 		if (ImGui::Button("Confirm", ButtonSize)) {
 			auto SceneType = CurrentSceneType == "Scene 2D" ? Scene::SceneType::Scene2D : Scene::SceneType::Scene3D;
 			newScene(std::string(Buffer), SceneType);

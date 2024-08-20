@@ -1,8 +1,8 @@
 #pragma once
 #include "Pika/Core/Window.h"
 #include "Pika/Renderer/GraphicsContext.h"
-#include <GLFW/glfw3.h>
 #include "Pika/Platform/OpenGL/OpenGLContext.h"
+#include <GLFW/glfw3.h>
 
 namespace Pika {
 
@@ -16,6 +16,7 @@ namespace Pika {
 		inline std::string getTitle() const override { return m_Data.m_Title; }
 		inline unsigned int getWidth() const override { return m_Data.m_Width; }
 		inline unsigned int getHeight() const override { return m_Data.m_Height; }
+		inline const void* getContextInformation() const override { return m_Context->getInformation(); }
 		inline void* getNativeWindow() const override { return m_pWindow; }
 
 		inline void setEventCallback(const EventCallbackFn& vEventCallback) override { m_Data.eventCallBack = vEventCallback; };
@@ -34,7 +35,7 @@ namespace Pika {
 		};
 		WindowData m_Data;
 		GLFWwindow* m_pWindow;
-		Ref<GraphicsContext> m_pContext;
+		Ref<GraphicsContext> m_Context;
 
 	};
 }

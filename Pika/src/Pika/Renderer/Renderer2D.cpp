@@ -456,14 +456,26 @@ namespace Pika {
 			glm::vec3 horizontalOffset = glm::vec3{ 0.0f, vInterval * i, 0.0f };
 			glm::vec3 verticalOffset = glm::vec3{ vInterval * i, 0.0f, 0.0f };
 
-			glm::vec4 TransformedStartHorizontal = vIdentityMatrix * glm::vec4(StartPositionHorizontal + horizontalOffset, 1.0f);
-			glm::vec4 TransformedEndHorizontal = vIdentityMatrix * glm::vec4(EndPositionHorizontal + horizontalOffset, 1.0f);
+			if (vIdentityMatrix != glm::mat4(1.0f)) {     // 一般只使用XOY平面Grid,节约算力
+				glm::vec4 TransformedStartHorizontal = vIdentityMatrix * glm::vec4(StartPositionHorizontal + horizontalOffset, 1.0f);
+				glm::vec4 TransformedEndHorizontal = vIdentityMatrix * glm::vec4(EndPositionHorizontal + horizontalOffset, 1.0f);
 
-			glm::vec4 TransformedStartVertical = vIdentityMatrix * glm::vec4(StartPositionVertical + verticalOffset, 1.0f);
-			glm::vec4 TransformedEndVertical = vIdentityMatrix * glm::vec4(EndPositionVertical + verticalOffset, 1.0f);
+				glm::vec4 TransformedStartVertical = vIdentityMatrix * glm::vec4(StartPositionVertical + verticalOffset, 1.0f);
+				glm::vec4 TransformedEndVertical = vIdentityMatrix * glm::vec4(EndPositionVertical + verticalOffset, 1.0f);
 
-			DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
-			DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
+				DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
+				DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
+			}
+			else {
+				glm::vec4 TransformedStartHorizontal = glm::vec4(StartPositionHorizontal + horizontalOffset, 1.0f);
+				glm::vec4 TransformedEndHorizontal = glm::vec4(EndPositionHorizontal + horizontalOffset, 1.0f);
+
+				glm::vec4 TransformedStartVertical = glm::vec4(StartPositionVertical + verticalOffset, 1.0f);
+				glm::vec4 TransformedEndVertical = glm::vec4(EndPositionVertical + verticalOffset, 1.0f);
+
+				DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
+				DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
+			}
 		}
 	}
 
