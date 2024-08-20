@@ -22,6 +22,6 @@ int main(int argc, char** argv)
 	PK_PROFILE_END_SESSION();
 }
 #else
-	#error Pika only for Windows! 
+	#error Pika only for Windows for now ! 
 #endif
 

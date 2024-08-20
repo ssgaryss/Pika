@@ -37,5 +37,11 @@ namespace Pika
 		static Ref<Texture2D> Create(const std::filesystem::path& vPath, bool vRequiredMips = true);
 	};
 
+	class Cubemap : public Texture
+	{
+	public:
+		static Ref<Cubemap> Create(const std::filesystem::path& vPath, bool vRequiredMips = true);
+	};
+
 }
 

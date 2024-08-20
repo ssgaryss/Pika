@@ -15,6 +15,7 @@ namespace Pika
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);  //MSAA
 
+		//glEnable(GL_CULL_FACE);  // Culling
 	}
 	void Pika::OpenGLRendererAPI::clear()
 	{

@@ -14,9 +14,9 @@ namespace Pika {
 		case RendererAPI::GraphicsAPI::None:
 			PK_CORE_ASSERT(false, "Shader: None, PIKA need a graphics API!");
 			return nullptr;
-#ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
 			return CreateRef<OpenGLShader>(vName, vVertexShaderSrc, vFragmentShaderSrc);
+#ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "Shader: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;
@@ -33,9 +33,9 @@ namespace Pika {
 		case RendererAPI::GraphicsAPI::None:
 			PK_CORE_ASSERT(false, "Shader: None, PIKA need a graphics API!");
 			return nullptr;
-#ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
 			return CreateRef<OpenGLShader>(vFilePath);
+#ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "Shader: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;
@@ -52,9 +52,9 @@ namespace Pika {
 		case RendererAPI::GraphicsAPI::None:
 			PK_CORE_ASSERT(false, "Shader: None, PIKA need a graphics API!");
 			return nullptr;
-#ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
 			return CreateRef<OpenGLShader>(vName, vFilePath);
+#ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "Shader: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;

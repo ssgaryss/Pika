@@ -74,9 +74,14 @@ namespace Pika {
 			// TODO !
 			Renderer3D::EndScene();
 			return;
-			return;
 		}
 		}
+	}
+
+	inline void SceneRenderer::setEnvironmentMap(const Ref<Cubemap>& vEnvironmentMap) const
+	{
+		//TODO !
+		Renderer3D::SetEnvironmentMap(vEnvironmentMap);
 	}
 
 	void SceneRenderer::resize(uint32_t vWidth, uint32_t vHeight)

@@ -30,7 +30,11 @@ namespace Pika
 		// Some temporary panels
 		bool m_IsShowDemoPanel = false;
 		bool m_IsShowNewScenePanel = false;
-		void ShowNewScenePanel(bool* vIsShow);
+		void showNewScenePanel(bool* vIsShow);
+		bool m_IsShowRendererStatistics = true;
+		bool m_IsShowSceneRendererSettings = true;
+		void showRendererStatistics(bool* vIsShow);
+		void showSceneRendererSettings(bool* vIsShow);
 	private:
 		// Shortcuts
 		void initializeShortcutLibrary();          // 初始化快捷键  TODO : 有Project序列化后读取Project中包含快捷键设置

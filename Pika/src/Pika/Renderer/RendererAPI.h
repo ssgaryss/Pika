@@ -35,6 +35,8 @@ namespace Pika {
 		virtual void setLineThickness(float vThickness) = 0;
 		virtual uint32_t getAvailableTextureSlots() = 0;
 
+		//virtual void enableCulling() = 0;
+
 		static Scope<RendererAPI> Create();
 	private:
 		static GraphicsAPI s_GraphicsAPI;

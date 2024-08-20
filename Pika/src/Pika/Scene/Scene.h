@@ -1,6 +1,7 @@
 #pragma once
 #include "Pika/Core/Timestep.h"
 #include "Pika/Renderer/Camera.h"
+#include "Pika/Renderer/Texture.h"
 #include "Pika/Core/UUID.h"
 #include <entt.h>
 

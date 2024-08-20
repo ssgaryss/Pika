@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "EditorCamera.h"
+#include "Texture.h"
 
 namespace Pika
 {
@@ -23,6 +24,8 @@ namespace Pika
 		static float GetLineThickness();
 		static void DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor = glm::vec4(1.0f));
 		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f);
+		// Environment
+		static void SetEnvironmentMap(const Ref<Cubemap>& vEnvironmentMap);
 
 		struct Statistics {
 			uint32_t m_DrawCalls = 0;

@@ -65,6 +65,7 @@ namespace Pika
 		m_TextureTree = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
 		m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
 		m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
+		//m_Renderer->setEnvironmentMap(Texture2D::Create("assets/environment/kloofendal_43d_clear_puresky_2k.hdr"));
 	}
 
 	void EditorLayer::onDetach()
@@ -162,7 +163,7 @@ namespace Pika
 
 		// Temporary Panels
 		if (m_IsShowDemoPanel) ImGui::ShowDemoWindow(&m_IsShowDemoPanel);
-		if (m_IsShowNewScenePanel) ShowNewScenePanel(&m_IsShowNewScenePanel);
+		if (m_IsShowNewScenePanel) showNewScenePanel(&m_IsShowNewScenePanel);
 
 		static bool dockspace_open = true;
 		static bool opt_fullscreen = true;
@@ -234,6 +235,8 @@ namespace Pika
 			if (ImGui::BeginMenu("Window")) {
 				ImGui::Checkbox("Scene Hierarchy Panel##Window", m_SceneHierarchyPanel->getIsShowSceneHirarchy());
 				ImGui::Checkbox("Content Browser Panel##Window", m_ContentBrowserPanel->getIsShowContentBrowser());
+				ImGui::Checkbox("Renderer Statistics Panel##Window", &m_IsShowRendererStatistics);
+				ImGui::Checkbox("Scene Renderer Settings Panel##Window", &m_IsShowSceneRendererSettings);
 				ImGui::Checkbox("Show Demo Panel##Window", &m_IsShowDemoPanel);
 				ImGui::EndMenu();
 			}
@@ -261,80 +264,9 @@ namespace Pika
 			ImGui::EndMenuBar();
 		}
 
-		// Statistics Panel
-		ImGui::Begin("Renderer statistics");
-		auto Statistics = Renderer2D::GetStatistics();
-		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) ? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
-		ImGui::Text("Mouse hovered entity : %s", MouseHoveredEntityName.c_str());
-		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
-		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
-		ImGui::Text("LineCount : %d", Statistics.getLineCount());
-		ImGui::Separator();
-		const auto ContextInformation = reinterpret_cast<const GraphicsContext::GraphicsContextInformation*>(Application::GetInstance().getWindow().getContextInformation());
-		ImGui::Columns(2, nullptr, false);
-		ImGui::SetColumnWidth(0, 80.0f);
-		ImGui::Text("Vendor : ", ContextInformation->m_Vendor.c_str());
-		ImGui::NextColumn();
-		ImGui::Text(ContextInformation->m_Vendor.c_str());
-		ImGui::NextColumn();
-		ImGui::Text("Renderer : ");
-		ImGui::NextColumn();
-		ImGui::Text(ContextInformation->m_Renderer.c_str());
-		ImGui::NextColumn();
-		ImGui::Text("Version : ");
-		ImGui::NextColumn();
-		ImGui::Text(ContextInformation->m_Version.c_str());
-		ImGui::Columns();
-		ImGui::Text("Frame Time : %.2f ms", m_LastFrameTime.getMiliseconds());
-		ImGui::Separator();
-		uintptr_t DepthID = static_cast<uintptr_t>(m_Renderer->getFramebuffer()->getDepthStencilAttachmentRendererID());
-		ImGui::Image(reinterpret_cast<ImTextureID>(DepthID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x) }, { 0.0f,1.0f }, { 1.0f,0.0f });
-		ImGui::Separator();
-		ImGui::End(); // Renderer statistics
-
-		// Scene Renderer Panel
-		ImGui::Begin("Scene Renderer Settings");
-		if (m_ActiveScene) {
-			auto& Context = m_Renderer->getContext();
-			if (Context) {
-				ImGui::Text("Scene Name : ");
-				ImGui::SameLine();
-				static char Buffer[256];
-				memset(Buffer, 0, sizeof(Buffer));
-				strcpy_s(Buffer, Context->getSceneName().c_str());
-				if (ImGui::InputText("##SceneName", Buffer, sizeof(Buffer)))
-					Context->setSceneName(std::string(Buffer));
-				ImGui::Text("Scene Type : ");
-				ImGui::SameLine();
-				const char* SceneTypeName[] = { "2D Scene", "3D Scene" };
-				ImGui::Text(SceneTypeName[static_cast<int>(Context->getSceneType())]);
-				const char* SceneModeName[] = { "Edit Mode", "Play Mode", "Simulate Mode" };
-				ImGui::Text("Scene State : ");
-				ImGui::SameLine();
-				ImGui::Text(SceneModeName[static_cast<int>(m_SceneStatePanel->getSceneState())]);
-				ImGui::Text("Primary Camera : ");
-				ImGui::SameLine();
-				std::string PrimaryCameraName = "None";
-				Entity PrimaryCamera = m_Renderer->getPrimaryCamera();
-				if (PrimaryCamera && PrimaryCamera.hasComponent<CameraComponent>()) {
-					m_Renderer->setPrimaryCamera(PrimaryCamera);
-					PrimaryCameraName = PrimaryCamera.getComponent<TagComponent>().m_Tag;
-				}
-				ImGui::Button(PrimaryCameraName.c_str());
-				if (ImGui::BeginDragDropTarget()) {
-					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("SCENE_CAMERA")) { // 对应ContentBrowserPanel中
-						const UUID& ID = *reinterpret_cast<const UUID*>(Payload->Data);
-						m_Renderer->setPrimaryCamera(m_Renderer->getContext()->getEntityByUUID(ID));
-					}
-					ImGui::EndDragDropTarget();
-				}
-				ImGui::Separator();
-				ImGui::Checkbox("Show Grid", m_Renderer->showGrid());
-			}
-		}
-		ImGui::End();
-
 		// Panels
+		if (m_IsShowRendererStatistics) showRendererStatistics(&m_IsShowRendererStatistics);
+		if (m_IsShowSceneRendererSettings) showSceneRendererSettings(&m_IsShowSceneRendererSettings);
 		m_SceneHierarchyPanel->onImGuiRender();
 		m_ContentBrowserPanel->onImGuiRender();
 		m_SceneStatePanel->onImGuiRender();
@@ -497,7 +429,7 @@ namespace Pika
 		Serializer->serializeYAMLText(Path);
 	}
 
-	void EditorLayer::ShowNewScenePanel(bool* vIsShow)
+	void EditorLayer::showNewScenePanel(bool* vIsShow)
 	{
 		ImVec2 Center = ImGui::GetMainViewport()->GetCenter();
 		ImGui::SetNextWindowPos(Center, ImGuiCond_Appearing, { 0.5f, 0.5f });
@@ -541,6 +473,84 @@ namespace Pika
 			*vIsShow = false;
 		ImGui::End();
 		ImGui::PopStyleVar();
+	}
+
+	void EditorLayer::showRendererStatistics(bool* vIsShow)
+	{
+		ImGui::Begin("Renderer statistics");
+		const auto ContextInformation = reinterpret_cast<const GraphicsContext::GraphicsContextInformation*>(Application::GetInstance().getWindow().getContextInformation());
+		ImGui::Columns(2, nullptr, false);
+		ImGui::SetColumnWidth(0, 80.0f);
+		ImGui::Text("Vendor : ", ContextInformation->m_Vendor.c_str());
+		ImGui::NextColumn();
+		ImGui::Text(ContextInformation->m_Vendor.c_str());
+		ImGui::NextColumn();
+		ImGui::Text("Renderer : ");
+		ImGui::NextColumn();
+		ImGui::Text(ContextInformation->m_Renderer.c_str());
+		ImGui::NextColumn();
+		ImGui::Text("Version : ");
+		ImGui::NextColumn();
+		ImGui::Text(ContextInformation->m_Version.c_str());
+		ImGui::Columns();
+		ImGui::Separator();
+		auto Statistics = Renderer2D::GetStatistics();
+		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) ? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
+		ImGui::Text("Mouse hovered entity : %s", MouseHoveredEntityName.c_str());
+		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
+		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
+		ImGui::Text("LineCount : %d", Statistics.getLineCount());
+		ImGui::Text("Frame Time : %.2f ms", m_LastFrameTime.getMiliseconds());
+		ImGui::Separator();
+		uintptr_t DepthID = static_cast<uintptr_t>(m_Renderer->getFramebuffer()->getDepthStencilAttachmentRendererID());
+		ImGui::Image(reinterpret_cast<ImTextureID>(DepthID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x) }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		ImGui::Separator();
+		ImGui::End(); // Renderer statistics
+
+	}
+
+	void EditorLayer::showSceneRendererSettings(bool* vIsShow)
+	{
+		ImGui::Begin("Scene Renderer Settings");
+		if (m_ActiveScene) {
+			auto& Context = m_Renderer->getContext();
+			if (Context) {
+				ImGui::Text("Scene Name : ");
+				ImGui::SameLine();
+				static char Buffer[256];
+				memset(Buffer, 0, sizeof(Buffer));
+				strcpy_s(Buffer, Context->getSceneName().c_str());
+				if (ImGui::InputText("##SceneName", Buffer, sizeof(Buffer)))
+					Context->setSceneName(std::string(Buffer));
+				ImGui::Text("Scene Type : ");
+				ImGui::SameLine();
+				const char* SceneTypeName[] = { "2D Scene", "3D Scene" };
+				ImGui::Text(SceneTypeName[static_cast<int>(Context->getSceneType())]);
+				const char* SceneModeName[] = { "Edit Mode", "Play Mode", "Simulate Mode" };
+				ImGui::Text("Scene State : ");
+				ImGui::SameLine();
+				ImGui::Text(SceneModeName[static_cast<int>(m_SceneStatePanel->getSceneState())]);
+				ImGui::Text("Primary Camera : ");
+				ImGui::SameLine();
+				std::string PrimaryCameraName = "None";
+				Entity PrimaryCamera = m_Renderer->getPrimaryCamera();
+				if (PrimaryCamera && PrimaryCamera.hasComponent<CameraComponent>()) {
+					m_Renderer->setPrimaryCamera(PrimaryCamera);
+					PrimaryCameraName = PrimaryCamera.getComponent<TagComponent>().m_Tag;
+				}
+				ImGui::Button(PrimaryCameraName.c_str());
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("SCENE_CAMERA")) { // 对应ContentBrowserPanel中
+						const UUID& ID = *reinterpret_cast<const UUID*>(Payload->Data);
+						m_Renderer->setPrimaryCamera(m_Renderer->getContext()->getEntityByUUID(ID));
+					}
+					ImGui::EndDragDropTarget();
+				}
+				ImGui::Separator();
+				ImGui::Checkbox("Show Grid", m_Renderer->showGrid());
+			}
+		}
+		ImGui::End();
 	}
 
 	void EditorLayer::initializeShortcutLibrary()

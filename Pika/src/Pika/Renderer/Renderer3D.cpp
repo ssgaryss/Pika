@@ -37,6 +37,9 @@ namespace Pika {
 		LineVertexData* m_pLineVertexBufferBase = nullptr;
 		LineVertexData* m_pLineVertexBufferPtr = nullptr;
 
+		// Environment Map
+		Ref<Cubemap> m_EnvironmentMap = nullptr;
+
 		struct CameraData {
 			glm::mat4 m_ViewProjectionMatrix = glm::mat4(1.0f);
 		};
@@ -86,6 +89,9 @@ namespace Pika {
 		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer3DData::s_MaxVerticesPerBatch];
 		s_Data.m_LineVertexArray->unbind();
 
+		//Environment Map
+		s_Data.m_EnvironmentMap = Cubemap::Create("assets/environment/StandardCubeMap.png");
+
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 1); // glslÖÐbinding = 1
 	}
 
@@ -117,6 +123,74 @@ namespace Pika {
 	void Renderer3D::Flush()
 	{
 		PK_PROFILE_FUNCTION();
+		if (s_Data.m_EnvironmentMap)
+			s_Data.m_EnvironmentMap->bind();
+
+		// TODO : DELETE !
+		float skyboxVertices[] = {
+			// Positions
+			-1.0f,  1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			-1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f
+		};
+		auto VAO = VertexArray::Create();
+		VAO->bind();
+		auto VBO = VertexBuffer::Create(sizeof(skyboxVertices));
+		BufferLayout Layout = {
+			{Pika::ShaderDataType::Float3, "a_Position"},
+		};
+		VBO->setLayout(Layout);
+		VAO->addVertexBuffer(VBO);
+		uint32_t* Index = new uint32_t[36];
+		for (uint32_t i = 0; i < 36; ++i)
+			Index[i] = i;
+		Ref<IndexBuffer> IndexBuffer = IndexBuffer::Create(Index, 36);
+		VAO->setIndexBuffer(IndexBuffer);
+		delete[] Index;
+		s_Data.m_MeshShader->bind();
+		s_Data.m_EnvironmentMap->bind();
+		s_Data.m_MeshShader->setInt("u_EnvironmentMap", 0);
+		VAO->bind();
+		RenderCommand::DrawIndexed(VAO.get(), 36);
+
 
 		// Lines
 		if (s_Data.m_LineIndexCount) {
@@ -196,6 +270,11 @@ namespace Pika {
 			}
 
 		}
+	}
+
+	void Renderer3D::SetEnvironmentMap(const Ref<Cubemap>& vEnvironmentMap)
+	{
+		s_Data.m_EnvironmentMap = vEnvironmentMap;
 	}
 
 	void Renderer3D::ResetStatistics()

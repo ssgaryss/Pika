@@ -12,9 +12,9 @@ namespace Pika {
 		case RendererAPI::GraphicsAPI::None:
 			PK_CORE_ASSERT(false, "UniformBuffer: None, PIKA need a graphics API!");
 			return nullptr;
-#ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
 			return CreateRef<OpenGLUniformBuffer>(vSize, vBinding);
+#ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "UniformBuffer: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;
