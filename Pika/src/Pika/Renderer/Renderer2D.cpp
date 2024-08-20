@@ -108,7 +108,11 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 
-		RenderCommand::Initialize();
+		{
+			uint32_t Flags = RendererAPI::EnableBlend | RendererAPI::EnableDepthTest
+				| RendererAPI::EnableLineSmooth;
+			RenderCommand::Initialize(Flags);
+		}
 
 		// Quad
 		s_Data.m_QuadVertexArray = VertexArray::Create();

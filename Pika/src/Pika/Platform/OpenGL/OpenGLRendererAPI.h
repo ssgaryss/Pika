@@ -7,7 +7,7 @@ namespace Pika
 	{
 	public:
 
-		void Initialize() override;
+		void Initialize(uint32_t vFlags) override;
 		void clear() override;
 		void setClearColor() override;
 		void setClearColor(Color vColor) override;

@@ -5,17 +5,20 @@
 
 namespace Pika
 {
-	void OpenGLRendererAPI::Initialize()
+	void OpenGLRendererAPI::Initialize(uint32_t vFlags)
 	{
 		PK_PROFILE_FUNCTION();
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_LINE_SMOOTH);  //MSAA
-
-		//glEnable(GL_CULL_FACE);  // Culling
+		if (vFlags & RendererAPI::EnableBlend) {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+		if (vFlags & RendererAPI::EnableDepthTest)
+			glEnable(GL_DEPTH_TEST);
+		if (vFlags & RendererAPI::EnableLineSmooth)
+			glEnable(GL_LINE_SMOOTH);  //MSAA
+		if (vFlags & RendererAPI::EnableCullBackFace)
+			glEnable(GL_CULL_FACE);  // Culling
 	}
 	void Pika::OpenGLRendererAPI::clear()
 	{

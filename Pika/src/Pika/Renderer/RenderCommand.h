@@ -8,7 +8,7 @@ namespace Pika
 	class RenderCommand
 	{
 	public:
-		static void Initialize();
+		static void Initialize(uint32_t vFlags = 0);
 		static void Clear();
 		static void SetClearColor();
 		static void SetClearColor(const Color& vColor);

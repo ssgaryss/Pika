@@ -59,7 +59,11 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 
-		RenderCommand::Initialize();
+		{
+			uint32_t Flags = RendererAPI::EnableBlend | RendererAPI::EnableDepthTest
+				| RendererAPI::EnableLineSmooth | RendererAPI::EnableCullBackFace;
+			RenderCommand::Initialize(Flags);
+		}
 
 		s_Data.m_MeshShader = Shader::Create("assets/shaders/Renderer3D/DefaultMeshShader.glsl");
 
