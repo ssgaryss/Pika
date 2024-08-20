@@ -72,6 +72,8 @@ namespace Pika
 		Ref<Texture2D> m_TextureRPGpack_sheet_2X;
 		Ref<SubTexture2D> m_TextureTree;
 		Ref<SubTexture2D> m_TextureWater, m_TextureGround;
+		Ref<Cubemap> m_SnowSkybox;
+		Ref<Texture2D> m_SnowSkybox2D;
 
 		// TODO : Delete!
 		float Rotation = 0.0f; //for now

@@ -65,7 +65,9 @@ namespace Pika
 		m_TextureTree = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
 		m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
 		m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
-		//m_Renderer->setEnvironmentMap(Texture2D::Create("assets/environment/kloofendal_43d_clear_puresky_2k.hdr"));
+		m_SnowSkybox = Cubemap::Create("assets/environment/skybox/LDR/snowy_park_01_2k.png");
+		m_SnowSkybox2D = Texture2D::Create("assets/environment/skybox/LDR/snowy_park_01_2k.png");
+		m_Renderer->setSkybox(m_SnowSkybox);
 	}
 
 	void EditorLayer::onDetach()
@@ -494,12 +496,20 @@ namespace Pika
 		ImGui::Text(ContextInformation->m_Version.c_str());
 		ImGui::Columns();
 		ImGui::Separator();
-		auto Statistics = Renderer2D::GetStatistics();
 		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) ? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
 		ImGui::Text("Mouse hovered entity : %s", MouseHoveredEntityName.c_str());
-		ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
-		ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
-		ImGui::Text("LineCount : %d", Statistics.getLineCount());
+		if(m_ActiveScene->getSceneType() == Scene::SceneType::Scene2D){
+			auto Statistics = Renderer2D::GetStatistics();
+			ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
+			ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
+			ImGui::Text("LineCount : %d", Statistics.getLineCount());
+		}
+		else {
+			auto Statistics = Renderer3D::GetStatistics();
+			ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
+			ImGui::Text("MeshCount : %d", Statistics.getMeshCount());
+			ImGui::Text("LineCount : %d", Statistics.getLineCount());
+		}
 		ImGui::Text("Frame Time : %.2f ms", m_LastFrameTime.getMiliseconds());
 		ImGui::Separator();
 		uintptr_t DepthID = static_cast<uintptr_t>(m_Renderer->getFramebuffer()->getDepthStencilAttachmentRendererID());

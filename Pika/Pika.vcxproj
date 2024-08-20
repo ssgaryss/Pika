@@ -143,7 +143,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="src\Pika.h" />
     <ClInclude Include="src\Pika\Core\Application.h" />
     <ClInclude Include="src\Pika\Core\Base.h" />
@@ -174,6 +173,7 @@
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLTexture.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLTextureFormat.h" />
+    <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Pika\Platform\Windows\GLFWwindow\WindowsWindow.h" />
     <ClInclude Include="src\Pika\Renderer\Buffer.h" />
@@ -191,6 +191,7 @@
     <ClInclude Include="src\Pika\Renderer\SubTexture2D.h" />
     <ClInclude Include="src\Pika\Renderer\Texture.h" />
     <ClInclude Include="src\Pika\Renderer\TextureFormat.h" />
+    <ClInclude Include="src\Pika\Renderer\UniformBuffer.h" />
     <ClInclude Include="src\Pika\Renderer\VertexArray.h" />
     <ClInclude Include="src\Pika\Scene\Components.h" />
     <ClInclude Include="src\Pika\Scene\Entity.h" />
@@ -200,7 +201,6 @@
     <ClInclude Include="src\Pika\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Pika\Utils\PlatformUtils.h" />
     <ClInclude Include="src\pkpch.h" />
-    <ClInclude Include="src\Pika\Renderer\UniformBuffer.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -620,7 +620,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
@@ -637,6 +636,7 @@
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLTextureFormat.cpp" />
+    <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="src\Pika\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsInput.cpp" />
     <ClCompile Include="src\Pika\Platform\Windows\GLFWwindow\WindowsPlatformUtils.cpp" />
@@ -654,6 +654,7 @@
     <ClCompile Include="src\Pika\Renderer\Shader.cpp" />
     <ClCompile Include="src\Pika\Renderer\SubTexture2D.cpp" />
     <ClCompile Include="src\Pika\Renderer\Texture.cpp" />
+    <ClCompile Include="src\Pika\Renderer\UniformBuffer.cpp" />
     <ClCompile Include="src\Pika\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Pika\Scene\Entity.cpp" />
     <ClCompile Include="src\Pika\Scene\Scene.cpp" />
@@ -663,7 +664,6 @@
     <ClCompile Include="src\pkpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Pika\Renderer\UniformBuffer.cpp" />
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -130,8 +130,8 @@ namespace Pika {
 				Offset += 4;
 			}
 		}
-		Ref<IndexBuffer> pQuadIndexBuffer = IndexBuffer::Create(QuadIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
-		s_Data.m_QuadVertexArray->setIndexBuffer(pQuadIndexBuffer);
+		Ref<IndexBuffer> QuadIndexBuffer = IndexBuffer::Create(QuadIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
+		s_Data.m_QuadVertexArray->setIndexBuffer(QuadIndexBuffer);
 		delete[] QuadIndicesPerBatch;
 
 		s_Data.m_QuadVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxVerticesPerBatch * sizeof(QuadVertexData));
@@ -159,8 +159,8 @@ namespace Pika {
 				LineIndicesPerBatch[i] = i;
 			}
 		}
-		Ref<IndexBuffer> pLineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
-		s_Data.m_LineVertexArray->setIndexBuffer(pLineIndexBuffer);
+		Ref<IndexBuffer> LineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
+		s_Data.m_LineVertexArray->setIndexBuffer(LineIndexBuffer);
 		delete[] LineIndicesPerBatch;
 
 		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxVerticesPerBatch * sizeof(LineVertexData));

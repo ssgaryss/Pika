@@ -13,12 +13,13 @@ namespace Pika
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
-		if (vFlags & RendererAPI::EnableDepthTest)
-			glEnable(GL_DEPTH_TEST);
-		if (vFlags & RendererAPI::EnableLineSmooth)
-			glEnable(GL_LINE_SMOOTH);  //MSAA
-		if (vFlags & RendererAPI::EnableCullBackFace)
-			glEnable(GL_CULL_FACE);  // Culling
+		else glDisable(GL_BLEND);
+		if (vFlags & RendererAPI::EnableDepthTest) glEnable(GL_DEPTH_TEST);
+		else glDisable(GL_DEPTH_TEST);
+		if (vFlags & RendererAPI::EnableLineSmooth) glEnable(GL_LINE_SMOOTH);  //MSAA
+		else glDisable(GL_LINE_SMOOTH);
+		if (vFlags & RendererAPI::EnableCullBackFace) glEnable(GL_CULL_FACE);  // Culling
+		else glDisable(GL_CULL_FACE);
 	}
 	void Pika::OpenGLRendererAPI::clear()
 	{

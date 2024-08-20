@@ -69,6 +69,7 @@ namespace Pika {
 		case Scene::SceneType::Scene3D:
 		{
 			Renderer3D::BeginScene(vEditorCamera);
+			Renderer3D::RenderSkybox(m_Context->m_Skybox);
 			if (m_Settings.m_ShowGrid)
 				Renderer3D::DrawGrid(glm::mat4(1.0f), 100.5f);
 			// TODO !
@@ -76,12 +77,6 @@ namespace Pika {
 			return;
 		}
 		}
-	}
-
-	inline void SceneRenderer::setEnvironmentMap(const Ref<Cubemap>& vEnvironmentMap) const
-	{
-		//TODO !
-		Renderer3D::SetEnvironmentMap(vEnvironmentMap);
 	}
 
 	void SceneRenderer::resize(uint32_t vWidth, uint32_t vHeight)

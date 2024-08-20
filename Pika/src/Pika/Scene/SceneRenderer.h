@@ -31,8 +31,8 @@ namespace Pika {
 		inline void setFramebuffer(const Ref<Framebuffer>& vFramebuffer) { m_Framebuffer = vFramebuffer; }
 		inline const Entity& getPrimaryCamera() const { return m_PrimaryCamera; }
 		inline void setPrimaryCamera(const Entity& vCamera) { m_PrimaryCamera = vCamera; }
-		//inline Ref<Texture2D> getEnvironmentMap() const { return m_Context->m_EnvironmentMap; }
-		inline void setEnvironmentMap(const Ref<Cubemap>& vEnvironmentMap) const;
+		inline Ref<Cubemap> getSkybox() const { return m_Context->m_Skybox; }
+		inline void setSkybox(const Ref<Cubemap>& vSkybox) { m_Context->m_Skybox = vSkybox; }
 
 		// Settings
 		inline bool* showGrid() { return &m_Settings.m_ShowGrid; }

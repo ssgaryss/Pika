@@ -7,9 +7,11 @@ layout(location = 2) in int a_EntityID;
 out vec4 v_Color;
 out flat int v_EntityID;
 
-layout(std140, binding = 1) uniform CameraData
+layout(std140, binding = 0) uniform CameraData
 {
 	mat4 u_ViewProjectionMatrix;
+	mat4 u_ViewMatrix;
+	mat4 u_ProjectionMatrix;
 };
 
 void main() {

@@ -67,11 +67,12 @@ namespace Pika
 		std::string m_SceneName = "Untitled";
 		entt::registry m_Registry;                                    // Entities
 		std::unordered_map<UUID, entt::entity> m_EntityMap;           // UUID -> Entity
-		SceneType m_SceneType = SceneType::Scene2D;                   // Scene Type
+		SceneType m_SceneType = SceneType::Scene3D;                   // Scene Type
 		SceneState m_SceneState = SceneState::Edit;                   // Scene State
 		bool m_IsPaused = false;                                      // Play & Simulation
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0; // Scene Display
 		Ref<b2World> m_Physics2DWorld = nullptr;                      // Physics 2D World
+		Ref<Cubemap> m_Skybox = nullptr;                              // Skybox
 
 		friend class Entity;
 		friend class SceneRenderer;

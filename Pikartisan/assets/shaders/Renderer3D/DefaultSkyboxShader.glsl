@@ -13,7 +13,8 @@ out vec3 v_TexCoords;
 
 void main() {
 	v_TexCoords = a_Position;
-	gl_Position = u_ViewProjectionMatrix * vec4(a_Position, 1.0f);
+	mat4 NoTranslationViewMatrix = mat4(mat3(u_ViewMatrix));
+	gl_Position = u_ProjectionMatrix * NoTranslationViewMatrix * vec4(a_Position, 1.0f);
 }
 #VERTEX_END()
 
@@ -24,11 +25,11 @@ layout(location = 1) out int o_EntityID;
 
 in vec3 v_TexCoords;
 
-uniform samplerCube u_EnvironmentMap;
+uniform samplerCube u_Skybox;
 
 void main() {
-	vec3 EnvironmentLight = texture(u_EnvironmentMap, v_TexCoords).rgb;
-	o_FragmentColor = vec4(EnvironmentLight, 1.0f);
+	o_FragmentColor = texture(u_Skybox, v_TexCoords);
+	//o_FragmentColor = vec4(v_TexCoords, 1.0f);  // Magic color
 	o_EntityID = -1;
 }
 #FRAGMENT_END()

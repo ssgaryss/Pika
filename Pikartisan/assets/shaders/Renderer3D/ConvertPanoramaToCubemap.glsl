@@ -1,4 +1,4 @@
-#VERTEX_BEGIN()
+ #VERTEX_BEGIN()
 #version 460 core
 precision highp float;
 

@@ -57,7 +57,7 @@ namespace Pika
 		void loadCubemap(const std::filesystem::path& vPath);
 		void loadHDR(const std::filesystem::path& vPath);
 		void loadLDR(const std::filesystem::path& vPath);
-		void convertPanoramaToCubemap();
+		void convertPanoramaToCubemap(); // TODO !
 	private:
 		uint32_t m_RendererID = 0;
 		uint32_t m_Width = 0;

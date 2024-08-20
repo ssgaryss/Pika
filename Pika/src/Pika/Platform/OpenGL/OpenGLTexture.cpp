@@ -175,56 +175,56 @@ namespace Pika {
 		else if (vPath.extension().string() == ".png")
 			loadLDR(vPath);
 	}
-	
+
 	void OpenGLCubemap::loadHDR(const std::filesystem::path& vPath)
 	{
-		PK_PROFILE_FUNCTION();
+		//PK_PROFILE_FUNCTION();
 
-		int Width, Height, Channels;
-		stbi_set_flip_vertically_on_load(true);
+		//int Width, Height, Channels;
+		//stbi_set_flip_vertically_on_load(true);
 
-		float* Data = stbi_loadf(vPath.string().c_str(), &Width, &Height, &Channels, 0); // HDR
-		if (!Data) throw std::runtime_error("Path : " + vPath.string());
-		m_Width = Width;
-		m_Height = Height;
+		//float* Data = stbi_loadf(vPath.string().c_str(), &Width, &Height, &Channels, 0); // HDR
+		//if (!Data) throw std::runtime_error("Path : " + vPath.string());
+		//m_Width = Width;
+		//m_Height = Height;
 
-		GLenum InternalFormat = 0, DataFormat = 0;
-		if (Channels == 4) {
-			InternalFormat = GL_RGBA16F;
-			DataFormat = GL_RGBA;
-		}
-		else if (Channels == 3) {
-			InternalFormat = GL_RGB16F;
-			DataFormat = GL_RGB;
-		}
-		else if (Channels == 1) {
-			InternalFormat = GL_RED;
-			DataFormat = GL_RED;
-		}
-		m_InternalFormat = InternalFormat;
-		m_DataFormat = DataFormat;
+		//GLenum InternalFormat = 0, DataFormat = 0;
+		//if (Channels == 4) {
+		//	InternalFormat = GL_RGBA16F;
+		//	DataFormat = GL_RGBA;
+		//}
+		//else if (Channels == 3) {
+		//	InternalFormat = GL_RGB16F;
+		//	DataFormat = GL_RGB;
+		//}
+		//else if (Channels == 1) {
+		//	InternalFormat = GL_RED;
+		//	DataFormat = GL_RED;
+		//}
+		//m_InternalFormat = InternalFormat;
+		//m_DataFormat = DataFormat;
 
-		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID);
-		for (uint32_t i = 0; i < 6; ++i) {
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_InternalFormat,
-				m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, nullptr);
-		}
-		//glTextureStorage2D(m_RendererID, 1, InternalFormat, m_Width, m_Height);
+		//glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID);
+		//for (uint32_t i = 0; i < 6; ++i) {
+		//	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_InternalFormat,
+		//		m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, nullptr);
+		//}
+		////glTextureStorage2D(m_RendererID, 1, InternalFormat, m_Width, m_Height);
 
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		if (m_RequiredMips)
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		else
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		//glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		//if (m_RequiredMips)
+		//	glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		//else
+		//	glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		//glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		if (m_RequiredMips)
-			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+		//if (m_RequiredMips)
+		//	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
 
-		stbi_image_free(Data);
-		PK_CORE_INFO("OpenGLCubemap : Success to load a texture at {0}.", vPath.string());
+		//stbi_image_free(Data);
+		//PK_CORE_INFO("OpenGLCubemap : Success to load a texture at {0}.", vPath.string());
 	}
 
 	void OpenGLCubemap::loadLDR(const std::filesystem::path& vPath)
@@ -236,6 +236,7 @@ namespace Pika {
 
 		stbi_uc* Data = stbi_load(vPath.string().c_str(), &Width, &Height, &Channels, 0); // 0 means desired channels = Channels
 		if (!Data) throw std::runtime_error("Path : " + vPath.string());
+		std::memset(Data, 200, sizeof(stbi_uc) * Width * Height * Channels);
 		m_Width = Width;
 		m_Height = Height;
 
@@ -269,11 +270,12 @@ namespace Pika {
 		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID);
 		for (uint32_t i = 0; i < 6; ++i) {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_InternalFormat,
-				m_Width, m_Height, 0, m_DataFormat, GL_UNSIGNED_BYTE, FaceData[i]);
+				FaceWidth, FaceHeight, 0, m_DataFormat, GL_UNSIGNED_BYTE, FaceData[i]);
 		}
 
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); // 通常对于 Cubemap 纹理，使用 GL_CLAMP_TO_EDGE 会更合适，避免在面之间出现边缘接缝
 		if (m_RequiredMips)
 			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		else
@@ -281,7 +283,7 @@ namespace Pika {
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		if (m_RequiredMips)
-			glGenerateMipmap(GL_TEXTURE_2D);
+			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
 		stbi_image_free(Data);
 		PK_CORE_INFO("OpenGLCubemap : Success to load a texture at {0}.", vPath.string());

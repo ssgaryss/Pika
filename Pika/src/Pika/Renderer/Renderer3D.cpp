@@ -28,20 +28,24 @@ namespace Pika {
 		Ref<Shader> m_MeshShader;
 
 		// Line
-		Ref<VertexArray> m_LineVertexArray;
-		Ref<VertexBuffer> m_LineVertexBuffer;
-		Ref<Shader> m_LineShader;
+		Ref<VertexArray> m_LineVertexArray = nullptr;
+		Ref<VertexBuffer> m_LineVertexBuffer = nullptr;
+		Ref<Shader> m_LineShader = nullptr;
 		float m_LineThickness = 0.5f;
 
 		uint32_t m_LineIndexCount = 0;
 		LineVertexData* m_pLineVertexBufferBase = nullptr;
 		LineVertexData* m_pLineVertexBufferPtr = nullptr;
 
-		// Environment Map
-		Ref<Cubemap> m_EnvironmentMap = nullptr;
+		// Skybox
+		Ref<VertexArray> m_SkyboxVertexArray = nullptr;
+		Ref<VertexBuffer> m_SkyboxVertexBuffer = nullptr;
+		Ref<Shader> m_SkyboxShader = nullptr;
 
 		struct CameraData {
 			glm::mat4 m_ViewProjectionMatrix = glm::mat4(1.0f);
+			glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
+			glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f); // Skybox渲染需要
 		};
 		CameraData m_CameraData;
 		Ref<UniformBuffer> m_CameraDataUniformBuffer;
@@ -76,8 +80,8 @@ namespace Pika {
 				LineIndicesPerBatch[i] = i;
 			}
 		}
-		Ref<IndexBuffer> pLineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer3DData::s_MaxIndicesPerBatch);
-		s_Data.m_LineVertexArray->setIndexBuffer(pLineIndexBuffer);
+		Ref<IndexBuffer> LineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer3DData::s_MaxIndicesPerBatch);
+		s_Data.m_LineVertexArray->setIndexBuffer(LineIndexBuffer);
 		delete[] LineIndicesPerBatch;
 
 		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer3DData::s_MaxVerticesPerBatch * sizeof(LineVertexData));
@@ -93,16 +97,47 @@ namespace Pika {
 		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer3DData::s_MaxVerticesPerBatch];
 		s_Data.m_LineVertexArray->unbind();
 
-		//Environment Map
-		s_Data.m_EnvironmentMap = Cubemap::Create("assets/environment/StandardCubeMap.png");
+		// Skybox
+		s_Data.m_SkyboxVertexArray = VertexArray::Create();
+		s_Data.m_SkyboxVertexArray->bind();
+		uint32_t SkyboxIndices[] = {
+			0, 1, 2,   2, 3, 0,  // Back face
+			4, 5, 6,   6, 7, 4,  // Front face
+			4, 5, 1,   1, 0, 4,  // Left face
+			3, 2, 6,   6, 7, 3,  // Right face
+			4, 0, 3,   3, 7, 4,  // Top face
+			1, 5, 6,   6, 2, 1   // Bottom face
+		};
+		Ref<IndexBuffer> SkyboxIndexBuffer = IndexBuffer::Create(SkyboxIndices, 36);
+		s_Data.m_SkyboxVertexArray->setIndexBuffer(SkyboxIndexBuffer);
+		float SkyboxVertices[] = {
+			-1.0f,  1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f, // 8个顶点
+		};
+		s_Data.m_SkyboxVertexBuffer = VertexBuffer::Create(SkyboxVertices, sizeof(SkyboxVertices));
+		BufferLayout SkyboxLayout = {
+			{Pika::ShaderDataType::Float3, "a_Position"},
+		};
+		s_Data.m_SkyboxVertexBuffer->setLayout(SkyboxLayout);
+		s_Data.m_SkyboxVertexArray->addVertexBuffer(s_Data.m_SkyboxVertexBuffer);
+		s_Data.m_SkyboxShader = Shader::Create("assets/shaders/Renderer3D/DefaultSkyboxShader.glsl");
+		s_Data.m_SkyboxVertexArray->unbind();
 
-		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 1); // glsl中binding = 1
+		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0); // glsl中binding = 1
 	}
 
 	void Renderer3D::BeginScene(const EditorCamera& vEditorCamera)
 	{
 		PK_PROFILE_FUNCTION();
 		s_Data.m_CameraData.m_ViewProjectionMatrix = vEditorCamera.getViewProjectionMatrix();
+		s_Data.m_CameraData.m_ViewMatrix = vEditorCamera.getViewMatrix();
+		s_Data.m_CameraData.m_ProjectionMatrix = vEditorCamera.getProjectionMatrix();
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
 
 		ResetStatistics();
@@ -127,74 +162,6 @@ namespace Pika {
 	void Renderer3D::Flush()
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_EnvironmentMap)
-			s_Data.m_EnvironmentMap->bind();
-
-		// TODO : DELETE !
-		float skyboxVertices[] = {
-			// Positions
-			-1.0f,  1.0f, -1.0f,
-			-1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-			 1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
-
-			-1.0f, -1.0f,  1.0f,
-			-1.0f, -1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f,  1.0f,
-			-1.0f, -1.0f,  1.0f,
-
-			 1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-
-			-1.0f, -1.0f,  1.0f,
-			-1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f, -1.0f,  1.0f,
-			-1.0f, -1.0f,  1.0f,
-
-			-1.0f,  1.0f, -1.0f,
-			 1.0f,  1.0f, -1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			-1.0f,  1.0f,  1.0f,
-			-1.0f,  1.0f, -1.0f,
-
-			-1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f,  1.0f,
-			 1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f,  1.0f,
-			 1.0f, -1.0f,  1.0f
-		};
-		auto VAO = VertexArray::Create();
-		VAO->bind();
-		auto VBO = VertexBuffer::Create(sizeof(skyboxVertices));
-		BufferLayout Layout = {
-			{Pika::ShaderDataType::Float3, "a_Position"},
-		};
-		VBO->setLayout(Layout);
-		VAO->addVertexBuffer(VBO);
-		uint32_t* Index = new uint32_t[36];
-		for (uint32_t i = 0; i < 36; ++i)
-			Index[i] = i;
-		Ref<IndexBuffer> IndexBuffer = IndexBuffer::Create(Index, 36);
-		VAO->setIndexBuffer(IndexBuffer);
-		delete[] Index;
-		s_Data.m_MeshShader->bind();
-		s_Data.m_EnvironmentMap->bind();
-		s_Data.m_MeshShader->setInt("u_EnvironmentMap", 0);
-		VAO->bind();
-		RenderCommand::DrawIndexed(VAO.get(), 36);
-
 
 		// Lines
 		if (s_Data.m_LineIndexCount) {
@@ -276,9 +243,14 @@ namespace Pika {
 		}
 	}
 
-	void Renderer3D::SetEnvironmentMap(const Ref<Cubemap>& vEnvironmentMap)
+	void Renderer3D::RenderSkybox(const Ref<Cubemap>& vSkybox)
 	{
-		s_Data.m_EnvironmentMap = vEnvironmentMap;
+		if (vSkybox) {
+			s_Data.m_SkyboxShader->bind();
+			vSkybox->bind(0);
+			s_Data.m_SkyboxShader->setInt("u_Skybox", 0);
+			RenderCommand::DrawIndexed(s_Data.m_SkyboxVertexArray.get(), 36);
+		}
 	}
 
 	void Renderer3D::ResetStatistics()

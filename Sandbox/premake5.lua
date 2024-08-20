@@ -27,6 +27,12 @@ project "Sandbox"
 		"Pika"
 	}
 
+	defines
+	{
+		"GLM_ENABLE_EXPERIMENTAL" -- 允许使用glm/gtx内容
+	}
+
+
 	filter "system:windows"
 		systemversion "latest"
 		
