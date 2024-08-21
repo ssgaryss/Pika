@@ -14,7 +14,8 @@ out vec3 v_TexCoords;
 void main() {
 	v_TexCoords = a_Position;
 	mat4 NoTranslationViewMatrix = mat4(mat3(u_ViewMatrix));
-	gl_Position = u_ProjectionMatrix * NoTranslationViewMatrix * vec4(a_Position, 1.0f);
+	//mat4 NoTranslationViewMatrix = u_ViewMatrix;
+	gl_Position = u_ProjectionMatrix * NoTranslationViewMatrix * vec4(a_Position, 1.0);
 }
 #VERTEX_END()
 

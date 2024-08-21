@@ -42,9 +42,14 @@ namespace Pika {
 		s_RendererAPI->setLineThickness(vThickness);
 	}
 
-	uint32_t RenderCommand::getAvailableTextureSlots()
+	uint32_t RenderCommand::GetAvailableTextureSlots()
 	{
 		return s_RendererAPI->getAvailableTextureSlots();
+	}
+
+	void RenderCommand::DepthMask(bool vAllow)
+	{
+		return s_RendererAPI->depthMask(vAllow);
 	}
 
 }

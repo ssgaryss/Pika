@@ -23,7 +23,7 @@ namespace Pika
 		static void SetLineThickness(float vThickness);
 		static float GetLineThickness();
 		static void DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor = glm::vec4(1.0f));
-		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f);
+		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f); // 与2D不同,vIdentityMatrix默认为单位矩阵即在平面XOZ, vSize为中心到边的距离
 		// Skybox
 		static void RenderSkybox(const Ref<Cubemap>& vSkybox);
 

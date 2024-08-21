@@ -72,4 +72,12 @@ namespace Pika
 		return static_cast<uint32_t>(maxTextureUnits);
 	}
 
+	void OpenGLRendererAPI::depthMask(bool vAllow)
+	{
+		if (vAllow)
+			glDepthMask(GL_TRUE);
+		else
+			glDepthMask(GL_FALSE); // 禁止写入深度缓冲区
+	}
+
 }

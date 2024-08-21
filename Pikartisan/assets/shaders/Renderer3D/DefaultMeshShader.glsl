@@ -24,11 +24,9 @@ layout(location = 1) out int o_EntityID;
 
 in vec3 v_TexCoords;
 
-uniform samplerCube u_EnvironmentMap;
 
 void main() {
-	vec3 EnvironmentLight = texture(u_EnvironmentMap, v_TexCoords).rgb;
-	o_FragmentColor = vec4(EnvironmentLight, 1.0f);
+	o_FragmentColor = vec4(1.0f, 1.f, 1.0f, 1.0f);
 	o_EntityID = -1;
 }
 #FRAGMENT_END()

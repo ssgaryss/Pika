@@ -102,7 +102,7 @@ namespace Pika {
 		s_Data.m_SkyboxVertexArray->bind();
 		uint32_t SkyboxIndices[] = {
 			0, 1, 2,   2, 3, 0,  // Back face
-			4, 5, 6,   6, 7, 4,  // Front face
+			4, 6, 5,   6, 4, 7,  // Front face
 			4, 5, 1,   1, 0, 4,  // Left face
 			3, 2, 6,   6, 7, 3,  // Right face
 			4, 0, 3,   3, 7, 4,  // Top face
@@ -111,14 +111,14 @@ namespace Pika {
 		Ref<IndexBuffer> SkyboxIndexBuffer = IndexBuffer::Create(SkyboxIndices, 36);
 		s_Data.m_SkyboxVertexArray->setIndexBuffer(SkyboxIndexBuffer);
 		float SkyboxVertices[] = {
-			-1.0f,  1.0f, -1.0f,
-			-1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-			 1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f,  1.0f,
-			-1.0f, -1.0f,  1.0f,
-			 1.0f, -1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f, // 8个顶点
+			-1.0f,  1.0f, -1.0f, //0
+			-1.0f, -1.0f, -1.0f, //1
+			 1.0f, -1.0f, -1.0f, //2
+			 1.0f,  1.0f, -1.0f, //3
+			-1.0f,  1.0f,  1.0f, //4
+			-1.0f, -1.0f,  1.0f, //5
+			 1.0f, -1.0f,  1.0f, //6
+			 1.0f,  1.0f,  1.0f, //7 // 8个顶点
 		};
 		s_Data.m_SkyboxVertexBuffer = VertexBuffer::Create(SkyboxVertices, sizeof(SkyboxVertices));
 		BufferLayout SkyboxLayout = {
@@ -212,29 +212,29 @@ namespace Pika {
 		if (vSize < 0.0f || vInterval < 0.0f)
 			return;
 		uint32_t NumsOfLines = static_cast<uint32_t>(vSize / vInterval);
-		glm::vec3 StartPositionHorizontal = { -vSize, -(float)NumsOfLines * vInterval, 0.0f };
-		glm::vec3 EndPositionHorizontal = { vSize, -(float)NumsOfLines * vInterval, 0.0f };
-		glm::vec3 StartPositionVertical = { -(float)NumsOfLines * vInterval, -vSize, 0.0f };
-		glm::vec3 EndPositionVertical = { -(float)NumsOfLines * vInterval, vSize, 0.0f };
+		glm::vec3 StartPositionHorizontal = { -vSize, 0.0f, -(float)NumsOfLines * vInterval };
+		glm::vec3 EndPositionHorizontal = { vSize, 0.0f, -(float)NumsOfLines * vInterval };
+		glm::vec3 StartPositionVertical = { -(float)NumsOfLines * vInterval, 0.0f, -vSize };
+		glm::vec3 EndPositionVertical = { -(float)NumsOfLines * vInterval, 0.0f, vSize };
 		for (uint32_t i = 0; i < NumsOfLines * 2 + 1; ++i) {
-			glm::vec3 horizontalOffset = glm::vec3{ 0.0f, vInterval * i, 0.0f };
-			glm::vec3 verticalOffset = glm::vec3{ vInterval * i, 0.0f, 0.0f };
+			glm::vec3 HorizontalOffset = glm::vec3{ 0.0f, 0.0f,vInterval * i };
+			glm::vec3 VerticalOffset = glm::vec3{ vInterval * i, 0.0f, 0.0f };
 			if (vIdentityMatrix != glm::mat4(1.0f)) {
-				glm::vec4 TransformedStartHorizontal = vIdentityMatrix * glm::vec4(StartPositionHorizontal + horizontalOffset, 1.0f);
-				glm::vec4 TransformedEndHorizontal = vIdentityMatrix * glm::vec4(EndPositionHorizontal + horizontalOffset, 1.0f);
+				glm::vec4 TransformedStartHorizontal = vIdentityMatrix * glm::vec4(StartPositionHorizontal + HorizontalOffset, 1.0f);
+				glm::vec4 TransformedEndHorizontal = vIdentityMatrix * glm::vec4(EndPositionHorizontal + HorizontalOffset, 1.0f);
 
-				glm::vec4 TransformedStartVertical = vIdentityMatrix * glm::vec4(StartPositionVertical + verticalOffset, 1.0f);
-				glm::vec4 TransformedEndVertical = vIdentityMatrix * glm::vec4(EndPositionVertical + verticalOffset, 1.0f);
+				glm::vec4 TransformedStartVertical = vIdentityMatrix * glm::vec4(StartPositionVertical + VerticalOffset, 1.0f);
+				glm::vec4 TransformedEndVertical = vIdentityMatrix * glm::vec4(EndPositionVertical + VerticalOffset, 1.0f);
 
 				DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
 				DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
 			}
 			else {
-				glm::vec4 TransformedStartHorizontal = glm::vec4(StartPositionHorizontal + horizontalOffset, 1.0f);
-				glm::vec4 TransformedEndHorizontal = glm::vec4(EndPositionHorizontal + horizontalOffset, 1.0f);
+				glm::vec4 TransformedStartHorizontal = glm::vec4(StartPositionHorizontal + HorizontalOffset, 1.0f);
+				glm::vec4 TransformedEndHorizontal = glm::vec4(EndPositionHorizontal + HorizontalOffset, 1.0f);
 
-				glm::vec4 TransformedStartVertical = glm::vec4(StartPositionVertical + verticalOffset, 1.0f);
-				glm::vec4 TransformedEndVertical = glm::vec4(EndPositionVertical + verticalOffset, 1.0f);
+				glm::vec4 TransformedStartVertical = glm::vec4(StartPositionVertical + VerticalOffset, 1.0f);
+				glm::vec4 TransformedEndVertical = glm::vec4(EndPositionVertical + VerticalOffset, 1.0f);
 
 				DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
 				DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
@@ -246,10 +246,13 @@ namespace Pika {
 	void Renderer3D::RenderSkybox(const Ref<Cubemap>& vSkybox)
 	{
 		if (vSkybox) {
+			RenderCommand::DepthMask(false);
 			s_Data.m_SkyboxShader->bind();
 			vSkybox->bind(0);
 			s_Data.m_SkyboxShader->setInt("u_Skybox", 0);
 			RenderCommand::DrawIndexed(s_Data.m_SkyboxVertexArray.get(), 36);
+			s_Data.m_SkyboxShader->unbind();
+			RenderCommand::DepthMask(true);
 		}
 	}
 
