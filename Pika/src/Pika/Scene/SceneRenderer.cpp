@@ -69,11 +69,11 @@ namespace Pika {
 		case Scene::SceneType::Scene3D:
 		{
 			Renderer3D::BeginScene(vEditorCamera);
+			Renderer3D::RenderSkybox(m_Context->m_Skybox);
 			if (m_Settings.m_ShowGrid)
 				Renderer3D::DrawGrid(glm::mat4(1.0f), 100.5f);
 			// TODO !
 			Renderer3D::EndScene();
-			return;
 			return;
 		}
 		}

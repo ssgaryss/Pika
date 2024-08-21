@@ -2,11 +2,11 @@
 
 #include "Camera.h"
 #include "EditorCamera.h"
+#include "Texture.h"
 
 namespace Pika
 {
 
-	//TODO : Renderer3D need to be refactored!!!
 	class Renderer3D
 	{
 	public:
@@ -14,15 +14,18 @@ namespace Pika
 		static void Initialize();
 		static void BeginScene(const EditorCamera& vEditorCamera);
 		static void BeginScene(const Camera& vCamera, const glm::mat4& vTramsform);
-		//static void DrawMesh(const Mesh& vMesh);
 		static void EndScene();
 		static void Flush();
 
+		// Mesh
+		//static void DrawMesh(const Mesh& vMesh);
 		// Line
 		static void SetLineThickness(float vThickness);
 		static float GetLineThickness();
 		static void DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor = glm::vec4(1.0f));
-		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f);
+		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f); // 与2D不同,vIdentityMatrix默认为单位矩阵即在平面XOZ, vSize为中心到边的距离
+		// Skybox
+		static void RenderSkybox(const Ref<Cubemap>& vSkybox);
 
 		struct Statistics {
 			uint32_t m_DrawCalls = 0;

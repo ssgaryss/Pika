@@ -13,9 +13,9 @@ namespace Pika
 		case RendererAPI::GraphicsAPI::None:
 			PK_CORE_ASSERT(false, "GraphicsContext: None, PIKA need a graphics API!");
 			return nullptr;
-#ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::OpenGL:
 			return CreateRef<OpenGLContext>(reinterpret_cast<GLFWwindow*>(vWindow));
+#ifdef PK_PLATFORM_WINDOWS
 		case RendererAPI::GraphicsAPI::DirectX:
 			PK_CORE_ASSERT(false, "GraphicsContext: DirectX, PIKA do not support DirectX yet!");
 			return nullptr;

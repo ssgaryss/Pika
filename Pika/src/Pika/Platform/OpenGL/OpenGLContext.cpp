@@ -5,30 +5,34 @@
 
 namespace Pika {
 
-    OpenGLContext::OpenGLContext(GLFWwindow* vWindow):
-        m_pWindowHandle{vWindow}
-    {
-    }
+	OpenGLContext::OpenGLContext(GLFWwindow* vWindow) :
+		m_pWindowHandle{ vWindow }
+	{
+	}
 
-    void OpenGLContext::Initialize()
-    {
-        PK_PROFILE_FUNCTION();
+	void OpenGLContext::Initialize()
+	{
+		PK_PROFILE_FUNCTION();
 
-        glfwMakeContextCurrent(m_pWindowHandle);
-        int Status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-        PK_CORE_ASSERT(Status, "Could not initialize gald!");
+		glfwMakeContextCurrent(m_pWindowHandle);
+		int Status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		PK_CORE_ASSERT(Status, "Could not initialize gald!");
 
-        PK_CORE_INFO("OpenGL Info :");
-        PK_CORE_INFO("     Vendor : {0}", reinterpret_cast<const char*>(glad_glGetString(GL_VENDOR)));
-        PK_CORE_INFO("   Renderer : {0}", reinterpret_cast<const char*>(glad_glGetString(GL_RENDERER)));
-        PK_CORE_INFO("    Version : {0}", reinterpret_cast<const char*>(glad_glGetString(GL_VERSION)));
-    }
+		m_Information.m_Vendor = reinterpret_cast<const char*>(glad_glGetString(GL_VENDOR));
+		m_Information.m_Renderer = reinterpret_cast<const char*>(glad_glGetString(GL_RENDERER));
+		m_Information.m_Version = reinterpret_cast<const char*>(glad_glGetString(GL_VERSION));
 
-    void OpenGLContext::swapBuffer()
-    {
-        PK_PROFILE_FUNCTION();
+		PK_CORE_INFO("OpenGL Info :");
+		PK_CORE_INFO("     Vendor : {0}", m_Information.m_Renderer);
+		PK_CORE_INFO("   Renderer : {0}", m_Information.m_Vendor);
+		PK_CORE_INFO("    Version : {0}", m_Information.m_Version);
+	}
 
-        glfwSwapBuffers(m_pWindowHandle);
-    }
+	void OpenGLContext::swapBuffer()
+	{
+		PK_PROFILE_FUNCTION();
+
+		glfwSwapBuffers(m_pWindowHandle);
+	}
 
 }

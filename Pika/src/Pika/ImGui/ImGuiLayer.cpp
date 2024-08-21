@@ -44,7 +44,7 @@ namespace Pika {
 		GLFWwindow* Window = reinterpret_cast<GLFWwindow*>(App.getWindow().getNativeWindow());
 
 		ImGui_ImplGlfw_InitForOpenGL(Window, true);
-		ImGui_ImplOpenGL3_Init("#version 410");
+		ImGui_ImplOpenGL3_Init("#version 460");
 
 	}
 	void ImGuiLayer::onDetach()

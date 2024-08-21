@@ -30,7 +30,11 @@ namespace Pika
 		// Some temporary panels
 		bool m_IsShowDemoPanel = false;
 		bool m_IsShowNewScenePanel = false;
-		void ShowNewScenePanel(bool* vIsShow);
+		void showNewScenePanel(bool* vIsShow);
+		bool m_IsShowRendererStatistics = true;
+		bool m_IsShowSceneRendererSettings = true;
+		void showRendererStatistics(bool* vIsShow);
+		void showSceneRendererSettings(bool* vIsShow);
 	private:
 		// Shortcuts
 		void initializeShortcutLibrary();          // 初始化快捷键  TODO : 有Project序列化后读取Project中包含快捷键设置
@@ -39,6 +43,7 @@ namespace Pika
 		bool onMousePressed(MouseButtonPressedEvent& vEvent);
 	private:
 		// Viewport
+		Timestep m_LastFrameTime = 0.0f;
 		bool m_IsViewportFocus = false;
 		bool m_IsViewportHovered = false;
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f }; // Viewport可用区域长宽
@@ -51,15 +56,15 @@ namespace Pika
 	private:
 		// Renderer
 		EditorCamera m_EditorCamera = {};
-		Ref<SceneRenderer> m_Renderer;
+		Ref<SceneRenderer> m_Renderer = nullptr;
 		// Scenes and SceneHierarchyPanel
 		std::filesystem::path m_ActiveScenePath; // TODO : Delete! use project path
-		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_ActiveScene = nullptr;
 		std::vector<Ref<Scene>> m_Scenes; // TODO : Not use it yet !(only one FBO for now)
 		// Panels
-		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel;
-		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
-		Scope<SceneStatePanel> m_SceneStatePanel;
+		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel = nullptr;
+		Scope<ContentBrowserPanel> m_ContentBrowserPanel = nullptr;
+		Scope<SceneStatePanel> m_SceneStatePanel = nullptr;
 
 		// TODO : remove these!
 		Ref<Texture2D> m_TextureBackround;
@@ -67,7 +72,8 @@ namespace Pika
 		Ref<Texture2D> m_TextureRPGpack_sheet_2X;
 		Ref<SubTexture2D> m_TextureTree;
 		Ref<SubTexture2D> m_TextureWater, m_TextureGround;
-		Ref<Texture2D> m_EnvironmentMap;
+		Ref<Cubemap> m_SnowSkybox;
+		Ref<Texture2D> m_SnowSkybox2D;
 
 		// TODO : Delete!
 		float Rotation = 0.0f; //for now

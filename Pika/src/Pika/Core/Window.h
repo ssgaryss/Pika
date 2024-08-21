@@ -26,6 +26,7 @@ namespace Pika {
 		virtual std::string getTitle() const = 0;
 		virtual unsigned int getWidth() const = 0;
 		virtual unsigned int getHeight() const = 0;
+		virtual const void* getContextInformation() const = 0;
 		virtual void* getNativeWindow() const = 0;
 
 		//window attributes

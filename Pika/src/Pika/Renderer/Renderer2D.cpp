@@ -108,7 +108,11 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 
-		RenderCommand::Initialize();
+		{
+			uint32_t Flags = RendererAPI::EnableBlend | RendererAPI::EnableDepthTest
+				| RendererAPI::EnableLineSmooth;
+			RenderCommand::Initialize(Flags);
+		}
 
 		// Quad
 		s_Data.m_QuadVertexArray = VertexArray::Create();
@@ -126,8 +130,8 @@ namespace Pika {
 				Offset += 4;
 			}
 		}
-		Ref<IndexBuffer> pQuadIndexBuffer = IndexBuffer::Create(QuadIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
-		s_Data.m_QuadVertexArray->setIndexBuffer(pQuadIndexBuffer);
+		Ref<IndexBuffer> QuadIndexBuffer = IndexBuffer::Create(QuadIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
+		s_Data.m_QuadVertexArray->setIndexBuffer(QuadIndexBuffer);
 		delete[] QuadIndicesPerBatch;
 
 		s_Data.m_QuadVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxVerticesPerBatch * sizeof(QuadVertexData));
@@ -155,8 +159,8 @@ namespace Pika {
 				LineIndicesPerBatch[i] = i;
 			}
 		}
-		Ref<IndexBuffer> pLineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
-		s_Data.m_LineVertexArray->setIndexBuffer(pLineIndexBuffer);
+		Ref<IndexBuffer> LineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer2DData::s_MaxIndicesPerBatch);
+		s_Data.m_LineVertexArray->setIndexBuffer(LineIndexBuffer);
 		delete[] LineIndicesPerBatch;
 
 		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxVerticesPerBatch * sizeof(LineVertexData));
@@ -173,7 +177,7 @@ namespace Pika {
 		s_Data.m_LineVertexArray->unbind();
 
 		// Default texture
-		s_Data.m_MaxTextureSlots = RenderCommand::getAvailableTextureSlots();
+		s_Data.m_MaxTextureSlots = RenderCommand::GetAvailableTextureSlots();
 		TextureSpecification TS;
 		s_Data.m_WhiteTexture = Texture2D::Create(TS);
 		uint32_t Data = 0xffffffff;
@@ -453,17 +457,29 @@ namespace Pika {
 		glm::vec3 StartPositionVertical = { -(float)NumsOfLines * vInterval, -vSize, 0.0f };
 		glm::vec3 EndPositionVertical = { -(float)NumsOfLines * vInterval, vSize, 0.0f };
 		for (uint32_t i = 0; i < NumsOfLines * 2 + 1; ++i) {
-			glm::vec3 horizontalOffset = glm::vec3{ 0.0f, vInterval * i, 0.0f };
-			glm::vec3 verticalOffset = glm::vec3{ vInterval * i, 0.0f, 0.0f };
+			glm::vec3 HorizontalOffset = glm::vec3{ 0.0f, vInterval * i, 0.0f };
+			glm::vec3 VerticalOffset = glm::vec3{ vInterval * i, 0.0f, 0.0f };
 
-			glm::vec4 TransformedStartHorizontal = vIdentityMatrix * glm::vec4(StartPositionHorizontal + horizontalOffset, 1.0f);
-			glm::vec4 TransformedEndHorizontal = vIdentityMatrix * glm::vec4(EndPositionHorizontal + horizontalOffset, 1.0f);
+			if (vIdentityMatrix != glm::mat4(1.0f)) {     // 一般只使用XOY平面Grid,节约算力
+				glm::vec4 TransformedStartHorizontal = vIdentityMatrix * glm::vec4(StartPositionHorizontal + HorizontalOffset, 1.0f);
+				glm::vec4 TransformedEndHorizontal = vIdentityMatrix * glm::vec4(EndPositionHorizontal + HorizontalOffset, 1.0f);
 
-			glm::vec4 TransformedStartVertical = vIdentityMatrix * glm::vec4(StartPositionVertical + verticalOffset, 1.0f);
-			glm::vec4 TransformedEndVertical = vIdentityMatrix * glm::vec4(EndPositionVertical + verticalOffset, 1.0f);
+				glm::vec4 TransformedStartVertical = vIdentityMatrix * glm::vec4(StartPositionVertical + VerticalOffset, 1.0f);
+				glm::vec4 TransformedEndVertical = vIdentityMatrix * glm::vec4(EndPositionVertical + VerticalOffset, 1.0f);
 
-			DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
-			DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
+				DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
+				DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
+			}
+			else {
+				glm::vec4 TransformedStartHorizontal = glm::vec4(StartPositionHorizontal + HorizontalOffset, 1.0f);
+				glm::vec4 TransformedEndHorizontal = glm::vec4(EndPositionHorizontal + HorizontalOffset, 1.0f);
+
+				glm::vec4 TransformedStartVertical = glm::vec4(StartPositionVertical + VerticalOffset, 1.0f);
+				glm::vec4 TransformedEndVertical = glm::vec4(EndPositionVertical + VerticalOffset, 1.0f);
+
+				DrawLine(glm::vec3(TransformedStartHorizontal), glm::vec3(TransformedEndHorizontal), vColor);
+				DrawLine(glm::vec3(TransformedStartVertical), glm::vec3(TransformedEndVertical), vColor);
+			}
 		}
 	}
 

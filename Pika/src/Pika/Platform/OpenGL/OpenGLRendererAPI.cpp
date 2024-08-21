@@ -5,16 +5,21 @@
 
 namespace Pika
 {
-	void OpenGLRendererAPI::Initialize()
+	void OpenGLRendererAPI::Initialize(uint32_t vFlags)
 	{
 		PK_PROFILE_FUNCTION();
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_LINE_SMOOTH);  //MSAA
-
+		if (vFlags & RendererAPI::EnableBlend) {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+		else glDisable(GL_BLEND);
+		if (vFlags & RendererAPI::EnableDepthTest) glEnable(GL_DEPTH_TEST);
+		else glDisable(GL_DEPTH_TEST);
+		if (vFlags & RendererAPI::EnableLineSmooth) glEnable(GL_LINE_SMOOTH);  //MSAA
+		else glDisable(GL_LINE_SMOOTH);
+		if (vFlags & RendererAPI::EnableCullBackFace) glEnable(GL_CULL_FACE);  // Culling
+		else glDisable(GL_CULL_FACE);
 	}
 	void Pika::OpenGLRendererAPI::clear()
 	{
@@ -65,6 +70,14 @@ namespace Pika
 		GLint maxTextureUnits = 0;
 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
 		return static_cast<uint32_t>(maxTextureUnits);
+	}
+
+	void OpenGLRendererAPI::depthMask(bool vAllow)
+	{
+		if (vAllow)
+			glDepthMask(GL_TRUE);
+		else
+			glDepthMask(GL_FALSE); // 禁止写入深度缓冲区
 	}
 
 }
