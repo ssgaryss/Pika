@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "UniformBuffer.h"
+#include "Pika/Scene/Primitive.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
@@ -12,24 +13,6 @@
 namespace Pika {
 
 #define MAX_QUADS_PER_BATCH 10000 // for now
-
-	struct QuadVertexData {
-		glm::vec3 m_Position = glm::vec3(0.0f);
-		glm::vec4 m_Color = glm::vec4(1.0f);
-		glm::vec2 m_TexCoord = glm::vec2(0.0f);
-		int m_TextureIndex = 0;
-		float m_TilingFactor = 1.0f;
-		// TODO : Editor only
-		int m_EntityID = -1;
-	};
-
-	struct LineVertexData
-	{
-		glm::vec3 m_Position = glm::vec3(0.0f);
-		glm::vec4 m_Color = glm::vec4(1.0f);
-
-		int m_EntityID = -1;
-	};
 
 	struct Renderer2DData {
 	public:

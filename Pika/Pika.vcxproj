@@ -183,6 +183,7 @@
     <ClInclude Include="src\Pika\Renderer\EditorCamera.h" />
     <ClInclude Include="src\Pika\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Pika\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\Pika\Renderer\RenderBatch.h" />
     <ClInclude Include="src\Pika\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Pika\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Pika\Renderer\Renderer3D.h" />
@@ -195,6 +196,10 @@
     <ClInclude Include="src\Pika\Renderer\VertexArray.h" />
     <ClInclude Include="src\Pika\Scene\Components.h" />
     <ClInclude Include="src\Pika\Scene\Entity.h" />
+    <ClInclude Include="src\Pika\Scene\Material.h" />
+    <ClInclude Include="src\Pika\Scene\Mesh.h" />
+    <ClInclude Include="src\Pika\Scene\Model.h" />
+    <ClInclude Include="src\Pika\Scene\Primitive.h" />
     <ClInclude Include="src\Pika\Scene\Scene.h" />
     <ClInclude Include="src\Pika\Scene\SceneCamera.h" />
     <ClInclude Include="src\Pika\Scene\SceneRenderer.h" />
@@ -647,6 +652,7 @@
     <ClCompile Include="src\Pika\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Pika\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Pika\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="src\Pika\Renderer\RenderBatch.cpp" />
     <ClCompile Include="src\Pika\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Pika\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Pika\Renderer\Renderer3D.cpp" />
@@ -657,6 +663,9 @@
     <ClCompile Include="src\Pika\Renderer\UniformBuffer.cpp" />
     <ClCompile Include="src\Pika\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Pika\Scene\Entity.cpp" />
+    <ClCompile Include="src\Pika\Scene\Material.cpp" />
+    <ClCompile Include="src\Pika\Scene\Mesh.cpp" />
+    <ClCompile Include="src\Pika\Scene\Model.cpp" />
     <ClCompile Include="src\Pika\Scene\Scene.cpp" />
     <ClCompile Include="src\Pika\Scene\SceneCamera.cpp" />
     <ClCompile Include="src\Pika\Scene\SceneRenderer.cpp" />

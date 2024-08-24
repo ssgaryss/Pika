@@ -3,18 +3,11 @@
 #include "RenderCommand.h"
 #include "Shader.h"
 #include "UniformBuffer.h"
+#include "Pika/Scene/Primitive.h"
 
 namespace Pika {
 
 #define MAX_MESHES_PER_BATCH 10000 // for now
-
-	struct LineVertexData
-	{
-		glm::vec3 m_Position = glm::vec3(0.0f);
-		glm::vec4 m_Color = glm::vec4(1.0f);
-
-		int m_EntityID = -1;
-	};
 
 	struct Renderer3DData
 	{
