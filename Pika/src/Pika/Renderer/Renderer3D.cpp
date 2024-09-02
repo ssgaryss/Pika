@@ -28,6 +28,7 @@ namespace Pika {
 		float m_LineThickness = 0.5f;
 
 		uint32_t m_LineIndexCount = 0;
+		Ref<RenderBatch<LineVertexData>> m_LineVertexDataBatch = nullptr;
 		LineVertexData* m_pLineVertexBufferBase = nullptr;
 		LineVertexData* m_pLineVertexBufferPtr = nullptr;
 
@@ -88,6 +89,7 @@ namespace Pika {
 		s_Data.m_LineVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
 		s_Data.m_LineShader = Shader::Create("assets/shaders/Renderer3D/DefaultLineShader.glsl");
 
+		s_Data.m_LineVertexDataBatch = CreateRef<RenderBatch<LineVertexData>>(Renderer3DData::s_MaxVerticesPerBatch);
 		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer3DData::s_MaxVerticesPerBatch];
 		s_Data.m_LineVertexArray->unbind();
 
