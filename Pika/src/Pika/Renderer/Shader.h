@@ -43,7 +43,7 @@ namespace Pika
 		virtual void setBool(const std::string& vName, const bool vValue) const = 0;
 		virtual void setIntArray(const std::string& vName, const int* vValue, uint32_t vCount) const = 0;
 
-		static Ref<Shader> Create(const std::string& vFilePath);
+		static Ref<Shader> Create(const std::filesystem::path& vFilePath);
 		static Ref<Shader> Create(const std::string& vName, const std::string& vFilePath);
 		static Ref<Shader> Create(const std::string& vName, const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
 	public:

@@ -10,8 +10,8 @@ namespace Pika
 	class OpenGLShader : public Shader
 	{
 	public:
-		OpenGLShader(const std::string& vFilePath);
-		OpenGLShader(const std::string& vName, const std::string& vFilePath);
+		OpenGLShader(const std::filesystem::path& vFilePath);
+		OpenGLShader(const std::string& vName, const std::filesystem::path& vFilePath);
 		OpenGLShader(const std::string& vName, const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
 		~OpenGLShader();
 		void bind() const override;
@@ -33,12 +33,12 @@ namespace Pika
 		void setIntArray(const std::string& vName, const int* vValue, uint32_t vCount) const override;
 	private:
 		void compileAndLinkShader(const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
-		std::string readFile(const std::string& vPath);
+		std::string readFile(const std::filesystem::path& vPath);
 		std::unordered_map<GLenum, std::string> preProcess(const std::string& vSources); //Analyse the shaders in file
 	private:
 		uint32_t m_RendererID = 0; //shader program ID
 		std::string m_Name;
-		std::string m_FilePath;
+		std::filesystem::path m_FilePath;
 		std::unordered_map<GLenum, std::string> m_OpenGLSourceCode;
 
 	};

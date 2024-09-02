@@ -1630,7 +1630,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Renderer\RenderBatch.cpp" />
     <ClCompile Include="src\Pika\Scene\Material.cpp" />
     <ClCompile Include="src\Pika\Scene\Mesh.cpp" />
     <ClCompile Include="src\Pika\Scene\Model.cpp" />

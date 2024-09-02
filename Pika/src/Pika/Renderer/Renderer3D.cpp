@@ -3,6 +3,7 @@
 #include "RenderCommand.h"
 #include "Shader.h"
 #include "UniformBuffer.h"
+#include "RenderBatch.h"
 #include "Pika/Scene/Primitive.h"
 
 namespace Pika {

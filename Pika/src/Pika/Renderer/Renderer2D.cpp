@@ -148,9 +148,9 @@ namespace Pika {
 
 		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxVerticesPerBatch * sizeof(LineVertexData));
 		BufferLayout LineLayout = {
-			{Pika::ShaderDataType::Float3, "a_Position"},
-			{Pika::ShaderDataType::Float4, "a_Color"},
-			{Pika::ShaderDataType::Int,    "a_EntityID"}
+			{ Pika::ShaderDataType::Float3, "a_Position" },
+			{ Pika::ShaderDataType::Float4, "a_Color" },
+			{ Pika::ShaderDataType::Int,    "a_EntityID" }
 		};
 		s_Data.m_LineVertexBuffer->setLayout(LineLayout);
 		s_Data.m_LineVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
