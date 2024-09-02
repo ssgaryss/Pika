@@ -4,7 +4,7 @@
 
 namespace Pika
 {
-	OpenGLShader::OpenGLShader(const std::string& vFilePath)
+	OpenGLShader::OpenGLShader(const std::filesystem::path& vFilePath)
 		: m_FilePath{ vFilePath }
 	{
 		PK_PROFILE_FUNCTION();
@@ -21,7 +21,7 @@ namespace Pika
 		}
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& vName, const std::string& vFilePath)
+	OpenGLShader::OpenGLShader(const std::string& vName, const std::filesystem::path& vFilePath)
 		: OpenGLShader{ vFilePath }
 	{
 		m_Name = vName;
@@ -269,19 +269,17 @@ namespace Pika
 		glDetachShader(m_RendererID, FragmentShader);
 	}
 
-	std::string OpenGLShader::readFile(const std::string& vPath)
+	std::string OpenGLShader::readFile(const std::filesystem::path& vPath)
 	{
 		PK_PROFILE_FUNCTION();
 
-		size_t LastSlashIndex = vPath.find_last_of('/');
-		size_t LastDotIndex = vPath.find_last_of('.');
-		if (LastSlashIndex != std::string::npos && LastDotIndex != std::string::npos && LastSlashIndex < LastDotIndex) {
-			m_Name = vPath.substr(LastSlashIndex + 1, LastDotIndex - LastSlashIndex - 1);
+		if (!vPath.empty() && vPath.has_filename() && vPath.has_extension()) {
+			m_Name = vPath.stem().string();
 		}
 		std::string Result;
 		std::ifstream in(vPath, std::ios::in | std::ios::binary);
 		if (!in.good()) {
-			throw std::runtime_error("Path : " + vPath);
+			throw std::runtime_error("Path : " + vPath.string());
 		}
 		in.seekg(0, std::ios_base::end);
 		size_t Size = in.tellg();
@@ -293,7 +291,7 @@ namespace Pika
 		else {
 			PK_CORE_INFO("OpenGLShader : load an empty shader file!");
 		}
-		PK_CORE_INFO("OpenGLShader : Success to load a shader at {0}.", vPath);
+		PK_CORE_INFO("OpenGLShader : Success to load a shader at {0}.", vPath.string());
 		return Result;
 	}
 

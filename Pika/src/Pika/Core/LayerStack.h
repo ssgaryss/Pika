@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Pika/Core/Layer.h"
 
 namespace Pika
@@ -25,7 +24,7 @@ namespace Pika
 
 	private:
 		std::vector<Layer*> m_pLayers;
-		unsigned int m_LayerInsertIndex = 0; //push layer to the index, push overlay layer to the back 
+		uint32_t m_LayerInsertIndex = 0; // push layer to the index, push overlay layer to the back 
 	};
 }
 

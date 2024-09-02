@@ -65,8 +65,7 @@ namespace Pika
 		m_TextureTree = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
 		m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
 		m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
-		m_SnowSkybox = Cubemap::Create("assets/environment/skybox/LDR/snowy_park_01_2k.png");
-		m_SnowSkybox2D = Texture2D::Create("assets/environment/skybox/LDR/snowy_park_01_2k.png");
+		m_SnowSkybox = Cubemap::Create("assets/environment/skybox/LDR/snowy_forest_path_01_2k.png");
 		m_Renderer->setSkybox(m_SnowSkybox);
 	}
 

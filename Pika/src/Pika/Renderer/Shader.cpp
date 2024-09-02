@@ -26,7 +26,7 @@ namespace Pika {
 		return nullptr;
 	}
 
-	Ref<Shader> Shader::Create(const std::string& vFilePath)
+	Ref<Shader> Shader::Create(const std::filesystem::path& vFilePath)
 	{
 		switch (RendererAPI::getAPI())
 		{

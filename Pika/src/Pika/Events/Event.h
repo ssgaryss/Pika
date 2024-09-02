@@ -1,5 +1,4 @@
 #pragma once
-#include "pkpch.h"
 #include "Pika/Core/Base.h"
 
 namespace Pika {

@@ -652,7 +652,6 @@
     <ClCompile Include="src\Pika\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Pika\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Pika\Renderer\GraphicsContext.cpp" />
-    <ClCompile Include="src\Pika\Renderer\RenderBatch.cpp" />
     <ClCompile Include="src\Pika\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Pika\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Pika\Renderer\Renderer3D.cpp" />
