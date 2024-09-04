@@ -26,7 +26,7 @@ in vec3 v_TexCoords;
 
 
 void main() {
-	o_FragmentColor = vec4(1.0f, 1.f, 1.0f, 1.0f);
+	o_FragmentColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	o_EntityID = -1;
 }
 #FRAGMENT_END()

@@ -86,7 +86,7 @@ namespace Pika {
 		aiMaterial* material = vScene->mMaterials[vMesh->mMaterialIndex];
 		//m_Textures = 
 		// TODO !
-		return {};
+		return StaticMesh(Vertices, Indices, nullptr);
 	}
 
 }

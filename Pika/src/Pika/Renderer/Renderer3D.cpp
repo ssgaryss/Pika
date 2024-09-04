@@ -14,11 +14,6 @@ namespace Pika {
 	struct Renderer3DData
 	{
 	public:
-		// TODO : Change it
-		static const uint32_t s_MaxMeshesPerBatch = MAX_MESHES_PER_BATCH;
-		static const uint32_t s_MaxMeshVerticesPerBatch = s_MaxMeshesPerBatch * 3;
-		static const uint32_t s_MaxMeshIndicesPerBatch = s_MaxMeshesPerBatch * 3;
-
 		// Mesh
 		Ref<Shader> m_MeshShader;
 
@@ -62,6 +57,7 @@ namespace Pika {
 			RenderCommand::Initialize(Flags);
 		}
 
+		// Mesh
 		s_Data.m_MeshShader = Shader::Create("assets/shaders/Renderer3D/DefaultMeshShader.glsl");
 
 		// Line
@@ -166,6 +162,31 @@ namespace Pika {
 			RenderCommand::DrawLines(s_Data.m_LineVertexArray.get(), s_Data.m_LineIndexCount);
 			s_Data.m_Statistics.m_DrawCalls++;
 		}
+	}
+
+	void Renderer3D::DrawStaticMesh(const StaticMesh& vMesh)
+	{
+		PK_PROFILE_FUNCTION();
+		// TODO : Change !
+		Ref<VertexArray> m_MeshVertexArray = VertexArray::Create();
+		m_MeshVertexArray->bind();
+		Ref<VertexBuffer> m_MeshVertexBuffer = VertexBuffer::Create(vMesh.getVertices().data(), vMesh.getVertices().size() * sizeof(StaticMeshVertexData));
+		Ref<IndexBuffer> m_MeshIndexBuffer = IndexBuffer::Create(const_cast<uint32_t*>(vMesh.getIndices().data()), vMesh.getIndices().size());
+		BufferLayout MeshLayout = {
+			{Pika::ShaderDataType::Float3, "a_Position"},
+			{Pika::ShaderDataType::Float3, "a_Normal"},
+			{Pika::ShaderDataType::Float2, "a_TexCoord"},
+			{Pika::ShaderDataType::Float4, "a_Color"},
+			{Pika::ShaderDataType::Int,    "a_EntityID"}
+		};
+		m_MeshVertexArray->setIndexBuffer(m_MeshIndexBuffer);
+		m_MeshVertexBuffer->setLayout(MeshLayout);
+		m_MeshVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
+		m_MeshVertexArray->unbind();
+		
+		s_Data.m_MeshShader->bind();
+		RenderCommand::DrawIndexed(m_MeshVertexArray.get(), m_MeshIndexBuffer->getCount());
+		s_Data.m_Statistics.m_MeshCount++;
 	}
 
 	void Renderer3D::SetLineThickness(float vThickness)

@@ -27,8 +27,8 @@ namespace Pika {
 		glm::vec3 m_Position;                   // 顶点位置 (x, y, z)
 		glm::vec3 m_Normal;                     // 顶点法线
 		glm::vec2 m_TexCoords;                  // 纹理坐标 (u, v)
-		glm::vec3 m_Tangent;                    // 切线向量 (可选，用于法线贴图)
-		glm::vec3 m_Bitangent;                  // 副切线向量 (可选，用于法线贴图)
+
+		int m_EntityID = -1;
 		StaticMeshVertexData() = default;
 	};
 

@@ -14,7 +14,7 @@ namespace Pika
 		glBufferData(GL_ARRAY_BUFFER, vSize, nullptr, GL_DYNAMIC_DRAW);
 	}
 
-	Pika::OpenGLVertexBuffer::OpenGLVertexBuffer(float* vVertices, uint32_t vSize)
+	Pika::OpenGLVertexBuffer::OpenGLVertexBuffer(const void* vVertices, uint32_t vSize)
 	{
 		PK_PROFILE_FUNCTION();
 

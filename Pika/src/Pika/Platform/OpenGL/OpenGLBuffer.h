@@ -8,7 +8,7 @@ namespace Pika
 	{
 	public:
 		OpenGLVertexBuffer(uint32_t vSize);
-		OpenGLVertexBuffer(float* vVertices, uint32_t vSize);
+		OpenGLVertexBuffer(const void* vVertices, uint32_t vSize);
 		OpenGLVertexBuffer(const OpenGLVertexBuffer& vVertexBuffer) = default;
 		OpenGLVertexBuffer& operator=(const OpenGLVertexBuffer& rhs) = default;
 		~OpenGLVertexBuffer() override;
