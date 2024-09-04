@@ -7,15 +7,30 @@
 
 namespace Pika {
 
+	namespace Utils {
+
+		static bool IsModel(const std::filesystem::path& vPath) {
+			return vPath.extension().string() == ".obj";
+		}
+
+	}
 
 	Model::Model(const std::filesystem::path& vPath)
 		: m_Path{ vPath }
 	{
-		loadModel(m_Path);
+		try {
+			loadModel(m_Path);
+		}
+		catch (const std::runtime_error& e) {
+			PK_CORE_WARN(e.what());
+		}
 	}
 
 	void Model::loadModel(const std::filesystem::path& vPath)
 	{
+		if (!Utils::IsModel(vPath))
+			throw std::runtime_error(std::format(R"(Model : Fail to load the model with unsupported format at "{0}".)", vPath.string()));
+
 		Assimp::Importer Importer;
 		const aiScene* pScene = Importer.ReadFile(vPath.string(),
 			aiProcess_Triangulate
@@ -24,14 +39,12 @@ namespace Pika {
 			| aiProcess_CalcTangentSpace);
 
 		if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
-		{
-			PK_CORE_ERROR("Model : Fail to load model at {0}.", vPath.string());
-			std::cerr << "ERROR::ASSIMP::" << Importer.GetErrorString() << std::endl;
-			return;
-		}
+			throw std::runtime_error(std::format(R"(Model : Fail to load the model at "{0}".)", vPath.string()) + "\nERROR::ASSIMP::" + Importer.GetErrorString());
 
 		m_Path = vPath;
 		processNode(pScene->mRootNode, pScene);
+		PK_CORE_INFO("Model : Success to load a model at {0}.", vPath.string());
+		m_IsLoaded = true;
 	}
 
 	void Model::processNode(aiNode* vNode, const aiScene* vScene)
@@ -66,10 +79,10 @@ namespace Pika {
 				Vertex.m_TexCoords = glm::vec2(0.0f, 0.0f);
 			}
 
-			if (vMesh->HasTangentsAndBitangents()) {
-				Vertex.m_Tangent = glm::vec3(vMesh->mTangents[i].x, vMesh->mTangents[i].y, vMesh->mTangents[i].z);
-				Vertex.m_Bitangent = glm::vec3(vMesh->mBitangents[i].x, vMesh->mBitangents[i].y, vMesh->mBitangents[i].z);
-			}
+			//if (vMesh->HasTangentsAndBitangents()) {
+			//	Vertex.m_Tangent = glm::vec3(vMesh->mTangents[i].x, vMesh->mTangents[i].y, vMesh->mTangents[i].z);
+			//	Vertex.m_Bitangent = glm::vec3(vMesh->mBitangents[i].x, vMesh->mBitangents[i].y, vMesh->mBitangents[i].z);
+			//}
 
 			Vertices.emplace_back(Vertex);
 		}
@@ -86,7 +99,7 @@ namespace Pika {
 		aiMaterial* material = vScene->mMaterials[vMesh->mMaterialIndex];
 		//m_Textures = 
 		// TODO !
-		return {};
+		return StaticMesh(Vertices, Indices, nullptr);
 	}
 
 }

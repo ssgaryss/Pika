@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneCamera.h"
 #include "Pika/Core/UUID.h"
+#include "Model.h"
 #include "Pika/Renderer/Texture.h"
 #include <string>
 #include <glm/glm.hpp>
@@ -52,6 +53,25 @@ namespace Pika
 		}
 	};
 
+	struct CameraComponent
+	{
+		SceneCamera m_Camera;
+		bool m_IsFixedAspectRatio = false;
+
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+	};
+
+	// 3D only
+	struct ModelComponent
+	{
+		Ref<Model> m_Model = nullptr;
+
+		ModelComponent() = default;
+		ModelComponent(const ModelComponent&) = default;
+	};
+
+	// 2D only
 	struct SpriteRendererComponent
 	{
 		glm::vec4 m_Color{ 1.0f, 1.0f, 1.0f, 1.0f };
@@ -61,15 +81,6 @@ namespace Pika
 		SpriteRendererComponent(const glm::vec4& vColor)
 			: m_Color{ vColor } {}
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-	};
-
-	struct CameraComponent
-	{
-		SceneCamera m_Camera;
-		bool m_IsFixedAspectRatio = false;
-
-		CameraComponent() = default;
-		CameraComponent(const CameraComponent&) = default;
 	};
 
 	struct Rigidbody2DComponent

@@ -25,7 +25,7 @@ namespace Pika {
 		return nullptr;
 	}
 
-	Ref<VertexBuffer> VertexBuffer::Create(float* vVertices, uint32_t vSize)
+	Ref<VertexBuffer> VertexBuffer::Create(const void* vVertices, uint32_t vSize)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -45,7 +45,7 @@ namespace Pika {
 
 
 	////////////////////////////IndexBuffer/////////////////////////////////
-	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* vIndices, uint32_t vCount)
+	Ref<IndexBuffer> IndexBuffer::Create(const uint32_t* vIndices, uint32_t vCount)
 	{
 		switch (RendererAPI::getAPI())
 		{

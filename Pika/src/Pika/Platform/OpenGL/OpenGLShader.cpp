@@ -17,7 +17,7 @@ namespace Pika
 		}
 		catch (const std::runtime_error& e)
 		{
-			PK_CORE_ERROR("OpenGLShader : fail to load shader file!\n {0}", e.what());
+			PK_CORE_WARN("OpenGLShader : Fail to load shader file!\n {0}", e.what());
 		}
 	}
 

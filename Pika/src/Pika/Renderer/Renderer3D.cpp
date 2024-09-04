@@ -8,20 +8,23 @@
 
 namespace Pika {
 
-#define MAX_MESHES_PER_BATCH 10000 // for now
+#define MAX_TRIANGLES_PER_BATCH 10000 // for now
+#define MAX_LINES_PER_BATCH 10000 // for now
 
 	struct Renderer3DData
 	{
 	public:
-		// TODO : Change it
-		static const uint32_t s_MaxQuadsPerBatch = MAX_MESHES_PER_BATCH;
-		static const uint32_t s_MaxVerticesPerBatch = s_MaxQuadsPerBatch * 3;
-		static const uint32_t s_MaxIndicesPerBatch = s_MaxQuadsPerBatch * 3;
-
-		// Mesh
-		Ref<Shader> m_MeshShader;
+		static const uint32_t s_MaxTrianglesPerBatch = MAX_TRIANGLES_PER_BATCH;
+		static const uint32_t s_MaxTriangleVerticesPerBatch = s_MaxTrianglesPerBatch * 3; // 此处是为了先创建Buffer提高性能
+		// StaticMesh
+		Ref<VertexArray> m_StaticMeshVertexArray = nullptr;
+		Ref<VertexBuffer> m_StaticMeshVertexBuffer = nullptr;
+		Ref<Shader> m_StaticMeshShader;
 
 		// Line
+		static const uint32_t s_MaxLinesPerBatch = MAX_LINES_PER_BATCH;
+		static const uint32_t s_MaxLineVerticesPerBatch = s_MaxLinesPerBatch * 2;
+		static const uint32_t s_MaxLineIndicesPerBatch = s_MaxLinesPerBatch * 2;
 		Ref<VertexArray> m_LineVertexArray = nullptr;
 		Ref<VertexBuffer> m_LineVertexBuffer = nullptr;
 		Ref<Shader> m_LineShader = nullptr;
@@ -29,8 +32,6 @@ namespace Pika {
 
 		uint32_t m_LineIndexCount = 0;
 		Ref<RenderBatch<LineVertexData>> m_LineVertexDataBatch = nullptr;
-		LineVertexData* m_pLineVertexBufferBase = nullptr;
-		LineVertexData* m_pLineVertexBufferPtr = nullptr;
 
 		// Skybox
 		Ref<VertexArray> m_SkyboxVertexArray = nullptr;
@@ -46,10 +47,6 @@ namespace Pika {
 		Ref<UniformBuffer> m_CameraDataUniformBuffer;
 
 		Renderer3D::Statistics m_Statistics; // Record the renderer states
-	public:
-		~Renderer3DData() {
-			delete[] m_pLineVertexBufferBase;
-		}
 	};
 
 	static Renderer3DData s_Data;
@@ -64,22 +61,35 @@ namespace Pika {
 			RenderCommand::Initialize(Flags);
 		}
 
-		s_Data.m_MeshShader = Shader::Create("assets/shaders/Renderer3D/DefaultMeshShader.glsl");
+		// StaticMesh
+		s_Data.m_StaticMeshVertexArray = VertexArray::Create();
+		s_Data.m_StaticMeshVertexArray->bind();
+		s_Data.m_StaticMeshVertexBuffer = VertexBuffer::Create(Renderer3DData::s_MaxTriangleVerticesPerBatch * sizeof(StaticMeshVertexData));
+		BufferLayout StaticMeshLayout = {
+			{Pika::ShaderDataType::Float3, "a_Position"},
+			{Pika::ShaderDataType::Float3, "a_Normal"},
+			{Pika::ShaderDataType::Float2, "a_TexCoord"},
+			{Pika::ShaderDataType::Int,    "a_EntityID"}
+		};
+		s_Data.m_StaticMeshVertexBuffer->setLayout(StaticMeshLayout);
+		s_Data.m_StaticMeshVertexArray->addVertexBuffer(s_Data.m_StaticMeshVertexBuffer);
+		s_Data.m_StaticMeshShader = Shader::Create("assets/shaders/Renderer3D/DefaultStaticMeshShader.glsl");
+		s_Data.m_StaticMeshVertexArray->unbind();
 
 		// Line
 		s_Data.m_LineVertexArray = VertexArray::Create();
 		s_Data.m_LineVertexArray->bind();
-		uint32_t* LineIndicesPerBatch = new uint32_t[Renderer3DData::s_MaxIndicesPerBatch];
+		uint32_t* LineIndicesPerBatch = new uint32_t[Renderer3DData::s_MaxLineIndicesPerBatch];
 		{
-			for (uint32_t i = 0; i < Renderer3DData::s_MaxIndicesPerBatch; i++) {
+			for (uint32_t i = 0; i < Renderer3DData::s_MaxLineIndicesPerBatch; i++) {
 				LineIndicesPerBatch[i] = i;
 			}
 		}
-		Ref<IndexBuffer> LineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer3DData::s_MaxIndicesPerBatch);
+		Ref<IndexBuffer> LineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer3DData::s_MaxLineIndicesPerBatch);
 		s_Data.m_LineVertexArray->setIndexBuffer(LineIndexBuffer);
 		delete[] LineIndicesPerBatch;
 
-		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer3DData::s_MaxVerticesPerBatch * sizeof(LineVertexData));
+		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer3DData::s_MaxLineVerticesPerBatch * sizeof(LineVertexData));
 		BufferLayout LineLayout = {
 			{Pika::ShaderDataType::Float3, "a_Position"},
 			{Pika::ShaderDataType::Float4, "a_Color"},
@@ -89,8 +99,7 @@ namespace Pika {
 		s_Data.m_LineVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
 		s_Data.m_LineShader = Shader::Create("assets/shaders/Renderer3D/DefaultLineShader.glsl");
 
-		s_Data.m_LineVertexDataBatch = CreateRef<RenderBatch<LineVertexData>>(Renderer3DData::s_MaxVerticesPerBatch);
-		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer3DData::s_MaxVerticesPerBatch];
+		s_Data.m_LineVertexDataBatch = CreateRef<RenderBatch<LineVertexData>>(Renderer3DData::s_MaxLineVerticesPerBatch);
 		s_Data.m_LineVertexArray->unbind();
 
 		// Skybox
@@ -160,16 +169,36 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 
 		// Lines
-		if (s_Data.m_LineIndexCount) {
+		if (!s_Data.m_LineVertexDataBatch->empty()) {
 			// Set Buffer Data
-			ptrdiff_t BatchElementNums = s_Data.m_pLineVertexBufferPtr - s_Data.m_pLineVertexBufferBase;
-			uint32_t Size = static_cast<uint32_t>(BatchElementNums) * sizeof(LineVertexData);
-			s_Data.m_LineVertexBuffer->setData(s_Data.m_pLineVertexBufferBase, Size);
+			s_Data.m_LineVertexBuffer->setData(s_Data.m_LineVertexDataBatch->data(), s_Data.m_LineVertexDataBatch->size());
 
 			s_Data.m_LineShader->bind();
 			RenderCommand::SetLineThickness(s_Data.m_LineThickness);
 			RenderCommand::DrawLines(s_Data.m_LineVertexArray.get(), s_Data.m_LineIndexCount);
 			s_Data.m_Statistics.m_DrawCalls++;
+		}
+	}
+
+	void Renderer3D::DrawStaticMesh(const StaticMesh& vMesh)
+	{
+		PK_PROFILE_FUNCTION();
+		
+		Ref<IndexBuffer> StaticMeshIndexBuffer = IndexBuffer::Create(vMesh.getIndicesData(), vMesh.getIndicesCount());
+		s_Data.m_StaticMeshVertexArray->setIndexBuffer(StaticMeshIndexBuffer);
+		s_Data.m_StaticMeshVertexBuffer->setData(vMesh.getVerticesData(), vMesh.getVerticesSize());
+
+		s_Data.m_StaticMeshShader->bind();
+		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
+		s_Data.m_Statistics.m_MeshCount++;
+	}
+
+	void Renderer3D::DrawModel(const glm::mat4& vTransform, const ModelComponent& vModel, int vEntityID)
+	{
+		PK_PROFILE_FUNCTION();
+
+		for (const auto& Mesh : vModel.m_Model->getMeshes()) {
+			DrawStaticMesh(Mesh);
 		}
 	}
 
@@ -186,20 +215,16 @@ namespace Pika {
 	void Renderer3D::DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor)
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_LineIndexCount >= Renderer3DData::s_MaxIndicesPerBatch)
-			NextBatch();
-
-		s_Data.m_pLineVertexBufferPtr->m_Position = vStartPosition;
-		s_Data.m_pLineVertexBufferPtr->m_Color = vColor;
-		s_Data.m_pLineVertexBufferPtr->m_EntityID = -1;
-		s_Data.m_pLineVertexBufferPtr++;
-
-		s_Data.m_pLineVertexBufferPtr->m_Position = vEndPosition;
-		s_Data.m_pLineVertexBufferPtr->m_Color = vColor;
-		s_Data.m_pLineVertexBufferPtr->m_EntityID = -1;
-		s_Data.m_pLineVertexBufferPtr++;
-
-		s_Data.m_LineIndexCount += 2;
+		try {
+			if (s_Data.m_LineIndexCount >= Renderer3DData::s_MaxLineIndicesPerBatch)
+				NextBatch();
+			s_Data.m_LineVertexDataBatch->add({ vStartPosition, vColor, -1 });
+			s_Data.m_LineVertexDataBatch->add({ vEndPosition, vColor, -1 });
+			s_Data.m_LineIndexCount += 2;
+		}
+		catch (const std::runtime_error& e) {
+			PK_CORE_WARN("RenderBatch : {}", e.what());
+		}
 		s_Data.m_Statistics.m_LineCount++;
 	}
 
@@ -265,8 +290,8 @@ namespace Pika {
 	void Renderer3D::StartBatch()
 	{
 		// Line
+		s_Data.m_LineVertexDataBatch->reset();
 		s_Data.m_LineIndexCount = 0;
-		s_Data.m_pLineVertexBufferPtr = s_Data.m_pLineVertexBufferBase;
 	}
 
 	void Renderer3D::NextBatch()

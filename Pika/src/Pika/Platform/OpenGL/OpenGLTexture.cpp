@@ -56,11 +56,10 @@ namespace Pika {
 		try
 		{
 			loadTexture(vPath);
-			m_IsLoaded = true;
 		}
 		catch (const std::runtime_error& e)
 		{
-			PK_CORE_ERROR("OpenGLTexture2D : Fail to load texture at {0}", e.what());
+			PK_CORE_WARN(e.what());
 		}
 	}
 
@@ -105,10 +104,11 @@ namespace Pika {
 		stbi_set_flip_vertically_on_load(true);
 
 		if (!Utils::IsLDR(vPath))
-			return;
+			throw std::runtime_error(std::format(R"(OpenGLTexture2D : Fail to load the texture with unsupported format at "{0}".)", vPath.string()));
 
 		stbi_uc* Data = stbi_load(vPath.string().c_str(), &Width, &Height, &Channels, 0); // 0 means desired channels = Channels
-		if (!Data) throw std::runtime_error("Path : " + vPath.string());
+		if (!Data)
+			throw std::runtime_error(std::format(R"(OpenGLTexture2D : Fail to load the texture at "{0}".)", vPath.string()));
 		m_Width = Width;
 		m_Height = Height;
 
@@ -145,6 +145,7 @@ namespace Pika {
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, Data);
 		stbi_image_free(Data);
 		PK_CORE_INFO("OpenGLTexture2D : Success to load a texture at {0}.", vPath.string());
+		m_IsLoaded = true;
 	}
 	////////////////////////////////// Texture2D ///////////////////////////////////
 
@@ -157,11 +158,10 @@ namespace Pika {
 		try
 		{
 			loadCubemap(vPath);
-			m_IsLoaded = true;
 		}
 		catch (const std::runtime_error& e)
 		{
-			PK_CORE_ERROR("OpenGLCubemap : Fail to load cubemap at {0}", e.what());
+			PK_CORE_WARN(e.what());
 		}
 	}
 
@@ -195,6 +195,8 @@ namespace Pika {
 			loadHDR(vPath);
 		else if (Utils::IsLDR(vPath))
 			loadLDR(vPath);
+		else
+			throw std::runtime_error(std::format(R"(OpenGLCubemap : Fail to load the cubemap with unsupported format at "{0}".)", vPath.string()));
 	}
 
 	void OpenGLCubemap::loadHDR(const std::filesystem::path& vPath)
@@ -208,7 +210,8 @@ namespace Pika {
 
 		int Width, Height, Channels;
 		stbi_uc* Data = stbi_load(vPath.string().c_str(), &Width, &Height, &Channels, 0); // 0 means desired channels = Channels
-		if (!Data) throw std::runtime_error("Path : " + vPath.string());
+		if (!Data)
+			throw std::runtime_error(std::format(R"(OpenGLCubemap : Fail to load cubemap at "{0}".)", vPath.string()));
 		m_Width = Width;
 		m_Height = Height;
 
@@ -282,8 +285,8 @@ namespace Pika {
 
 		stbi_image_free(Data);
 		PK_CORE_INFO("OpenGLCubemap : Success to load a cubemap at {0}.", vPath.string());
+		m_IsLoaded = true;
 	}
-
 	/////////////////////////////////// Cubemap ////////////////////////////////////
 
 }

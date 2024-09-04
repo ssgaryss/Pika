@@ -72,7 +72,12 @@ namespace Pika {
 			Renderer3D::RenderSkybox(m_Context->m_Skybox);
 			if (m_Settings.m_ShowGrid)
 				Renderer3D::DrawGrid(glm::mat4(1.0f), 100.5f);
-			// TODO !
+			auto View = m_Context->m_Registry.group<TransformComponent, ModelComponent>();
+			for (const auto& Entt : View) {
+				auto [Transform, Model] = View.get<TransformComponent, ModelComponent>(Entt); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
+				if (Model.m_Model)
+					Renderer3D::DrawModel(Transform, Model, static_cast<int>(Entt));
+			}
 			Renderer3D::EndScene();
 			return;
 		}

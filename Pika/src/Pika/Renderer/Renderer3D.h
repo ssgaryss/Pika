@@ -1,8 +1,9 @@
 #pragma once
-
 #include "Camera.h"
 #include "EditorCamera.h"
 #include "Texture.h"
+#include "Pika/Scene/Mesh.h"
+#include "Pika/Scene/Components.h"
 
 namespace Pika
 {
@@ -18,7 +19,8 @@ namespace Pika
 		static void Flush();
 
 		// Mesh
-		//static void DrawMesh(const Mesh& vMesh);
+		static void DrawStaticMesh(const StaticMesh& vMesh);
+		static void DrawModel(const glm::mat4& vTransform, const ModelComponent& vSprite, int vEntityID = -1);
 		// Line
 		static void SetLineThickness(float vThickness);
 		static float GetLineThickness();

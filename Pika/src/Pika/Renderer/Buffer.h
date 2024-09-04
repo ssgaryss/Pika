@@ -134,7 +134,7 @@ namespace Pika
 		virtual void setLayout(const BufferLayout& vLayout) = 0;
 
 		static Ref<VertexBuffer> Create(uint32_t vSize);
-		static Ref<VertexBuffer> Create(float* vVertices, uint32_t vSize);
+		static Ref<VertexBuffer> Create(const void* vVertices, uint32_t vSize);
 	};
 
 	class IndexBuffer
@@ -145,7 +145,7 @@ namespace Pika
 		virtual void unbind() const = 0;
 		virtual uint32_t getCount() const = 0; // nums of indices
 
-		static Ref<IndexBuffer> Create(uint32_t* vIndices, uint32_t vCount);
+		static Ref<IndexBuffer> Create(const uint32_t* vIndices, uint32_t vCount);
 	};
 
 }
