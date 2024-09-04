@@ -61,7 +61,7 @@ namespace Pika
 	}
 
 	////////////////////////////IndexBuffer/////////////////////////////////
-	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* vIndices, uint32_t vCount)
+	OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* vIndices, uint32_t vCount)
 	{
 		PK_PROFILE_FUNCTION();
 

@@ -8,14 +8,18 @@
 
 namespace Pika {
 
-#define MAX_MESHES_PER_BATCH 10000 // for now
+#define MAX_TRIANGLES_PER_BATCH 10000 // for now
 #define MAX_LINES_PER_BATCH 10000 // for now
 
 	struct Renderer3DData
 	{
 	public:
-		// Mesh
-		Ref<Shader> m_MeshShader;
+		static const uint32_t s_MaxTrianglesPerBatch = MAX_TRIANGLES_PER_BATCH;
+		static const uint32_t s_MaxTriangleVerticesPerBatch = s_MaxTrianglesPerBatch * 3; // 此处是为了先创建Buffer提高性能
+		// StaticMesh
+		Ref<VertexArray> m_StaticMeshVertexArray = nullptr;
+		Ref<VertexBuffer> m_StaticMeshVertexBuffer = nullptr;
+		Ref<Shader> m_StaticMeshShader;
 
 		// Line
 		static const uint32_t s_MaxLinesPerBatch = MAX_LINES_PER_BATCH;
@@ -57,8 +61,20 @@ namespace Pika {
 			RenderCommand::Initialize(Flags);
 		}
 
-		// Mesh
-		s_Data.m_MeshShader = Shader::Create("assets/shaders/Renderer3D/DefaultMeshShader.glsl");
+		// StaticMesh
+		s_Data.m_StaticMeshVertexArray = VertexArray::Create();
+		s_Data.m_StaticMeshVertexArray->bind();
+		s_Data.m_StaticMeshVertexBuffer = VertexBuffer::Create(Renderer3DData::s_MaxTriangleVerticesPerBatch * sizeof(StaticMeshVertexData));
+		BufferLayout StaticMeshLayout = {
+			{Pika::ShaderDataType::Float3, "a_Position"},
+			{Pika::ShaderDataType::Float3, "a_Normal"},
+			{Pika::ShaderDataType::Float2, "a_TexCoord"},
+			{Pika::ShaderDataType::Int,    "a_EntityID"}
+		};
+		s_Data.m_StaticMeshVertexBuffer->setLayout(StaticMeshLayout);
+		s_Data.m_StaticMeshVertexArray->addVertexBuffer(s_Data.m_StaticMeshVertexBuffer);
+		s_Data.m_StaticMeshShader = Shader::Create("assets/shaders/Renderer3D/DefaultStaticMeshShader.glsl");
+		s_Data.m_StaticMeshVertexArray->unbind();
 
 		// Line
 		s_Data.m_LineVertexArray = VertexArray::Create();
@@ -167,26 +183,23 @@ namespace Pika {
 	void Renderer3D::DrawStaticMesh(const StaticMesh& vMesh)
 	{
 		PK_PROFILE_FUNCTION();
-		// TODO : Change !
-		Ref<VertexArray> m_MeshVertexArray = VertexArray::Create();
-		m_MeshVertexArray->bind();
-		Ref<VertexBuffer> m_MeshVertexBuffer = VertexBuffer::Create(vMesh.getVertices().data(), (uint32_t)vMesh.getVertices().size() * sizeof(StaticMeshVertexData));
-		Ref<IndexBuffer> m_MeshIndexBuffer = IndexBuffer::Create(const_cast<uint32_t*>(vMesh.getIndices().data()), (uint32_t)vMesh.getIndices().size());
-		BufferLayout MeshLayout = {
-			{Pika::ShaderDataType::Float3, "a_Position"},
-			{Pika::ShaderDataType::Float3, "a_Normal"},
-			{Pika::ShaderDataType::Float2, "a_TexCoord"},
-			{Pika::ShaderDataType::Float4, "a_Color"},
-			{Pika::ShaderDataType::Int,    "a_EntityID"}
-		};
-		m_MeshVertexArray->setIndexBuffer(m_MeshIndexBuffer);
-		m_MeshVertexBuffer->setLayout(MeshLayout);
-		m_MeshVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
-		m_MeshVertexArray->unbind();
 		
-		s_Data.m_MeshShader->bind();
-		RenderCommand::DrawIndexed(m_MeshVertexArray.get(), m_MeshIndexBuffer->getCount());
+		Ref<IndexBuffer> StaticMeshIndexBuffer = IndexBuffer::Create(vMesh.getIndicesData(), vMesh.getIndicesCount());
+		s_Data.m_StaticMeshVertexArray->setIndexBuffer(StaticMeshIndexBuffer);
+		s_Data.m_StaticMeshVertexBuffer->setData(vMesh.getVerticesData(), vMesh.getVerticesSize());
+
+		s_Data.m_StaticMeshShader->bind();
+		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
 		s_Data.m_Statistics.m_MeshCount++;
+	}
+
+	void Renderer3D::DrawModel(const glm::mat4& vTransform, const ModelComponent& vModel, int vEntityID)
+	{
+		PK_PROFILE_FUNCTION();
+
+		for (const auto& Mesh : vModel.m_Model->getMeshes()) {
+			DrawStaticMesh(Mesh);
+		}
 	}
 
 	void Renderer3D::SetLineThickness(float vThickness)

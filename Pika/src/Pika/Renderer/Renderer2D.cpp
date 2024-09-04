@@ -17,8 +17,8 @@ namespace Pika {
 	struct Renderer2DData {
 	public:
 		static const uint32_t s_MaxQuadsPerBatch = MAX_QUADS_PER_BATCH;
-		static const uint32_t s_MaxMeshVerticesPerBatch = s_MaxQuadsPerBatch * 4;
-		static const uint32_t s_MaxMeshIndicesPerBatch = s_MaxQuadsPerBatch * 6;
+		static const uint32_t s_MaxQuadVerticesPerBatch = s_MaxQuadsPerBatch * 4;
+		static const uint32_t s_MaxQuadIndicesPerBatch = s_MaxQuadsPerBatch * 6;
 
 		// Quad
 		Ref<VertexArray> m_QuadVertexArray;
@@ -100,10 +100,10 @@ namespace Pika {
 		// Quad
 		s_Data.m_QuadVertexArray = VertexArray::Create();
 		s_Data.m_QuadVertexArray->bind();
-		uint32_t* QuadIndicesPerBatch = new uint32_t[Renderer2DData::s_MaxMeshIndicesPerBatch];
+		uint32_t* QuadIndicesPerBatch = new uint32_t[Renderer2DData::s_MaxQuadIndicesPerBatch];
 		{
 			uint32_t Offset = 0;
-			for (uint32_t i = 0; i < Renderer2DData::s_MaxMeshIndicesPerBatch; i += 6) {
+			for (uint32_t i = 0; i < Renderer2DData::s_MaxQuadIndicesPerBatch; i += 6) {
 				QuadIndicesPerBatch[i + 0] = Offset + 0;
 				QuadIndicesPerBatch[i + 1] = Offset + 1;
 				QuadIndicesPerBatch[i + 2] = Offset + 2;
@@ -113,11 +113,11 @@ namespace Pika {
 				Offset += 4;
 			}
 		}
-		Ref<IndexBuffer> QuadIndexBuffer = IndexBuffer::Create(QuadIndicesPerBatch, Renderer2DData::s_MaxMeshIndicesPerBatch);
+		Ref<IndexBuffer> QuadIndexBuffer = IndexBuffer::Create(QuadIndicesPerBatch, Renderer2DData::s_MaxQuadIndicesPerBatch);
 		s_Data.m_QuadVertexArray->setIndexBuffer(QuadIndexBuffer);
 		delete[] QuadIndicesPerBatch;
 
-		s_Data.m_QuadVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxMeshVerticesPerBatch * sizeof(QuadVertexData));
+		s_Data.m_QuadVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxQuadVerticesPerBatch * sizeof(QuadVertexData));
 		BufferLayout QuadLayout = {
 			{Pika::ShaderDataType::Float3, "a_Position"},
 			{Pika::ShaderDataType::Float4, "a_Color"},
@@ -130,23 +130,23 @@ namespace Pika {
 		s_Data.m_QuadVertexArray->addVertexBuffer(s_Data.m_QuadVertexBuffer);
 		s_Data.m_QuadShader = Shader::Create("assets/shaders/Renderer2D/DefaultQuadShader.glsl");
 
-		s_Data.m_pQuadVertexBufferBase = new QuadVertexData[Renderer2DData::s_MaxMeshVerticesPerBatch];
+		s_Data.m_pQuadVertexBufferBase = new QuadVertexData[Renderer2DData::s_MaxQuadVerticesPerBatch];
 		s_Data.m_QuadVertexArray->unbind();
 
 		// Line
 		s_Data.m_LineVertexArray = VertexArray::Create();
 		s_Data.m_LineVertexArray->bind();
-		uint32_t* LineIndicesPerBatch = new uint32_t[Renderer2DData::s_MaxMeshIndicesPerBatch];
+		uint32_t* LineIndicesPerBatch = new uint32_t[Renderer2DData::s_MaxQuadIndicesPerBatch];
 		{
-			for (uint32_t i = 0; i < Renderer2DData::s_MaxMeshIndicesPerBatch; i++) {
+			for (uint32_t i = 0; i < Renderer2DData::s_MaxQuadIndicesPerBatch; i++) {
 				LineIndicesPerBatch[i] = i;
 			}
 		}
-		Ref<IndexBuffer> LineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer2DData::s_MaxMeshIndicesPerBatch);
+		Ref<IndexBuffer> LineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer2DData::s_MaxQuadIndicesPerBatch);
 		s_Data.m_LineVertexArray->setIndexBuffer(LineIndexBuffer);
 		delete[] LineIndicesPerBatch;
 
-		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxMeshVerticesPerBatch * sizeof(LineVertexData));
+		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer2DData::s_MaxQuadVerticesPerBatch * sizeof(LineVertexData));
 		BufferLayout LineLayout = {
 			{ Pika::ShaderDataType::Float3, "a_Position" },
 			{ Pika::ShaderDataType::Float4, "a_Color" },
@@ -156,7 +156,7 @@ namespace Pika {
 		s_Data.m_LineVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
 		s_Data.m_LineShader = Shader::Create("assets/shaders/Renderer2D/DefaultLineShader.glsl");
 
-		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer2DData::s_MaxMeshVerticesPerBatch];
+		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer2DData::s_MaxQuadVerticesPerBatch];
 		s_Data.m_LineVertexArray->unbind();
 
 		// Default texture
@@ -314,7 +314,7 @@ namespace Pika {
 	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const glm::vec4& vColor)
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxMeshIndicesPerBatch)
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxQuadIndicesPerBatch)
 			NextBatch();
 
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
@@ -335,7 +335,7 @@ namespace Pika {
 	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxMeshIndicesPerBatch)
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxQuadIndicesPerBatch)
 			NextBatch();
 
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };
@@ -369,7 +369,7 @@ namespace Pika {
 	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor)
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxMeshIndicesPerBatch)
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxQuadIndicesPerBatch)
 			NextBatch();
 
 		auto Texture = vSubTexture->getTexture();
@@ -413,7 +413,7 @@ namespace Pika {
 	void Renderer2D::DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor)
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_LineIndexCount >= Renderer2DData::s_MaxMeshIndicesPerBatch)
+		if (s_Data.m_LineIndexCount >= Renderer2DData::s_MaxQuadIndicesPerBatch)
 			NextBatch();
 
 		s_Data.m_pLineVertexBufferPtr->m_Position = vStartPosition;
@@ -469,7 +469,7 @@ namespace Pika {
 	void Renderer2D::DrawSprite(const glm::mat4& vTransform, const SpriteRendererComponent& vSprite, int vEntityID)
 	{
 		PK_PROFILE_FUNCTION();
-		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxMeshIndicesPerBatch)
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxQuadIndicesPerBatch)
 			NextBatch();
 
 		constexpr glm::vec2 TexCoord[4] = { {0.0f, 0.0f},{1.0f,0.0f},{1.0f,1.0f},{0.0f,1.0f} };

@@ -3,7 +3,7 @@
 #include "EditorCamera.h"
 #include "Texture.h"
 #include "Pika/Scene/Mesh.h"
-#include "Pika/Scene/Primitive.h"
+#include "Pika/Scene/Components.h"
 
 namespace Pika
 {
@@ -20,6 +20,7 @@ namespace Pika
 
 		// Mesh
 		static void DrawStaticMesh(const StaticMesh& vMesh);
+		static void DrawModel(const glm::mat4& vTransform, const ModelComponent& vSprite, int vEntityID = -1);
 		// Line
 		static void SetLineThickness(float vThickness);
 		static float GetLineThickness();

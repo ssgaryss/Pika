@@ -56,11 +56,10 @@ namespace Pika {
 		try
 		{
 			loadTexture(vPath);
-			m_IsLoaded = true;
 		}
 		catch (const std::runtime_error& e)
 		{
-			PK_CORE_ERROR(e.what());
+			PK_CORE_WARN(e.what());
 		}
 	}
 
@@ -146,6 +145,7 @@ namespace Pika {
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, Data);
 		stbi_image_free(Data);
 		PK_CORE_INFO("OpenGLTexture2D : Success to load a texture at {0}.", vPath.string());
+		m_IsLoaded = true;
 	}
 	////////////////////////////////// Texture2D ///////////////////////////////////
 
@@ -158,11 +158,10 @@ namespace Pika {
 		try
 		{
 			loadCubemap(vPath);
-			m_IsLoaded = true;
 		}
 		catch (const std::runtime_error& e)
 		{
-			PK_CORE_ERROR(e.what());
+			PK_CORE_WARN(e.what());
 		}
 	}
 
@@ -286,8 +285,8 @@ namespace Pika {
 
 		stbi_image_free(Data);
 		PK_CORE_INFO("OpenGLCubemap : Success to load a cubemap at {0}.", vPath.string());
+		m_IsLoaded = true;
 	}
-
 	/////////////////////////////////// Cubemap ////////////////////////////////////
 
 }

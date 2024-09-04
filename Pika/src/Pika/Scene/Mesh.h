@@ -10,8 +10,10 @@ namespace Pika {
 		StaticMesh(const std::vector<StaticMeshVertexData>& vVertices,
 			const std::vector<uint32_t>& vIndices, const Ref<Material>& vMaterial);
 
-		inline const std::vector<StaticMeshVertexData>& getVertices() const { return m_Vertices; }
-		inline const std::vector<uint32_t>& getIndices() const { return m_Indices; }
+		inline const void* getVerticesData() const { return m_Vertices.data(); }
+		inline uint32_t getVerticesSize() const { return static_cast<uint32_t>(m_Vertices.size()) * sizeof(StaticMeshVertexData); }
+		inline const uint32_t* getIndicesData() const { return m_Indices.data(); }
+		inline uint32_t getIndicesCount() const { return static_cast<uint32_t>(m_Indices.size()); }
 	private:
 		std::vector<StaticMeshVertexData> m_Vertices;
 		std::vector<uint32_t> m_Indices;

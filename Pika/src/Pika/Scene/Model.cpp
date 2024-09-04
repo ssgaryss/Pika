@@ -22,7 +22,7 @@ namespace Pika {
 			loadModel(m_Path);
 		}
 		catch (const std::runtime_error& e) {
-			PK_CORE_ERROR(e.what());
+			PK_CORE_WARN(e.what());
 		}
 	}
 
@@ -44,6 +44,7 @@ namespace Pika {
 		m_Path = vPath;
 		processNode(pScene->mRootNode, pScene);
 		PK_CORE_INFO("Model : Success to load a model at {0}.", vPath.string());
+		m_IsLoaded = true;
 	}
 
 	void Model::processNode(aiNode* vNode, const aiScene* vScene)

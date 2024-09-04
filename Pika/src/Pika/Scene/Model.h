@@ -17,13 +17,16 @@ namespace Pika {
 		void loadModel(const std::filesystem::path& vPath);
 
 		inline const std::filesystem::path& getPath() const { return m_Path; }
+		inline const std::vector<StaticMesh>& getMeshes() const { return m_Meshes; }
 	private:
 		void processNode(aiNode* vNode, const aiScene* vScene);
 		StaticMesh processMesh(aiMesh* vMesh, const aiScene* vScene);
 	private:
+		bool m_IsLoaded = false;
 		std::vector<StaticMesh> m_Meshes;   // TODO : Skeletal Mesh !
 		std::vector<Ref<Texture2D>> m_Textures;
 		std::filesystem::path m_Path;
 	};
+
 
 }

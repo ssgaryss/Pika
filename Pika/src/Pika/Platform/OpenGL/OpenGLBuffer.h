@@ -28,7 +28,7 @@ namespace Pika
 	{
 	public:
 		OpenGLIndexBuffer() = delete;
-		OpenGLIndexBuffer(uint32_t* vIndices, uint32_t vCount);
+		OpenGLIndexBuffer(const uint32_t* vIndices, uint32_t vCount);
 		~OpenGLIndexBuffer();
 		void bind() const override;
 		void unbind() const override;
