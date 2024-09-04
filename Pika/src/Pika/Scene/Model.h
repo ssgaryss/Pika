@@ -15,6 +15,8 @@ namespace Pika {
 		Model() = default;
 		Model(const std::filesystem::path& vPath);
 		void loadModel(const std::filesystem::path& vPath);
+
+		inline const std::filesystem::path& getPath() const { return m_Path; }
 	private:
 		void processNode(aiNode* vNode, const aiScene* vScene);
 		StaticMesh processMesh(aiMesh* vMesh, const aiScene* vScene);

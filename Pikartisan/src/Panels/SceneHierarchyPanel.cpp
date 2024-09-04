@@ -228,6 +228,14 @@ namespace Pika {
 					}
 				}
 			}
+			// Only 3D
+			if (m_Context->getSceneType() == Scene::SceneType::Scene3D) {
+				if (!m_SelectedEntity.hasComponent<ModelComponent>()) {
+					if (ImGui::MenuItem("Model Component")) {
+						m_SelectedEntity.addComponent<ModelComponent>();
+					}
+				}
+			}
 			ImGui::EndPopup();
 		}
 		ImGui::PopItemWidth();
@@ -296,7 +304,8 @@ namespace Pika {
 				if (ImGui::BeginDragDropTarget()) {
 					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
 						std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
-						vSpriteRendererComponent.m_Texture = Texture2D::Create(Path);
+						const auto& Texture2D = Texture2D::Create(Path);
+						vSpriteRendererComponent.m_Texture = Texture2D->getIsLoaded() ? Texture2D : nullptr;
 					}
 					ImGui::EndDragDropTarget();
 				}
@@ -324,7 +333,21 @@ namespace Pika {
 				ImGui::DragFloat("Restitution", &vBoxCollider2DComponent.m_Restitution);
 				ImGui::DragFloat("RestitutionThreshold", &vBoxCollider2DComponent.m_RestitutionThreshold);
 				});
+		}
 
+		// Only 3D 
+		if (m_Context->getSceneType() == Scene::SceneType::Scene3D) {
+			drawEntityComponent<ModelComponent>("Model", vEntity, [](auto& vModelComponent) {
+				std::string Path = vModelComponent.m_Model ? vModelComponent.m_Model->getPath().string() : "None";
+				ImGui::Button(Path.c_str());
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
+						std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+						vModelComponent.m_Model = CreateRef<Model>(Path);
+					}
+					ImGui::EndDragDropTarget();
+				}
+				});
 		}
 
 	}

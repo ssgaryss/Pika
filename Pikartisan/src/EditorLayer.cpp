@@ -301,8 +301,10 @@ namespace Pika
 				if (Path.extension().string() == ".pika")
 					openScene(Path);
 				if (Path.extension().string() == ".png") {
-					if (m_MouseHoveredEntity && m_MouseHoveredEntity.hasComponent<SpriteRendererComponent>())
-						m_MouseHoveredEntity.getComponent<SpriteRendererComponent>().m_Texture = Texture2D::Create(Path);
+					if (m_MouseHoveredEntity && m_MouseHoveredEntity.hasComponent<SpriteRendererComponent>()) {
+						const auto& Texture2D = Texture2D::Create(Path);
+						m_MouseHoveredEntity.getComponent<SpriteRendererComponent>().m_Texture = Texture2D->getIsLoaded() ? Texture2D : nullptr;
+					}
 				}
 			}
 			ImGui::EndDragDropTarget();
@@ -497,7 +499,7 @@ namespace Pika
 		ImGui::Separator();
 		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) ? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
 		ImGui::Text("Mouse hovered entity : %s", MouseHoveredEntityName.c_str());
-		if(m_ActiveScene->getSceneType() == Scene::SceneType::Scene2D){
+		if (m_ActiveScene->getSceneType() == Scene::SceneType::Scene2D) {
 			auto Statistics = Renderer2D::GetStatistics();
 			ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
 			ImGui::Text("QuadCount : %d", Statistics.getQuadCount());

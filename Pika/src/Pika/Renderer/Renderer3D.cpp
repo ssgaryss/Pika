@@ -170,8 +170,8 @@ namespace Pika {
 		// TODO : Change !
 		Ref<VertexArray> m_MeshVertexArray = VertexArray::Create();
 		m_MeshVertexArray->bind();
-		Ref<VertexBuffer> m_MeshVertexBuffer = VertexBuffer::Create(vMesh.getVertices().data(), vMesh.getVertices().size() * sizeof(StaticMeshVertexData));
-		Ref<IndexBuffer> m_MeshIndexBuffer = IndexBuffer::Create(const_cast<uint32_t*>(vMesh.getIndices().data()), vMesh.getIndices().size());
+		Ref<VertexBuffer> m_MeshVertexBuffer = VertexBuffer::Create(vMesh.getVertices().data(), (uint32_t)vMesh.getVertices().size() * sizeof(StaticMeshVertexData));
+		Ref<IndexBuffer> m_MeshIndexBuffer = IndexBuffer::Create(const_cast<uint32_t*>(vMesh.getIndices().data()), (uint32_t)vMesh.getIndices().size());
 		BufferLayout MeshLayout = {
 			{Pika::ShaderDataType::Float3, "a_Position"},
 			{Pika::ShaderDataType::Float3, "a_Normal"},
