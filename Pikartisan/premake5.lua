@@ -31,7 +31,8 @@ project "Pikartisan"
 
 	defines
 	{
-		"GLM_ENABLE_EXPERIMENTAL" -- 允许使用glm/gtx内容
+		"GLM_ENABLE_EXPERIMENTAL", -- 允许使用glm/gtx内容
+		"_CRT_SECURE_NO_WARNINGS"
 	}
 
 	filter "system:windows"

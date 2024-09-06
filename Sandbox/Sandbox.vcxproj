@@ -134,16 +134,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Core\ParticleSystem.h" />
-    <ClInclude Include="src\ExampleLayer.h" />
-    <ClInclude Include="src\Sandbox2D.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\Core\ParticleSystem.cpp" />
-    <ClCompile Include="src\Sandbox2D.cpp" />
-    <ClCompile Include="src\SandboxApp.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Pika\Pika.vcxproj">
       <Project>{AABA8A7C-96F1-8B0D-3FDE-71102BF4070F}</Project>
     </ProjectReference>
