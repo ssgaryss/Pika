@@ -87,7 +87,7 @@ namespace Pika {
 			ImGui::TreePop();
 		}
 
-		if(IsRemove)
+		if (IsRemove)
 			m_Context->destroyEntity(vEntity);
 	}
 
@@ -330,12 +330,12 @@ namespace Pika {
 				});
 
 			drawEntityComponent<BoxCollider2DComponent>("BoxCollider2D Component", vEntity, [](auto& vBoxCollider2DComponent) {
-				ImGui::DragFloat2("Offset", glm::value_ptr(vBoxCollider2DComponent.m_Offset));
-				ImGui::DragFloat2("Size", glm::value_ptr(vBoxCollider2DComponent.m_Size));
-				ImGui::DragFloat("Density", &vBoxCollider2DComponent.m_Density);
-				ImGui::DragFloat("Friction", &vBoxCollider2DComponent.m_Friction);
-				ImGui::DragFloat("Restitution", &vBoxCollider2DComponent.m_Restitution);
-				ImGui::DragFloat("RestitutionThreshold", &vBoxCollider2DComponent.m_RestitutionThreshold);
+				ImGui::DragFloat2("Offset", glm::value_ptr(vBoxCollider2DComponent.m_Offset), 0.1f, 0.0f, 100000.0f);
+				ImGui::DragFloat2("Size", glm::value_ptr(vBoxCollider2DComponent.m_Size), 0.1f, 0.0f, 100000.0f);
+				ImGui::DragFloat("Density", &vBoxCollider2DComponent.m_Density, 0.1f, 0.0f, 10.0f);
+				ImGui::DragFloat("Friction", &vBoxCollider2DComponent.m_Friction, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution", &vBoxCollider2DComponent.m_Restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("RestitutionThreshold", &vBoxCollider2DComponent.m_RestitutionThreshold, 0.01f, 0.0f, 1.0f);
 				});
 		}
 
