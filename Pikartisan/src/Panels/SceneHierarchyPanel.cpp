@@ -71,9 +71,10 @@ namespace Pika {
 		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
 			ImGui::OpenPopup(std::format("EntitySettings##{0}", (uint32_t)vEntity).c_str());
 
+		bool IsRemove = false;
 		if (ImGui::BeginPopup(std::format("EntitySettings##{0}", (uint32_t)vEntity).c_str())) {
 			if (ImGui::MenuItem("Delete")) {
-				m_Context->destroyEntity(vEntity);
+				IsRemove = true;
 				if (m_SelectedEntity == vEntity)
 					m_SelectedEntity = {};
 			}
@@ -85,6 +86,9 @@ namespace Pika {
 			// TODO : Child Entity need to be added!
 			ImGui::TreePop();
 		}
+
+		if(IsRemove)
+			m_Context->destroyEntity(vEntity);
 	}
 
 	// 主要给drawEntityComponents()使用的模板

@@ -30,10 +30,10 @@ namespace Pika
 		return createEntityWithUUID(UUID(vUUID), vName);
 	}
 
-	void Scene::destroyEntity(Entity& vEntity)
+	void Scene::destroyEntity(Entity vEntity)
 	{
-		m_Registry.destroy(vEntity);
 		m_EntityMap.erase(vEntity.getUUID());
+		m_Registry.destroy(vEntity);
 	}
 
 	void Scene::onUpdate(Timestep vTimestep)
