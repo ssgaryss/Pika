@@ -34,7 +34,7 @@ namespace Pika
 		Entity createEntity(const std::string& vName = "Untitled");
 		Entity createEntityWithUUID(UUID vUUID, const std::string& vName = "Untitled");
 		Entity createEntityWithUUIDString(const std::string& vUUID, const std::string& vName = "Untitled");
-		void destroyEntity(Entity& vEntity);
+		void destroyEntity(Entity vEntity);
 
 		void onUpdate(Timestep vTiemstep);
 

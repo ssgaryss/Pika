@@ -13,6 +13,12 @@ project "Sandbox"
 		"src/**.cpp"
 	}
 
+	removefiles
+    {
+		"src/**.h",
+		"src/**.cpp"  -- 暂时不需要Sandbox
+    }
+
 	includedirs
 	{
 		"%{wks.location}/Pika/vendor/spdlog/include",
