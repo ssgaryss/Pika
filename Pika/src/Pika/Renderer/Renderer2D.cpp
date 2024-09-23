@@ -90,6 +90,7 @@ namespace Pika {
 	void Renderer2D::Initialize()
 	{
 		PK_PROFILE_FUNCTION();
+		PK_CORE_INFO("Try to initialize Pika 2D Renderer ...");
 
 		{
 			uint32_t Flags = RendererAPI::EnableBlend | RendererAPI::EnableDepthTest
@@ -168,6 +169,8 @@ namespace Pika {
 		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture;
 
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0); // glsl÷–binding = 0
+	
+		PK_CORE_INFO("Success to initialize Pika 2D Renderer!");
 	}
 
 	void Renderer2D::BeginScene(const EditorCamera& vEditorCamera)

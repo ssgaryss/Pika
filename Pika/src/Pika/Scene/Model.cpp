@@ -10,7 +10,8 @@ namespace Pika {
 	namespace Utils {
 
 		static bool IsModel(const std::filesystem::path& vPath) {
-			return vPath.extension().string() == ".obj";
+			return vPath.extension().string() == ".obj"
+				|| vPath.extension().string() == ".fbx";
 		}
 
 	}

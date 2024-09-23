@@ -1,7 +1,8 @@
 #pragma once
 #include "SceneCamera.h"
-#include "Pika/Core/UUID.h"
 #include "Model.h"
+#include "Material.h"
+#include "Pika/Core/UUID.h"
 #include "Pika/Renderer/Texture.h"
 #include <string>
 #include <glm/glm.hpp>
@@ -69,6 +70,14 @@ namespace Pika
 
 		ModelComponent() = default;
 		ModelComponent(const ModelComponent&) = default;
+	};
+
+	struct MaterialComponent
+	{
+		Ref<Material> m_Material = nullptr;
+
+		MaterialComponent() = default;
+		MaterialComponent(const MaterialComponent&) = default;
 	};
 
 	// 2D only

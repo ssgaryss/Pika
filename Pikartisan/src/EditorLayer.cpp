@@ -227,6 +227,7 @@ namespace Pika
 					saveScene();
 				if (ImGui::MenuItem("Save Scene as ...", m_ShortcutLibrary["Save_Scene_As"].toString().c_str()))
 					saveSceneAs();
+				ImGui::Separator();
 				if (ImGui::MenuItem("Exit"))
 					Application::GetInstance().close();
 				ImGui::EndMenu();
@@ -513,6 +514,7 @@ namespace Pika
 		}
 		ImGui::Text("Frame Time : %.2f ms", m_LastFrameTime.getMiliseconds());
 		ImGui::Separator();
+		ImGui::Text("Depth map :");
 		uintptr_t DepthID = static_cast<uintptr_t>(m_Renderer->getFramebuffer()->getDepthStencilAttachmentRendererID());
 		ImGui::Image(reinterpret_cast<ImTextureID>(DepthID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x) }, { 0.0f,1.0f }, { 1.0f,0.0f });
 		ImGui::Separator();

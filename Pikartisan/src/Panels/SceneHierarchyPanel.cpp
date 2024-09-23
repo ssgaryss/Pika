@@ -71,9 +71,10 @@ namespace Pika {
 		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
 			ImGui::OpenPopup(std::format("EntitySettings##{0}", (uint32_t)vEntity).c_str());
 
+		bool IsRemove = false;
 		if (ImGui::BeginPopup(std::format("EntitySettings##{0}", (uint32_t)vEntity).c_str())) {
 			if (ImGui::MenuItem("Delete")) {
-				m_Context->destroyEntity(vEntity);
+				IsRemove = true;
 				if (m_SelectedEntity == vEntity)
 					m_SelectedEntity = {};
 			}
@@ -85,6 +86,9 @@ namespace Pika {
 			// TODO : Child Entity need to be added!
 			ImGui::TreePop();
 		}
+
+		if (IsRemove)
+			m_Context->destroyEntity(vEntity);
 	}
 
 	// 主要给drawEntityComponents()使用的模板
@@ -188,8 +192,6 @@ namespace Pika {
 
 	void SceneHierarchyPanel::drawEntityComponents(Entity vEntity)
 	{
-		// TODO !
-
 		drawEntityComponent<TagComponent>("Tag", vEntity, [](auto& vTagComponent) {
 			static char Buffer[256];
 			memset(Buffer, 0, sizeof(Buffer));
@@ -233,6 +235,18 @@ namespace Pika {
 				if (!m_SelectedEntity.hasComponent<ModelComponent>()) {
 					if (ImGui::MenuItem("Model Component")) {
 						m_SelectedEntity.addComponent<ModelComponent>();
+					}
+				}
+				if (!m_SelectedEntity.hasComponent<MaterialComponent>()) {
+					if (ImGui::BeginMenu("Material Component")) {
+						if (ImGui::MenuItem("None")) {
+							m_SelectedEntity.addComponent<MaterialComponent>();
+						}
+						if (ImGui::MenuItem("Blinn-Phone")) {
+							auto& MC = m_SelectedEntity.addComponent<MaterialComponent>();
+							MC.m_Material = CreateRef<BlinnPhoneMaterial>();
+						}
+						ImGui::EndMenu();
 					}
 				}
 			}
@@ -326,12 +340,12 @@ namespace Pika {
 				});
 
 			drawEntityComponent<BoxCollider2DComponent>("BoxCollider2D Component", vEntity, [](auto& vBoxCollider2DComponent) {
-				ImGui::DragFloat2("Offset", glm::value_ptr(vBoxCollider2DComponent.m_Offset));
-				ImGui::DragFloat2("Size", glm::value_ptr(vBoxCollider2DComponent.m_Size));
-				ImGui::DragFloat("Density", &vBoxCollider2DComponent.m_Density);
-				ImGui::DragFloat("Friction", &vBoxCollider2DComponent.m_Friction);
-				ImGui::DragFloat("Restitution", &vBoxCollider2DComponent.m_Restitution);
-				ImGui::DragFloat("RestitutionThreshold", &vBoxCollider2DComponent.m_RestitutionThreshold);
+				ImGui::DragFloat2("Offset", glm::value_ptr(vBoxCollider2DComponent.m_Offset), 0.1f, 0.0f, 100000.0f);
+				ImGui::DragFloat2("Size", glm::value_ptr(vBoxCollider2DComponent.m_Size), 0.1f, 0.0f, 100000.0f);
+				ImGui::DragFloat("Density", &vBoxCollider2DComponent.m_Density, 0.1f, 0.0f, 10.0f);
+				ImGui::DragFloat("Friction", &vBoxCollider2DComponent.m_Friction, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution", &vBoxCollider2DComponent.m_Restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("RestitutionThreshold", &vBoxCollider2DComponent.m_RestitutionThreshold, 0.01f, 0.0f, 1.0f);
 				});
 		}
 
@@ -346,6 +360,16 @@ namespace Pika {
 						vModelComponent.m_Model = CreateRef<Model>(Path);
 					}
 					ImGui::EndDragDropTarget();
+				}
+				});
+			drawEntityComponent<MaterialComponent>("Material", vEntity, [](auto& vMaterialComponent) {
+				auto& Material = vMaterialComponent.m_Material;
+				std::string Name = Material ? Material->getMaterialType() : "None";
+				ImGui::Text("Material type : %s", Name.c_str());
+				if (auto BlinnPhone = dynamic_cast<BlinnPhoneMaterial*>(Material.get())) {
+					ImGui::ColorEdit3("Ambient", glm::value_ptr(BlinnPhone->getAmbient()));
+					ImGui::ColorEdit3("Diffuse", glm::value_ptr(BlinnPhone->getDiffuse()));
+					ImGui::ColorEdit3("Specular", glm::value_ptr(BlinnPhone->getSpecular()));
 				}
 				});
 		}

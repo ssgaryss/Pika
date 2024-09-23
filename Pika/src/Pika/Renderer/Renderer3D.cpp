@@ -54,6 +54,7 @@ namespace Pika {
 	void Renderer3D::Initialize()
 	{
 		PK_PROFILE_FUNCTION();
+		PK_CORE_INFO("Try to initialize Pika 3D Renderer ...");
 
 		{
 			uint32_t Flags = RendererAPI::EnableBlend | RendererAPI::EnableDepthTest
@@ -135,6 +136,8 @@ namespace Pika {
 		s_Data.m_SkyboxVertexArray->unbind();
 
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0); // glsl÷–binding = 1
+	
+		PK_CORE_INFO("Success to initialize Pika 3D Renderer!");
 	}
 
 	void Renderer3D::BeginScene(const EditorCamera& vEditorCamera)
@@ -180,13 +183,18 @@ namespace Pika {
 		}
 	}
 
-	void Renderer3D::DrawStaticMesh(const StaticMesh& vMesh)
+	void Renderer3D::DrawStaticMesh(const glm::mat4& vTransform, const StaticMesh& vMesh, int vEntityID)
 	{
 		PK_PROFILE_FUNCTION();
-		
+
 		Ref<IndexBuffer> StaticMeshIndexBuffer = IndexBuffer::Create(vMesh.getIndicesData(), vMesh.getIndicesCount());
 		s_Data.m_StaticMeshVertexArray->setIndexBuffer(StaticMeshIndexBuffer);
-		s_Data.m_StaticMeshVertexBuffer->setData(vMesh.getVerticesData(), vMesh.getVerticesSize());
+		auto TransformVertices = vMesh.getVertices();
+		for (auto& Vertex : TransformVertices) {
+			Vertex.m_Position = vTransform * glm::vec4(Vertex.m_Position, 1.0f);
+			Vertex.m_EntityID = vEntityID;
+		}
+		s_Data.m_StaticMeshVertexBuffer->setData(TransformVertices.data(), vMesh.getVerticesSize());
 
 		s_Data.m_StaticMeshShader->bind();
 		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
@@ -197,8 +205,8 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 
-		for (const auto& Mesh : vModel.m_Model->getMeshes()) {
-			DrawStaticMesh(Mesh);
+		for (auto& Mesh : vModel.m_Model->getMeshes()) {
+			DrawStaticMesh(vTransform, Mesh, vEntityID);
 		}
 	}
 

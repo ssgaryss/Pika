@@ -19,7 +19,7 @@ namespace Pika
 		static void Flush();
 
 		// Mesh
-		static void DrawStaticMesh(const StaticMesh& vMesh);
+		static void DrawStaticMesh(const glm::mat4& vTransform, const StaticMesh& vMesh, int vEntityID = -1);
 		static void DrawModel(const glm::mat4& vTransform, const ModelComponent& vSprite, int vEntityID = -1);
 		// Line
 		static void SetLineThickness(float vThickness);

@@ -11,6 +11,7 @@
 #include "Pika/Core/Timestep.h"
 #include "Pika/Core/Random.h"
 #include "Pika/Core/Shortcut.h"
+#include "Pika/Core/UUID.h"
 #include "Pika/Debug/Instrumentor.h"
 //-----------------Render----------------
 #include "Pika/Renderer/RenderCommand.h"
