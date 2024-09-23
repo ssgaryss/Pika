@@ -192,8 +192,6 @@ namespace Pika {
 
 	void SceneHierarchyPanel::drawEntityComponents(Entity vEntity)
 	{
-		// TODO !
-
 		drawEntityComponent<TagComponent>("Tag", vEntity, [](auto& vTagComponent) {
 			static char Buffer[256];
 			memset(Buffer, 0, sizeof(Buffer));
@@ -237,6 +235,18 @@ namespace Pika {
 				if (!m_SelectedEntity.hasComponent<ModelComponent>()) {
 					if (ImGui::MenuItem("Model Component")) {
 						m_SelectedEntity.addComponent<ModelComponent>();
+					}
+				}
+				if (!m_SelectedEntity.hasComponent<MaterialComponent>()) {
+					if (ImGui::BeginMenu("Material Component")) {
+						if (ImGui::MenuItem("None")) {
+							m_SelectedEntity.addComponent<MaterialComponent>();
+						}
+						if (ImGui::MenuItem("Blinn-Phone")) {
+							auto& MC = m_SelectedEntity.addComponent<MaterialComponent>();
+							MC.m_Material = CreateRef<BlinnPhoneMaterial>();
+						}
+						ImGui::EndMenu();
 					}
 				}
 			}
@@ -350,6 +360,16 @@ namespace Pika {
 						vModelComponent.m_Model = CreateRef<Model>(Path);
 					}
 					ImGui::EndDragDropTarget();
+				}
+				});
+			drawEntityComponent<MaterialComponent>("Material", vEntity, [](auto& vMaterialComponent) {
+				auto& Material = vMaterialComponent.m_Material;
+				std::string Name = Material ? Material->getMaterialType() : "None";
+				ImGui::Text("Material type : %s", Name.c_str());
+				if (auto BlinnPhone = dynamic_cast<BlinnPhoneMaterial*>(Material.get())) {
+					ImGui::ColorEdit3("Ambient", glm::value_ptr(BlinnPhone->getAmbient()));
+					ImGui::ColorEdit3("Diffuse", glm::value_ptr(BlinnPhone->getDiffuse()));
+					ImGui::ColorEdit3("Specular", glm::value_ptr(BlinnPhone->getSpecular()));
 				}
 				});
 		}

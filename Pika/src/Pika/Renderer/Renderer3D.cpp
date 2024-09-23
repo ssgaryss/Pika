@@ -54,6 +54,7 @@ namespace Pika {
 	void Renderer3D::Initialize()
 	{
 		PK_PROFILE_FUNCTION();
+		PK_CORE_INFO("Try to initialize Pika 3D Renderer ...");
 
 		{
 			uint32_t Flags = RendererAPI::EnableBlend | RendererAPI::EnableDepthTest
@@ -135,6 +136,8 @@ namespace Pika {
 		s_Data.m_SkyboxVertexArray->unbind();
 
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0); // glsl÷–binding = 1
+	
+		PK_CORE_INFO("Success to initialize Pika 3D Renderer!");
 	}
 
 	void Renderer3D::BeginScene(const EditorCamera& vEditorCamera)
