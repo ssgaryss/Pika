@@ -143,6 +143,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Pika\Scene\Material.h" />
     <ClInclude Include="src\Pika.h" />
     <ClInclude Include="src\Pika\Core\Application.h" />
     <ClInclude Include="src\Pika\Core\Base.h" />
@@ -196,7 +197,6 @@
     <ClInclude Include="src\Pika\Renderer\VertexArray.h" />
     <ClInclude Include="src\Pika\Scene\Components.h" />
     <ClInclude Include="src\Pika\Scene\Entity.h" />
-    <ClInclude Include="src\Pika\Scene\Material.h" />
     <ClInclude Include="src\Pika\Scene\Mesh.h" />
     <ClInclude Include="src\Pika\Scene\Model.h" />
     <ClInclude Include="src\Pika\Scene\Primitive.h" />
@@ -625,6 +625,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Pika\Scene\Material.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
@@ -662,7 +663,6 @@
     <ClCompile Include="src\Pika\Renderer\UniformBuffer.cpp" />
     <ClCompile Include="src\Pika\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Pika\Scene\Entity.cpp" />
-    <ClCompile Include="src\Pika\Scene\Material.cpp" />
     <ClCompile Include="src\Pika\Scene\Mesh.cpp" />
     <ClCompile Include="src\Pika\Scene\Model.cpp" />
     <ClCompile Include="src\Pika\Scene\Scene.cpp" />

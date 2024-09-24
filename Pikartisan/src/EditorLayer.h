@@ -32,8 +32,8 @@ namespace Pika
 		bool m_IsShowNewScenePanel = false;
 		void showNewScenePanel(bool* vIsShow);
 		bool m_IsShowRendererStatistics = true;
-		bool m_IsShowSceneRendererSettings = true;
 		void showRendererStatistics(bool* vIsShow);
+		bool m_IsShowSceneRendererSettings = true;
 		void showSceneRendererSettings(bool* vIsShow);
 	private:
 		// Shortcuts
