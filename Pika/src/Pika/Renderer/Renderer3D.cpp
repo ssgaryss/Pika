@@ -196,6 +196,7 @@ namespace Pika {
 		auto TransformVertices = vMesh.getVertices();
 		for (auto& Vertex : TransformVertices) {
 			Vertex.m_Position = vTransform * glm::vec4(Vertex.m_Position, 1.0f);
+			Vertex.m_Normal = vTransform * glm::vec4(Vertex.m_Normal, 1.0f);
 			Vertex.m_EntityID = vEntityID;
 		}
 		s_Data.m_StaticMeshVertexBuffer->setData(TransformVertices.data(), vMesh.getVerticesSize());
@@ -214,6 +215,7 @@ namespace Pika {
 		auto TransformVertices = vMesh.getVertices();
 		for (auto& Vertex : TransformVertices) {
 			Vertex.m_Position = vTransform * glm::vec4(Vertex.m_Position, 1.0f);
+			Vertex.m_Normal = vTransform * glm::vec4(Vertex.m_Normal, 1.0f);
 			Vertex.m_EntityID = vEntityID;
 		}
 		s_Data.m_StaticMeshVertexBuffer->setData(TransformVertices.data(), vMesh.getVerticesSize());

@@ -12,20 +12,15 @@ layout(std140, binding = 0) uniform CameraData
 	mat4 u_ProjectionMatrix;
 };
 
-layout(std140, binding = 1) uniform BlinnPhoneMaterial
-{
-	vec3 u_Ambient;
-	vec3 u_Diffuse;
-	vec3 u_Specular;
-};
-
 out vec3 v_Normal;
 out vec3 v_Position;
+out vec3 v_ViewPosition;
 out flat int v_EntityID;
 
 void main() {
 	v_Normal = a_Normal;
 	v_Position = a_Position;
+	v_ViewPosition = inverse(u_ViewMatrix)[3].xyz;
 	v_EntityID = a_EntityID;
 	gl_Position = u_ViewProjectionMatrix * vec4(a_Position, 1.0f);
 }
@@ -36,8 +31,16 @@ void main() {
 layout(location = 0) out vec4 o_FragmentColor;
 layout(location = 1) out int o_EntityID;
 
+layout(std140, binding = 1) uniform BlinnPhoneMaterial
+{
+	vec3 u_Ambient;
+	vec3 u_Diffuse;
+	vec3 u_Specular;
+};
+
 in vec3 v_Normal;
 in vec3 v_Position;
+in vec3 v_ViewPosition;
 in flat int v_EntityID;
 
 const vec3 lightPos = vec3(0.0, 10.0, 0.0);
@@ -54,6 +57,12 @@ void main() {
 	vec3 LightDir = normalize(lightPos - v_Position);
 	float diff = max(dot(Normal, LightDir), 0.0);
 	vec3 Diffuse = diff * lightColor;
+
+	// specular
+	vec3 ViewDir = normalize(v_ViewPosition - v_Position);
+	vec3 HalfDir = normalize(LightDir + ViewDir);
+	float spec = pow(max(dot(Normal, HalfDir), 0.0), 5.0);
+	vec3 Specular = spec * lightColor;
 
 	vec3 Result = (Ambient + Diffuse) * objectColor;
 	o_FragmentColor = vec4(Result, 1.0);
