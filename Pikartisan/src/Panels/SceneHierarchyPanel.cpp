@@ -411,9 +411,10 @@ namespace Pika {
 				std::string Name = Material ? Material->getMaterialType() : "None";
 				ImGui::Text("Material type : %s", Name.c_str());
 				if (auto BlinnPhone = dynamic_cast<BlinnPhoneMaterial*>(Material.get())) {
-					ImGui::ColorEdit3("Ambient", glm::value_ptr(BlinnPhone->getAmbient()));
-					ImGui::ColorEdit3("Diffuse", glm::value_ptr(BlinnPhone->getDiffuse()));
-					ImGui::ColorEdit3("Specular", glm::value_ptr(BlinnPhone->getSpecular()));
+					auto& MaterialData = BlinnPhone->getData();
+					ImGui::ColorEdit3("Ambient", glm::value_ptr(MaterialData.m_Ambient));
+					ImGui::ColorEdit3("Diffuse", glm::value_ptr(MaterialData.m_Diffuse));
+					ImGui::ColorEdit3("Specular", glm::value_ptr(MaterialData.m_Specular));
 				}
 				});
 		}

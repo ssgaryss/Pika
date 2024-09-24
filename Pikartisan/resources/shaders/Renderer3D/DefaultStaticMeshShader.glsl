@@ -12,11 +12,9 @@ layout(std140, binding = 0) uniform CameraData
 	mat4 u_ProjectionMatrix;
 };
 
-out vec3 v_TexCoords;
 out flat int v_EntityID;
 
 void main() {
-	v_TexCoords = a_Position;
 	v_EntityID = a_EntityID;
 	gl_Position = u_ViewProjectionMatrix * vec4(a_Position, 1.0f);
 }
@@ -27,7 +25,6 @@ void main() {
 layout(location = 0) out vec4 o_FragmentColor;
 layout(location = 1) out int o_EntityID;
 
-in vec3 v_TexCoords;
 in flat int v_EntityID;
 
 void main() {

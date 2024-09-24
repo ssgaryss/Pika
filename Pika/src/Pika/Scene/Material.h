@@ -14,22 +14,20 @@ namespace Pika {
 	class BlinnPhoneMaterial : public Material
 	{
 	public:
+		struct Data {
+			glm::vec3 m_Ambient;
+			glm::vec3 m_Diffuse;
+			glm::vec3 m_Specular;
+		};
+	public:
 		inline std::string getMaterialType() const override { return m_MaterialType; }
 
-		inline const glm::vec3& getAmbient() const { return m_Ambient; }
-		inline glm::vec3& getAmbient() { return m_Ambient; }
-		inline void setAmbient(const glm::vec3& vAmbient) { m_Ambient = vAmbient; }
-		inline const glm::vec3& getDiffuse() const { return m_Diffuse; }
-		inline glm::vec3& getDiffuse() { return m_Diffuse; }
-		inline void setDiffuse(const glm::vec3& vDiffuse) { m_Diffuse = vDiffuse; }
-		inline const glm::vec3& getSpecular() const { return m_Specular; }
-		inline glm::vec3& getSpecular() { return m_Specular; }
-		inline void setSpecular(const glm::vec3& vSpecular) { m_Specular = vSpecular; }
+		inline const Data& getData() const { return m_Data; }
+		inline Data& getData() { return m_Data; }
+		inline void setData(const Data& vData) { m_Data = vData; }
 	private:
 		inline static const std::string m_MaterialType = "Blinn-Phone";
-		glm::vec3 m_Ambient;
-		glm::vec3 m_Diffuse;
-		glm::vec3 m_Specular;
+		Data m_Data;
 	};
 
 }

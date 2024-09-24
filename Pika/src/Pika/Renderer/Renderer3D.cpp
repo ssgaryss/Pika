@@ -19,7 +19,9 @@ namespace Pika {
 		// StaticMesh
 		Ref<VertexArray> m_StaticMeshVertexArray = nullptr;
 		Ref<VertexBuffer> m_StaticMeshVertexBuffer = nullptr;
-		Ref<Shader> m_StaticMeshShader;
+		Ref<Shader> m_StaticMeshShader = nullptr;
+		Ref<Shader> m_BlinnPhoneShader = nullptr;
+		Ref<UniformBuffer> m_BlinnPhoneMaterialData = nullptr;
 
 		// Line
 		static const uint32_t s_MaxLinesPerBatch = MAX_LINES_PER_BATCH;
@@ -75,6 +77,7 @@ namespace Pika {
 		s_Data.m_StaticMeshVertexBuffer->setLayout(StaticMeshLayout);
 		s_Data.m_StaticMeshVertexArray->addVertexBuffer(s_Data.m_StaticMeshVertexBuffer);
 		s_Data.m_StaticMeshShader = Shader::Create("resources/shaders/Renderer3D/DefaultStaticMeshShader.glsl");
+		s_Data.m_BlinnPhoneShader = Shader::Create("resources/shaders/Renderer3D/DefaultBlinnPhoneShader.glsl");
 		s_Data.m_StaticMeshVertexArray->unbind();
 
 		// Line
@@ -135,8 +138,9 @@ namespace Pika {
 		s_Data.m_SkyboxShader = Shader::Create("resources/shaders/Renderer3D/DefaultSkyboxShader.glsl");
 		s_Data.m_SkyboxVertexArray->unbind();
 
-		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0); // glsl÷–binding = 1
-	
+		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0);     // glsl÷–binding = 0
+		s_Data.m_BlinnPhoneMaterialData = UniformBuffer::Create(sizeof(BlinnPhoneMaterial::Data), 1);
+
 		PK_CORE_INFO("Success to initialize Pika 3D Renderer!");
 	}
 
@@ -201,12 +205,43 @@ namespace Pika {
 		s_Data.m_Statistics.m_MeshCount++;
 	}
 
+	void Renderer3D::DrawStaticMesh(const glm::mat4& vTransform, const StaticMesh& vMesh, const MaterialComponent& vMaterial, int vEntityID)
+	{
+		PK_PROFILE_FUNCTION();
+
+		Ref<IndexBuffer> StaticMeshIndexBuffer = IndexBuffer::Create(vMesh.getIndicesData(), vMesh.getIndicesCount());
+		s_Data.m_StaticMeshVertexArray->setIndexBuffer(StaticMeshIndexBuffer);
+		auto TransformVertices = vMesh.getVertices();
+		for (auto& Vertex : TransformVertices) {
+			Vertex.m_Position = vTransform * glm::vec4(Vertex.m_Position, 1.0f);
+			Vertex.m_EntityID = vEntityID;
+		}
+		s_Data.m_StaticMeshVertexBuffer->setData(TransformVertices.data(), vMesh.getVerticesSize());
+
+		if(auto BlinnPhone = dynamic_cast<BlinnPhoneMaterial*>(vMaterial.m_Material.get())){
+			s_Data.m_BlinnPhoneShader->bind();
+			const auto& MaterialData = BlinnPhone->getData();
+			s_Data.m_BlinnPhoneMaterialData->setData(&MaterialData, sizeof(MaterialData));
+		}
+		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
+		s_Data.m_Statistics.m_MeshCount++;
+	}
+
 	void Renderer3D::DrawModel(const glm::mat4& vTransform, const ModelComponent& vModel, int vEntityID)
 	{
 		PK_PROFILE_FUNCTION();
 
 		for (auto& Mesh : vModel.m_Model->getMeshes()) {
 			DrawStaticMesh(vTransform, Mesh, vEntityID);
+		}
+	}
+
+	void Renderer3D::DrawModel(const glm::mat4& vTransform, const ModelComponent& vModel, const MaterialComponent& vMaterial, int vEntityID)
+	{
+		PK_PROFILE_FUNCTION();
+
+		for (auto& Mesh : vModel.m_Model->getMeshes()) {
+			DrawStaticMesh(vTransform, Mesh, vMaterial, vEntityID);
 		}
 	}
 
