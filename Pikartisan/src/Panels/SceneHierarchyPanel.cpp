@@ -29,8 +29,22 @@ namespace Pika {
 
 				// ÓÒ¼ü¿Õ°×ÇøÓòµ¯³ö²Ëµ¥
 				if (ImGui::BeginPopupContextWindow("Create entity", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
-					if (ImGui::MenuItem("Create empty entity"))
-						m_Context->createEntity("Empty entity");
+					if (ImGui::BeginMenu("Create Entity")) {
+						if (ImGui::MenuItem("Empty entity"))
+							m_Context->createEntity("Empty entity");
+						// Only 3D
+						if (m_Context->getSceneType() == Scene::SceneType::Scene3D) {
+							if (ImGui::BeginMenu("Objects")) {
+								if (ImGui::MenuItem("Sphere")) {
+									auto Entity = m_Context->createEntity("Sphere");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/sphere.fbx");
+								}
+								ImGui::EndMenu();
+							}
+						}
+						ImGui::EndMenu();
+					}
 					ImGui::EndPopup();
 				}
 
