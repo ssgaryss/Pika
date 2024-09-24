@@ -74,7 +74,7 @@ namespace Pika {
 		};
 		s_Data.m_StaticMeshVertexBuffer->setLayout(StaticMeshLayout);
 		s_Data.m_StaticMeshVertexArray->addVertexBuffer(s_Data.m_StaticMeshVertexBuffer);
-		s_Data.m_StaticMeshShader = Shader::Create("assets/shaders/Renderer3D/DefaultStaticMeshShader.glsl");
+		s_Data.m_StaticMeshShader = Shader::Create("resources/shaders/Renderer3D/DefaultStaticMeshShader.glsl");
 		s_Data.m_StaticMeshVertexArray->unbind();
 
 		// Line
@@ -98,7 +98,7 @@ namespace Pika {
 		};
 		s_Data.m_LineVertexBuffer->setLayout(LineLayout);
 		s_Data.m_LineVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
-		s_Data.m_LineShader = Shader::Create("assets/shaders/Renderer3D/DefaultLineShader.glsl");
+		s_Data.m_LineShader = Shader::Create("resources/shaders/Renderer3D/DefaultLineShader.glsl");
 
 		s_Data.m_LineVertexDataBatch = CreateRef<RenderBatch<LineVertexData>>(Renderer3DData::s_MaxLineVerticesPerBatch);
 		s_Data.m_LineVertexArray->unbind();
@@ -132,7 +132,7 @@ namespace Pika {
 		};
 		s_Data.m_SkyboxVertexBuffer->setLayout(SkyboxLayout);
 		s_Data.m_SkyboxVertexArray->addVertexBuffer(s_Data.m_SkyboxVertexBuffer);
-		s_Data.m_SkyboxShader = Shader::Create("assets/shaders/Renderer3D/DefaultSkyboxShader.glsl");
+		s_Data.m_SkyboxShader = Shader::Create("resources/shaders/Renderer3D/DefaultSkyboxShader.glsl");
 		s_Data.m_SkyboxVertexArray->unbind();
 
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0); // glsl÷–binding = 1

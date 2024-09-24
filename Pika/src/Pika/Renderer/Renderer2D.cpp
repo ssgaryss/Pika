@@ -129,7 +129,7 @@ namespace Pika {
 		};
 		s_Data.m_QuadVertexBuffer->setLayout(QuadLayout);
 		s_Data.m_QuadVertexArray->addVertexBuffer(s_Data.m_QuadVertexBuffer);
-		s_Data.m_QuadShader = Shader::Create("assets/shaders/Renderer2D/DefaultQuadShader.glsl");
+		s_Data.m_QuadShader = Shader::Create("resources/shaders/Renderer2D/DefaultQuadShader.glsl");
 
 		s_Data.m_pQuadVertexBufferBase = new QuadVertexData[Renderer2DData::s_MaxQuadVerticesPerBatch];
 		s_Data.m_QuadVertexArray->unbind();
@@ -155,7 +155,7 @@ namespace Pika {
 		};
 		s_Data.m_LineVertexBuffer->setLayout(LineLayout);
 		s_Data.m_LineVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
-		s_Data.m_LineShader = Shader::Create("assets/shaders/Renderer2D/DefaultLineShader.glsl");
+		s_Data.m_LineShader = Shader::Create("resources/shaders/Renderer2D/DefaultLineShader.glsl");
 
 		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer2DData::s_MaxQuadVerticesPerBatch];
 		s_Data.m_LineVertexArray->unbind();
