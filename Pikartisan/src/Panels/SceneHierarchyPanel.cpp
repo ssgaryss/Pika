@@ -60,6 +60,11 @@ namespace Pika {
 									auto& MC = Entity.addComponent<ModelComponent>();
 									MC.m_Model = CreateRef<Model>("resources/objects/cylinder.fbx");
 								}
+								if (ImGui::MenuItem("Monkey")) {
+									auto Entity = m_Context->createEntity("Monkey");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/monkey.fbx");
+								}
 								ImGui::EndMenu();
 							}
 						}
