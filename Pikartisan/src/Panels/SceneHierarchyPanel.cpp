@@ -34,11 +34,31 @@ namespace Pika {
 							m_Context->createEntity("Empty entity");
 						// Only 3D
 						if (m_Context->getSceneType() == Scene::SceneType::Scene3D) {
-							if (ImGui::BeginMenu("Objects")) {
+							if (ImGui::BeginMenu("Mesh")) {
+								if (ImGui::MenuItem("Plane")) {
+									auto Entity = m_Context->createEntity("Plane");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/plane.fbx");
+								}
 								if (ImGui::MenuItem("Sphere")) {
 									auto Entity = m_Context->createEntity("Sphere");
 									auto& MC = Entity.addComponent<ModelComponent>();
 									MC.m_Model = CreateRef<Model>("resources/objects/sphere.fbx");
+								}
+								if (ImGui::MenuItem("Cube")) {
+									auto Entity = m_Context->createEntity("Cube");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/cube.fbx");
+								}
+								if (ImGui::MenuItem("Cone")) {
+									auto Entity = m_Context->createEntity("Cone");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/cone.fbx");
+								}
+								if (ImGui::MenuItem("Cylinder")) {
+									auto Entity = m_Context->createEntity("Cylinder");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/cylinder.fbx");
 								}
 								ImGui::EndMenu();
 							}
@@ -367,6 +387,10 @@ namespace Pika {
 		if (m_Context->getSceneType() == Scene::SceneType::Scene3D) {
 			drawEntityComponent<ModelComponent>("Model", vEntity, [](auto& vModelComponent) {
 				std::string Path = vModelComponent.m_Model ? vModelComponent.m_Model->getPath().string() : "None";
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100.f);
+				ImGui::Text("Path");
+				ImGui::NextColumn();
 				ImGui::Button(Path.c_str());
 				if (ImGui::BeginDragDropTarget()) {
 					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ∂‘”¶ContentBrowserPanel÷–
@@ -375,6 +399,7 @@ namespace Pika {
 					}
 					ImGui::EndDragDropTarget();
 				}
+				ImGui::Columns();
 				});
 			drawEntityComponent<MaterialComponent>("Material", vEntity, [](auto& vMaterialComponent) {
 				auto& Material = vMaterialComponent.m_Material;
