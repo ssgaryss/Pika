@@ -1506,7 +1506,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Scene\Material.h" />
+    <ClInclude Include="src\Pika\Scene\Materials.h" />
+    <ClInclude Include="src\Pika\Scene\Lights.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1644,6 +1645,7 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Scene\Material.cpp" />
+    <ClCompile Include="src\Pika\Scene\Materials.cpp" />
+    <ClCompile Include="src\Pika\Scene\Lights.cpp" />
   </ItemGroup>
 </Project>

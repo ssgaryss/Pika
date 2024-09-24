@@ -7,9 +7,9 @@ bin-int/
 *.user
 
 #Debug only
-Sandbox/PikaProfile-Runtime.json
-Sandbox/PikaProfile-Shutdown.json
-Sandbox/PikaProfile-Startup.json
+Pikartisan/PikaProfile-Runtime.json
+Pikartisan/PikaProfile-Shutdown.json
+Pikartisan/PikaProfile-Startup.json
 
 #Visual Studio
 *.sln

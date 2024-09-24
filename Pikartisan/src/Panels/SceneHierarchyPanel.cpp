@@ -29,8 +29,47 @@ namespace Pika {
 
 				// 右键空白区域弹出菜单
 				if (ImGui::BeginPopupContextWindow("Create entity", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
-					if (ImGui::MenuItem("Create empty entity"))
-						m_Context->createEntity("Empty entity");
+					if (ImGui::BeginMenu("Create Entity")) {
+						if (ImGui::MenuItem("Empty entity"))
+							m_Context->createEntity("Empty entity");
+						// Only 3D
+						if (m_Context->getSceneType() == Scene::SceneType::Scene3D) {
+							if (ImGui::BeginMenu("Mesh")) {
+								if (ImGui::MenuItem("Plane")) {
+									auto Entity = m_Context->createEntity("Plane");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/plane.fbx");
+								}
+								if (ImGui::MenuItem("Sphere")) {
+									auto Entity = m_Context->createEntity("Sphere");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/sphere.fbx");
+								}
+								if (ImGui::MenuItem("Cube")) {
+									auto Entity = m_Context->createEntity("Cube");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/cube.fbx");
+								}
+								if (ImGui::MenuItem("Cone")) {
+									auto Entity = m_Context->createEntity("Cone");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/cone.fbx");
+								}
+								if (ImGui::MenuItem("Cylinder")) {
+									auto Entity = m_Context->createEntity("Cylinder");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/cylinder.fbx");
+								}
+								if (ImGui::MenuItem("Monkey")) {
+									auto Entity = m_Context->createEntity("Monkey");
+									auto& MC = Entity.addComponent<ModelComponent>();
+									MC.m_Model = CreateRef<Model>("resources/objects/monkey.fbx");
+								}
+								ImGui::EndMenu();
+							}
+						}
+						ImGui::EndMenu();
+					}
 					ImGui::EndPopup();
 				}
 
@@ -239,12 +278,18 @@ namespace Pika {
 				}
 				if (!m_SelectedEntity.hasComponent<MaterialComponent>()) {
 					if (ImGui::BeginMenu("Material Component")) {
-						if (ImGui::MenuItem("None")) {
-							m_SelectedEntity.addComponent<MaterialComponent>();
-						}
 						if (ImGui::MenuItem("Blinn-Phone")) {
 							auto& MC = m_SelectedEntity.addComponent<MaterialComponent>();
 							MC.m_Material = CreateRef<BlinnPhoneMaterial>();
+						}
+						ImGui::EndMenu();
+					}
+				}
+				if (!m_SelectedEntity.hasComponent<LightComponent>()) {
+					if (ImGui::BeginMenu("Light Component")) {
+						if (ImGui::MenuItem("Point Light")) {
+							auto& LC = m_SelectedEntity.addComponent<LightComponent>();
+							LC.m_Light = CreateRef<PointLight>();
 						}
 						ImGui::EndMenu();
 					}
@@ -351,8 +396,34 @@ namespace Pika {
 
 		// Only 3D 
 		if (m_Context->getSceneType() == Scene::SceneType::Scene3D) {
+			drawEntityComponent<LightComponent>("Light", vEntity, [](auto& vLightComponent) {
+				auto& Light = vLightComponent.m_Light;
+				std::string Type = Light ? Light->getType() : "None";
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100.0f);
+				ImGui::Text("Type");
+				ImGui::NextColumn();
+				ImGui::Text(Type.c_str());
+				ImGui::NextColumn();
+				if (auto Point = dynamic_cast<PointLight*>(vLightComponent.m_Light.get())) {
+					auto& LightData = Point->getData();
+					ImGui::Text("Light Color");
+					ImGui::NextColumn();
+					ImGui::ColorEdit3("##Light Color", glm::value_ptr(LightData.m_LightColor));
+					ImGui::NextColumn();
+					ImGui::Text("Intensity");
+					ImGui::NextColumn();
+					ImGui::DragFloat("##Intensity", &LightData.m_Intensity, 0.05f, 0.0f, 100000.0f);
+					ImGui::NextColumn();
+				}
+				ImGui::Columns();
+				});
 			drawEntityComponent<ModelComponent>("Model", vEntity, [](auto& vModelComponent) {
 				std::string Path = vModelComponent.m_Model ? vModelComponent.m_Model->getPath().string() : "None";
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100.f);
+				ImGui::Text("Path");
+				ImGui::NextColumn();
 				ImGui::Button(Path.c_str());
 				if (ImGui::BeginDragDropTarget()) {
 					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
@@ -361,16 +432,34 @@ namespace Pika {
 					}
 					ImGui::EndDragDropTarget();
 				}
+				ImGui::Columns();
 				});
 			drawEntityComponent<MaterialComponent>("Material", vEntity, [](auto& vMaterialComponent) {
 				auto& Material = vMaterialComponent.m_Material;
-				std::string Name = Material ? Material->getMaterialType() : "None";
-				ImGui::Text("Material type : %s", Name.c_str());
+				std::string Type = Material ? Material->getType() : "None";
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100.0f);
+				ImGui::Text("Type");
+				ImGui::NextColumn();
+				ImGui::Text(Type.c_str());
+				ImGui::NextColumn();
 				if (auto BlinnPhone = dynamic_cast<BlinnPhoneMaterial*>(Material.get())) {
-					ImGui::ColorEdit3("Ambient", glm::value_ptr(BlinnPhone->getAmbient()));
-					ImGui::ColorEdit3("Diffuse", glm::value_ptr(BlinnPhone->getDiffuse()));
-					ImGui::ColorEdit3("Specular", glm::value_ptr(BlinnPhone->getSpecular()));
+					auto& MaterialData = BlinnPhone->getData();
+					ImGui::Text("Ambient");
+					ImGui::NextColumn();
+					ImGui::ColorEdit3("##Ambient", glm::value_ptr(MaterialData.m_Ambient));
+					ImGui::NextColumn();
+					ImGui::Text("Diffuse");
+					ImGui::NextColumn();
+					ImGui::ColorEdit3("##Diffuse", glm::value_ptr(MaterialData.m_Diffuse));
+					ImGui::NextColumn();
+					ImGui::Text("Specular");
+					ImGui::NextColumn();
+					ImGui::ColorEdit3("##Specular", glm::value_ptr(MaterialData.m_Specular));
+					ImGui::NextColumn();
 				}
+				// TODO : PBR Material
+				ImGui::Columns();
 				});
 		}
 

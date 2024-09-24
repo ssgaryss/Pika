@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "Pika/Scene/Mesh.h"
 #include "Pika/Scene/Components.h"
+#include "Pika/Scene/Materials.h"
 
 namespace Pika
 {
@@ -20,7 +21,9 @@ namespace Pika
 
 		// Mesh
 		static void DrawStaticMesh(const glm::mat4& vTransform, const StaticMesh& vMesh, int vEntityID = -1);
-		static void DrawModel(const glm::mat4& vTransform, const ModelComponent& vSprite, int vEntityID = -1);
+		static void DrawStaticMesh(const glm::mat4& vTransform, const StaticMesh& vMesh, const MaterialComponent& vMaterial, int vEntityID = -1);
+		static void DrawModel(const glm::mat4& vTransform, const ModelComponent& vModel, int vEntityID = -1);
+		static void DrawModel(const glm::mat4& vTransform, const ModelComponent& vModel, const MaterialComponent& vMaterial, int vEntityID = -1);
 		// Line
 		static void SetLineThickness(float vThickness);
 		static float GetLineThickness();

@@ -1,6 +1,6 @@
 #pragma once
 #include "Primitive.h"
-#include "Material.h"
+#include "Materials.h"
 
 namespace Pika {
 

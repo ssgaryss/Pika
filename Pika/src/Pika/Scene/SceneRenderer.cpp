@@ -75,8 +75,15 @@ namespace Pika {
 			auto View = m_Context->m_Registry.group<TransformComponent, ModelComponent>();
 			for (const auto& Entt : View) {
 				auto [Transform, Model] = View.get<TransformComponent, ModelComponent>(Entt); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
-				if (Model.m_Model)
-					Renderer3D::DrawModel(Transform, Model, static_cast<int>(Entt));
+				if (Model.m_Model) {
+					if (m_Context->m_Registry.any_of<MaterialComponent>(Entt)) {
+						auto& Material = m_Context->m_Registry.get<MaterialComponent>(Entt);
+						Renderer3D::DrawModel(Transform, Model, Material, static_cast<int>(Entt));
+					}
+					else {
+						Renderer3D::DrawModel(Transform, Model, static_cast<int>(Entt));
+					}
+				}
 			}
 			Renderer3D::EndScene();
 			return;
