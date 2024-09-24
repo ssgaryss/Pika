@@ -61,7 +61,7 @@ void main() {
 	// specular
 	vec3 ViewDir = normalize(v_ViewPosition - v_Position);
 	vec3 HalfDir = normalize(LightDir + ViewDir);
-	float spec = pow(max(dot(Normal, HalfDir), 0.0), 5.0);
+	float spec = pow(max(dot(Normal, HalfDir), 0.0), 8.0);
 	vec3 Specular = spec * lightColor;
 
 	vec3 Result = (Ambient + Diffuse) * objectColor;

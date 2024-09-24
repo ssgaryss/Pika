@@ -1,7 +1,8 @@
 #pragma once
 #include "SceneCamera.h"
 #include "Model.h"
-#include "Material.h"
+#include "Materials.h"
+#include "Lights.h"
 #include "Pika/Core/UUID.h"
 #include "Pika/Renderer/Texture.h"
 #include <string>
@@ -69,7 +70,7 @@ namespace Pika
 		Ref<Model> m_Model = nullptr;
 
 		ModelComponent() = default;
-		ModelComponent(const ModelComponent&) = default;
+		ModelComponent(const ModelComponent&) = default; // 感觉浅拷贝就行，毕竟Mesh数据是复用的
 	};
 
 	struct MaterialComponent
@@ -77,7 +78,21 @@ namespace Pika
 		Ref<Material> m_Material = nullptr;
 
 		MaterialComponent() = default;
-		MaterialComponent(const MaterialComponent&) = default;
+		MaterialComponent(const MaterialComponent& vOther) {
+			if (vOther.m_Material)
+				m_Material = vOther.m_Material->clone(); // 这里深拷贝感觉好一点，因为我并没有把Material作为一种Asset，也就没有复用
+		}
+	};
+
+	struct LightComponent
+	{
+		Ref<Light> m_Light = nullptr;
+
+		LightComponent() = default;
+		LightComponent(const LightComponent& vOther) {
+			if (vOther.m_Light)
+				m_Light = vOther.m_Light->clone();
+		}
 	};
 
 	// 2D only
@@ -89,7 +104,7 @@ namespace Pika
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const glm::vec4& vColor)
 			: m_Color{ vColor } {}
-		SpriteRendererComponent(const SpriteRendererComponent&) = default;
+		SpriteRendererComponent(const SpriteRendererComponent&) = default; // Texture复用，浅拷贝
 	};
 
 	struct Rigidbody2DComponent

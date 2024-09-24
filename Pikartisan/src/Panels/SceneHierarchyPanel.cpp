@@ -278,12 +278,18 @@ namespace Pika {
 				}
 				if (!m_SelectedEntity.hasComponent<MaterialComponent>()) {
 					if (ImGui::BeginMenu("Material Component")) {
-						if (ImGui::MenuItem("None")) {
-							m_SelectedEntity.addComponent<MaterialComponent>();
-						}
 						if (ImGui::MenuItem("Blinn-Phone")) {
 							auto& MC = m_SelectedEntity.addComponent<MaterialComponent>();
 							MC.m_Material = CreateRef<BlinnPhoneMaterial>();
+						}
+						ImGui::EndMenu();
+					}
+				}
+				if (!m_SelectedEntity.hasComponent<LightComponent>()) {
+					if (ImGui::BeginMenu("Light Component")) {
+						if (ImGui::MenuItem("Point Light")) {
+							auto& LC = m_SelectedEntity.addComponent<LightComponent>();
+							LC.m_Light = CreateRef<PointLight>();
 						}
 						ImGui::EndMenu();
 					}
@@ -390,6 +396,28 @@ namespace Pika {
 
 		// Only 3D 
 		if (m_Context->getSceneType() == Scene::SceneType::Scene3D) {
+			drawEntityComponent<LightComponent>("Light", vEntity, [](auto& vLightComponent) {
+				auto& Light = vLightComponent.m_Light;
+				std::string Type = Light ? Light->getType() : "None";
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100.0f);
+				ImGui::Text("Type");
+				ImGui::NextColumn();
+				ImGui::Text(Type.c_str());
+				ImGui::NextColumn();
+				if (auto Point = dynamic_cast<PointLight*>(vLightComponent.m_Light.get())) {
+					auto& LightData = Point->getData();
+					ImGui::Text("Light Color");
+					ImGui::NextColumn();
+					ImGui::ColorEdit3("##Light Color", glm::value_ptr(LightData.m_LightColor));
+					ImGui::NextColumn();
+					ImGui::Text("Intensity");
+					ImGui::NextColumn();
+					ImGui::DragFloat("##Intensity", &LightData.m_Intensity, 0.05f, 0.0f, 100000.0f);
+					ImGui::NextColumn();
+				}
+				ImGui::Columns();
+				});
 			drawEntityComponent<ModelComponent>("Model", vEntity, [](auto& vModelComponent) {
 				std::string Path = vModelComponent.m_Model ? vModelComponent.m_Model->getPath().string() : "None";
 				ImGui::Columns(2);
@@ -408,14 +436,30 @@ namespace Pika {
 				});
 			drawEntityComponent<MaterialComponent>("Material", vEntity, [](auto& vMaterialComponent) {
 				auto& Material = vMaterialComponent.m_Material;
-				std::string Name = Material ? Material->getMaterialType() : "None";
-				ImGui::Text("Material type : %s", Name.c_str());
+				std::string Type = Material ? Material->getType() : "None";
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100.0f);
+				ImGui::Text("Type");
+				ImGui::NextColumn();
+				ImGui::Text(Type.c_str());
+				ImGui::NextColumn();
 				if (auto BlinnPhone = dynamic_cast<BlinnPhoneMaterial*>(Material.get())) {
 					auto& MaterialData = BlinnPhone->getData();
-					ImGui::ColorEdit3("Ambient", glm::value_ptr(MaterialData.m_Ambient));
-					ImGui::ColorEdit3("Diffuse", glm::value_ptr(MaterialData.m_Diffuse));
-					ImGui::ColorEdit3("Specular", glm::value_ptr(MaterialData.m_Specular));
+					ImGui::Text("Ambient");
+					ImGui::NextColumn();
+					ImGui::ColorEdit3("##Ambient", glm::value_ptr(MaterialData.m_Ambient));
+					ImGui::NextColumn();
+					ImGui::Text("Diffuse");
+					ImGui::NextColumn();
+					ImGui::ColorEdit3("##Diffuse", glm::value_ptr(MaterialData.m_Diffuse));
+					ImGui::NextColumn();
+					ImGui::Text("Specular");
+					ImGui::NextColumn();
+					ImGui::ColorEdit3("##Specular", glm::value_ptr(MaterialData.m_Specular));
+					ImGui::NextColumn();
 				}
+				// TODO : PBR Material
+				ImGui::Columns();
 				});
 		}
 

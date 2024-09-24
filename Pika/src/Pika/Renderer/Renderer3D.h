@@ -4,7 +4,7 @@
 #include "Texture.h"
 #include "Pika/Scene/Mesh.h"
 #include "Pika/Scene/Components.h"
-#include "Pika/Scene/Material.h"
+#include "Pika/Scene/Materials.h"
 
 namespace Pika
 {
