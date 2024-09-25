@@ -2,10 +2,10 @@
 #version 460 core
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec4 a_Color;
-layout(location = 2) in int a_EntityID;
+layout(location = 2) in highp int a_EntityID;
 
 out vec4 v_Color;
-out flat int v_EntityID;
+out flat highp int v_EntityID;
 
 layout(std140, binding = 0) uniform CameraData
 {
@@ -23,10 +23,10 @@ void main() {
 #version 460 core
 
 layout(location = 0) out vec4 o_FragmentColor;
-layout(location = 1) out int o_EntityID;
+layout(location = 1) out highp int o_EntityID;
 
 in vec4 v_Color;
-in flat int v_EntityID;
+in flat highp int v_EntityID;
 
 uniform sampler2D u_Textures[32];
 

@@ -47,6 +47,8 @@ namespace Pika
 		inline void setSceneName(const std::string& vName) { m_SceneName = vName; }
 		inline SceneType getSceneType() const { return m_SceneType; }
 		inline void setSceneType(SceneType vSceneType) { m_SceneType = vSceneType; }
+		inline const Ref<Cubemap>& getSkybox() const { return m_Skybox; }
+		inline void setSkybox(const Ref<Cubemap>& vSkybox) { m_Skybox = vSkybox; }
 	private:
 		void onUpdateEditor(Timestep vTimestep);        // SceneState::Edit
 		void onUpdateRuntime(Timestep vTimestep);       // SceneState::Play
@@ -75,7 +77,8 @@ namespace Pika
 		Ref<Cubemap> m_Skybox = nullptr;                              // Skybox
 
 		friend class Entity;
-		friend class SceneRenderer;
+		friend class SceneRenderer; // TODO : Delete
+		friend class RenderDataExtractor;
 		friend class SceneHierarchyPanel;
 		friend class SceneStatePanel;
 		friend class SceneSerializer;

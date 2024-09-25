@@ -45,9 +45,9 @@ namespace Pika
 		m_ActiveScene = CreateRef<Scene>();
 		// Initialize Scene Renderer
 		m_Renderer = CreateRef<SceneRenderer>();
-		m_Renderer->setContext(m_ActiveScene);
+		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
 		m_Renderer->setFramebuffer(Framebuffer::Create({ 1920, 1080, 1,
-			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false }));
+			{TextureFormat::RGBA8, TextureFormat::R32I, TextureFormat::DEPTH24STENCIL8}, false })); // 这里EntityID一定用R32I，因为R16I会发生阶段导致bug！！！
 		m_Renderer->initialize();
 
 		// Initialize Shortcuts
@@ -56,17 +56,8 @@ namespace Pika
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>(m_ActiveScene);
 		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 		m_SceneStatePanel = CreateScope<SceneStatePanel>(m_ActiveScene);
-
-		// TODO : Delete!!!
-		m_TextureBackround = Texture2D::Create("assets/textures/board.png");
-		m_Texture2024 = Texture2D::Create("assets/textures/2024.png");
-		m_TextureRPGpack_sheet_2X = Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
-
-		m_TextureTree = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
-		m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
-		m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
-		m_SnowSkybox = Cubemap::Create("assets/environment/skybox/LDR/snowy_forest_path_01_2k.png");
-		m_Renderer->setSkybox(m_SnowSkybox);
+		// Initialize Default Skybox
+		m_ActiveScene->setSkybox(Cubemap::Create("resources/skybox/snowy_forest_path_01_2k.png"));
 	}
 
 	void EditorLayer::onDetach()
@@ -80,7 +71,7 @@ namespace Pika
 		m_LastFrameTime = vTimestep;
 
 		// 更新Scene和Scene中所有Cameras的ViewportSize
-		m_Renderer->getContext()->onViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+		m_ActiveScene->onViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		// 更新FBO、EditorCamera和CameraController的Size，使其大小与Viewport保持一致
 		if (const FramebufferSpecification& FS = m_Renderer->getFramebuffer()->getFramebufferSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f
@@ -95,33 +86,6 @@ namespace Pika
 		RenderCommand::Clear(); // 会影响所有FBO中的Texture而非一个
 		m_Renderer->getFramebuffer()->clearAttachment(1, -1); // 所有EntityID其余区域赋值-1
 
-#if 0
-		Renderer2D::BeginScene(m_CameraController);
-		Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 20.0f, 20.0f }, m_TextureBackround, 10.0f);
-		Renderer2D::DrawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
-		Renderer2D::DrawQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f });
-		Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.2f, 0.5f }, { 0.5f, 0.5f, 1.0f, 1.0f });
-		Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f }, { 0.5f, 0.5f }, glm::radians(Rotation), { 1.0f, 0.0f, 1.0f, 1.0f });
-		Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f, 0.1f }, { 0.5f, 0.5f }, glm::radians(Rotation), m_Texture2024);
-		int num = 0;
-		for (int i = 0; i < 20; ++i) {
-			for (int j = 0; j < 30; ++j) {
-				if (s_Map[i * 30 + j] == '0')
-					Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureWater);
-				else if (s_Map[i * 30 + j] == '1')
-					Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureGround);
-				else
-					Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureTree);
-			}
-		}
-
-		Rotation += glm::radians(10.0f);
-		Renderer2D::EndScene();
-
-		//Renderer2D::BeginScene(m_CameraController);
-		//m_ActiveScene->onUpdate(vTimestep);
-		//Renderer2D::EndScene();
-#endif // 0
 		m_ActiveScene->onUpdate(vTimestep);
 		switch (m_SceneStatePanel->getSceneState())
 		{
@@ -312,7 +276,7 @@ namespace Pika
 		}
 		// Gizmos
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
-		if (SelectedEntity && m_SceneStatePanel->getSceneState() == Scene::SceneState::Edit) {
+		if (SelectedEntity && m_SceneStatePanel->getSceneState() == Scene::SceneState::Edit && SelectedEntity.hasComponent<TransformComponent>()) {
 			ImGuizmo::BeginFrame();
 			ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
 			ImGuizmo::SetOrthographic(m_EditorCamera.isOthograhic());
@@ -367,7 +331,7 @@ namespace Pika
 		m_ActiveScene = CreateRef<Scene>(vName, vType);
 		m_SceneHierarchyPanel->setContext(m_ActiveScene);
 		m_SceneStatePanel->setContext(m_ActiveScene);
-		m_Renderer->setContext(m_ActiveScene);
+		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
 		m_Renderer->initialize();
 		m_ActiveScenePath = std::filesystem::path(); // 重置为空
 	}
@@ -403,7 +367,7 @@ namespace Pika
 		auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
 		Serializer->deserializeYAMLText(Path);
 		m_ActiveScenePath = std::filesystem::path(Path); // 绝对路径
-		m_Renderer->setContext(m_ActiveScene);
+		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
 		m_Renderer->initialize();   // 要在deserialize之后才会确定SceneType
 
 	}
@@ -498,7 +462,8 @@ namespace Pika
 		ImGui::Text(ContextInformation->m_Version.c_str());
 		ImGui::Columns();
 		ImGui::Separator();
-		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) ? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
+		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) && m_MouseHoveredEntity.hasComponent<TagComponent>()
+			? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
 		ImGui::Text("Mouse hovered entity : %s", MouseHoveredEntityName.c_str());
 		if (m_ActiveScene->getSceneType() == Scene::SceneType::Scene2D) {
 			auto Statistics = Renderer2D::GetStatistics();
@@ -526,7 +491,7 @@ namespace Pika
 	{
 		ImGui::Begin("Scene Renderer Settings");
 		if (m_ActiveScene) {
-			auto& Context = m_Renderer->getContext();
+			auto& Context = m_ActiveScene;
 			if (Context) {
 				ImGui::Text("Scene Name : ");
 				ImGui::SameLine();
@@ -543,19 +508,37 @@ namespace Pika
 				ImGui::Text("Scene State : ");
 				ImGui::SameLine();
 				ImGui::Text(SceneModeName[static_cast<int>(m_SceneStatePanel->getSceneState())]);
+				ImGui::Separator();
 				ImGui::Text("Primary Camera : ");
 				ImGui::SameLine();
 				std::string PrimaryCameraName = "None";
 				Entity PrimaryCamera = m_Renderer->getPrimaryCamera();
-				if (PrimaryCamera && PrimaryCamera.hasComponent<CameraComponent>()) {
-					m_Renderer->setPrimaryCamera(PrimaryCamera);
+				if (PrimaryCamera && PrimaryCamera.hasComponent<CameraComponent>())
 					PrimaryCameraName = PrimaryCamera.getComponent<TagComponent>().m_Tag;
-				}
 				ImGui::Button(PrimaryCameraName.c_str());
 				if (ImGui::BeginDragDropTarget()) {
-					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("SCENE_CAMERA")) { // 对应ContentBrowserPanel中
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("SCENE_CAMERA")) { // 对应SceneHierarchyPanel中
 						const UUID& ID = *reinterpret_cast<const UUID*>(Payload->Data);
-						m_Renderer->setPrimaryCamera(m_Renderer->getContext()->getEntityByUUID(ID));
+						Entity CameraEntity = m_ActiveScene->getEntityByUUID(ID);
+						if (CameraEntity.hasComponent<CameraComponent>())
+							m_Renderer->setPrimaryCamera(CameraEntity);
+						else
+							PK_WARN("Fail to set primary camera with an entity without camera component.");
+					}
+					ImGui::EndDragDropTarget();
+				}
+				ImGui::Text("Skybox");
+				ImGui::SameLine();
+				const auto& Skybox = m_ActiveScene->getSkybox();
+				std::string SkyboxPath = Skybox ? Skybox->getPath().string() : "None";
+				ImGui::Button(SkyboxPath.c_str());
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
+						std::filesystem::path Path = reinterpret_cast<const wchar_t*>(Payload->Data);
+						if (Path.extension().string() == ".png") {
+							m_ActiveScene->setSkybox(Cubemap::Create(Path));
+						}
+						//TODO : HDR
 					}
 					ImGui::EndDragDropTarget();
 				}

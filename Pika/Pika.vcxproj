@@ -143,6 +143,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Pika\Scene\RenderDataExtractor.h" />
     <ClInclude Include="src\Pika\Scene\Lights.h" />
     <ClInclude Include="src\Pika\Scene\Materials.h" />
     <ClInclude Include="src\Pika.h" />
@@ -626,6 +627,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Pika\Scene\RenderDataExtractor.cpp" />
     <ClCompile Include="src\Pika\Scene\Lights.cpp" />
     <ClCompile Include="src\Pika\Scene\Materials.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />

@@ -13,6 +13,7 @@
 #include <math.h>
 #include <filesystem>
 #include <format>
+#include <tuple>
 
 //data structure
 #include <optional>
