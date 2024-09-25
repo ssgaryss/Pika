@@ -2,7 +2,7 @@
 #include "Scene.h"
 #include "Entity.h"
 #include "Lights.h"
-#include "Pika/Core/UUID.h"
+#include "RenderDataExtractor.h"
 #include "Pika/Renderer/Framebuffer.h"
 #include "Pika/Renderer/Shader.h"
 #include "Pika/Renderer/EditorCamera.h"
@@ -33,8 +33,6 @@ namespace Pika {
 		inline void setFramebuffer(const Ref<Framebuffer>& vFramebuffer) { m_Framebuffer = vFramebuffer; }
 		inline const Entity& getPrimaryCamera() const { return m_PrimaryCamera; }
 		inline void setPrimaryCamera(const Entity& vCamera) { m_PrimaryCamera = vCamera; }
-		inline const Ref<Cubemap>& getSkybox() const { return m_Context->m_Skybox; }
-		inline void setSkybox(const Ref<Cubemap>& vSkybox) { m_Context->m_Skybox = vSkybox; }
 
 		// Settings
 		inline bool* showGrid() { return &m_Settings.m_ShowGrid; }
@@ -47,7 +45,8 @@ namespace Pika {
 		inline static const uint32_t s_MaxSpotLightsNumber = 4;
 	private:
 		RendererSettings m_Settings;
-		Ref<Scene> m_Context;
+		Ref<Scene> m_Context; // TODO : Delete!
+		Ref<RenderDataExtractor> m_RenderDataExtracor;
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<ShaderLibrary> m_ShaderLibray; // TODO : 自己创建的Shaders
 

@@ -22,7 +22,7 @@ void main() {
 #FRAGMENT_BEGIN()
 #version 460 core
 layout(location = 0) out vec4 o_FragmentColor;
-layout(location = 1) out int o_EntityID;
+layout(location = 1) out highp int o_EntityID;
 
 in vec3 v_TexCoords;
 

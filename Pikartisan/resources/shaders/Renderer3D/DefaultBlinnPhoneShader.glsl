@@ -3,7 +3,7 @@
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoord;
-layout(location = 3) in int a_EntityID;
+layout(location = 3) in highp int a_EntityID;
 
 layout(std140, binding = 0) uniform CameraData
 {
@@ -15,7 +15,7 @@ layout(std140, binding = 0) uniform CameraData
 out vec3 v_Normal;
 out vec3 v_Position;
 out vec3 v_ViewPosition;
-out flat int v_EntityID;
+out flat highp int v_EntityID;
 
 void main() {
 	v_Normal = a_Normal;
@@ -29,7 +29,7 @@ void main() {
 #FRAGMENT_BEGIN()
 #version 460 core
 layout(location = 0) out vec4 o_FragmentColor;
-layout(location = 1) out int o_EntityID;
+layout(location = 1) out highp int o_EntityID;
 
 struct PointLightData {
 	vec3 m_Position;
@@ -55,7 +55,7 @@ layout(std140, binding = 4) uniform BlinnPhoneMaterial
 in vec3 v_Normal;
 in vec3 v_Position;
 in vec3 v_ViewPosition;
-in flat int v_EntityID;
+in flat highp int v_EntityID;
 
 const vec3 lightPos = vec3(0.0, 10.0, 0.0);
 const vec3 lightColor = vec3(1.0, 1.0, 1.0);

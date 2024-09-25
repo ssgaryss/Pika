@@ -47,7 +47,7 @@ namespace Pika
 		m_Renderer = CreateRef<SceneRenderer>();
 		m_Renderer->setContext(m_ActiveScene);
 		m_Renderer->setFramebuffer(Framebuffer::Create({ 1920, 1080, 1,
-			{TextureFormat::RGBA8, TextureFormat::R16I, TextureFormat::DEPTH24STENCIL8}, false }));
+			{TextureFormat::RGBA8, TextureFormat::R32I, TextureFormat::DEPTH24STENCIL8}, false })); // 这里EntityID一定用R32I，因为R16I会发生阶段导致bug！！！
 		m_Renderer->initialize();
 
 		// Initialize Shortcuts
@@ -66,7 +66,7 @@ namespace Pika
 		m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
 		m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
 		m_SnowSkybox = Cubemap::Create("assets/environment/skybox/LDR/snowy_forest_path_01_2k.png");
-		m_Renderer->setSkybox(m_SnowSkybox);
+		m_ActiveScene->setSkybox(m_SnowSkybox);
 	}
 
 	void EditorLayer::onDetach()
@@ -312,7 +312,7 @@ namespace Pika
 		}
 		// Gizmos
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
-		if (SelectedEntity && m_SceneStatePanel->getSceneState() == Scene::SceneState::Edit) {
+		if (SelectedEntity && m_SceneStatePanel->getSceneState() == Scene::SceneState::Edit && SelectedEntity.hasComponent<TransformComponent>()) {
 			ImGuizmo::BeginFrame();
 			ImGuizmo::SetDrawlist(); // 设置绘制列表（draw list）,即ImGui提供的渲染API
 			ImGuizmo::SetOrthographic(m_EditorCamera.isOthograhic());
@@ -498,7 +498,8 @@ namespace Pika
 		ImGui::Text(ContextInformation->m_Version.c_str());
 		ImGui::Columns();
 		ImGui::Separator();
-		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) ? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
+		std::string MouseHoveredEntityName = static_cast<bool>(m_MouseHoveredEntity) && m_MouseHoveredEntity.hasComponent<TagComponent>()
+			? m_MouseHoveredEntity.getComponent<TagComponent>().m_Tag : "None";
 		ImGui::Text("Mouse hovered entity : %s", MouseHoveredEntityName.c_str());
 		if (m_ActiveScene->getSceneType() == Scene::SceneType::Scene2D) {
 			auto Statistics = Renderer2D::GetStatistics();
@@ -547,8 +548,6 @@ namespace Pika
 				ImGui::SameLine();
 				std::string PrimaryCameraName = "None";
 				Entity PrimaryCamera = m_Renderer->getPrimaryCamera();
-				if (PrimaryCamera)
-					PK_ERROR("11");
 				if (PrimaryCamera && PrimaryCamera.hasComponent<CameraComponent>())
 					PrimaryCameraName = PrimaryCamera.getComponent<TagComponent>().m_Tag;
 				ImGui::Button(PrimaryCameraName.c_str());
