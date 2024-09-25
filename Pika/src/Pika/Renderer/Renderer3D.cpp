@@ -21,7 +21,7 @@ namespace Pika {
 		Ref<VertexBuffer> m_StaticMeshVertexBuffer = nullptr;
 		Ref<Shader> m_StaticMeshShader = nullptr;
 		Ref<Shader> m_BlinnPhoneShader = nullptr;
-		Ref<UniformBuffer> m_BlinnPhoneMaterialData = nullptr;
+		Ref<UniformBuffer> m_BlinnPhoneMaterialDataUniformBuffer = nullptr;
 
 		// Line
 		static const uint32_t s_MaxLinesPerBatch = MAX_LINES_PER_BATCH;
@@ -40,13 +40,17 @@ namespace Pika {
 		Ref<VertexBuffer> m_SkyboxVertexBuffer = nullptr;
 		Ref<Shader> m_SkyboxShader = nullptr;
 
+		// Camera
 		struct CameraData {
 			glm::mat4 m_ViewProjectionMatrix = glm::mat4(1.0f);
 			glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
 			glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f); // Skybox渲染需要
 		};
 		CameraData m_CameraData;
-		Ref<UniformBuffer> m_CameraDataUniformBuffer;
+		Ref<UniformBuffer> m_CameraDataUniformBuffer = nullptr;
+
+		// Lights
+		Ref<UniformBuffer> m_PointLightsDataUniformBuffer = nullptr;
 
 		Renderer3D::Statistics m_Statistics; // Record the renderer states
 	};
@@ -139,7 +143,10 @@ namespace Pika {
 		s_Data.m_SkyboxVertexArray->unbind();
 
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0);     // glsl中binding = 0
-		s_Data.m_BlinnPhoneMaterialData = UniformBuffer::Create(sizeof(BlinnPhoneMaterial::Data), 1);
+		//TODO : Directional light
+		s_Data.m_PointLightsDataUniformBuffer = UniformBuffer::Create(sizeof(PointLight::Data), 2);
+		//TODO : Spot light
+		s_Data.m_BlinnPhoneMaterialDataUniformBuffer = UniformBuffer::Create(sizeof(BlinnPhoneMaterial::Data), 4); // 注意由于GLSL std140内存对齐vec3是4bytes，所以这里需要手动计算
 
 		PK_CORE_INFO("Success to initialize Pika 3D Renderer!");
 	}
@@ -151,6 +158,9 @@ namespace Pika {
 		s_Data.m_CameraData.m_ViewMatrix = vEditorCamera.getViewMatrix();
 		s_Data.m_CameraData.m_ProjectionMatrix = vEditorCamera.getProjectionMatrix();
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
+
+		//PK_CORE_ERROR("{}", sizeof(vLights.m_PointLightsData));
+		//s_Data.m_PointLightsDataUniformBuffer->setData(&vLights.m_PointLightsData, sizeof(vLights.m_PointLightsData));
 
 		ResetStatistics();
 		StartBatch();
@@ -223,7 +233,7 @@ namespace Pika {
 		if(auto BlinnPhone = dynamic_cast<BlinnPhoneMaterial*>(vMaterial.m_Material.get())){
 			s_Data.m_BlinnPhoneShader->bind();
 			const auto& MaterialData = BlinnPhone->getData();
-			s_Data.m_BlinnPhoneMaterialData->setData(&MaterialData, sizeof(MaterialData));
+			s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&MaterialData, sizeof(MaterialData));
 		}
 		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
 		s_Data.m_Statistics.m_MeshCount++;

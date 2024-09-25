@@ -31,7 +31,21 @@ void main() {
 layout(location = 0) out vec4 o_FragmentColor;
 layout(location = 1) out int o_EntityID;
 
-layout(std140, binding = 1) uniform BlinnPhoneMaterial
+struct PointLightData {
+	vec3 m_Position;
+	vec3 m_LightColor;
+	float m_Intensity;
+	float m_Constant;
+	float m_Linear;
+	float m_Quadratic;
+};
+
+layout(std140, binding = 2) uniform PointLightsData
+{
+	PointLightData u_PointLight[4];
+};
+
+layout(std140, binding = 4) uniform BlinnPhoneMaterial
 {
 	vec3 u_Ambient;
 	vec3 u_Diffuse;
@@ -45,7 +59,7 @@ in flat int v_EntityID;
 
 const vec3 lightPos = vec3(0.0, 10.0, 0.0);
 const vec3 lightColor = vec3(1.0, 1.0, 1.0);
-const vec3 objectColor = vec3(1.0, 0.5, 0.31);
+const vec3 objectColor = vec3(1.0, 0.0, 1.0);
 
 void main() {
 	// ambient
@@ -64,7 +78,7 @@ void main() {
 	float spec = pow(max(dot(Normal, HalfDir), 0.0), 8.0);
 	vec3 Specular = spec * lightColor;
 
-	vec3 Result = (Ambient + Diffuse) * objectColor;
+	vec3 Result = (Ambient + Diffuse + Specular) * objectColor;
 	o_FragmentColor = vec4(Result, 1.0);
 
 	o_EntityID = v_EntityID;
