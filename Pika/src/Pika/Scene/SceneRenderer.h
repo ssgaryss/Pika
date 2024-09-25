@@ -16,12 +16,6 @@ namespace Pika {
 		{
 			bool m_ShowGrid = true;
 		};
-		struct LightUUIDs
-		{
-			std::pair<bool, UUID> m_DirectionLight;
-			std::array<std::pair<bool, UUID>, 4> m_PointLight;
-			std::array<std::pair<bool, UUID>, 4> m_SpotLight;
-		};
 	public:
 		SceneRenderer() = default;
 		SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer);
@@ -43,15 +37,16 @@ namespace Pika {
 		inline void setPrimaryCamera(const Entity& vCamera) { m_PrimaryCamera = vCamera; }
 		inline const Ref<Cubemap>& getSkybox() const { return m_Skybox; }
 		inline void setSkybox(const Ref<Cubemap>& vSkybox) { m_Skybox = vSkybox; }
-		inline const LightUUIDs& getLightUUIDs() const { return m_LightUUIDs; }
-		inline LightUUIDs& getLightUUIDs() { return m_LightUUIDs; }
-
 
 		// Settings
 		inline bool* showGrid() { return &m_Settings.m_ShowGrid; }
 
 
 		void resize(uint32_t vWidth, uint32_t vHeight); // resize FBO
+	private:
+		inline static const uint32_t s_MaxDirectionLightsNumber = 1;
+		inline static const uint32_t s_MaxPointLightsNumber = 4;
+		inline static const uint32_t s_MaxSpotLightsNumber = 4;
 	private:
 		RendererSettings m_Settings;
 		Ref<Scene> m_Context;
@@ -60,7 +55,9 @@ namespace Pika {
 
 		Entity m_PrimaryCamera = {};       // TOD0 : Use C# to control it.
 		Ref<Cubemap> m_Skybox = nullptr;   // Skybox
-		LightUUIDs m_LightUUIDs;
+		std::array<Entity, s_MaxDirectionLightsNumber> m_DirectionLights;
+		std::array<Entity, s_MaxPointLightsNumber> m_PointLights;
+		std::array<Entity, s_MaxSpotLightsNumber> m_SpotLights;
 	};
 
 }
