@@ -24,7 +24,7 @@ namespace Pika
 	Application* createApplication() {
 		PK_PROFILE_FUNCTION();
 		ApplicationSpecification Specification;
-		Specification.m_AppName = "Pikartisan";
+		Specification.m_AppName = "Pika Engine";
 		return new Pikatisan(Specification);
 	}
 

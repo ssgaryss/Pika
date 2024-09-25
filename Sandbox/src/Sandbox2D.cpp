@@ -42,6 +42,15 @@ void Sandbox2D::onAttach()
 	m_TextureWater = Pika::SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
 	m_TextureGround = Pika::SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
 
+	//m_TextureBackround = Texture2D::Create("assets/textures/board.png");
+	//m_Texture2024 = Texture2D::Create("assets/textures/2024.png");
+	//m_TextureRPGpack_sheet_2X = Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
+
+	//m_TextureTree = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
+	//m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
+	//m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
+
+
 	// Init here
 	m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
 	m_Particle.ColorEnd = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };

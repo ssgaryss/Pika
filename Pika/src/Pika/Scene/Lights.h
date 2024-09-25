@@ -13,6 +13,12 @@ namespace Pika {
 		virtual Ref<Light> clone() const = 0;
 	};
 
+	class DirectionLight : public Light
+	{
+	public:
+	private:
+	};
+
 	class PointLight : public Light
 	{
 	public:

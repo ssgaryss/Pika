@@ -58,15 +58,7 @@ namespace Pika
 		m_SceneStatePanel = CreateScope<SceneStatePanel>(m_ActiveScene);
 
 		// TODO : Delete!!!
-		m_TextureBackround = Texture2D::Create("assets/textures/board.png");
-		m_Texture2024 = Texture2D::Create("assets/textures/2024.png");
-		m_TextureRPGpack_sheet_2X = Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
-
-		m_TextureTree = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
-		m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
-		m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
-		m_SnowSkybox = Cubemap::Create("assets/environment/skybox/LDR/snowy_forest_path_01_2k.png");
-		m_ActiveScene->setSkybox(m_SnowSkybox);
+		m_ActiveScene->setSkybox(Cubemap::Create("assets/environment/skybox/LDR/snowy_forest_path_01_2k.png"));
 	}
 
 	void EditorLayer::onDetach()
@@ -544,6 +536,7 @@ namespace Pika
 				ImGui::Text("Scene State : ");
 				ImGui::SameLine();
 				ImGui::Text(SceneModeName[static_cast<int>(m_SceneStatePanel->getSceneState())]);
+				ImGui::Separator();
 				ImGui::Text("Primary Camera : ");
 				ImGui::SameLine();
 				std::string PrimaryCameraName = "None";
@@ -559,6 +552,21 @@ namespace Pika
 							m_Renderer->setPrimaryCamera(CameraEntity);
 						else
 							PK_WARN("Fail to set primary camera with an entity without camera component.");
+					}
+					ImGui::EndDragDropTarget();
+				}
+				ImGui::Text("Skybox");
+				ImGui::SameLine();
+				const auto& Skybox = m_ActiveScene->getSkybox();
+				std::string SkyboxPath = Skybox ? Skybox->getPath().string() : "None";
+				ImGui::Button(SkyboxPath.c_str());
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ∂‘”¶ContentBrowserPanel÷–
+						std::filesystem::path Path = reinterpret_cast<const wchar_t*>(Payload->Data);
+						if (Path.extension().string() == ".png") {
+							m_ActiveScene->setSkybox(Cubemap::Create(Path));
+						}
+						//TODO : HDR
 					}
 					ImGui::EndDragDropTarget();
 				}
