@@ -68,6 +68,13 @@ namespace Pika {
 								ImGui::EndMenu();
 							}
 						}
+						// Only 2D
+						if (m_Context->getSceneType() == Scene::SceneType::Scene2D) {
+							if (ImGui::MenuItem("Sprite")) {
+								auto Entity = m_Context->createEntity("Sprite");
+								auto SRC = Entity.addComponent<SpriteRendererComponent>();
+							}
+						}
 						ImGui::EndMenu();
 					}
 					ImGui::EndPopup();
