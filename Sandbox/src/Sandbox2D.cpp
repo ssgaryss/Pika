@@ -88,6 +88,35 @@ void Sandbox2D::onUpdate(Pika::Timestep vTimestep)
 		}
 	}
 
+#if 0
+	Renderer2D::BeginScene(m_CameraController);
+	Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 20.0f, 20.0f }, m_TextureBackround, 10.0f);
+	Renderer2D::DrawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
+	Renderer2D::DrawQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f });
+	Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.2f, 0.5f }, { 0.5f, 0.5f, 1.0f, 1.0f });
+	Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f }, { 0.5f, 0.5f }, glm::radians(Rotation), { 1.0f, 0.0f, 1.0f, 1.0f });
+	Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f, 0.1f }, { 0.5f, 0.5f }, glm::radians(Rotation), m_Texture2024);
+	int num = 0;
+	for (int i = 0; i < 20; ++i) {
+		for (int j = 0; j < 30; ++j) {
+			if (s_Map[i * 30 + j] == '0')
+				Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureWater);
+			else if (s_Map[i * 30 + j] == '1')
+				Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureGround);
+			else
+				Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureTree);
+		}
+	}
+
+	Rotation += glm::radians(10.0f);
+	Renderer2D::EndScene();
+
+	//Renderer2D::BeginScene(m_CameraController);
+	//m_ActiveScene->onUpdate(vTimestep);
+	//Renderer2D::EndScene();
+#endif // 0
+
+
 	// Particles
 	m_ParticleSystem.OnUpdate(vTimestep);
 	m_ParticleSystem.OnRender();
@@ -102,7 +131,7 @@ void Sandbox2D::onImGuiRender()
 	auto Statistics = Pika::Renderer2D::GetStatistics();
 	ImGui::Begin("Renderer statistics");
 	ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
-	ImGui::Text("QuadCount : %d", Statistics.getQuadCount()); 
+	ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
 	ImGui::End();
 }
 

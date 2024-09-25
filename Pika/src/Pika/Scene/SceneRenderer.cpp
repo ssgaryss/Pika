@@ -5,9 +5,16 @@
 
 namespace Pika {
 
-	SceneRenderer::SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer)
-		: m_Context{ vScene }, m_Framebuffer{ vFramebuffer }
+
+	SceneRenderer::SceneRenderer()
 	{
+
+	}
+
+	SceneRenderer::SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer)
+		: m_Framebuffer{ vFramebuffer }
+	{
+		m_RenderDataExtracor = CreateRef<RenderDataExtractor>(vScene);
 	}
 
 	void SceneRenderer::beginFrame()
@@ -24,7 +31,7 @@ namespace Pika {
 	{
 		if (!m_PrimaryCamera)
 			return;
-		switch (m_Context->getSceneType())
+		switch (m_RenderDataExtracor->extractSceneType())
 		{
 		case Scene::SceneType::Scene2D:
 		{
@@ -32,10 +39,15 @@ namespace Pika {
 			const auto& ViewMatrix = glm::inverse(glm::translate(glm::mat4(1.0f), TC.m_Position) *
 				glm::toMat4(glm::quat(glm::radians(TC.m_Rotation))));
 			Renderer2D::BeginScene(m_PrimaryCamera.getComponent<CameraComponent>().m_Camera, ViewMatrix);
-			auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
-			for (const auto& Entt : View) {
-				auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entt); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
-				Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entt));
+			//auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
+			//for (const auto& Entt : View) {
+			//	auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entt); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
+			//	Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entt));
+			//}
+			auto SpritesData = m_RenderDataExtracor->extractSprites();
+			for (const auto& SpriteData : SpritesData) {
+				auto [Transform, SpriteRenderer, EntityID] = SpriteData;
+				Renderer2D::DrawSprite(Transform, SpriteRenderer, EntityID);
 			}
 			Renderer2D::EndScene();
 			return;
@@ -51,17 +63,17 @@ namespace Pika {
 
 	void SceneRenderer::render(const EditorCamera& vEditorCamera)
 	{
-		switch (m_Context->getSceneType())
+		switch (m_RenderDataExtracor->extractSceneType())
 		{
 		case Scene::SceneType::Scene2D:
 		{
 			Renderer2D::BeginScene(vEditorCamera);
 			if (m_Settings.m_ShowGrid)
 				Renderer2D::DrawGrid(glm::mat4(1.0f), 100.5f);
-			auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
-			for (const auto& Entt : View) {
-				auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entt); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
-				Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entt));
+			auto SpritesData = m_RenderDataExtracor->extractSprites();
+			for (const auto& SpriteData : SpritesData) {
+				auto [Transform, SpriteRenderer, EntityID] = SpriteData;
+				Renderer2D::DrawSprite(Transform, SpriteRenderer, EntityID);
 			}
 			Renderer2D::EndScene();
 			return;
@@ -69,15 +81,15 @@ namespace Pika {
 		case Scene::SceneType::Scene3D:
 		{
 			Renderer3D::BeginScene(vEditorCamera);
-			Renderer3D::RenderSkybox(m_Context->m_Skybox);
+			Renderer3D::RenderSkybox(m_RenderDataExtracor->extractSkybox());
 			if (m_Settings.m_ShowGrid)
 				Renderer3D::DrawGrid(glm::mat4(1.0f), 100.5f);
-			auto View = m_Context->m_Registry.group<TransformComponent, ModelComponent>();
+			auto View = m_RenderDataExtracor->getScene()->m_Registry.group<TransformComponent, ModelComponent>();
 			for (const auto& Entt : View) {
 				auto [Transform, Model] = View.get<TransformComponent, ModelComponent>(Entt); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
 				if (Model.m_Model) {
-					if (m_Context->m_Registry.any_of<MaterialComponent>(Entt)) {
-						auto& Material = m_Context->m_Registry.get<MaterialComponent>(Entt);
+					if (m_RenderDataExtracor->getScene()->m_Registry.any_of<MaterialComponent>(Entt)) {
+						auto& Material = m_RenderDataExtracor->getScene()->m_Registry.get<MaterialComponent>(Entt);
 						Renderer3D::DrawModel(Transform, Model, Material, static_cast<int>(Entt));
 					}
 					else {
@@ -98,7 +110,7 @@ namespace Pika {
 
 	void SceneRenderer::initialize()
 	{
-		switch (m_Context->getSceneType())
+		switch (m_RenderDataExtracor->extractSceneType())
 		{
 		case Pika::Scene::SceneType::Scene2D:
 		{
