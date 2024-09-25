@@ -547,15 +547,17 @@ namespace Pika
 				ImGui::SameLine();
 				std::string PrimaryCameraName = "None";
 				Entity PrimaryCamera = m_Renderer->getPrimaryCamera();
-				if (PrimaryCamera && PrimaryCamera.hasComponent<CameraComponent>()) {
-					m_Renderer->setPrimaryCamera(PrimaryCamera);
+				if (PrimaryCamera && PrimaryCamera.hasComponent<CameraComponent>())
 					PrimaryCameraName = PrimaryCamera.getComponent<TagComponent>().m_Tag;
-				}
 				ImGui::Button(PrimaryCameraName.c_str());
 				if (ImGui::BeginDragDropTarget()) {
-					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("SCENE_CAMERA")) { // 对应ContentBrowserPanel中
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("SCENE_CAMERA")) { // 对应SceneHierarchyPanel中
 						const UUID& ID = *reinterpret_cast<const UUID*>(Payload->Data);
-						m_Renderer->setPrimaryCamera(m_Renderer->getContext()->getEntityByUUID(ID));
+						Entity CameraEntity = m_Renderer->getContext()->getEntityByUUID(ID);
+						if (CameraEntity.hasComponent<CameraComponent>())
+							m_Renderer->setPrimaryCamera(CameraEntity);
+						else
+							PK_WARN("Fail to set primary camera with an entity without camera component.");
 					}
 					ImGui::EndDragDropTarget();
 				}
