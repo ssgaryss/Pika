@@ -547,6 +547,8 @@ namespace Pika
 				ImGui::SameLine();
 				std::string PrimaryCameraName = "None";
 				Entity PrimaryCamera = m_Renderer->getPrimaryCamera();
+				if (PrimaryCamera)
+					PK_ERROR("11");
 				if (PrimaryCamera && PrimaryCamera.hasComponent<CameraComponent>())
 					PrimaryCameraName = PrimaryCamera.getComponent<TagComponent>().m_Tag;
 				ImGui::Button(PrimaryCameraName.c_str());

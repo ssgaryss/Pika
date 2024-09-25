@@ -72,6 +72,7 @@ namespace Pika
 		bool m_IsPaused = false;                                      // Play & Simulation
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0; // Scene Display
 		Ref<b2World> m_Physics2DWorld = nullptr;                      // Physics 2D World
+		Ref<Cubemap> m_Skybox = nullptr;                              // Skybox
 
 		friend class Entity;
 		friend class SceneRenderer;

@@ -69,7 +69,7 @@ namespace Pika {
 		case Scene::SceneType::Scene3D:
 		{
 			Renderer3D::BeginScene(vEditorCamera);
-			Renderer3D::RenderSkybox(m_Skybox);
+			Renderer3D::RenderSkybox(m_Context->m_Skybox);
 			if (m_Settings.m_ShowGrid)
 				Renderer3D::DrawGrid(glm::mat4(1.0f), 100.5f);
 			auto View = m_Context->m_Registry.group<TransformComponent, ModelComponent>();
@@ -89,14 +89,6 @@ namespace Pika {
 			return;
 		}
 		}
-	}
-
-	LightsData SceneRenderer::getLightsData() const
-	{
-		//LightsData Data;
-		//auto View = m_Context->m_Registry.group<TransformComponent, LightComponent>();
-		//for()
-		return LightsData();
 	}
 
 	void SceneRenderer::resize(uint32_t vWidth, uint32_t vHeight)
