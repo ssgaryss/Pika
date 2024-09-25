@@ -39,12 +39,7 @@ namespace Pika {
 			const auto& ViewMatrix = glm::inverse(glm::translate(glm::mat4(1.0f), TC.m_Position) *
 				glm::toMat4(glm::quat(glm::radians(TC.m_Rotation))));
 			Renderer2D::BeginScene(m_PrimaryCamera.getComponent<CameraComponent>().m_Camera, ViewMatrix);
-			//auto View = m_Context->m_Registry.group<TransformComponent, SpriteRendererComponent>();
-			//for (const auto& Entt : View) {
-			//	auto [Transform, SpriteRenderer] = View.get<TransformComponent, SpriteRendererComponent>(Entt); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
-			//	Renderer2D::DrawSprite(Transform, SpriteRenderer, static_cast<int>(Entt));
-			//}
-			auto SpritesData = m_RenderDataExtracor->extractSprites();
+			auto SpritesData = m_RenderDataExtracor->extractComponentsWithEntityID<TransformComponent, SpriteRendererComponent>();
 			for (const auto& SpriteData : SpritesData) {
 				auto [Transform, SpriteRenderer, EntityID] = SpriteData;
 				Renderer2D::DrawSprite(Transform, SpriteRenderer, EntityID);
@@ -70,7 +65,7 @@ namespace Pika {
 			Renderer2D::BeginScene(vEditorCamera);
 			if (m_Settings.m_ShowGrid)
 				Renderer2D::DrawGrid(glm::mat4(1.0f), 100.5f);
-			auto SpritesData = m_RenderDataExtracor->extractSprites();
+			auto SpritesData = m_RenderDataExtracor->extractComponentsWithEntityID<TransformComponent, SpriteRendererComponent>();
 			for (const auto& SpriteData : SpritesData) {
 				auto [Transform, SpriteRenderer, EntityID] = SpriteData;
 				Renderer2D::DrawSprite(Transform, SpriteRenderer, EntityID);

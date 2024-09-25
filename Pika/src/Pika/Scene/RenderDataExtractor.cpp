@@ -11,17 +11,6 @@ namespace Pika {
 		return m_Scene->getSceneType();
 	}
 
-	std::vector<std::tuple<TransformComponent&, SpriteRendererComponent&, int>> RenderDataExtractor::extractSprites() const
-	{
-		auto View = m_Scene->m_Registry.group<TransformComponent, SpriteRendererComponent>();
-		std::vector<std::tuple<TransformComponent&, SpriteRendererComponent&, int>> SpritesData;
-		for (const auto& Entt : View) {
-			auto RequireComponents = m_Scene->m_Registry.get<TransformComponent, SpriteRendererComponent>(Entt);
-			SpritesData.emplace_back(std::tuple_cat(RequireComponents, std::make_tuple(static_cast<int>(Entt))));
-		}
-		return SpritesData;
-	}
-
 	const Ref<Cubemap>& RenderDataExtractor::extractSkybox() const
 	{
 		return m_Scene->m_Skybox;
