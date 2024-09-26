@@ -75,23 +75,22 @@ namespace Pika {
 		}
 		case Scene::SceneType::Scene3D:
 		{
-			Renderer3D::BeginScene(vEditorCamera);
+			auto Data = m_RenderDataExtracor->extractLightsData();
+			Renderer3D::BeginScene(vEditorCamera, Data);
 			Renderer3D::RenderSkybox(m_RenderDataExtracor->extractSkybox());
 			if (m_Settings.m_ShowGrid)
 				Renderer3D::DrawGrid(glm::mat4(1.0f), 100.5f);
-			auto View = m_RenderDataExtracor->getScene()->m_Registry.group<TransformComponent, ModelComponent>();
-			for (const auto& Entt : View) {
-				auto [Transform, Model] = View.get<TransformComponent, ModelComponent>(Entt); // 此处得到的是tuple，C++17开始对tuple的结构化绑定可以自动推导引用
-				if (Model.m_Model) {
-					if (m_RenderDataExtracor->getScene()->m_Registry.any_of<MaterialComponent>(Entt)) {
-						auto& Material = m_RenderDataExtracor->getScene()->m_Registry.get<MaterialComponent>(Entt);
-						Renderer3D::DrawModel(Transform, Model, Material, static_cast<int>(Entt));
-					}
-					else {
-						Renderer3D::DrawModel(Transform, Model, static_cast<int>(Entt));
-					}
-				}
+			auto NoMaterialModelsData = m_RenderDataExtracor->extractNoMaterialModelsWithEntityID();
+			for (const auto& NoMaterialModelData : NoMaterialModelsData) {
+				auto [Transform, Model, EntityID] = NoMaterialModelData;
+				Renderer3D::DrawModel(Transform, Model, EntityID);
 			}
+			auto BlinnPhoneMaterialModelsData = m_RenderDataExtracor->extractBlinnPhoneMaterialModelsWithEntityID();
+			for (const auto& BlinnPhoneMaterialModelData : BlinnPhoneMaterialModelsData) {
+				auto [Transform, Model, Material, EntityID] = BlinnPhoneMaterialModelData;
+				Renderer3D::DrawModel(Transform, Model, Material, EntityID);
+			}
+
 			Renderer3D::EndScene();
 			return;
 		}

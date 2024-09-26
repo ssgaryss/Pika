@@ -31,7 +31,8 @@ void main() {
 layout(location = 0) out vec4 o_FragmentColor;
 layout(location = 1) out highp int o_EntityID;
 
-struct PointLightData {
+#define MAX_NUM_OF_POINT_LIGHTS 4
+struct PointLight {
 	vec3 m_Position;
 	vec3 m_LightColor;
 	float m_Intensity;
@@ -40,9 +41,9 @@ struct PointLightData {
 	float m_Quadratic;
 };
 
-layout(std140, binding = 2) uniform PointLightsData
+layout(std140, binding = 2) uniform PointLights
 {
-	PointLightData u_PointLight[4];
+	PointLight u_PointLight[MAX_NUM_OF_POINT_LIGHTS];
 };
 
 layout(std140, binding = 4) uniform BlinnPhoneMaterial
@@ -50,6 +51,7 @@ layout(std140, binding = 4) uniform BlinnPhoneMaterial
 	vec3 u_Ambient;
 	vec3 u_Diffuse;
 	vec3 u_Specular;
+	float u_Shininess;
 };
 
 in vec3 v_Normal;
@@ -57,30 +59,32 @@ in vec3 v_Position;
 in vec3 v_ViewPosition;
 in flat highp int v_EntityID;
 
-const vec3 lightPos = vec3(0.0, 10.0, 0.0);
-const vec3 lightColor = vec3(1.0, 1.0, 1.0);
-const vec3 objectColor = vec3(1.0, 0.0, 1.0);
+vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vPosition, vec3 vViewDir);
 
 void main() {
-	// ambient
-	float AmbientStrength = 0.1;
-	vec3 Ambient = AmbientStrength * lightColor;
-
-	// diffuse 
-	vec3 Normal = normalize(v_Normal);
-	vec3 LightDir = normalize(lightPos - v_Position);
-	float diff = max(dot(Normal, LightDir), 0.0);
-	vec3 Diffuse = diff * lightColor;
-
-	// specular
-	vec3 ViewDir = normalize(v_ViewPosition - v_Position);
-	vec3 HalfDir = normalize(LightDir + ViewDir);
-	float spec = pow(max(dot(Normal, HalfDir), 0.0), 8.0);
-	vec3 Specular = spec * lightColor;
-
-	vec3 Result = (Ambient + Diffuse + Specular) * objectColor;
+	vec3 Result = vec3(0.0);
+	for (int i = 0; i < MAX_NUM_OF_POINT_LIGHTS; ++i) {
+		Result += calculatePointLights(u_PointLight[i], v_Normal, v_Position, v_ViewPosition - v_Position);
+	}
 	o_FragmentColor = vec4(Result, 1.0);
 
 	o_EntityID = v_EntityID;
 }
+
+vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vPosition, vec3 vViewDir) {
+	vec3 LightDir = normalize(vLight.m_Position - v_Position);
+	vec3 ViewDir = normalize(vViewDir);
+	vec3 Normal = normalize(vNormal);
+	vec3 HalfDir = normalize(LightDir + ViewDir);
+	float Distance = length(vLight.m_Position - vPosition);
+	float Attenuation = 1.0 / (vLight.m_Constant + vLight.m_Linear * Distance + vLight.m_Quadratic * (Distance * Distance));
+	float Diff = max(dot(vNormal, LightDir), 0.0);
+	float Spec = pow(max(dot(Normal, HalfDir), 0.0), u_Shininess);
+	float AmbientStrength = 0.1;
+	vec3 Diffuse = Diff * vLight.m_LightColor * u_Diffuse;
+	vec3 Specular = Spec * vLight.m_LightColor * u_Specular;
+	vec3 Ambient = AmbientStrength * vLight.m_LightColor * u_Ambient;
+	return (Diffuse + Specular) * vLight.m_Intensity * Attenuation + Ambient;
+}
+
 #FRAGMENT_END()
