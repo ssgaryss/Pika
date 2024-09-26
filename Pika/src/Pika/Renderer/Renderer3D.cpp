@@ -151,7 +151,7 @@ namespace Pika {
 		PK_CORE_INFO("Success to initialize Pika 3D Renderer!");
 	}
 
-	void Renderer3D::BeginScene(const EditorCamera& vEditorCamera)
+	void Renderer3D::BeginScene(const EditorCamera& vEditorCamera, const LightsData& vLightsData)
 	{
 		PK_PROFILE_FUNCTION();
 		s_Data.m_CameraData.m_ViewProjectionMatrix = vEditorCamera.getViewProjectionMatrix();
@@ -159,8 +159,8 @@ namespace Pika {
 		s_Data.m_CameraData.m_ProjectionMatrix = vEditorCamera.getProjectionMatrix();
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
 
-		//PK_CORE_ERROR("{}", sizeof(vLights.m_PointLightsData));
-		//s_Data.m_PointLightsDataUniformBuffer->setData(&vLights.m_PointLightsData, sizeof(vLights.m_PointLightsData));
+		PK_CORE_ERROR("{}", sizeof(vLightsData.m_PointLightsData));
+		s_Data.m_PointLightsDataUniformBuffer->setData(&vLightsData.m_PointLightsData, sizeof(vLightsData.m_PointLightsData));
 
 		ResetStatistics();
 		StartBatch();
@@ -230,7 +230,7 @@ namespace Pika {
 		}
 		s_Data.m_StaticMeshVertexBuffer->setData(TransformVertices.data(), vMesh.getVerticesSize());
 
-		if(auto BlinnPhone = dynamic_cast<BlinnPhoneMaterial*>(vMaterial.m_Material.get())){
+		if (auto BlinnPhone = dynamic_cast<BlinnPhoneMaterial*>(vMaterial.m_Material.get())) {
 			s_Data.m_BlinnPhoneShader->bind();
 			const auto& MaterialData = BlinnPhone->getData();
 			s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&MaterialData, sizeof(MaterialData));

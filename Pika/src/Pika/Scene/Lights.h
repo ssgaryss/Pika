@@ -67,8 +67,17 @@ namespace Pika {
 				: m_Position{ vPosition }, m_LightColor{ vPointLightData.m_LightColor },
 				m_Intensity{ vPointLightData.m_Intensity }, m_Constant{ vPointLightData.m_Constant },
 				m_Linear{ vPointLightData.m_Linear }, m_Quadratic{ vPointLightData.m_Quadratic } {}
+			void setData(const glm::vec3& vPosition, const PointLight::Data& vPointLightData) {
+				m_Position = vPosition;
+				m_LightColor = vPointLightData.m_LightColor;
+				m_Intensity = vPointLightData.m_Intensity;
+				m_Constant = vPointLightData.m_Constant;
+				m_Linear = vPointLightData.m_Linear;
+				m_Quadratic = vPointLightData.m_Quadratic;
+			}
 		};
-		std::array<UniformBufferSTD140PointLightData, 4> m_PointLightsData;
+		//std::array<UniformBufferSTD140PointLightData, 4> m_PointLightsData;
+		UniformBufferSTD140PointLightData m_PointLightsData; // TODO : Delete£¡
 	};
 
 

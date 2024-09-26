@@ -16,7 +16,7 @@ namespace Pika
 		Renderer3D() = delete;
 		static void Initialize();
 		//static void BeginScene(const EditorCamera& vEditorCamera, const LightsData& vLights);
-		static void BeginScene(const EditorCamera& vEditorCamera);
+		static void BeginScene(const EditorCamera& vEditorCamera, const LightsData& vLightsData);
 		static void BeginScene(const Camera& vCamera, const glm::mat4& vTramsform);
 		static void EndScene();
 		static void Flush();

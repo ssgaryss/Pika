@@ -5,6 +5,8 @@
 
 namespace Pika {
 
+	struct LightsData;
+
 	class RenderDataExtractor
 	{
 	public:
@@ -34,7 +36,7 @@ namespace Pika {
 			auto View = m_Scene->m_Registry.view<Components...>();
 			std::vector<std::tuple<Components&...>> EntityData;
 			for (const auto& Entt : View)
-				EntityData.emplace_back(m_Scene->m_Registry.get<Components...>(Entt));
+				EntityData.emplace_back(View.get<Components...>(Entt));
 			return EntityData;
 		}
 
@@ -43,8 +45,9 @@ namespace Pika {
 		std::vector<std::tuple<TransformComponent&, ModelComponent&, int>> extractNoMaterialModelsWithEntityID() const;
 		std::vector<std::tuple<TransformComponent&, ModelComponent&, MaterialComponent&, int>> extractBlinnPhoneMaterialModelsWithEntityID() const;
 		std::vector<Entity> extractDirectionLights() const;
-		std::vector<Entity> extractPointLights() const;
+		std::vector<std::tuple<TransformComponent&, LightComponent&>> extractPointLights() const;
 		std::vector<Entity> extractSpotLights() const;    // 暂时不直接提取数据
+		LightsData extractLightsData() const;
 
 	public:
 		Ref<Scene> m_Scene = nullptr;

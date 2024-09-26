@@ -23,7 +23,7 @@ namespace Pika {
 		std::vector<std::tuple<TransformComponent&, ModelComponent&, int>> EntityData;
 		for (const auto& Entt : View) {
 			if (!m_Scene->m_Registry.any_of<MaterialComponent>(Entt))
-				EntityData.emplace_back(std::tuple_cat(m_Scene->m_Registry.get<TransformComponent, ModelComponent>(Entt),
+				EntityData.emplace_back(std::tuple_cat(View.get<TransformComponent, ModelComponent>(Entt),
 					std::make_tuple(static_cast<int>(Entt))));
 		}
 		return EntityData;
@@ -36,7 +36,7 @@ namespace Pika {
 		for (const auto& Entt : View) {
 			auto& Material = View.get<MaterialComponent>(Entt);
 			if (dynamic_cast<BlinnPhoneMaterial*>(Material.m_Material.get()))
-				EntityData.emplace_back(std::tuple_cat(m_Scene->m_Registry.get<TransformComponent, ModelComponent, MaterialComponent>(Entt),
+				EntityData.emplace_back(std::tuple_cat(View.get<TransformComponent, ModelComponent, MaterialComponent>(Entt),
 					std::make_tuple(static_cast<int>(Entt))));
 		}
 		return EntityData;
@@ -44,7 +44,7 @@ namespace Pika {
 
 	std::vector<Entity> RenderDataExtractor::extractDirectionLights() const
 	{
-		auto View = m_Scene->m_Registry.group<LightComponent>();
+		auto View = m_Scene->m_Registry.view<LightComponent>();
 		std::vector<Entity> DirectionLights;
 		for (const auto& Entt : View) {
 			auto& Light = m_Scene->m_Registry.get<LightComponent>(Entt);
@@ -55,22 +55,21 @@ namespace Pika {
 		return DirectionLights;
 	}
 
-	std::vector<Entity> RenderDataExtractor::extractPointLights() const
+	std::vector<std::tuple<TransformComponent&, LightComponent&>> RenderDataExtractor::extractPointLights() const
 	{
-		auto View = m_Scene->m_Registry.group<TransformComponent, LightComponent>();
-		std::vector<Entity> PointLights;
+		auto View = m_Scene->m_Registry.view<TransformComponent, LightComponent>();
+		std::vector<std::tuple<TransformComponent&, LightComponent&>> EntityData;
 		for (const auto& Entt : View) {
-			auto& Light = m_Scene->m_Registry.get<LightComponent>(Entt);
-			if (auto pPointLight = dynamic_cast<PointLight*>(Light.m_Light.get())) {
-				PointLights.emplace_back(Entity{ Entt, m_Scene.get() });
-			}
+			auto& Light = View.get<LightComponent>(Entt);
+			if (dynamic_cast<PointLight*>(Light.m_Light.get()))
+				EntityData.emplace_back(View.get<TransformComponent, LightComponent>(Entt));
 		}
-		return PointLights;
+		return EntityData;
 	}
 
 	std::vector<Entity> RenderDataExtractor::extractSpotLights() const
 	{
-		auto View = m_Scene->m_Registry.group<TransformComponent, LightComponent>();
+		auto View = m_Scene->m_Registry.view<TransformComponent, LightComponent>();
 		std::vector<Entity> SpotLights;
 		for (const auto& Entt : View) {
 			auto& Light = m_Scene->m_Registry.get<LightComponent>(Entt);
@@ -79,6 +78,18 @@ namespace Pika {
 			}
 		}
 		return SpotLights;
+	}
+
+	LightsData RenderDataExtractor::extractLightsData() const
+	{
+		LightsData Data;
+		auto PointLightsData = extractPointLights();
+		for (const auto& PointLightData : PointLightsData) {
+			auto [Transform, Light] = PointLightData;
+			auto pPointLight = dynamic_cast<PointLight*>(Light.m_Light.get());
+			Data.m_PointLightsData.setData(Transform.m_Position, pPointLight->getData());
+		}
+		return Data;
 	}
 
 }
