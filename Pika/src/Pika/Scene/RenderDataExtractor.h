@@ -19,11 +19,11 @@ namespace Pika {
 
 		template<typename... Components>
 		std::vector<std::tuple<Components&..., int>> extractComponentsWithEntityID() const {
-			auto View = m_Scene->m_Registry.group<Components...>();
+			auto View = m_Scene->m_Registry.view<Components...>();
 			std::vector<std::tuple<Components&..., int>> EntityData;
 			// 遍历实体，提取相关组件并将它们与实体 ID 一起存入结果
 			for (const auto& Entt : View) {
-				auto RequiredComponents = m_Scene->m_Registry.get<Components...>(Entt);
+				auto RequiredComponents = View.get<Components...>(Entt);
 				EntityData.emplace_back(std::tuple_cat(RequiredComponents, std::make_tuple(static_cast<int>(Entt))));
 			}
 			return EntityData;
@@ -31,7 +31,7 @@ namespace Pika {
 
 		template<typename... Components>
 		std::vector<std::tuple<Components&...>> extractComponents() const {
-			auto View = m_Scene->m_Registry.group<Components...>();
+			auto View = m_Scene->m_Registry.view<Components...>();
 			std::vector<std::tuple<Components&...>> EntityData;
 			for (const auto& Entt : View)
 				EntityData.emplace_back(m_Scene->m_Registry.get<Components...>(Entt));
@@ -40,7 +40,8 @@ namespace Pika {
 
 		// Only 3D
 		const Ref<Cubemap>& extractSkybox() const;
-		std::vector<std::tuple<TransformComponent&, ModelComponent&, int>> extractNoMaterialModels() const;
+		std::vector<std::tuple<TransformComponent&, ModelComponent&, int>> extractNoMaterialModelsWithEntityID() const;
+		std::vector<std::tuple<TransformComponent&, ModelComponent&, MaterialComponent&, int>> extractBlinnPhoneMaterialModelsWithEntityID() const;
 		std::vector<Entity> extractDirectionLights() const;
 		std::vector<Entity> extractPointLights() const;
 		std::vector<Entity> extractSpotLights() const;    // 暂时不直接提取数据
