@@ -34,6 +34,14 @@ namespace Pika {
 							m_Context->createEntity("Empty entity");
 						// Only 3D
 						if (m_Context->getSceneType() == Scene::SceneType::Scene3D) {
+							if (ImGui::BeginMenu("Light")) {
+								if (ImGui::MenuItem("Point Light")) {
+									auto Entity = m_Context->createEntity("Point Light");
+									auto& LC = Entity.addComponent<LightComponent>();
+									LC.m_Light = CreateRef<PointLight>();
+								}
+								ImGui::EndMenu();
+							}
 							if (ImGui::BeginMenu("Mesh")) {
 								if (ImGui::MenuItem("Plane")) {
 									auto Entity = m_Context->createEntity("Plane");

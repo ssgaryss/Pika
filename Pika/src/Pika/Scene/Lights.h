@@ -25,7 +25,7 @@ namespace Pika {
 		struct Data
 		{
 			glm::vec3 m_LightColor = glm::vec3(1.0f);               // 光源颜色
-			float m_Intensity = 0.0f;                               // 光源强度
+			float m_Intensity = 1.0f;                               // 光源强度
 			float m_Constant = 1.0f;                                // 常数衰减项
 			float m_Linear = 0.07f;                                 // 线性衰减项
 			float m_Quadratic = 0.017f;                             // 二次衰减项

@@ -74,8 +74,7 @@ namespace Pika {
 					m_Quadratic = vPointLightData.m_Quadratic;
 				}
 			};
-			//std::array<UniformBufferSTD140PointLightData, 4> m_PointLightsData;
-			UniformBufferSTD140PointLightData m_PointLightsData; // TODO : Delete£¡
+			std::array<UniformBufferSTD140PointLightData, 4> m_PointLightsData;
 		};
 		LightsUniformBufferData m_LightsData;
 		Ref<UniformBuffer> m_PointLightsDataUniformBuffer = nullptr;
@@ -192,14 +191,14 @@ namespace Pika {
 		for (size_t i = 0; i < PointLightsDataSize; ++i) {
 			// TODO : Not only 1!
 			auto [Transform, Light] = vLightsData.m_PointLights[i];
-			s_Data.m_LightsData.m_PointLightsData.m_Position = Transform.m_Position;
+			s_Data.m_LightsData.m_PointLightsData[i].m_Position = Transform.m_Position;
 			if (auto pPointLight = dynamic_cast<PointLight*>(Light.m_Light.get())) {
 				const auto& Data = pPointLight->getData();
-				s_Data.m_LightsData.m_PointLightsData.m_LightColor = Data.m_LightColor;
-				s_Data.m_LightsData.m_PointLightsData.m_Intensity = Data.m_Intensity;
-				s_Data.m_LightsData.m_PointLightsData.m_Constant = Data.m_Constant;
-				s_Data.m_LightsData.m_PointLightsData.m_Linear = Data.m_Linear;
-				s_Data.m_LightsData.m_PointLightsData.m_Quadratic = Data.m_Quadratic;
+				s_Data.m_LightsData.m_PointLightsData[i].m_LightColor = Data.m_LightColor;
+				s_Data.m_LightsData.m_PointLightsData[i].m_Intensity = Data.m_Intensity;
+				s_Data.m_LightsData.m_PointLightsData[i].m_Constant = Data.m_Constant;
+				s_Data.m_LightsData.m_PointLightsData[i].m_Linear = Data.m_Linear;
+				s_Data.m_LightsData.m_PointLightsData[i].m_Quadratic = Data.m_Quadratic;
 			}
 		}
 		s_Data.m_PointLightsDataUniformBuffer->setData(&s_Data.m_LightsData.m_PointLightsData, 
