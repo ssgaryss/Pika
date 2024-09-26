@@ -51,6 +51,7 @@ layout(std140, binding = 4) uniform BlinnPhoneMaterial
 	vec3 u_Ambient;
 	vec3 u_Diffuse;
 	vec3 u_Specular;
+	float u_Shininess;
 };
 
 in vec3 v_Normal;
@@ -78,7 +79,7 @@ vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vPosition, vec3 
 	float Distance = length(vLight.m_Position - vPosition);
 	float Attenuation = 1.0 / (vLight.m_Constant + vLight.m_Linear * Distance + vLight.m_Quadratic * (Distance * Distance));
 	float Diff = max(dot(vNormal, LightDir), 0.0);
-	float Spec = pow(max(dot(Normal, HalfDir), 0.0), 8.0);
+	float Spec = pow(max(dot(Normal, HalfDir), 0.0), u_Shininess);
 	float AmbientStrength = 0.1;
 	vec3 Diffuse = Diff * vLight.m_LightColor * u_Diffuse;
 	vec3 Specular = Spec * vLight.m_LightColor * u_Specular;

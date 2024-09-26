@@ -19,10 +19,12 @@ namespace Pika {
 			alignas(16) glm::vec3 m_Ambient = glm::vec3(1.0f);
 			alignas(16) glm::vec3 m_Diffuse = glm::vec3(1.0f);
 			alignas(16) glm::vec3 m_Specular = glm::vec3(1.0f);
-			Data() = default;
+			float m_Shininess = 0.0f;
 		};
 	public:
 		BlinnPhoneMaterial() = default;
+		BlinnPhoneMaterial(const Data& vData)
+			: m_Data{ vData } {}
 		BlinnPhoneMaterial(const BlinnPhoneMaterial&) = default;
 		BlinnPhoneMaterial& operator=(const BlinnPhoneMaterial&) = default;
 		BlinnPhoneMaterial(BlinnPhoneMaterial&&) = default;

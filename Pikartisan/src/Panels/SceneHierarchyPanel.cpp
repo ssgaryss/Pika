@@ -293,9 +293,39 @@ namespace Pika {
 				}
 				if (!m_SelectedEntity.hasComponent<MaterialComponent>()) {
 					if (ImGui::BeginMenu("Material Component")) {
-						if (ImGui::MenuItem("Blinn-Phone")) {
-							auto& MC = m_SelectedEntity.addComponent<MaterialComponent>();
-							MC.m_Material = CreateRef<BlinnPhoneMaterial>();
+						if (ImGui::BeginMenu("Blinn-Phone")) {
+							if (ImGui::MenuItem("Defualt")) {
+								auto& MC = m_SelectedEntity.addComponent<MaterialComponent>();
+								MC.m_Material = CreateRef<BlinnPhoneMaterial>();
+							}
+							if (ImGui::MenuItem("Gold")) {
+								auto& MC = m_SelectedEntity.addComponent<MaterialComponent>();
+								MC.m_Material = CreateRef<BlinnPhoneMaterial>(BlinnPhoneMaterial::Data{
+									{  0.24725,   0.1995,   0.0745 },
+									{  0.75164,  0.60648,  0.22648 },
+									{ 0.628281, 0.555802, 0.366065 },
+									0.4f
+									});
+							}
+							if (ImGui::MenuItem("Pearl")) {
+								auto& MC = m_SelectedEntity.addComponent<MaterialComponent>();
+								MC.m_Material = CreateRef<BlinnPhoneMaterial>(BlinnPhoneMaterial::Data{
+									{     0.25,	0.20725, 0.20725 },
+									{        1,	  0.829,   0.829 },
+									{ 0.296648,0.296648,0.296648 },
+									0.088f
+									});
+							}
+							if (ImGui::MenuItem("Jade")) {
+								auto& MC = m_SelectedEntity.addComponent<MaterialComponent>();
+								MC.m_Material = CreateRef<BlinnPhoneMaterial>(BlinnPhoneMaterial::Data{
+									{    0.135,	 0.2225,  0.1575 },
+									{     0.54,	   0.89,	0.63 },
+									{ 0.316228,0.316228,0.316228 },
+									0.1f
+									});
+							}
+							ImGui::EndMenu();
 						}
 						ImGui::EndMenu();
 					}
@@ -471,6 +501,8 @@ namespace Pika {
 					ImGui::Text("Specular");
 					ImGui::NextColumn();
 					ImGui::ColorEdit3("##Specular", glm::value_ptr(MaterialData.m_Specular));
+					ImGui::NextColumn();
+					ImGui::DragFloat("Shininess", &MaterialData.m_Shininess, 0.05f, 0.0f, 100000.0f);
 					ImGui::NextColumn();
 				}
 				// TODO : PBR Material
