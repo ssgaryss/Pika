@@ -5,7 +5,18 @@
 
 namespace Pika {
 
-	struct LightsData;
+
+	struct LightsData
+	{
+		std::vector<std::tuple<TransformComponent&, LightComponent&>> m_DirectionLights;
+		std::vector<std::tuple<TransformComponent&, LightComponent&>> m_PointLights;
+		std::vector<std::tuple<TransformComponent&, LightComponent&>> m_SpotLights;
+		LightsData() {
+			m_DirectionLights.reserve(4);
+			m_PointLights.reserve(8);
+			m_SpotLights.reserve(8); // 防止vector扩容增大开销
+		}
+	};
 
 	class RenderDataExtractor
 	{

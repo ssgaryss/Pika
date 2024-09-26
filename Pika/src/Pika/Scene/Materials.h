@@ -16,9 +16,9 @@ namespace Pika {
 	{
 	public:
 		struct Data {
-			alignas(16) glm::vec3 m_Ambient;
-			alignas(16) glm::vec3 m_Diffuse;
-			alignas(16) glm::vec3 m_Specular;
+			alignas(16) glm::vec3 m_Ambient = glm::vec3(1.0f);
+			alignas(16) glm::vec3 m_Diffuse = glm::vec3(1.0f);
+			alignas(16) glm::vec3 m_Specular = glm::vec3(1.0f);
 			Data() = default;
 		};
 	public:

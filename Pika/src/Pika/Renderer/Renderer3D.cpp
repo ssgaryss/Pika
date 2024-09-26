@@ -41,15 +41,43 @@ namespace Pika {
 		Ref<Shader> m_SkyboxShader = nullptr;
 
 		// Camera
-		struct CameraData {
+		struct CameraUniformBufferData {
 			glm::mat4 m_ViewProjectionMatrix = glm::mat4(1.0f);
 			glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
 			glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f); // Skybox渲染需要
 		};
-		CameraData m_CameraData;
+		CameraUniformBufferData m_CameraData;
 		Ref<UniformBuffer> m_CameraDataUniformBuffer = nullptr;
 
 		// Lights
+		static const uint32_t s_MaxDirectionLightsNumber = 1;
+		static const uint32_t s_MaxPointLightsNumber = 4;
+		static const uint32_t s_MaxSpotLightsNumber = 4;
+
+		struct LightsUniformBufferData {
+			struct UniformBufferSTD140PointLightData
+			{
+				// 这里内存对齐是为了满足std140中vec3对齐到16字节
+				alignas(16) glm::vec3 m_Position = glm::vec3(0.0f);     // 光源位置
+				alignas(16) glm::vec3 m_LightColor = glm::vec3(1.0f);   // 光源颜色
+				float m_Intensity = 0.0f;                               // 光源强度
+				float m_Constant = 1.0f;                                // 常数衰减项
+				float m_Linear = 0.07f;                                 // 线性衰减项
+				float m_Quadratic = 0.017f;                             // 二次衰减项
+				UniformBufferSTD140PointLightData() = default;
+				void setData(const glm::vec3& vPosition, const PointLight::Data& vPointLightData) {
+					m_Position = vPosition;
+					m_LightColor = vPointLightData.m_LightColor;
+					m_Intensity = vPointLightData.m_Intensity;
+					m_Constant = vPointLightData.m_Constant;
+					m_Linear = vPointLightData.m_Linear;
+					m_Quadratic = vPointLightData.m_Quadratic;
+				}
+			};
+			//std::array<UniformBufferSTD140PointLightData, 4> m_PointLightsData;
+			UniformBufferSTD140PointLightData m_PointLightsData; // TODO : Delete！
+		};
+		LightsUniformBufferData m_LightsData;
 		Ref<UniformBuffer> m_PointLightsDataUniformBuffer = nullptr;
 
 		Renderer3D::Statistics m_Statistics; // Record the renderer states
@@ -144,7 +172,7 @@ namespace Pika {
 
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0);     // glsl中binding = 0
 		//TODO : Directional light
-		s_Data.m_PointLightsDataUniformBuffer = UniformBuffer::Create(sizeof(PointLight::Data), 2);
+		s_Data.m_PointLightsDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_LightsData.m_PointLightsData), 2);
 		//TODO : Spot light
 		s_Data.m_BlinnPhoneMaterialDataUniformBuffer = UniformBuffer::Create(sizeof(BlinnPhoneMaterial::Data), 4); // 注意由于GLSL std140内存对齐vec3是4bytes，所以这里需要手动计算
 
@@ -159,8 +187,23 @@ namespace Pika {
 		s_Data.m_CameraData.m_ProjectionMatrix = vEditorCamera.getProjectionMatrix();
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
 
-		PK_CORE_ERROR("{}", sizeof(vLightsData.m_PointLightsData));
-		s_Data.m_PointLightsDataUniformBuffer->setData(&vLightsData.m_PointLightsData, sizeof(vLightsData.m_PointLightsData));
+		// Point Lights
+		size_t PointLightsDataSize = vLightsData.m_PointLights.size();
+		for (size_t i = 0; i < PointLightsDataSize; ++i) {
+			// TODO : Not only 1!
+			auto [Transform, Light] = vLightsData.m_PointLights[i];
+			s_Data.m_LightsData.m_PointLightsData.m_Position = Transform.m_Position;
+			if (auto pPointLight = dynamic_cast<PointLight*>(Light.m_Light.get())) {
+				const auto& Data = pPointLight->getData();
+				s_Data.m_LightsData.m_PointLightsData.m_LightColor = Data.m_LightColor;
+				s_Data.m_LightsData.m_PointLightsData.m_Intensity = Data.m_Intensity;
+				s_Data.m_LightsData.m_PointLightsData.m_Constant = Data.m_Constant;
+				s_Data.m_LightsData.m_PointLightsData.m_Linear = Data.m_Linear;
+				s_Data.m_LightsData.m_PointLightsData.m_Quadratic = Data.m_Quadratic;
+			}
+		}
+		s_Data.m_PointLightsDataUniformBuffer->setData(&s_Data.m_LightsData.m_PointLightsData, 
+			sizeof(s_Data.m_LightsData.m_PointLightsData));
 
 		ResetStatistics();
 		StartBatch();
@@ -197,7 +240,7 @@ namespace Pika {
 		}
 	}
 
-	void Renderer3D::DrawStaticMesh(const glm::mat4& vTransform, const StaticMesh& vMesh, int vEntityID)
+	void Renderer3D::DrawStaticMesh(const TransformComponent& vTransform, const StaticMesh& vMesh, int vEntityID)
 	{
 		PK_PROFILE_FUNCTION();
 
@@ -205,8 +248,8 @@ namespace Pika {
 		s_Data.m_StaticMeshVertexArray->setIndexBuffer(StaticMeshIndexBuffer);
 		auto TransformVertices = vMesh.getVertices();
 		for (auto& Vertex : TransformVertices) {
-			Vertex.m_Position = vTransform * glm::vec4(Vertex.m_Position, 1.0f);
-			Vertex.m_Normal = vTransform * glm::vec4(Vertex.m_Normal, 1.0f);
+			Vertex.m_Position = static_cast<glm::mat4>(vTransform) * glm::vec4(Vertex.m_Position, 1.0f);
+			Vertex.m_Normal = glm::toMat4(glm::quat(glm::radians(vTransform.m_Rotation))) * glm::vec4(Vertex.m_Normal, 1.0f);
 			Vertex.m_EntityID = vEntityID;
 		}
 		s_Data.m_StaticMeshVertexBuffer->setData(TransformVertices.data(), vMesh.getVerticesSize());
@@ -216,7 +259,7 @@ namespace Pika {
 		s_Data.m_Statistics.m_MeshCount++;
 	}
 
-	void Renderer3D::DrawStaticMesh(const glm::mat4& vTransform, const StaticMesh& vMesh, const MaterialComponent& vMaterial, int vEntityID)
+	void Renderer3D::DrawStaticMesh(const TransformComponent& vTransform, const StaticMesh& vMesh, const MaterialComponent& vMaterial, int vEntityID)
 	{
 		PK_PROFILE_FUNCTION();
 
@@ -224,8 +267,8 @@ namespace Pika {
 		s_Data.m_StaticMeshVertexArray->setIndexBuffer(StaticMeshIndexBuffer);
 		auto TransformVertices = vMesh.getVertices();
 		for (auto& Vertex : TransformVertices) {
-			Vertex.m_Position = vTransform * glm::vec4(Vertex.m_Position, 1.0f);
-			Vertex.m_Normal = vTransform * glm::vec4(Vertex.m_Normal, 1.0f);
+			Vertex.m_Position = static_cast<glm::mat4>(vTransform) * glm::vec4(Vertex.m_Position, 1.0f);
+			Vertex.m_Normal = glm::toMat4(glm::quat(glm::radians(vTransform.m_Rotation))) * glm::vec4(Vertex.m_Normal, 1.0f);
 			Vertex.m_EntityID = vEntityID;
 		}
 		s_Data.m_StaticMeshVertexBuffer->setData(TransformVertices.data(), vMesh.getVerticesSize());
@@ -239,7 +282,7 @@ namespace Pika {
 		s_Data.m_Statistics.m_MeshCount++;
 	}
 
-	void Renderer3D::DrawModel(const glm::mat4& vTransform, const ModelComponent& vModel, int vEntityID)
+	void Renderer3D::DrawModel(const TransformComponent& vTransform, const ModelComponent& vModel, int vEntityID)
 	{
 		PK_PROFILE_FUNCTION();
 
@@ -248,7 +291,7 @@ namespace Pika {
 		}
 	}
 
-	void Renderer3D::DrawModel(const glm::mat4& vTransform, const ModelComponent& vModel, const MaterialComponent& vMaterial, int vEntityID)
+	void Renderer3D::DrawModel(const TransformComponent& vTransform, const ModelComponent& vModel, const MaterialComponent& vMaterial, int vEntityID)
 	{
 		PK_PROFILE_FUNCTION();
 

@@ -83,12 +83,7 @@ namespace Pika {
 	LightsData RenderDataExtractor::extractLightsData() const
 	{
 		LightsData Data;
-		auto PointLightsData = extractPointLights();
-		for (const auto& PointLightData : PointLightsData) {
-			auto [Transform, Light] = PointLightData;
-			auto pPointLight = dynamic_cast<PointLight*>(Light.m_Light.get());
-			Data.m_PointLightsData.setData(Transform.m_Position, pPointLight->getData());
-		}
+		Data.m_PointLights = extractPointLights();
 		return Data;
 	}
 

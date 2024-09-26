@@ -65,7 +65,8 @@ void main() {
 	for (int i = 0; i < MAX_NUM_OF_POINT_LIGHTS; ++i) {
 		Result += calculatePointLights(u_PointLight[i], v_Normal, v_Position, v_ViewPosition - v_Position);
 	}
-	o_FragmentColor = vec4(u_PointLight.m_Intensity, u_PointLight.m_Intensity, u_PointLight.m_Intensity, 1.0);
+	vec3 N = normalize(v_Normal);
+	o_FragmentColor = vec4(N, 1.0);
 
 	o_EntityID = v_EntityID;
 }
@@ -78,9 +79,9 @@ vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vPosition, vec3 
 	float diff = max(dot(vNormal, LightDir), 0.0);
 	float spec = pow(max(dot(Normal, HalfDir), 0.0), 8.0);
 	float AmbientStrength = 0.1;
-	vec3 Diffuse = diff * vLight.m_LightColor;
-	vec3 Specular = spec * vLight.m_LightColor;
-	vec3 Ambient = AmbientStrength * vLight.m_LightColor;
+	vec3 Diffuse = diff * vLight.m_LightColor * u_Diffuse;
+	vec3 Specular = spec * vLight.m_LightColor * u_Specular;
+	vec3 Ambient = AmbientStrength * vLight.m_LightColor * u_Ambient;
 	return (Diffuse + Specular + Ambient);
 }
 

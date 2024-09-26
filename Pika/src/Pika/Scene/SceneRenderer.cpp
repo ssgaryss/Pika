@@ -75,8 +75,8 @@ namespace Pika {
 		}
 		case Scene::SceneType::Scene3D:
 		{
-			auto LightsData = m_RenderDataExtracor->extractLightsData();
-			Renderer3D::BeginScene(vEditorCamera, LightsData);
+			auto Data = m_RenderDataExtracor->extractLightsData();
+			Renderer3D::BeginScene(vEditorCamera, Data);
 			Renderer3D::RenderSkybox(m_RenderDataExtracor->extractSkybox());
 			if (m_Settings.m_ShowGrid)
 				Renderer3D::DrawGrid(glm::mat4(1.0f), 100.5f);

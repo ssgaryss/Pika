@@ -628,8 +628,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Scene\RenderDataExtractor.cpp" />
-    <ClCompile Include="src\Pika\Scene\Lights.cpp" />
-    <ClCompile Include="src\Pika\Scene\Materials.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />

@@ -43,10 +43,6 @@ namespace Pika {
 
 		void resize(uint32_t vWidth, uint32_t vHeight); // resize FBO
 	private:
-		inline static const uint32_t s_MaxDirectionLightsNumber = 1;
-		inline static const uint32_t s_MaxPointLightsNumber = 4;
-		inline static const uint32_t s_MaxSpotLightsNumber = 4;
-	private:
 		RendererSettings m_Settings;
 		Ref<RenderDataExtractor> m_RenderDataExtracor = nullptr;
 		Ref<Framebuffer> m_Framebuffer = nullptr;
