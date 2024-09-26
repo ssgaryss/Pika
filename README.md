@@ -3,7 +3,7 @@ Welcome to Pika Engine! 🎉
 
 Pika Engine 是个人独立开发的渲染引擎，旨在将我之所学付诸于实现。
 
-现阶段的Pika Engine 已初步具备的2D引擎特征，正在前往3D的开发之路......
+现阶段的Pika Engine 已初步具备的2D引擎特征，Pika3D的正在开发中...
 ## Getting Started
 Visual Studio 2022 is recommended, Pika is officially untested on other development environments whilst I focus on a Windows build.
 
@@ -18,7 +18,7 @@ Visual Studio 2022 is recommended, Pika is officially untested on other developm
    Run the Windows-GenProject.bat file found in scripts folder. This will download the required prerequisites for the project if they are not present yet.
 ## Demo
 ### Pika3D (Point Lights & Blinn-Phone Material)
-![Point Lights & Blinn-Phone Material.](examples/Demo3D_1.mp4)
+![Point Lights & Blinn-Phone Material.](examples/Demo3D_Blinn-Phone.png)
 ### Pika2D (2D Physical effects)
-![2D Physical effects.](examples/Demo2D_1.mp4)
+![2D Physical effects.](examples/Demo2D_Physics2D.png)
    
