@@ -36,3 +36,5 @@
 #include "Pika/Scene/SceneCamera.h"
 #include "Pika/Scene/SceneSerializer.h"
 #include "Pika/Scene/SceneRenderer.h"
+#include "Pika/Scene/Lights.h"
+#include "Pika/Scene/RenderDataExtractor.h"

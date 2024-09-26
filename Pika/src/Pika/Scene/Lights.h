@@ -3,6 +3,7 @@
 
 namespace Pika {
 
+
 	class Light
 	{
 	public:
@@ -12,16 +13,22 @@ namespace Pika {
 		virtual Ref<Light> clone() const = 0;
 	};
 
+	class DirectionLight : public Light
+	{
+	public:
+	private:
+	};
+
 	class PointLight : public Light
 	{
 	public:
 		struct Data
 		{
-			glm::vec3 m_LightColor;      // 光源颜色
-			float m_Intensity;      // 光源强度
-			float m_Constant = 1.0f;       // 常数衰减项
-			float m_Linear = 0.07f;         // 线性衰减项
-			float m_Quadratic = 0.017f;      // 二次衰减项
+			glm::vec3 m_LightColor = glm::vec3(1.0f);               // 光源颜色
+			float m_Intensity = 0.0f;                               // 光源强度
+			float m_Constant = 1.0f;                                // 常数衰减项
+			float m_Linear = 0.07f;                                 // 线性衰减项
+			float m_Quadratic = 0.017f;                             // 二次衰减项
 			Data() = default;
 			// I = m_Intensity / ( m_Constant + m_Linear * distance + m_Quadratic * distance * distance )
 		};
@@ -43,5 +50,35 @@ namespace Pika {
 		inline static const std::string m_Type = "Point Light";
 		Data m_Data;
 	};
+
+	struct LightsData
+	{
+		struct UniformBufferSTD140PointLightData
+		{
+			// 这里内存对齐是为了满足std140中vec3对齐到16字节
+			alignas(16) glm::vec3 m_Position;                       // 光源位置
+			alignas(16) glm::vec3 m_LightColor = glm::vec3(1.0f);   // 光源颜色
+			float m_Intensity = 0.0f;                               // 光源强度
+			float m_Constant = 1.0f;                                // 常数衰减项
+			float m_Linear = 0.07f;                                 // 线性衰减项
+			float m_Quadratic = 0.017f;                             // 二次衰减项
+			UniformBufferSTD140PointLightData() = default;
+			UniformBufferSTD140PointLightData(const glm::vec3& vPosition, const PointLight::Data& vPointLightData)
+				: m_Position{ vPosition }, m_LightColor{ vPointLightData.m_LightColor },
+				m_Intensity{ vPointLightData.m_Intensity }, m_Constant{ vPointLightData.m_Constant },
+				m_Linear{ vPointLightData.m_Linear }, m_Quadratic{ vPointLightData.m_Quadratic } {}
+			void setData(const glm::vec3& vPosition, const PointLight::Data& vPointLightData) {
+				m_Position = vPosition;
+				m_LightColor = vPointLightData.m_LightColor;
+				m_Intensity = vPointLightData.m_Intensity;
+				m_Constant = vPointLightData.m_Constant;
+				m_Linear = vPointLightData.m_Linear;
+				m_Quadratic = vPointLightData.m_Quadratic;
+			}
+		};
+		//std::array<UniformBufferSTD140PointLightData, 4> m_PointLightsData;
+		UniformBufferSTD140PointLightData m_PointLightsData; // TODO : Delete！
+	};
+
 
 }

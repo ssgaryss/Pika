@@ -79,8 +79,7 @@ namespace Pika
 
 		MaterialComponent() = default;
 		MaterialComponent(const MaterialComponent& vOther) {
-			if (vOther.m_Material)
-				m_Material = vOther.m_Material->clone(); // 这里深拷贝感觉好一点，因为我并没有把Material作为一种Asset，也就没有复用
+			m_Material = vOther.m_Material ? vOther.m_Material->clone() : nullptr; // 这里深拷贝感觉好一点，因为我并没有把Material作为一种Asset，也就没有复用
 		}
 	};
 
@@ -90,8 +89,7 @@ namespace Pika
 
 		LightComponent() = default;
 		LightComponent(const LightComponent& vOther) {
-			if (vOther.m_Light)
-				m_Light = vOther.m_Light->clone();
+			m_Light = vOther.m_Light ? vOther.m_Light->clone() : nullptr;
 		}
 	};
 

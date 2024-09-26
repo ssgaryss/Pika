@@ -42,6 +42,15 @@ void Sandbox2D::onAttach()
 	m_TextureWater = Pika::SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
 	m_TextureGround = Pika::SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
 
+	//m_TextureBackround = Texture2D::Create("assets/textures/board.png");
+	//m_Texture2024 = Texture2D::Create("assets/textures/2024.png");
+	//m_TextureRPGpack_sheet_2X = Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
+
+	//m_TextureTree = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 2, 1 }, { 1, 2 }, { 128, 128 });
+	//m_TextureWater = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 11, 11 }, { 1, 1 }, { 128, 128 });
+	//m_TextureGround = SubTexture2D::Create(m_TextureRPGpack_sheet_2X, { 1, 11 }, { 1, 1 }, { 128, 128 });
+
+
 	// Init here
 	m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
 	m_Particle.ColorEnd = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };
@@ -79,6 +88,35 @@ void Sandbox2D::onUpdate(Pika::Timestep vTimestep)
 		}
 	}
 
+#if 0
+	Renderer2D::BeginScene(m_CameraController);
+	Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.9f }, { 20.0f, 20.0f }, m_TextureBackround, 10.0f);
+	Renderer2D::DrawQuad({ 0.5f, 0.5f }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f });
+	Renderer2D::DrawQuad({ -0.5f, 0.5f }, { 0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f });
+	Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.2f, 0.5f }, { 0.5f, 0.5f, 1.0f, 1.0f });
+	Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f }, { 0.5f, 0.5f }, glm::radians(Rotation), { 1.0f, 0.0f, 1.0f, 1.0f });
+	Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f, 0.1f }, { 0.5f, 0.5f }, glm::radians(Rotation), m_Texture2024);
+	int num = 0;
+	for (int i = 0; i < 20; ++i) {
+		for (int j = 0; j < 30; ++j) {
+			if (s_Map[i * 30 + j] == '0')
+				Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureWater);
+			else if (s_Map[i * 30 + j] == '1')
+				Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureGround);
+			else
+				Renderer2D::DrawQuad({ -3.0f + j * 0.2f, 2.0f - i * 0.2f }, { 0.2f, 0.2f }, m_TextureTree);
+		}
+	}
+
+	Rotation += glm::radians(10.0f);
+	Renderer2D::EndScene();
+
+	//Renderer2D::BeginScene(m_CameraController);
+	//m_ActiveScene->onUpdate(vTimestep);
+	//Renderer2D::EndScene();
+#endif // 0
+
+
 	// Particles
 	m_ParticleSystem.OnUpdate(vTimestep);
 	m_ParticleSystem.OnRender();
@@ -93,7 +131,7 @@ void Sandbox2D::onImGuiRender()
 	auto Statistics = Pika::Renderer2D::GetStatistics();
 	ImGui::Begin("Renderer statistics");
 	ImGui::Text("DrawCalls : %d", Statistics.getDrawCalls());
-	ImGui::Text("QuadCount : %d", Statistics.getQuadCount()); 
+	ImGui::Text("QuadCount : %d", Statistics.getQuadCount());
 	ImGui::End();
 }
 

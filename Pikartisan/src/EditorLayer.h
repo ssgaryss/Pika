@@ -65,17 +65,6 @@ namespace Pika
 		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel = nullptr;
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel = nullptr;
 		Scope<SceneStatePanel> m_SceneStatePanel = nullptr;
-
-		// TODO : remove these!
-		Ref<Texture2D> m_TextureBackround;
-		Ref<Texture2D> m_Texture2024;
-		Ref<Texture2D> m_TextureRPGpack_sheet_2X;
-		Ref<SubTexture2D> m_TextureTree;
-		Ref<SubTexture2D> m_TextureWater, m_TextureGround;
-		Ref<Cubemap> m_SnowSkybox;
-
-		// TODO : Delete!
-		float Rotation = 0.0f; //for now
 	};
 
 }

@@ -68,6 +68,13 @@ namespace Pika {
 								ImGui::EndMenu();
 							}
 						}
+						// Only 2D
+						if (m_Context->getSceneType() == Scene::SceneType::Scene2D) {
+							if (ImGui::MenuItem("Sprite")) {
+								auto Entity = m_Context->createEntity("Sprite");
+								auto SRC = Entity.addComponent<SpriteRendererComponent>();
+							}
+						}
 						ImGui::EndMenu();
 					}
 					ImGui::EndPopup();
@@ -405,8 +412,8 @@ namespace Pika {
 				ImGui::NextColumn();
 				ImGui::Text(Type.c_str());
 				ImGui::NextColumn();
-				if (auto Point = dynamic_cast<PointLight*>(vLightComponent.m_Light.get())) {
-					auto& LightData = Point->getData();
+				if (auto pPointLight = dynamic_cast<PointLight*>(vLightComponent.m_Light.get())) {
+					auto& LightData = pPointLight->getData();
 					ImGui::Text("Light Color");
 					ImGui::NextColumn();
 					ImGui::ColorEdit3("##Light Color", glm::value_ptr(LightData.m_LightColor));
@@ -443,8 +450,8 @@ namespace Pika {
 				ImGui::NextColumn();
 				ImGui::Text(Type.c_str());
 				ImGui::NextColumn();
-				if (auto BlinnPhone = dynamic_cast<BlinnPhoneMaterial*>(Material.get())) {
-					auto& MaterialData = BlinnPhone->getData();
+				if (auto pBlinnPhoneMaterial = dynamic_cast<BlinnPhoneMaterial*>(Material.get())) {
+					auto& MaterialData = pBlinnPhoneMaterial->getData();
 					ImGui::Text("Ambient");
 					ImGui::NextColumn();
 					ImGui::ColorEdit3("##Ambient", glm::value_ptr(MaterialData.m_Ambient));

@@ -1508,6 +1508,7 @@
     </ClInclude>
     <ClInclude Include="src\Pika\Scene\Materials.h" />
     <ClInclude Include="src\Pika\Scene\Lights.h" />
+    <ClInclude Include="src\Pika\Scene\RenderDataExtractor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1647,5 +1648,6 @@
     </ClCompile>
     <ClCompile Include="src\Pika\Scene\Materials.cpp" />
     <ClCompile Include="src\Pika\Scene\Lights.cpp" />
+    <ClCompile Include="src\Pika\Scene\RenderDataExtractor.cpp" />
   </ItemGroup>
 </Project>
