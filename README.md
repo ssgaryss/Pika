@@ -16,4 +16,9 @@ Visual Studio 2022 is recommended, Pika is officially untested on other developm
 3. Configuring the dependencies:
    
    Run the Windows-GenProject.bat file found in scripts folder. This will download the required prerequisites for the project if they are not present yet.
+## Demo
+### Pika3D (Point Lights & Blinn-Phone Material)
+![Point Lights & Blinn-Phone Material.](examples/Demo3D_1.mp4)
+### Pika2D (2D Physical effects)
+![2D Physical effects.](examples/Demo2D_1.mp4)
    
