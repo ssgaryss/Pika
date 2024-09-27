@@ -40,6 +40,11 @@ namespace Pika {
 									auto& LC = Entity.addComponent<LightComponent>();
 									LC.m_Light = CreateRef<PointLight>();
 								}
+								if (ImGui::MenuItem("Direction Light")) {
+									auto Entity = m_Context->createEntity("Direction Light");
+									auto& LC = Entity.addComponent<LightComponent>();
+									LC.m_Light = CreateRef<DirectionLight>();
+								}
 								ImGui::EndMenu();
 							}
 							if (ImGui::BeginMenu("Mesh")) {
@@ -450,7 +455,18 @@ namespace Pika {
 				ImGui::NextColumn();
 				ImGui::Text(Type.c_str());
 				ImGui::NextColumn();
-				if (auto pPointLight = dynamic_cast<PointLight*>(vLightComponent.m_Light.get())) {
+				if (auto pDirectionLight = dynamic_cast<DirectionLight*>(vLightComponent.m_Light.get())) {
+					auto& LightData = pDirectionLight->getData();
+					ImGui::Text("Light Color");
+					ImGui::NextColumn();
+					ImGui::ColorEdit3("##Light Color", glm::value_ptr(LightData.m_LightColor));
+					ImGui::NextColumn();
+					ImGui::Text("Intensity");
+					ImGui::NextColumn();
+					ImGui::DragFloat("##Intensity", &LightData.m_Intensity, 0.05f, 0.0f, 100000.0f);
+					ImGui::NextColumn();
+				}
+				else if (auto pPointLight = dynamic_cast<PointLight*>(vLightComponent.m_Light.get())) {
 					auto& LightData = pPointLight->getData();
 					ImGui::Text("Light Color");
 					ImGui::NextColumn();

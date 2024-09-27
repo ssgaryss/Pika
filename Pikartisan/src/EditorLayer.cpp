@@ -530,8 +530,8 @@ namespace Pika
 				ImGui::Text("Skybox");
 				ImGui::SameLine();
 				const auto& Skybox = m_ActiveScene->getSkybox();
-				std::string SkyboxPath = Skybox ? Skybox->getPath().string() : "None";
-				ImGui::Button(SkyboxPath.c_str());
+				std::string SkyboxName = Skybox ? Skybox->getPath().filename().string() : "None";
+				ImGui::Button(SkyboxName.c_str());
 				if (ImGui::BeginDragDropTarget()) {
 					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ∂‘”¶ContentBrowserPanel÷–
 						std::filesystem::path Path = reinterpret_cast<const wchar_t*>(Payload->Data);

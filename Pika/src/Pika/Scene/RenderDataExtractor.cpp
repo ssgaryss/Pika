@@ -42,17 +42,16 @@ namespace Pika {
 		return EntityData;
 	}
 
-	std::vector<Entity> RenderDataExtractor::extractDirectionLights() const
+	std::vector<std::tuple<TransformComponent&, LightComponent&>> RenderDataExtractor::extractDirectionLights() const
 	{
-		auto View = m_Scene->m_Registry.view<LightComponent>();
-		std::vector<Entity> DirectionLights;
+		auto View = m_Scene->m_Registry.view<TransformComponent, LightComponent>();
+		std::vector<std::tuple<TransformComponent&, LightComponent&>> EntityData;
 		for (const auto& Entt : View) {
-			auto& Light = m_Scene->m_Registry.get<LightComponent>(Entt);
-			if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.m_Light.get())) {
-				DirectionLights.emplace_back(Entity{ Entt, m_Scene.get() });
-			}
+			auto& Light = View.get<LightComponent>(Entt);
+			if (dynamic_cast<DirectionLight*>(Light.m_Light.get()))
+				EntityData.emplace_back(View.get<TransformComponent, LightComponent>(Entt));
 		}
-		return DirectionLights;
+		return EntityData;
 	}
 
 	std::vector<std::tuple<TransformComponent&, LightComponent&>> RenderDataExtractor::extractPointLights() const
@@ -67,23 +66,24 @@ namespace Pika {
 		return EntityData;
 	}
 
-	std::vector<Entity> RenderDataExtractor::extractSpotLights() const
+	std::vector<std::tuple<TransformComponent&, LightComponent&>> RenderDataExtractor::extractSpotLights() const
 	{
 		auto View = m_Scene->m_Registry.view<TransformComponent, LightComponent>();
-		std::vector<Entity> SpotLights;
+		std::vector<std::tuple<TransformComponent&, LightComponent&>> EntityData;
 		for (const auto& Entt : View) {
-			auto& Light = m_Scene->m_Registry.get<LightComponent>(Entt);
-			if (auto pSpotLight = dynamic_cast<PointLight*>(Light.m_Light.get())) {
-				SpotLights.emplace_back(Entity{ Entt, m_Scene.get() });
-			}
+			auto& Light = View.get<LightComponent>(Entt);
+			if (dynamic_cast<SpotLight*>(Light.m_Light.get()))
+				EntityData.emplace_back(View.get<TransformComponent, LightComponent>(Entt));
 		}
-		return SpotLights;
+		return EntityData;
 	}
 
 	LightsData RenderDataExtractor::extractLightsData() const
 	{
 		LightsData Data;
+		Data.m_DirectionLights = extractDirectionLights();
 		Data.m_PointLights = extractPointLights();
+		Data.m_SpotLights = extractSpotLights();
 		return Data;
 	}
 

@@ -55,6 +55,17 @@ namespace Pika {
 		static const uint32_t s_MaxSpotLightsNumber = 4;
 
 		struct LightsUniformBufferData {
+			struct UniformBufferSTD140DirectionLightData
+			{
+				alignas(16) glm::vec3 m_Direction = glm::vec3(0.0f);    // 方向
+				alignas(16) glm::vec3 m_LightColor = glm::vec3(1.0f);   // 光源颜色
+				float m_Intensity = 0.0f;                               // 光源强度
+				void setData(const glm::vec3& vDirection, const DirectionLight::Data& vDirectionLightData) {
+					m_Direction = vDirection;
+					m_LightColor = vDirectionLightData.m_LightColor;
+					m_Intensity = vDirectionLightData.m_Intensity;
+				}
+			};
 			struct UniformBufferSTD140PointLightData
 			{
 				// 这里内存对齐是为了满足std140中vec3对齐到16字节
@@ -64,7 +75,6 @@ namespace Pika {
 				float m_Constant = 1.0f;                                // 常数衰减项
 				float m_Linear = 0.07f;                                 // 线性衰减项
 				float m_Quadratic = 0.017f;                             // 二次衰减项
-				UniformBufferSTD140PointLightData() = default;
 				void setData(const glm::vec3& vPosition, const PointLight::Data& vPointLightData) {
 					m_Position = vPosition;
 					m_LightColor = vPointLightData.m_LightColor;
@@ -74,9 +84,56 @@ namespace Pika {
 					m_Quadratic = vPointLightData.m_Quadratic;
 				}
 			};
-			std::array<UniformBufferSTD140PointLightData, 4> m_PointLightsData;
+
+			void setData(const LightsData& vLightsData) {
+				// Direction Lights
+				uint32_t DirectionLightsDataSize = static_cast<uint32_t>(vLightsData.m_DirectionLights.size());
+				if (DirectionLightsDataSize > s_MaxDirectionLightsNumber)
+					PK_CORE_WARN("Renderer3D : There are {} direction lights, but renderer only support {}.",
+						DirectionLightsDataSize, s_MaxDirectionLightsNumber);
+				for (uint32_t i = 0; i < s_MaxDirectionLightsNumber; ++i) {
+					if (i < DirectionLightsDataSize) {
+						auto [Transform, Light] = vLightsData.m_DirectionLights[i];
+						glm::vec3 DefaultDirection = glm::vec3(0.0f, -1.0f, 0.0f); // TODO : Change to -z！
+						m_DirectionLightsData[i].m_Direction = glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) * glm::vec4(DefaultDirection, 1.0f);
+						if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.m_Light.get())) {
+							const auto& Data = pDirectionLight->getData();
+							m_DirectionLightsData[i].m_LightColor = Data.m_LightColor;
+							m_DirectionLightsData[i].m_Intensity = Data.m_Intensity;
+						}
+					}
+					else {
+						m_DirectionLightsData[i].m_Intensity = 0.0f; // 重置
+					}
+				}
+				// Point Lights
+				uint32_t PointLightsDataSize = static_cast<uint32_t>(vLightsData.m_PointLights.size());
+				if (PointLightsDataSize > s_MaxPointLightsNumber)
+					PK_CORE_WARN("Renderer3D : There are {} point lights, but renderer only support {}.",
+						PointLightsDataSize, s_MaxPointLightsNumber);
+				for (uint32_t i = 0; i < s_MaxPointLightsNumber; ++i) {
+					if (i < PointLightsDataSize) {
+						auto [Transform, Light] = vLightsData.m_PointLights[i];
+						m_PointLightsData[i].m_Position = Transform.m_Position;
+						if (auto pPointLight = dynamic_cast<PointLight*>(Light.m_Light.get())) {
+							const auto& Data = pPointLight->getData();
+							m_PointLightsData[i].m_LightColor = Data.m_LightColor;
+							m_PointLightsData[i].m_Intensity = Data.m_Intensity;
+							m_PointLightsData[i].m_Constant = Data.m_Constant;
+							m_PointLightsData[i].m_Linear = Data.m_Linear;
+							m_PointLightsData[i].m_Quadratic = Data.m_Quadratic;
+						}
+					}
+					else {
+						m_PointLightsData[i].m_Intensity = 0.0f; // 重置
+					}
+				}
+			}
+			std::array<UniformBufferSTD140DirectionLightData, s_MaxDirectionLightsNumber> m_DirectionLightsData;
+			std::array<UniformBufferSTD140PointLightData, s_MaxPointLightsNumber> m_PointLightsData;
 		};
 		LightsUniformBufferData m_LightsData;
+		Ref<UniformBuffer> m_DirectionLightsDataUniformBuffer = nullptr;
 		Ref<UniformBuffer> m_PointLightsDataUniformBuffer = nullptr;
 
 		Renderer3D::Statistics m_Statistics; // Record the renderer states
@@ -170,7 +227,7 @@ namespace Pika {
 		s_Data.m_SkyboxVertexArray->unbind();
 
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0);     // glsl中binding = 0
-		//TODO : Directional light
+		s_Data.m_DirectionLightsDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_LightsData.m_DirectionLightsData), 1);
 		s_Data.m_PointLightsDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_LightsData.m_PointLightsData), 2);
 		//TODO : Spot light
 		s_Data.m_BlinnPhoneMaterialDataUniformBuffer = UniformBuffer::Create(sizeof(BlinnPhoneMaterial::Data), 4); // 注意由于GLSL std140内存对齐vec3是4bytes，所以这里需要手动计算
@@ -186,22 +243,10 @@ namespace Pika {
 		s_Data.m_CameraData.m_ProjectionMatrix = vEditorCamera.getProjectionMatrix();
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
 
-		// Point Lights
-		size_t PointLightsDataSize = vLightsData.m_PointLights.size();
-		for (size_t i = 0; i < PointLightsDataSize; ++i) {
-			// TODO : Not only 1!
-			auto [Transform, Light] = vLightsData.m_PointLights[i];
-			s_Data.m_LightsData.m_PointLightsData[i].m_Position = Transform.m_Position;
-			if (auto pPointLight = dynamic_cast<PointLight*>(Light.m_Light.get())) {
-				const auto& Data = pPointLight->getData();
-				s_Data.m_LightsData.m_PointLightsData[i].m_LightColor = Data.m_LightColor;
-				s_Data.m_LightsData.m_PointLightsData[i].m_Intensity = Data.m_Intensity;
-				s_Data.m_LightsData.m_PointLightsData[i].m_Constant = Data.m_Constant;
-				s_Data.m_LightsData.m_PointLightsData[i].m_Linear = Data.m_Linear;
-				s_Data.m_LightsData.m_PointLightsData[i].m_Quadratic = Data.m_Quadratic;
-			}
-		}
-		s_Data.m_PointLightsDataUniformBuffer->setData(&s_Data.m_LightsData.m_PointLightsData, 
+		s_Data.m_LightsData.setData(vLightsData);
+		s_Data.m_DirectionLightsDataUniformBuffer->setData(&s_Data.m_LightsData.m_DirectionLightsData,
+			sizeof(s_Data.m_LightsData.m_DirectionLightsData));
+		s_Data.m_PointLightsDataUniformBuffer->setData(&s_Data.m_LightsData.m_PointLightsData,
 			sizeof(s_Data.m_LightsData.m_PointLightsData));
 
 		ResetStatistics();
