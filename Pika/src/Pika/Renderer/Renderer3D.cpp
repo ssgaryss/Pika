@@ -300,6 +300,7 @@ namespace Pika {
 
 		s_Data.m_StaticMeshShader->bind();
 		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
+		s_Data.m_Statistics.m_DrawCalls++;
 		s_Data.m_Statistics.m_MeshCount++;
 	}
 
@@ -323,6 +324,7 @@ namespace Pika {
 			s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&MaterialData, sizeof(MaterialData));
 		}
 		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
+		s_Data.m_Statistics.m_DrawCalls++;
 		s_Data.m_Statistics.m_MeshCount++;
 	}
 

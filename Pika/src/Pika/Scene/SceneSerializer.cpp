@@ -226,6 +226,11 @@ namespace Pika {
 							}
 							Out << YAML::EndMap;
 						}
+						// Only 3D
+						if (Entity.hasComponent<ModelComponent>()) {
+							auto& Model = Entity.getComponent<ModelComponent>();
+						}
+						// Only 2D
 						if (Entity.hasComponent<SpriteRendererComponent>()) {
 							auto& SpriteRenderer = Entity.getComponent<SpriteRendererComponent>();
 							Out << YAML::Key << "SpriteRendererComponent" << YAML::Value << YAML::BeginMap;
