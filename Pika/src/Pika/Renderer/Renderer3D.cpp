@@ -318,9 +318,9 @@ namespace Pika {
 		}
 		s_Data.m_StaticMeshVertexBuffer->setData(TransformVertices.data(), vMesh.getVerticesSize());
 
-		if (auto BlinnPhone = dynamic_cast<BlinnPhoneMaterial*>(vMaterial.m_Material.get())) {
+		if (auto pBlinnPhoneMaterial = dynamic_cast<BlinnPhoneMaterial*>(vMaterial.m_Material.get())) {
 			s_Data.m_BlinnPhoneShader->bind();
-			const auto& MaterialData = BlinnPhone->getData();
+			const auto& MaterialData = pBlinnPhoneMaterial->getData();
 			s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&MaterialData, sizeof(MaterialData));
 		}
 		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());

@@ -8,7 +8,7 @@ namespace Pika {
 	public:
 		virtual ~Material() = default;
 
-		virtual std::string getType() const = 0;
+		virtual const std::string& getType() const = 0;
 		virtual Ref<Material> clone() const = 0;
 	};
 
@@ -29,7 +29,7 @@ namespace Pika {
 		BlinnPhoneMaterial& operator=(const BlinnPhoneMaterial&) = default;
 		BlinnPhoneMaterial(BlinnPhoneMaterial&&) = default;
 		BlinnPhoneMaterial& operator=(BlinnPhoneMaterial&&) noexcept = default;
-		inline std::string getType() const override { return s_Type; }
+		inline const std::string& getType() const override { return s_Type; }
 		inline Ref<Material> clone() const override { return CreateRef<BlinnPhoneMaterial>(*this); } // 原型模式！
 
 		inline const Data& getData() const { return m_Data; }

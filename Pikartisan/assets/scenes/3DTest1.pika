@@ -1,0 +1,20 @@
+Scene:
+  Name: Untitled
+  SceneType: Scene3D
+  Entities:
+    - Entity: "{67B130DE-D580-42C1-A835-78C10A5A22E6}"
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [0, 0, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      ModelComponent:
+        Path: resources/objects/cube.fbx
+      MaterialComponent:
+        Type: Blinn-Phone
+        Data:
+          Ambient: [0.247250006, 0.199499995, 0.074500002]
+          Diffuse: [0.751640022, 0.606480002, 0.226480007]
+          Specular: [0.628280997, 0.555801988, 0.366064996]
+          Shininess: 0.400000006

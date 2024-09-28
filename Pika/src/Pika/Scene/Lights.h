@@ -9,7 +9,7 @@ namespace Pika {
 	public:
 		virtual ~Light() = default;
 
-		virtual std::string getType() const = 0;
+		virtual const std::string& getType() const = 0;
 		virtual Ref<Light> clone() const = 0;
 	};
 
@@ -29,7 +29,7 @@ namespace Pika {
 		DirectionLight& operator=(DirectionLight&&) noexcept = default;
 		~DirectionLight() = default;
 
-		inline std::string getType() const override { return m_Type; }
+		inline const std::string& getType() const override { return m_Type; }
 		inline Ref<Light> clone() const override { return CreateRef<DirectionLight>(*this); }
 
 		inline const Data& getData() const { return m_Data; }
@@ -60,7 +60,7 @@ namespace Pika {
 		PointLight& operator=(PointLight&&) noexcept = default;
 		~PointLight() = default;
 
-		inline std::string getType() const override { return m_Type; }
+		inline const std::string& getType() const override { return m_Type; }
 		inline Ref<Light> clone() const override { return CreateRef<PointLight>(*this); }
 
 		inline const Data& getData() const { return m_Data; }

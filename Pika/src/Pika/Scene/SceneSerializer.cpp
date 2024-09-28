@@ -152,7 +152,7 @@ namespace Pika {
 				return "Scene2D"s;
 			case Pika::Scene::SceneType::Scene3D:
 				return "Scene3D"s;
-			}			
+			}
 			PK_CORE_WARN("SceneSerializer : Unknown Scene Type !");
 			return ""s;
 		}
@@ -226,11 +226,42 @@ namespace Pika {
 							}
 							Out << YAML::EndMap;
 						}
-						// Only 3D
+						// 3D Components
 						if (Entity.hasComponent<ModelComponent>()) {
 							auto& Model = Entity.getComponent<ModelComponent>();
+							Out << YAML::Key << "ModelComponent" << YAML::Value << YAML::BeginMap;
+							{
+								Out << YAML::Key << "Path" << YAML::Value << (Model.m_Model ? Model.m_Model->getPath().string() : "None");
+							}
+							Out << YAML::EndMap;
 						}
-						// Only 2D
+
+						if (Entity.hasComponent<MaterialComponent>()) {
+							auto& Material = Entity.getComponent<MaterialComponent>();
+							Out << YAML::Key << "MaterialComponent" << YAML::Value << YAML::BeginMap;
+							{
+								if (Material.m_Material) {
+									std::string Type = Material.m_Material->getType();
+									Out << YAML::Key << "Type" << YAML::Value << Type;
+									if (auto pBlinnPhoneMaterial = dynamic_cast<BlinnPhoneMaterial*>(Material.m_Material.get())) {
+										Out << YAML::Key << "Data" << YAML::Value << YAML::BeginMap;
+										{
+											const auto& Data = pBlinnPhoneMaterial->getData();
+											Out << YAML::Key << "Ambient" << YAML::Value << Data.m_Ambient;
+											Out << YAML::Key << "Diffuse" << YAML::Value << Data.m_Diffuse;
+											Out << YAML::Key << "Specular" << YAML::Value << Data.m_Specular;
+											Out << YAML::Key << "Shininess" << YAML::Value << Data.m_Shininess;
+										}
+										Out << YAML::EndMap;
+									}
+								}
+								else {
+									std::string Type = "None";
+								}
+							}
+							Out << YAML::EndMap;
+						}
+						// 2D Components
 						if (Entity.hasComponent<SpriteRendererComponent>()) {
 							auto& SpriteRenderer = Entity.getComponent<SpriteRendererComponent>();
 							Out << YAML::Key << "SpriteRendererComponent" << YAML::Value << YAML::BeginMap;
@@ -348,31 +379,59 @@ namespace Pika {
 					CC.m_Camera.setAspectRatio(CameraNode["AspectRatio"].as<float>());
 					CC.m_IsFixedAspectRatio = CameraComponentNode["IsFixedAspectRatio"].as<bool>();
 				}
+				// 3D Components
+				if (Entity["ModelComponent"]) {
+					auto ModelComponentNode = Entity["ModelComponent"];
+					auto& MC = DeserializedEntity.addComponent<ModelComponent>();
+					std::string ModelPath = ModelComponentNode["Path"].as<std::string>();
+					MC.m_Model = ModelPath == "None" ? nullptr : CreateRef<Model>(std::filesystem::path(ModelPath));
+				}
 
+				if (Entity["MaterialComponent"]) {
+					auto MaterialComponentNode = Entity["MaterialComponent"];
+					auto& MC = DeserializedEntity.addComponent<MaterialComponent>();
+					std::string Type = MaterialComponentNode["Type"].as<std::string>();
+					if(Type != "None") {
+						if (Type == "Blinn-Phone") {
+							auto DataNode = MaterialComponentNode["Data"];
+							BlinnPhoneMaterial::Data Data;
+							Data.m_Ambient = DataNode["Ambient"].as<glm::vec3>();
+							Data.m_Diffuse = DataNode["Diffuse"].as<glm::vec3>();
+							Data.m_Specular = DataNode["Specular"].as<glm::vec3>();
+							Data.m_Shininess = DataNode["Shininess"].as<float>();
+							MC.m_Material = CreateRef<BlinnPhoneMaterial>(Data);
+						}
+					}
+					else {
+						MC.m_Material = nullptr;
+					}
+				}
+
+				// 2D Components
 				if (Entity["SpriteRendererComponent"]) {
 					auto SpriteRendererComponentNode = Entity["SpriteRendererComponent"];
 					auto& SRC = DeserializedEntity.addComponent<SpriteRendererComponent>();
 					SRC.m_Color = SpriteRendererComponentNode["Color"].as<glm::vec4>();
-					const auto& TexturePath = SpriteRendererComponentNode["Texture"].as<std::string>();
+					std::string TexturePath = SpriteRendererComponentNode["Texture"].as<std::string>();
 					SRC.m_Texture = TexturePath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(TexturePath));
 				}
 
 				if (Entity["Rigidbody2DComponent"]) {
 					auto Rigidbody2DComponentNode = Entity["Rigidbody2DComponent"];
-					auto& SRC = DeserializedEntity.addComponent<Rigidbody2DComponent>();
-					SRC.m_Type = Utils::StringToRigidbodyType(Rigidbody2DComponentNode["RigidbodyType"].as<std::string>());
-					SRC.m_IsFixedRotation = Rigidbody2DComponentNode["IsFixedRotation"].as<bool>();
+					auto& R2DC = DeserializedEntity.addComponent<Rigidbody2DComponent>();
+					R2DC.m_Type = Utils::StringToRigidbodyType(Rigidbody2DComponentNode["RigidbodyType"].as<std::string>());
+					R2DC.m_IsFixedRotation = Rigidbody2DComponentNode["IsFixedRotation"].as<bool>();
 				}
 
 				if (Entity["BoxCollider2DComponent"]) {
 					auto BoxCollider2DComponentNode = Entity["BoxCollider2DComponent"];
-					auto& SRC = DeserializedEntity.addComponent<BoxCollider2DComponent>();
-					SRC.m_Offset = BoxCollider2DComponentNode["Offset"].as<glm::vec2>();
-					SRC.m_Size = BoxCollider2DComponentNode["Size"].as<glm::vec2>();
-					SRC.m_Density = BoxCollider2DComponentNode["Density"].as<float>();
-					SRC.m_Friction = BoxCollider2DComponentNode["Friction"].as<float>();
-					SRC.m_Restitution = BoxCollider2DComponentNode["Restitution"].as<float>();
-					SRC.m_RestitutionThreshold = BoxCollider2DComponentNode["RestitutionThreshold"].as<float>();
+					auto& BC2DC = DeserializedEntity.addComponent<BoxCollider2DComponent>();
+					BC2DC.m_Offset = BoxCollider2DComponentNode["Offset"].as<glm::vec2>();
+					BC2DC.m_Size = BoxCollider2DComponentNode["Size"].as<glm::vec2>();
+					BC2DC.m_Density = BoxCollider2DComponentNode["Density"].as<float>();
+					BC2DC.m_Friction = BoxCollider2DComponentNode["Friction"].as<float>();
+					BC2DC.m_Restitution = BoxCollider2DComponentNode["Restitution"].as<float>();
+					BC2DC.m_RestitutionThreshold = BoxCollider2DComponentNode["RestitutionThreshold"].as<float>();
 				}
 			}
 		}
