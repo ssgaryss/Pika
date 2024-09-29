@@ -23,6 +23,8 @@ namespace Pika {
 		};
 	public:
 		DirectionLight() = default;  // 由于基类申明了析构函数，这里不能偷懒，满足rule of five，因为Component之后可能会多次拷贝等
+		DirectionLight(const Data& vData)
+			:m_Data{ vData } {}
 		DirectionLight(const DirectionLight&) = default;
 		DirectionLight& operator=(const DirectionLight&) = default;
 		DirectionLight(DirectionLight&&) noexcept = default;
@@ -54,6 +56,8 @@ namespace Pika {
 		};
 	public:
 		PointLight() = default;  // 由于基类申明了析构函数，这里不能偷懒，满足rule of five，因为Component之后可能会多次拷贝等
+		PointLight(const Data& vData)
+			:m_Data{ vData } {}
 		PointLight(const PointLight&) = default;
 		PointLight& operator=(const PointLight&) = default;
 		PointLight(PointLight&&) noexcept = default;

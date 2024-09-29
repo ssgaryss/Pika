@@ -257,6 +257,44 @@ namespace Pika {
 								}
 								else {
 									std::string Type = "None";
+									Out << YAML::Key << "Type" << YAML::Value << Type;
+								}
+							}
+							Out << YAML::EndMap;
+						}
+
+						if (Entity.hasComponent<LightComponent>()) {
+							auto& Light = Entity.getComponent<LightComponent>();
+							Out << YAML::Key << "LightComponent" << YAML::Value << YAML::BeginMap;
+							{
+								if (Light.m_Light) {
+									std::string Type = Light.m_Light->getType();
+									Out << YAML::Key << "Type" << YAML::Value << Type;
+									if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.m_Light.get())) {
+										Out << YAML::Key << "Data" << YAML::Value << YAML::BeginMap;
+										{
+											const auto& Data = pDirectionLight->getData();
+											Out << YAML::Key << "Light Color" << YAML::Value << Data.m_LightColor;
+											Out << YAML::Key << "Intensity" << YAML::Value << Data.m_Intensity;
+										}
+										Out << YAML::EndMap;
+									}
+									else if (auto pPointLight = dynamic_cast<PointLight*>(Light.m_Light.get())) {
+										Out << YAML::Key << "Data" << YAML::Value << YAML::BeginMap;
+										{
+											const auto& Data = pPointLight->getData();
+											Out << YAML::Key << "Light Color" << YAML::Value << Data.m_LightColor;
+											Out << YAML::Key << "Intensity" << YAML::Value << Data.m_Intensity;
+											Out << YAML::Key << "Constant" << YAML::Value << Data.m_Constant;
+											Out << YAML::Key << "Linear" << YAML::Value << Data.m_Linear;
+											Out << YAML::Key << "Quadratic" << YAML::Value << Data.m_Quadratic;
+										}
+										Out << YAML::EndMap;
+									}
+								}
+								else {
+									std::string Type = "None";
+									Out << YAML::Key << "Type" << YAML::Value << Type;
 								}
 							}
 							Out << YAML::EndMap;
@@ -391,7 +429,7 @@ namespace Pika {
 					auto MaterialComponentNode = Entity["MaterialComponent"];
 					auto& MC = DeserializedEntity.addComponent<MaterialComponent>();
 					std::string Type = MaterialComponentNode["Type"].as<std::string>();
-					if(Type != "None") {
+					if (Type != "None") {
 						if (Type == "Blinn-Phone") {
 							auto DataNode = MaterialComponentNode["Data"];
 							BlinnPhoneMaterial::Data Data;
@@ -404,6 +442,34 @@ namespace Pika {
 					}
 					else {
 						MC.m_Material = nullptr;
+					}
+				}
+
+				if (Entity["LightComponent"]) {
+					auto LightComponentNode = Entity["LightComponent"];
+					auto& LC = DeserializedEntity.addComponent<LightComponent>();
+					std::string Type = LightComponentNode["Type"].as<std::string>();
+					if (Type != "None") {
+						if (Type == "Direction Light") {
+							auto DataNode = LightComponentNode["Data"];
+							DirectionLight::Data Data;
+							Data.m_LightColor = DataNode["Light Color"].as<glm::vec3>();
+							Data.m_Intensity = DataNode["Intensity"].as<float>();
+							LC.m_Light = CreateRef<DirectionLight>(Data);
+						}
+						else if (Type == "Point Light") {
+							auto DataNode = LightComponentNode["Data"];
+							PointLight::Data Data;
+							Data.m_LightColor = DataNode["Light Color"].as<glm::vec3>();
+							Data.m_Intensity = DataNode["Intensity"].as<float>();
+							Data.m_Constant = DataNode["Constant"].as<float>();
+							Data.m_Linear = DataNode["Linear"].as<float>();
+							Data.m_Quadratic = DataNode["Quadratic"].as<float>();
+							LC.m_Light = CreateRef<PointLight>(Data);
+						}
+					}
+					else {
+						LC.m_Light = nullptr;
 					}
 				}
 
