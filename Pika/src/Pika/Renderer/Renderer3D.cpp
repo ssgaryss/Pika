@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "UniformBuffer.h"
 #include "RenderBatch.h"
+#include "Texture.h"
 #include "Pika/Scene/Primitive.h"
 
 namespace Pika {
@@ -39,6 +40,19 @@ namespace Pika {
 		Ref<VertexArray> m_SkyboxVertexArray = nullptr;
 		Ref<VertexBuffer> m_SkyboxVertexBuffer = nullptr;
 		Ref<Shader> m_SkyboxShader = nullptr;
+
+		// Textures
+		static const uint32_t m_MaxTextureSlots = 32;
+		std::optional<uint32_t> addTexture(const Ref<Texture2D>& vTexture) {
+			if (m_TextureIndex >= m_MaxTextureSlots) return std::nullopt;
+			uint32_t TextureIndex = m_TextureIndex;
+			m_TextureSlots[TextureIndex] = vTexture;
+			m_TextureIndex++;
+			return TextureIndex;
+		}
+		std::array<Ref<Texture2D>, 128> m_TextureSlots; // for now : 默认不多于128个texture
+		Ref<Texture2D> m_WhiteTexture; // Default at texture slot 0
+		uint32_t m_TextureIndex = 1;
 
 		// Camera
 		struct CameraUniformBufferData {
@@ -226,6 +240,14 @@ namespace Pika {
 		s_Data.m_SkyboxShader = Shader::Create("resources/shaders/Renderer3D/DefaultSkyboxShader.glsl");
 		s_Data.m_SkyboxVertexArray->unbind();
 
+		// Texture
+		TextureSpecification TS;
+		s_Data.m_WhiteTexture = Texture2D::Create(TS);
+		uint32_t Data = 0xffffffff;
+		s_Data.m_WhiteTexture->setData(&Data, sizeof(Data));
+		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture;
+
+		// Uniform Buffers
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0);     // glsl中binding = 0
 		s_Data.m_DirectionLightsDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_LightsData.m_DirectionLightsData), 1);
 		s_Data.m_PointLightsDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_LightsData.m_PointLightsData), 2);

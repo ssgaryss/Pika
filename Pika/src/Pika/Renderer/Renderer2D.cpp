@@ -130,7 +130,6 @@ namespace Pika {
 		s_Data.m_QuadVertexBuffer->setLayout(QuadLayout);
 		s_Data.m_QuadVertexArray->addVertexBuffer(s_Data.m_QuadVertexBuffer);
 		s_Data.m_QuadShader = Shader::Create("resources/shaders/Renderer2D/DefaultQuadShader.glsl");
-
 		s_Data.m_pQuadVertexBufferBase = new QuadVertexData[Renderer2DData::s_MaxQuadVerticesPerBatch];
 		s_Data.m_QuadVertexArray->unbind();
 
@@ -160,16 +159,23 @@ namespace Pika {
 		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer2DData::s_MaxQuadVerticesPerBatch];
 		s_Data.m_LineVertexArray->unbind();
 
-		// Default texture
+		// Texture
 		s_Data.m_MaxTextureSlots = RenderCommand::GetAvailableTextureSlots();
 		TextureSpecification TS;
 		s_Data.m_WhiteTexture = Texture2D::Create(TS);
 		uint32_t Data = 0xffffffff;
 		s_Data.m_WhiteTexture->setData(&Data, sizeof(Data));
 		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture;
-
+		s_Data.m_QuadShader->bind();
+		std::vector<int32_t> Textures(s_Data.m_MaxTextureSlots);
+		for (int32_t i = 0; i < 32; ++i)
+			Textures[i] = i;
+		s_Data.m_QuadShader->setIntArray("u_Textures", Textures.data(), static_cast<uint32_t>(Textures.size()));
+		s_Data.m_QuadShader->unbind();
+		
+		// Uniform Buffers
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0); // glsl中binding = 0
-	
+
 		PK_CORE_INFO("Success to initialize Pika 2D Renderer!");
 	}
 
@@ -178,12 +184,6 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 		s_Data.m_CameraData.m_ViewProjectionMatrix = vEditorCamera.getViewProjectionMatrix();
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
-		s_Data.m_QuadShader->bind();
-		// TODO : delete!!!
-		int32_t Textures[32]; //基于Shader中变量的数据
-		for (int32_t i = 0; i < 32; ++i)
-			Textures[i] = i;
-		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
 
 		ResetStatistics();
 		StartBatch();
@@ -194,12 +194,6 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 		s_Data.m_CameraData.m_ViewProjectionMatrix = vCamera.getProjectionMatrix() * vViewMatrix;
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
-		s_Data.m_QuadShader->bind();
-		// TODO : delete!!!
-		int32_t Textures[32]; //基于Shader中变量的数据
-		for (int32_t i = 0; i < 32; ++i)
-			Textures[i] = i;
-		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
 
 		ResetStatistics();
 		StartBatch();
