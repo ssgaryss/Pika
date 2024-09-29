@@ -408,8 +408,13 @@ namespace Pika {
 				static Ref<Texture2D> DefaultTexture = Texture2D::Create("resources/icons/ComponentPanel/DefaultTexture.png");
 				uintptr_t Texture = vSpriteRendererComponent.m_Texture ? static_cast<uintptr_t>(vSpriteRendererComponent.m_Texture->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
 
-				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 });
+				//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 });
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100.0f);
+				ImGui::Text("Texture");
+				ImGui::NextColumn();
 				ImGui::ImageButton(reinterpret_cast<ImTextureID>(Texture), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+				ImGui::NextColumn();
 				if (ImGui::BeginDragDropTarget()) {
 					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ∂‘”¶ContentBrowserPanel÷–
 						std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
@@ -418,11 +423,16 @@ namespace Pika {
 					}
 					ImGui::EndDragDropTarget();
 				}
-				ImGui::SameLine();
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15.0f);
-				ImGui::Text("Texture");
-				ImGui::PopStyleVar();
+				//ImGui::PopStyleVar();
+				ImGui::Text("Tile Factor");
+				ImGui::NextColumn();
+				ImGui::DragFloat2("##Tiling Factor", glm::value_ptr(vSpriteRendererComponent.m_TilingFactor), 0.05f, 0.0f, 100000.0f);
+				ImGui::NextColumn();
+				ImGui::Text("Color");
+				ImGui::NextColumn();
 				ImGui::ColorEdit4("##Color", glm::value_ptr(vSpriteRendererComponent.m_Color));
+				ImGui::NextColumn();
+				ImGui::Columns();
 				});
 			drawEntityComponent<Rigidbody2DComponent>("Rigidbody2D Component", vEntity, [](auto& vRigidbody2DComponent) {
 				Rigidbody2DComponent::RigidbodyType CurrentRigidbodyType = vRigidbody2DComponent.m_Type;

@@ -6,13 +6,17 @@ bin-int/
 # Files
 *.user
 
-#Debug only
+# Debug only
 Pikartisan/PikaProfile-Runtime.json
 Pikartisan/PikaProfile-Shutdown.json
 Pikartisan/PikaProfile-Startup.json
 
-#Visual Studio
+# Visual Studio
 *.sln
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+
+# Assetes
+# Pikartisan/Assetes # TODO!
+Pikartisan/Assetes/environment/skybox

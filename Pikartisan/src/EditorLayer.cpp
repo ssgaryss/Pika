@@ -91,7 +91,7 @@ namespace Pika
 		{
 		case Pika::Scene::SceneState::Edit:
 		{
-			if (m_IsViewportFocus)
+			if (m_IsViewportFocus && m_IsViewportHovered)
 				m_EditorCamera.onUpdate(vTimestep);
 			m_Renderer->render(m_EditorCamera);
 			break;

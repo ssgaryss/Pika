@@ -306,6 +306,7 @@ namespace Pika {
 							{
 								Out << YAML::Key << "Color" << YAML::Value << SpriteRenderer.m_Color;
 								Out << YAML::Key << "Texture" << YAML::Value << (SpriteRenderer.m_Texture ? SpriteRenderer.m_Texture->getPath().string() : "None");
+								Out << YAML::Key << "Tiling Factor" << YAML::Value << SpriteRenderer.m_TilingFactor;
 							}
 							Out << YAML::EndMap;
 						}
@@ -480,6 +481,7 @@ namespace Pika {
 					SRC.m_Color = SpriteRendererComponentNode["Color"].as<glm::vec4>();
 					std::string TexturePath = SpriteRendererComponentNode["Texture"].as<std::string>();
 					SRC.m_Texture = TexturePath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(TexturePath));
+					SRC.m_TilingFactor = SpriteRendererComponentNode["Tiling Factor"].as<glm::vec2>();
 				}
 
 				if (Entity["Rigidbody2DComponent"]) {
