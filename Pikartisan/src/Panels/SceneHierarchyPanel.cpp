@@ -528,7 +528,9 @@ namespace Pika {
 					ImGui::NextColumn();
 					ImGui::ColorEdit3("##Specular", glm::value_ptr(MaterialData.m_Specular));
 					ImGui::NextColumn();
-					ImGui::DragFloat("Shininess", &MaterialData.m_Shininess, 0.05f, 0.0f, 100000.0f);
+					ImGui::Text("Shininess");
+					ImGui::NextColumn();
+					ImGui::DragFloat("##Shininess", &MaterialData.m_Shininess, 0.05f, 0.0f, 100000.0f);
 					ImGui::NextColumn();
 				}
 				// TODO : PBR Material
