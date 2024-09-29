@@ -1,5 +1,6 @@
 Scene:
   Name: First 3D Scene
   SceneType: Scene3D
+  Skybox: None
   Entities:
     []

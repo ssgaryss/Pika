@@ -181,6 +181,7 @@ namespace Pika {
 			{
 				Out << YAML::Key << "Name" << YAML::Value << SceneName;
 				Out << YAML::Key << "SceneType" << YAML::Value << Utils::SceneTypeToString(m_Scene->getSceneType());
+				Out << YAML::Key << "Skybox" << YAML::Value << (m_Scene->m_Skybox ? m_Scene->m_Skybox->getPath().string() : "None");
 				Out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // ËùÓÐEntities
 				{
 					m_Scene->m_Registry.view<IDComponent>().each([&Out, this](auto vEntity, auto& vTagComponent) {
@@ -383,6 +384,9 @@ namespace Pika {
 		std::string SceneName = SceneNode["Name"].as<std::string>();
 		m_Scene->setSceneName(SceneName);
 		m_Scene->setSceneType(Utils::StringToSceneType(SceneNode["SceneType"].as<std::string>()));
+		std::string SkyboxPath = SceneNode["Skybox"].as<std::string>();
+		if (SkyboxPath != "None")
+			m_Scene->setSkybox(Cubemap::Create(SkyboxPath));
 		// Entities
 		YAML::Node Entities = SceneNode["Entities"];
 		if (Entities) {
