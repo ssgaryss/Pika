@@ -42,7 +42,15 @@ namespace Pika {
 		Ref<Shader> m_SkyboxShader = nullptr;
 
 		// Textures
-		static const uint32_t m_MaxTextureSlots = 32;
+		static const uint32_t m_MaxTextureSlots = 32; // TODO : 这个应该和硬件有关！
+		std::optional<uint32_t> findTextureIndex(const Ref<Texture2D>& vTexture) {  // 已存在Texture则返回其index
+			for (uint32_t i = 1; i < m_TextureIndex; ++i) {
+				if (*vTexture.get() == *m_TextureSlots[i].get()) {
+					return i;
+				}
+			}
+			return std::nullopt;
+		}
 		std::optional<uint32_t> addTexture(const Ref<Texture2D>& vTexture) {
 			if (m_TextureIndex >= m_MaxTextureSlots) return std::nullopt;
 			uint32_t TextureIndex = m_TextureIndex;
@@ -62,6 +70,45 @@ namespace Pika {
 		};
 		CameraUniformBufferData m_CameraData;
 		Ref<UniformBuffer> m_CameraDataUniformBuffer = nullptr;
+
+		// Materials
+		struct UniformBufferSTD140BlinnPhoneMaterialData
+		{
+			alignas(16) glm::vec3 m_Ambient = glm::vec3(1.0f);
+			alignas(16) glm::vec3 m_Diffuse = glm::vec3(1.0f);
+			alignas(16) glm::vec3 m_Specular = glm::vec3(1.0f);
+			float m_Shininess = 0.0f;
+			uint32_t m_DiffuseMapIndex = 0;
+			uint32_t m_SpecularMapIndex = 0;
+		};
+		UniformBufferSTD140BlinnPhoneMaterialData m_BlinnPhoneMaterialUniformBufferData;
+		void setData(const BlinnPhoneMaterial::Data& vBlinnPhoneMaterialData) {
+			m_BlinnPhoneMaterialUniformBufferData.m_Ambient = vBlinnPhoneMaterialData.m_Ambient;
+			m_BlinnPhoneMaterialUniformBufferData.m_Diffuse = vBlinnPhoneMaterialData.m_Diffuse;
+			m_BlinnPhoneMaterialUniformBufferData.m_Specular = vBlinnPhoneMaterialData.m_Specular;
+			m_BlinnPhoneMaterialUniformBufferData.m_Shininess = vBlinnPhoneMaterialData.m_Shininess;
+			if (vBlinnPhoneMaterialData.m_DiffuseMap) {
+				uint32_t DiffuseTextureIndex = static_cast<uint32_t>(findTextureIndex(vBlinnPhoneMaterialData.m_DiffuseMap).value_or(0));
+				if (DiffuseTextureIndex == 0) {
+					auto Success = addTexture(vBlinnPhoneMaterialData.m_DiffuseMap);
+					if (Success.has_value())
+						DiffuseTextureIndex = static_cast<int>(Success.value());
+					else
+						PK_CORE_ERROR("Renderer3D : Fail to add Blinn-Phone diffuse texture to texture slots.");
+				}
+				uint32_t SpecularTextureIndex = static_cast<uint32_t>(findTextureIndex(vBlinnPhoneMaterialData.m_SpecularMap).value_or(0));
+				if (SpecularTextureIndex == 0) {
+					auto Success = addTexture(vBlinnPhoneMaterialData.m_SpecularMap);
+					if (Success.has_value())
+						SpecularTextureIndex = static_cast<int>(Success.value());
+					else
+						PK_CORE_ERROR("Renderer3D : Fail to add Blinn-Phone specular texture to texture slots.");
+				}
+				m_BlinnPhoneMaterialUniformBufferData.m_DiffuseMapIndex = DiffuseTextureIndex;
+				m_BlinnPhoneMaterialUniformBufferData.m_SpecularMapIndex = SpecularTextureIndex;
+			}
+		}
+
 
 		// Lights
 		static const uint32_t s_MaxDirectionLightsNumber = 1;
@@ -180,6 +227,12 @@ namespace Pika {
 		s_Data.m_StaticMeshVertexArray->addVertexBuffer(s_Data.m_StaticMeshVertexBuffer);
 		s_Data.m_StaticMeshShader = Shader::Create("resources/shaders/Renderer3D/DefaultStaticMeshShader.glsl");
 		s_Data.m_BlinnPhoneShader = Shader::Create("resources/shaders/Renderer3D/DefaultBlinnPhoneShader.glsl");
+		s_Data.m_BlinnPhoneShader->bind();
+		std::vector<int32_t> Textures(s_Data.m_MaxTextureSlots);
+		for (int32_t i = 0; i < 32; ++i)
+			Textures[i] = i;
+		s_Data.m_BlinnPhoneShader->setIntArray("u_Textures", Textures.data(), static_cast<uint32_t>(Textures.size()));
+		s_Data.m_BlinnPhoneShader->unbind();
 		s_Data.m_StaticMeshVertexArray->unbind();
 
 		// Line
@@ -343,7 +396,9 @@ namespace Pika {
 		if (auto pBlinnPhoneMaterial = dynamic_cast<BlinnPhoneMaterial*>(vMaterial.m_Material.get())) {
 			s_Data.m_BlinnPhoneShader->bind();
 			const auto& MaterialData = pBlinnPhoneMaterial->getData();
-			s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&MaterialData, sizeof(MaterialData));
+			s_Data.setData(MaterialData);
+			s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&s_Data.m_BlinnPhoneMaterialUniformBufferData, 
+				sizeof(s_Data.m_BlinnPhoneMaterialUniformBufferData));
 		}
 		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
 		s_Data.m_Statistics.m_DrawCalls++;

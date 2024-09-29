@@ -1,4 +1,5 @@
 #pragma once
+#include "Pika/Renderer/Texture.h"
 #include <glm/glm.hpp>
 
 namespace Pika {
@@ -16,10 +17,12 @@ namespace Pika {
 	{
 	public:
 		struct Data {
-			alignas(16) glm::vec3 m_Ambient = glm::vec3(1.0f);
-			alignas(16) glm::vec3 m_Diffuse = glm::vec3(1.0f);
-			alignas(16) glm::vec3 m_Specular = glm::vec3(1.0f);
+			glm::vec3 m_Ambient = glm::vec3(1.0f);
+			glm::vec3 m_Diffuse = glm::vec3(1.0f);
+			glm::vec3 m_Specular = glm::vec3(1.0f);
 			float m_Shininess = 0.0f;
+			Ref<Texture2D> m_DiffuseMap = nullptr;
+			Ref<Texture2D> m_SpecularMap = nullptr;
 		};
 	public:
 		BlinnPhoneMaterial() = default;

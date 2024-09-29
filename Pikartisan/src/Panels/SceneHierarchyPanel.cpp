@@ -532,6 +532,17 @@ namespace Pika {
 					ImGui::NextColumn();
 					ImGui::DragFloat("##Shininess", &MaterialData.m_Shininess, 0.05f, 0.0f, 100000.0f);
 					ImGui::NextColumn();
+					ImGui::Text("Diffuse Map");
+					ImGui::NextColumn();
+					static Ref<Texture2D> DefaultTexture = Texture2D::Create("resources/icons/ComponentPanel/DefaultTexture.png");
+					uintptr_t DiffuseMap = MaterialData.m_DiffuseMap ? static_cast<uintptr_t>(MaterialData.m_DiffuseMap->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
+					ImGui::ImageButton(reinterpret_cast<ImTextureID>(DiffuseMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					ImGui::NextColumn();
+					ImGui::Text("Specular Map");
+					ImGui::NextColumn();
+					uintptr_t SpecularMap = MaterialData.m_SpecularMap ? static_cast<uintptr_t>(MaterialData.m_SpecularMap->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
+					ImGui::ImageButton(reinterpret_cast<ImTextureID>(SpecularMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					ImGui::NextColumn();
 				}
 				// TODO : PBR Material
 				ImGui::Columns();

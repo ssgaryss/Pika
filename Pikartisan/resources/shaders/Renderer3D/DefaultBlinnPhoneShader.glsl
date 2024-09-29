@@ -62,7 +62,11 @@ layout(std140, binding = 4) uniform BlinnPhoneMaterial
 	vec3 u_Diffuse;
 	vec3 u_Specular;
 	float u_Shininess;
+	uint u_DiffuseTextureSlot;
+	uint u_SpecularTextureSlot;
 };
+
+uniform sampler2D u_Textures[32];
 
 in vec3 v_Normal;
 in vec3 v_Position;
