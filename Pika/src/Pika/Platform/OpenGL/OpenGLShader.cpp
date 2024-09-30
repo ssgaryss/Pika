@@ -79,7 +79,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniform1f(Location, vValue);
@@ -90,7 +90,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniform2f(Location, vValue.x, vValue.y);
@@ -101,7 +101,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniform3f(Location, vValue.x, vValue.y, vValue.z);
@@ -112,7 +112,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniform4f(Location, vValue.x, vValue.y, vValue.z, vValue.w);
@@ -123,7 +123,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniform1i(Location, vValue);
@@ -134,7 +134,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniform2i(Location, (int)vValue.x, (int)vValue.y);
@@ -145,7 +145,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniform3i(Location, (int)vValue.x, (int)vValue.y, (int)vValue.z);
@@ -156,7 +156,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniform4i(Location, (int)vValue.x, (int)vValue.y, (int)vValue.z, (int)vValue.w);
@@ -167,7 +167,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniformMatrix3fv(Location, 1, GL_FALSE, &vValue[0][0]);
@@ -178,7 +178,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniformMatrix4fv(Location, 1, GL_FALSE, &vValue[0][0]);
@@ -189,7 +189,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniform1i(Location, vValue);
@@ -200,7 +200,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		GLint Location = glGetUniformLocation(m_RendererID, vName.c_str());
 		if (Location == -1) {
-			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0} in shader "{1}"!")", vName, m_Name);
+			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
 		glUniform1iv(Location, vCount, vValue);

@@ -152,7 +152,7 @@ namespace Pika {
 				return "Scene2D"s;
 			case Pika::Scene::SceneType::Scene3D:
 				return "Scene3D"s;
-			}			
+			}
 			PK_CORE_WARN("SceneSerializer : Unknown Scene Type !");
 			return ""s;
 		}
@@ -181,6 +181,7 @@ namespace Pika {
 			{
 				Out << YAML::Key << "Name" << YAML::Value << SceneName;
 				Out << YAML::Key << "SceneType" << YAML::Value << Utils::SceneTypeToString(m_Scene->getSceneType());
+				Out << YAML::Key << "Skybox" << YAML::Value << (m_Scene->m_Skybox ? m_Scene->m_Skybox->getPath().string() : "None");
 				Out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // ËùÓÐEntities
 				{
 					m_Scene->m_Registry.view<IDComponent>().each([&Out, this](auto vEntity, auto& vTagComponent) {
@@ -226,12 +227,89 @@ namespace Pika {
 							}
 							Out << YAML::EndMap;
 						}
+						// 3D Components
+						if (Entity.hasComponent<ModelComponent>()) {
+							auto& Model = Entity.getComponent<ModelComponent>();
+							Out << YAML::Key << "ModelComponent" << YAML::Value << YAML::BeginMap;
+							{
+								Out << YAML::Key << "Path" << YAML::Value << (Model.m_Model ? Model.m_Model->getPath().string() : "None");
+							}
+							Out << YAML::EndMap;
+						}
+
+						if (Entity.hasComponent<MaterialComponent>()) {
+							auto& Material = Entity.getComponent<MaterialComponent>();
+							Out << YAML::Key << "MaterialComponent" << YAML::Value << YAML::BeginMap;
+							{
+								if (Material.m_Material) {
+									std::string Type = Material.m_Material->getType();
+									Out << YAML::Key << "Type" << YAML::Value << Type;
+									if (auto pBlinnPhoneMaterial = dynamic_cast<BlinnPhoneMaterial*>(Material.m_Material.get())) {
+										Out << YAML::Key << "Data" << YAML::Value << YAML::BeginMap;
+										{
+											const auto& Data = pBlinnPhoneMaterial->getData();
+											Out << YAML::Key << "Ambient" << YAML::Value << Data.m_Ambient;
+											Out << YAML::Key << "Diffuse" << YAML::Value << Data.m_Diffuse;
+											Out << YAML::Key << "Specular" << YAML::Value << Data.m_Specular;
+											Out << YAML::Key << "Shininess" << YAML::Value << Data.m_Shininess;
+											Out << YAML::Key << "Diffuse Map" << YAML::Value << (Data.m_DiffuseMap ? Data.m_DiffuseMap->getPath().string() : "None");
+											Out << YAML::Key << "Specular Map" << YAML::Value << (Data.m_SpecularMap ? Data.m_DiffuseMap->getPath().string() : "None");
+										}
+										Out << YAML::EndMap;
+									}
+								}
+								else {
+									std::string Type = "None";
+									Out << YAML::Key << "Type" << YAML::Value << Type;
+								}
+							}
+							Out << YAML::EndMap;
+						}
+
+						if (Entity.hasComponent<LightComponent>()) {
+							auto& Light = Entity.getComponent<LightComponent>();
+							Out << YAML::Key << "LightComponent" << YAML::Value << YAML::BeginMap;
+							{
+								if (Light.m_Light) {
+									std::string Type = Light.m_Light->getType();
+									Out << YAML::Key << "Type" << YAML::Value << Type;
+									if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.m_Light.get())) {
+										Out << YAML::Key << "Data" << YAML::Value << YAML::BeginMap;
+										{
+											const auto& Data = pDirectionLight->getData();
+											Out << YAML::Key << "Light Color" << YAML::Value << Data.m_LightColor;
+											Out << YAML::Key << "Intensity" << YAML::Value << Data.m_Intensity;
+										}
+										Out << YAML::EndMap;
+									}
+									else if (auto pPointLight = dynamic_cast<PointLight*>(Light.m_Light.get())) {
+										Out << YAML::Key << "Data" << YAML::Value << YAML::BeginMap;
+										{
+											const auto& Data = pPointLight->getData();
+											Out << YAML::Key << "Light Color" << YAML::Value << Data.m_LightColor;
+											Out << YAML::Key << "Intensity" << YAML::Value << Data.m_Intensity;
+											Out << YAML::Key << "Constant" << YAML::Value << Data.m_Constant;
+											Out << YAML::Key << "Linear" << YAML::Value << Data.m_Linear;
+											Out << YAML::Key << "Quadratic" << YAML::Value << Data.m_Quadratic;
+										}
+										Out << YAML::EndMap;
+									}
+								}
+								else {
+									std::string Type = "None";
+									Out << YAML::Key << "Type" << YAML::Value << Type;
+								}
+							}
+							Out << YAML::EndMap;
+						}
+						// 2D Components
 						if (Entity.hasComponent<SpriteRendererComponent>()) {
 							auto& SpriteRenderer = Entity.getComponent<SpriteRendererComponent>();
 							Out << YAML::Key << "SpriteRendererComponent" << YAML::Value << YAML::BeginMap;
 							{
 								Out << YAML::Key << "Color" << YAML::Value << SpriteRenderer.m_Color;
 								Out << YAML::Key << "Texture" << YAML::Value << (SpriteRenderer.m_Texture ? SpriteRenderer.m_Texture->getPath().string() : "None");
+								Out << YAML::Key << "Tiling Factor" << YAML::Value << SpriteRenderer.m_TilingFactor;
 							}
 							Out << YAML::EndMap;
 						}
@@ -308,6 +386,9 @@ namespace Pika {
 		std::string SceneName = SceneNode["Name"].as<std::string>();
 		m_Scene->setSceneName(SceneName);
 		m_Scene->setSceneType(Utils::StringToSceneType(SceneNode["SceneType"].as<std::string>()));
+		std::string SkyboxPath = SceneNode["Skybox"].as<std::string>();
+		if (SkyboxPath != "None")
+			m_Scene->setSkybox(Cubemap::Create(SkyboxPath));
 		// Entities
 		YAML::Node Entities = SceneNode["Entities"];
 		if (Entities) {
@@ -343,31 +424,92 @@ namespace Pika {
 					CC.m_Camera.setAspectRatio(CameraNode["AspectRatio"].as<float>());
 					CC.m_IsFixedAspectRatio = CameraComponentNode["IsFixedAspectRatio"].as<bool>();
 				}
+				// 3D Components
+				if (Entity["ModelComponent"]) {
+					auto ModelComponentNode = Entity["ModelComponent"];
+					auto& MC = DeserializedEntity.addComponent<ModelComponent>();
+					std::string ModelPath = ModelComponentNode["Path"].as<std::string>();
+					MC.m_Model = ModelPath == "None" ? nullptr : CreateRef<Model>(std::filesystem::path(ModelPath));
+				}
 
+				if (Entity["MaterialComponent"]) {
+					auto MaterialComponentNode = Entity["MaterialComponent"];
+					auto& MC = DeserializedEntity.addComponent<MaterialComponent>();
+					std::string Type = MaterialComponentNode["Type"].as<std::string>();
+					if (Type != "None") {
+						if (Type == "Blinn-Phone") {
+							auto DataNode = MaterialComponentNode["Data"];
+							BlinnPhoneMaterial::Data Data;
+							Data.m_Ambient = DataNode["Ambient"].as<glm::vec3>();
+							Data.m_Diffuse = DataNode["Diffuse"].as<glm::vec3>();
+							Data.m_Specular = DataNode["Specular"].as<glm::vec3>();
+							Data.m_Shininess = DataNode["Shininess"].as<float>();
+							std::string DiffuseMapPath = DataNode["Diffuse Map"].as<std::string>();
+							Data.m_DiffuseMap = DiffuseMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(DiffuseMapPath));
+							std::string SpecularMapPath = DataNode["Specular Map"].as<std::string>();
+							Data.m_SpecularMap = SpecularMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(SpecularMapPath));
+							MC.m_Material = CreateRef<BlinnPhoneMaterial>(Data);
+						}
+					}
+					else {
+						MC.m_Material = nullptr;
+					}
+				}
+
+				if (Entity["LightComponent"]) {
+					auto LightComponentNode = Entity["LightComponent"];
+					auto& LC = DeserializedEntity.addComponent<LightComponent>();
+					std::string Type = LightComponentNode["Type"].as<std::string>();
+					if (Type != "None") {
+						if (Type == "Direction Light") {
+							auto DataNode = LightComponentNode["Data"];
+							DirectionLight::Data Data;
+							Data.m_LightColor = DataNode["Light Color"].as<glm::vec3>();
+							Data.m_Intensity = DataNode["Intensity"].as<float>();
+							LC.m_Light = CreateRef<DirectionLight>(Data);
+						}
+						else if (Type == "Point Light") {
+							auto DataNode = LightComponentNode["Data"];
+							PointLight::Data Data;
+							Data.m_LightColor = DataNode["Light Color"].as<glm::vec3>();
+							Data.m_Intensity = DataNode["Intensity"].as<float>();
+							Data.m_Constant = DataNode["Constant"].as<float>();
+							Data.m_Linear = DataNode["Linear"].as<float>();
+							Data.m_Quadratic = DataNode["Quadratic"].as<float>();
+							LC.m_Light = CreateRef<PointLight>(Data);
+						}
+					}
+					else {
+						LC.m_Light = nullptr;
+					}
+				}
+
+				// 2D Components
 				if (Entity["SpriteRendererComponent"]) {
 					auto SpriteRendererComponentNode = Entity["SpriteRendererComponent"];
 					auto& SRC = DeserializedEntity.addComponent<SpriteRendererComponent>();
 					SRC.m_Color = SpriteRendererComponentNode["Color"].as<glm::vec4>();
-					const auto& TexturePath = SpriteRendererComponentNode["Texture"].as<std::string>();
+					std::string TexturePath = SpriteRendererComponentNode["Texture"].as<std::string>();
 					SRC.m_Texture = TexturePath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(TexturePath));
+					SRC.m_TilingFactor = SpriteRendererComponentNode["Tiling Factor"].as<glm::vec2>();
 				}
 
 				if (Entity["Rigidbody2DComponent"]) {
 					auto Rigidbody2DComponentNode = Entity["Rigidbody2DComponent"];
-					auto& SRC = DeserializedEntity.addComponent<Rigidbody2DComponent>();
-					SRC.m_Type = Utils::StringToRigidbodyType(Rigidbody2DComponentNode["RigidbodyType"].as<std::string>());
-					SRC.m_IsFixedRotation = Rigidbody2DComponentNode["IsFixedRotation"].as<bool>();
+					auto& R2DC = DeserializedEntity.addComponent<Rigidbody2DComponent>();
+					R2DC.m_Type = Utils::StringToRigidbodyType(Rigidbody2DComponentNode["RigidbodyType"].as<std::string>());
+					R2DC.m_IsFixedRotation = Rigidbody2DComponentNode["IsFixedRotation"].as<bool>();
 				}
 
 				if (Entity["BoxCollider2DComponent"]) {
 					auto BoxCollider2DComponentNode = Entity["BoxCollider2DComponent"];
-					auto& SRC = DeserializedEntity.addComponent<BoxCollider2DComponent>();
-					SRC.m_Offset = BoxCollider2DComponentNode["Offset"].as<glm::vec2>();
-					SRC.m_Size = BoxCollider2DComponentNode["Size"].as<glm::vec2>();
-					SRC.m_Density = BoxCollider2DComponentNode["Density"].as<float>();
-					SRC.m_Friction = BoxCollider2DComponentNode["Friction"].as<float>();
-					SRC.m_Restitution = BoxCollider2DComponentNode["Restitution"].as<float>();
-					SRC.m_RestitutionThreshold = BoxCollider2DComponentNode["RestitutionThreshold"].as<float>();
+					auto& BC2DC = DeserializedEntity.addComponent<BoxCollider2DComponent>();
+					BC2DC.m_Offset = BoxCollider2DComponentNode["Offset"].as<glm::vec2>();
+					BC2DC.m_Size = BoxCollider2DComponentNode["Size"].as<glm::vec2>();
+					BC2DC.m_Density = BoxCollider2DComponentNode["Density"].as<float>();
+					BC2DC.m_Friction = BoxCollider2DComponentNode["Friction"].as<float>();
+					BC2DC.m_Restitution = BoxCollider2DComponentNode["Restitution"].as<float>();
+					BC2DC.m_RestitutionThreshold = BoxCollider2DComponentNode["RestitutionThreshold"].as<float>();
 				}
 			}
 		}

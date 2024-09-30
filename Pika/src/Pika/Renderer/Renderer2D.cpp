@@ -124,13 +124,18 @@ namespace Pika {
 			{Pika::ShaderDataType::Float4, "a_Color"},
 			{Pika::ShaderDataType::Float2, "a_TexCoord"},
 			{Pika::ShaderDataType::Int,    "a_TextureIndex"},
-			{Pika::ShaderDataType::Float,  "a_TilingFactor"},
+			{Pika::ShaderDataType::Float2,  "a_TilingFactor"},
 			{Pika::ShaderDataType::Int,    "a_EntityID"}
 		};
 		s_Data.m_QuadVertexBuffer->setLayout(QuadLayout);
 		s_Data.m_QuadVertexArray->addVertexBuffer(s_Data.m_QuadVertexBuffer);
 		s_Data.m_QuadShader = Shader::Create("resources/shaders/Renderer2D/DefaultQuadShader.glsl");
-
+		s_Data.m_QuadShader->bind();
+		std::vector<int32_t> Textures(s_Data.m_MaxTextureSlots);
+		for (int32_t i = 0; i < 32; ++i)
+			Textures[i] = i;
+		s_Data.m_QuadShader->setIntArray("u_Textures", Textures.data(), static_cast<uint32_t>(Textures.size()));
+		s_Data.m_QuadShader->unbind();
 		s_Data.m_pQuadVertexBufferBase = new QuadVertexData[Renderer2DData::s_MaxQuadVerticesPerBatch];
 		s_Data.m_QuadVertexArray->unbind();
 
@@ -160,16 +165,17 @@ namespace Pika {
 		s_Data.m_pLineVertexBufferBase = new LineVertexData[Renderer2DData::s_MaxQuadVerticesPerBatch];
 		s_Data.m_LineVertexArray->unbind();
 
-		// Default texture
+		// Texture
 		s_Data.m_MaxTextureSlots = RenderCommand::GetAvailableTextureSlots();
 		TextureSpecification TS;
 		s_Data.m_WhiteTexture = Texture2D::Create(TS);
 		uint32_t Data = 0xffffffff;
 		s_Data.m_WhiteTexture->setData(&Data, sizeof(Data));
 		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture;
-
+		
+		// Uniform Buffers
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0); // glsl中binding = 0
-	
+
 		PK_CORE_INFO("Success to initialize Pika 2D Renderer!");
 	}
 
@@ -178,12 +184,6 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 		s_Data.m_CameraData.m_ViewProjectionMatrix = vEditorCamera.getViewProjectionMatrix();
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
-		s_Data.m_QuadShader->bind();
-		// TODO : delete!!!
-		int32_t Textures[32]; //基于Shader中变量的数据
-		for (int32_t i = 0; i < 32; ++i)
-			Textures[i] = i;
-		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
 
 		ResetStatistics();
 		StartBatch();
@@ -194,12 +194,6 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 		s_Data.m_CameraData.m_ViewProjectionMatrix = vCamera.getProjectionMatrix() * vViewMatrix;
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
-		s_Data.m_QuadShader->bind();
-		// TODO : delete!!!
-		int32_t Textures[32]; //基于Shader中变量的数据
-		for (int32_t i = 0; i < 32; ++i)
-			Textures[i] = i;
-		s_Data.m_QuadShader->setIntArray("u_Textures", Textures, s_Data.m_TextureIndex);
 
 		ResetStatistics();
 		StartBatch();
@@ -254,12 +248,12 @@ namespace Pika {
 		DrawQuad(Transform, vColor);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, const glm::vec2& vTilingFactor, const glm::vec4& vTintColor)
 	{
 		DrawQuad(glm::vec3(vPosition, 0.0f), vScale, vTexture, vTilingFactor, vTintColor);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	void Renderer2D::DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const Ref<Texture2D>& vTexture, const glm::vec2& vTilingFactor, const glm::vec4& vTintColor)
 	{
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
@@ -279,12 +273,12 @@ namespace Pika {
 		DrawQuad(Transform, vColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<Texture2D>& vTexture, const glm::vec2& vTilingFactor, const glm::vec4& vTintColor)
 	{
 		DrawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vTexture, vTilingFactor, vTintColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<Texture2D>& vTexture, const glm::vec2& vTilingFactor, const glm::vec4& vTintColor)
 	{
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
 			glm::toMat4(glm::quat(glm::radians(vRotation))) *
@@ -293,21 +287,21 @@ namespace Pika {
 	}
 
 	// SubTexture2D
-	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
+	void Renderer2D::DrawQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const Ref<SubTexture2D>& vSubTexture, const glm::vec2& vTilingFactor, const glm::vec4& vTintColor) {
 		DrawQuad(glm::vec3(vPosition, 0.0f), vScale, vSubTexture, vTilingFactor, vTintColor);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
+	void Renderer2D::DrawQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const Ref<SubTexture2D>& vSubTexture, const glm::vec2& vTilingFactor, const glm::vec4& vTintColor) {
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
 		DrawQuad(Transform, vSubTexture, vTilingFactor, vTintColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<SubTexture2D>& vSubTexture, const glm::vec2& vTilingFactor, const glm::vec4& vTintColor) {
 		DrawRotatedQuad(glm::vec3(vPosition, 0.0f), vScale, vRotation, vSubTexture, vTilingFactor, vTintColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor) {
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& vPosition, const glm::vec2& vScale, const glm::vec3& vRotation, const Ref<SubTexture2D>& vSubTexture, const glm::vec2& vTilingFactor, const glm::vec4& vTintColor) {
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), vPosition) *
 			glm::toMat4(glm::quat(glm::radians(vRotation))) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(vScale, 1.0f));
@@ -326,7 +320,7 @@ namespace Pika {
 			s_Data.m_pQuadVertexBufferPtr->m_Color = vColor;
 			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
 			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = 0;
-			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = 1.0f;
+			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = glm::vec2(1.0f);
 			s_Data.m_pQuadVertexBufferPtr->m_EntityID = -1;
 			s_Data.m_pQuadVertexBufferPtr++;
 		}
@@ -335,7 +329,7 @@ namespace Pika {
 		s_Data.m_Statistics.m_QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const Ref<Texture2D>& vTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const Ref<Texture2D>& vTexture, const glm::vec2& vTilingFactor, const glm::vec4& vTintColor)
 	{
 		PK_PROFILE_FUNCTION();
 		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxQuadIndicesPerBatch)
@@ -369,7 +363,7 @@ namespace Pika {
 		s_Data.m_Statistics.m_QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const Ref<SubTexture2D>& vSubTexture, float vTilingFactor, const glm::vec4& vTintColor)
+	void Renderer2D::DrawQuad(const glm::mat4& vTransform, const Ref<SubTexture2D>& vSubTexture, const glm::vec2& vTilingFactor, const glm::vec4& vTintColor)
 	{
 		PK_PROFILE_FUNCTION();
 		if (s_Data.m_QuadIndexCount >= Renderer2DData::s_MaxQuadIndicesPerBatch)
@@ -496,7 +490,7 @@ namespace Pika {
 			s_Data.m_pQuadVertexBufferPtr->m_Color = vSprite.m_Color;
 			s_Data.m_pQuadVertexBufferPtr->m_TexCoord = TexCoord[i];
 			s_Data.m_pQuadVertexBufferPtr->m_TextureIndex = TextureIndex;
-			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = 1.0f;
+			s_Data.m_pQuadVertexBufferPtr->m_TilingFactor = vSprite.m_TilingFactor;
 			s_Data.m_pQuadVertexBufferPtr->m_EntityID = vEntityID;
 			s_Data.m_pQuadVertexBufferPtr++;
 		}

@@ -40,6 +40,11 @@ namespace Pika {
 									auto& LC = Entity.addComponent<LightComponent>();
 									LC.m_Light = CreateRef<PointLight>();
 								}
+								if (ImGui::MenuItem("Direction Light")) {
+									auto Entity = m_Context->createEntity("Direction Light");
+									auto& LC = Entity.addComponent<LightComponent>();
+									LC.m_Light = CreateRef<DirectionLight>();
+								}
 								ImGui::EndMenu();
 							}
 							if (ImGui::BeginMenu("Mesh")) {
@@ -403,8 +408,13 @@ namespace Pika {
 				static Ref<Texture2D> DefaultTexture = Texture2D::Create("resources/icons/ComponentPanel/DefaultTexture.png");
 				uintptr_t Texture = vSpriteRendererComponent.m_Texture ? static_cast<uintptr_t>(vSpriteRendererComponent.m_Texture->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
 
-				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 });
+				//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 });
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100.0f);
+				ImGui::Text("Texture");
+				ImGui::NextColumn();
 				ImGui::ImageButton(reinterpret_cast<ImTextureID>(Texture), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+				ImGui::NextColumn();
 				if (ImGui::BeginDragDropTarget()) {
 					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
 						std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
@@ -413,11 +423,16 @@ namespace Pika {
 					}
 					ImGui::EndDragDropTarget();
 				}
-				ImGui::SameLine();
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15.0f);
-				ImGui::Text("Texture");
-				ImGui::PopStyleVar();
+				//ImGui::PopStyleVar();
+				ImGui::Text("Tile Factor");
+				ImGui::NextColumn();
+				ImGui::DragFloat2("##Tiling Factor", glm::value_ptr(vSpriteRendererComponent.m_TilingFactor), 0.05f, 0.0f, 100000.0f);
+				ImGui::NextColumn();
+				ImGui::Text("Color");
+				ImGui::NextColumn();
 				ImGui::ColorEdit4("##Color", glm::value_ptr(vSpriteRendererComponent.m_Color));
+				ImGui::NextColumn();
+				ImGui::Columns();
 				});
 			drawEntityComponent<Rigidbody2DComponent>("Rigidbody2D Component", vEntity, [](auto& vRigidbody2DComponent) {
 				Rigidbody2DComponent::RigidbodyType CurrentRigidbodyType = vRigidbody2DComponent.m_Type;
@@ -450,7 +465,18 @@ namespace Pika {
 				ImGui::NextColumn();
 				ImGui::Text(Type.c_str());
 				ImGui::NextColumn();
-				if (auto pPointLight = dynamic_cast<PointLight*>(vLightComponent.m_Light.get())) {
+				if (auto pDirectionLight = dynamic_cast<DirectionLight*>(vLightComponent.m_Light.get())) {
+					auto& LightData = pDirectionLight->getData();
+					ImGui::Text("Light Color");
+					ImGui::NextColumn();
+					ImGui::ColorEdit3("##Light Color", glm::value_ptr(LightData.m_LightColor));
+					ImGui::NextColumn();
+					ImGui::Text("Intensity");
+					ImGui::NextColumn();
+					ImGui::DragFloat("##Intensity", &LightData.m_Intensity, 0.05f, 0.0f, 100000.0f);
+					ImGui::NextColumn();
+				}
+				else if (auto pPointLight = dynamic_cast<PointLight*>(vLightComponent.m_Light.get())) {
 					auto& LightData = pPointLight->getData();
 					ImGui::Text("Light Color");
 					ImGui::NextColumn();
@@ -502,7 +528,52 @@ namespace Pika {
 					ImGui::NextColumn();
 					ImGui::ColorEdit3("##Specular", glm::value_ptr(MaterialData.m_Specular));
 					ImGui::NextColumn();
-					ImGui::DragFloat("Shininess", &MaterialData.m_Shininess, 0.05f, 0.0f, 100000.0f);
+					ImGui::Text("Shininess");
+					ImGui::NextColumn();
+					ImGui::DragFloat("##Shininess", &MaterialData.m_Shininess, 0.05f, 0.0f, 100000.0f);
+					ImGui::NextColumn();
+					ImGui::Text("Diffuse Map");
+					ImGui::NextColumn();
+					static Ref<Texture2D> DefaultTexture = Texture2D::Create("resources/icons/ComponentPanel/DefaultTexture.png");
+					uintptr_t DiffuseMap = MaterialData.m_DiffuseMap ? static_cast<uintptr_t>(MaterialData.m_DiffuseMap->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
+					ImGui::ImageButton(reinterpret_cast<ImTextureID>(DiffuseMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					if (ImGui::BeginDragDropTarget()) {
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
+							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+							const auto& Texture2D = Texture2D::Create(Path);
+							MaterialData.m_DiffuseMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
+						}
+						ImGui::EndDragDropTarget();
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("DiffuseMap");
+					}
+					if (ImGui::BeginPopup("DiffuseMap")) {
+						if (ImGui::MenuItem("Delete"))
+							MaterialData.m_DiffuseMap = nullptr;
+						ImGui::EndPopup();
+					}
+					ImGui::NextColumn();
+					ImGui::Text("Specular Map");
+					ImGui::NextColumn();
+					uintptr_t SpecularMap = MaterialData.m_SpecularMap ? static_cast<uintptr_t>(MaterialData.m_SpecularMap->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
+					ImGui::ImageButton(reinterpret_cast<ImTextureID>(SpecularMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					if (ImGui::BeginDragDropTarget()) {
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
+							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+							const auto& Texture2D = Texture2D::Create(Path);
+							MaterialData.m_SpecularMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
+						}
+						ImGui::EndDragDropTarget();
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("SpecularMap");
+					}
+					if (ImGui::BeginPopup("SpecularMap")) {
+						if (ImGui::MenuItem("Delete"))
+							MaterialData.m_SpecularMap = nullptr;
+						ImGui::EndPopup();
+					}
 					ImGui::NextColumn();
 				}
 				// TODO : PBR Material

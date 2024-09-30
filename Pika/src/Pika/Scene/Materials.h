@@ -1,4 +1,5 @@
 #pragma once
+#include "Pika/Renderer/Texture.h"
 #include <glm/glm.hpp>
 
 namespace Pika {
@@ -8,7 +9,7 @@ namespace Pika {
 	public:
 		virtual ~Material() = default;
 
-		virtual std::string getType() const = 0;
+		virtual const std::string& getType() const = 0;
 		virtual Ref<Material> clone() const = 0;
 	};
 
@@ -16,10 +17,12 @@ namespace Pika {
 	{
 	public:
 		struct Data {
-			alignas(16) glm::vec3 m_Ambient = glm::vec3(1.0f);
-			alignas(16) glm::vec3 m_Diffuse = glm::vec3(1.0f);
-			alignas(16) glm::vec3 m_Specular = glm::vec3(1.0f);
-			float m_Shininess = 0.0f;
+			glm::vec3 m_Ambient = glm::vec3(1.0f);
+			glm::vec3 m_Diffuse = glm::vec3(1.0f);
+			glm::vec3 m_Specular = glm::vec3(1.0f);
+			float m_Shininess = 5.0f;
+			Ref<Texture2D> m_DiffuseMap = nullptr;
+			Ref<Texture2D> m_SpecularMap = nullptr;
 		};
 	public:
 		BlinnPhoneMaterial() = default;
@@ -29,7 +32,7 @@ namespace Pika {
 		BlinnPhoneMaterial& operator=(const BlinnPhoneMaterial&) = default;
 		BlinnPhoneMaterial(BlinnPhoneMaterial&&) = default;
 		BlinnPhoneMaterial& operator=(BlinnPhoneMaterial&&) noexcept = default;
-		inline std::string getType() const override { return s_Type; }
+		inline const std::string& getType() const override { return s_Type; }
 		inline Ref<Material> clone() const override { return CreateRef<BlinnPhoneMaterial>(*this); } // 原型模式！
 
 		inline const Data& getData() const { return m_Data; }

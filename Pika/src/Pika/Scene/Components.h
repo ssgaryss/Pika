@@ -98,6 +98,7 @@ namespace Pika
 	{
 		glm::vec4 m_Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<Texture2D> m_Texture = nullptr;
+		glm::vec2 m_TilingFactor = glm::vec2(1.0f);
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const glm::vec4& vColor)

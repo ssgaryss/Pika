@@ -4,13 +4,13 @@ layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec4 a_Color;
 layout(location = 2) in vec2 a_TexCoord;
 layout(location = 3) in int a_TextureIndex;
-layout(location = 4) in float a_TilingFactor;
+layout(location = 4) in vec2 a_TilingFactor;
 layout(location = 5) in highp int a_EntityID;
 
 out vec4 v_Color;
 out vec2 v_TexCoord;
 out flat int v_TextureIndex;
-out float v_TilingFactor;
+out vec2 v_TilingFactor;
 out flat highp int v_EntityID;
 
 layout(std140, binding = 0) uniform CameraData
@@ -37,7 +37,7 @@ layout(location = 1) out highp int o_EntityID;
 in vec4 v_Color;
 in vec2 v_TexCoord;
 in flat int v_TextureIndex;
-in float v_TilingFactor;
+in vec2 v_TilingFactor;
 in flat highp int v_EntityID;
 
 uniform sampler2D u_Textures[32];

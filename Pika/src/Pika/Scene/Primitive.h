@@ -9,7 +9,7 @@ namespace Pika {
 		glm::vec4 m_Color = glm::vec4(1.0f);
 		glm::vec2 m_TexCoord = glm::vec2(0.0f);
 		int m_TextureIndex = 0;
-		float m_TilingFactor = 1.0f;
+		glm::vec2 m_TilingFactor = glm::vec2(1.0f);
 		// TODO : Editor only
 		int m_EntityID = -1;
 	};

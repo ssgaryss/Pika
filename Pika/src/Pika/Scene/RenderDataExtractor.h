@@ -55,9 +55,9 @@ namespace Pika {
 		const Ref<Cubemap>& extractSkybox() const;
 		std::vector<std::tuple<TransformComponent&, ModelComponent&, int>> extractNoMaterialModelsWithEntityID() const;
 		std::vector<std::tuple<TransformComponent&, ModelComponent&, MaterialComponent&, int>> extractBlinnPhoneMaterialModelsWithEntityID() const;
-		std::vector<Entity> extractDirectionLights() const;
+		std::vector<std::tuple<TransformComponent&, LightComponent&>> extractDirectionLights() const;
 		std::vector<std::tuple<TransformComponent&, LightComponent&>> extractPointLights() const;
-		std::vector<Entity> extractSpotLights() const;    // 暂时不直接提取数据
+		std::vector<std::tuple<TransformComponent&, LightComponent&>> extractSpotLights() const;    // 暂时不直接提取数据
 		LightsData extractLightsData() const;
 
 	public:
