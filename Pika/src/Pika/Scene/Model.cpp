@@ -34,10 +34,15 @@ namespace Pika {
 
 		Assimp::Importer Importer;
 		const aiScene* pScene = Importer.ReadFile(vPath.string(),
-			aiProcess_Triangulate
-			| aiProcess_GenSmoothNormals
-			| aiProcess_FlipUVs
-			| aiProcess_CalcTangentSpace);
+			aiProcess_Triangulate |
+			aiProcess_GenSmoothNormals |
+			aiProcess_FlipUVs |
+			aiProcess_CalcTangentSpace |
+			aiProcess_OptimizeMeshes |            // 合并小网格
+			aiProcess_JoinIdenticalVertices |     // 合并重复顶点
+			aiProcess_ImproveCacheLocality |      // 优化顶点缓存以提高效率
+			aiProcess_RemoveRedundantMaterials |  // 移除冗余材质
+			aiProcess_SortByPType);               // 按类型排序（点、线、面）
 
 		if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
 			throw std::runtime_error(std::format(R"(Model : Fail to load the model at "{0}".)", vPath.string()) + "\nERROR::ASSIMP::" + Importer.GetErrorString());
@@ -95,7 +100,6 @@ namespace Pika {
 				Indices.emplace_back(face.mIndices[j]);
 			}
 		}
-
 		// 处理材质
 		aiMaterial* material = vScene->mMaterials[vMesh->mMaterialIndex];
 		//m_Textures = 
