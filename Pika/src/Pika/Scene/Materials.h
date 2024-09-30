@@ -20,7 +20,7 @@ namespace Pika {
 			glm::vec3 m_Ambient = glm::vec3(1.0f);
 			glm::vec3 m_Diffuse = glm::vec3(1.0f);
 			glm::vec3 m_Specular = glm::vec3(1.0f);
-			float m_Shininess = 0.0f;
+			float m_Shininess = 5.0f;
 			Ref<Texture2D> m_DiffuseMap = nullptr;
 			Ref<Texture2D> m_SpecularMap = nullptr;
 		};

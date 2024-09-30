@@ -87,7 +87,7 @@ namespace Pika {
 			alignas(16) glm::vec3 m_Ambient = glm::vec3(1.0f);
 			alignas(16) glm::vec3 m_Diffuse = glm::vec3(1.0f);
 			alignas(16) glm::vec3 m_Specular = glm::vec3(1.0f);
-			float m_Shininess = 0.0f;
+			float m_Shininess = 5.0f;
 			uint32_t m_DiffuseMapIndex = 0;
 			uint32_t m_SpecularMapIndex = 0;
 		};
@@ -97,6 +97,8 @@ namespace Pika {
 			m_BlinnPhoneMaterialUniformBufferData.m_Diffuse = vBlinnPhoneMaterialData.m_Diffuse;
 			m_BlinnPhoneMaterialUniformBufferData.m_Specular = vBlinnPhoneMaterialData.m_Specular;
 			m_BlinnPhoneMaterialUniformBufferData.m_Shininess = vBlinnPhoneMaterialData.m_Shininess;
+			m_BlinnPhoneMaterialUniformBufferData.m_DiffuseMapIndex = 0;
+			m_BlinnPhoneMaterialUniformBufferData.m_SpecularMapIndex = 0;
 			if (vBlinnPhoneMaterialData.m_DiffuseMap) {
 				uint32_t DiffuseTextureIndex = static_cast<uint32_t>(findTextureIndex(vBlinnPhoneMaterialData.m_DiffuseMap).value_or(0));
 				if (DiffuseTextureIndex == 0) {
@@ -106,6 +108,9 @@ namespace Pika {
 					else
 						PK_CORE_ERROR("Renderer3D : Fail to add Blinn-Phone diffuse texture to texture slots.");
 				}
+				m_BlinnPhoneMaterialUniformBufferData.m_DiffuseMapIndex = DiffuseTextureIndex;
+			}
+			if (vBlinnPhoneMaterialData.m_SpecularMap) {
 				uint32_t SpecularTextureIndex = static_cast<uint32_t>(findTextureIndex(vBlinnPhoneMaterialData.m_SpecularMap).value_or(0));
 				if (SpecularTextureIndex == 0) {
 					auto Success = addTexture(vBlinnPhoneMaterialData.m_SpecularMap);
@@ -114,7 +119,6 @@ namespace Pika {
 					else
 						PK_CORE_ERROR("Renderer3D : Fail to add Blinn-Phone specular texture to texture slots.");
 				}
-				m_BlinnPhoneMaterialUniformBufferData.m_DiffuseMapIndex = DiffuseTextureIndex;
 				m_BlinnPhoneMaterialUniformBufferData.m_SpecularMapIndex = SpecularTextureIndex;
 			}
 		}
@@ -424,8 +428,11 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 
-		for (auto& Mesh : vModel.m_Model->getMeshes()) {
-			DrawStaticMesh(vTransform, Mesh, vEntityID);
+		if (vModel.m_Model) {
+			s_Data.resetTextureSlots();
+			for (auto& Mesh : vModel.m_Model->getMeshes()) {
+				DrawStaticMesh(vTransform, Mesh, vEntityID);
+			}
 		}
 	}
 
@@ -433,9 +440,11 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 
-		s_Data.resetTextureSlots();
-		for (auto& Mesh : vModel.m_Model->getMeshes()) {
-			DrawStaticMesh(vTransform, Mesh, vMaterial, vEntityID);
+		if (vModel.m_Model) {
+			s_Data.resetTextureSlots();
+			for (auto& Mesh : vModel.m_Model->getMeshes()) {
+				DrawStaticMesh(vTransform, Mesh, vMaterial, vEntityID);
+			}
 		}
 	}
 

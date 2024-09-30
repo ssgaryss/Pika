@@ -537,11 +537,43 @@ namespace Pika {
 					static Ref<Texture2D> DefaultTexture = Texture2D::Create("resources/icons/ComponentPanel/DefaultTexture.png");
 					uintptr_t DiffuseMap = MaterialData.m_DiffuseMap ? static_cast<uintptr_t>(MaterialData.m_DiffuseMap->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
 					ImGui::ImageButton(reinterpret_cast<ImTextureID>(DiffuseMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					if (ImGui::BeginDragDropTarget()) {
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
+							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+							const auto& Texture2D = Texture2D::Create(Path);
+							MaterialData.m_DiffuseMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
+						}
+						ImGui::EndDragDropTarget();
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("DiffuseMap");
+					}
+					if (ImGui::BeginPopup("DiffuseMap")) {
+						if (ImGui::MenuItem("Delete"))
+							MaterialData.m_DiffuseMap = nullptr;
+						ImGui::EndPopup();
+					}
 					ImGui::NextColumn();
 					ImGui::Text("Specular Map");
 					ImGui::NextColumn();
 					uintptr_t SpecularMap = MaterialData.m_SpecularMap ? static_cast<uintptr_t>(MaterialData.m_SpecularMap->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
 					ImGui::ImageButton(reinterpret_cast<ImTextureID>(SpecularMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					if (ImGui::BeginDragDropTarget()) {
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
+							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+							const auto& Texture2D = Texture2D::Create(Path);
+							MaterialData.m_SpecularMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
+						}
+						ImGui::EndDragDropTarget();
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("SpecularMap");
+					}
+					if (ImGui::BeginPopup("SpecularMap")) {
+						if (ImGui::MenuItem("Delete"))
+							MaterialData.m_SpecularMap = nullptr;
+						ImGui::EndPopup();
+					}
 					ImGui::NextColumn();
 				}
 				// TODO : PBR Material

@@ -81,9 +81,19 @@ vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vPosition, vec3 
 
 void main() {
 	vec3 Result = vec3(0.0);
+	// Ambient
+	float AmbientStrength = 0.1;
+	if (u_DiffuseMapSlot == 0) {
+		Result += AmbientStrength * u_Ambient;
+	}
+	else {
+		Result += AmbientStrength * texture(u_Textures[u_DiffuseMapSlot], v_TexCoord).rgb;
+	}
+	// Direction Lights
 	for (int i = 0; i < MAX_NUM_OF_DIRECTION_LIGHTS; ++i) {
 		Result += calculateDirectionLights(u_DirectionLight[i], v_Normal, v_ViewPosition - v_Position);
 	}
+	// Point Lights
 	for (int i = 0; i < MAX_NUM_OF_POINT_LIGHTS; ++i) {
 		Result += calculatePointLights(u_PointLight[i], v_Normal, v_Position, v_ViewPosition - v_Position);
 	}
@@ -99,11 +109,22 @@ vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewDir
 	vec3 HalfDir = normalize(LightDir + ViewDir);
 	float Diff = max(dot(Normal, LightDir), 0.0);
 	float Spec = pow(max(dot(Normal, HalfDir), 0.0), u_Shininess);
-	float AmbientStrength = 0.1;
-	vec3 Diffuse = Diff * vLight.m_LightColor * u_Diffuse * vec3(texture(u_Textures[u_DiffuseMapSlot], v_TexCoord));
-	vec3 Specular = Spec * vLight.m_LightColor * u_Specular * vec3(texture(u_Textures[u_SpecularMapSlot], v_TexCoord));
-	vec3 Ambient = AmbientStrength * vLight.m_LightColor * u_Ambient * vec3(texture(u_Textures[u_DiffuseMapSlot], v_TexCoord));
-	return (Diffuse + Specular) * vLight.m_Intensity + Ambient;
+	vec3 Diffuse = vec3(1.0);
+	vec3 Specular = vec3(1.0);
+	if (u_DiffuseMapSlot == 0) {
+		Diffuse = Diff * vLight.m_LightColor * u_Diffuse;
+	}
+	else {
+		Diffuse = Diff * vLight.m_LightColor * texture(u_Textures[u_DiffuseMapSlot], v_TexCoord).rgb;
+	}
+
+	if (u_SpecularMapSlot == 0) {
+		Specular = Spec * vLight.m_LightColor * u_Specular;
+	}
+	else {
+		Specular = Spec * vLight.m_LightColor * texture(u_Textures[u_SpecularMapSlot], v_TexCoord).rgb;
+	}
+	return (Diffuse + Specular) * vLight.m_Intensity;
 }
 
 vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vPosition, vec3 vViewDir) {
@@ -115,11 +136,22 @@ vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vPosition, vec3 
 	float Attenuation = 1.0 / (vLight.m_Constant + vLight.m_Linear * Distance + vLight.m_Quadratic * (Distance * Distance));
 	float Diff = max(dot(Normal, LightDir), 0.0);
 	float Spec = pow(max(dot(Normal, HalfDir), 0.0), u_Shininess);
-	float AmbientStrength = 0.1;
-	vec3 Diffuse = Diff * vLight.m_LightColor * u_Diffuse;
-	vec3 Specular = Spec * vLight.m_LightColor * u_Specular;
-	vec3 Ambient = AmbientStrength * vLight.m_LightColor * u_Ambient;
-	return (Diffuse + Specular) * vLight.m_Intensity * Attenuation + Ambient;
+	vec3 Diffuse = vec3(1.0);
+	vec3 Specular = vec3(1.0);
+	if (u_DiffuseMapSlot == 0) {
+		Diffuse = Diff * vLight.m_LightColor * u_Diffuse;
+	}
+	else {
+		Diffuse = Diff * vLight.m_LightColor * texture(u_Textures[u_DiffuseMapSlot], v_TexCoord).rgb;
+	}
+
+	if (u_SpecularMapSlot == 0) {
+		Specular = Spec * vLight.m_LightColor * u_Specular;
+	}
+	else {
+		Specular = Spec * vLight.m_LightColor * texture(u_Textures[u_SpecularMapSlot], v_TexCoord).rgb;
+	}
+	return (Diffuse + Specular) * vLight.m_Intensity * Attenuation;
 }
 
 #FRAGMENT_END()

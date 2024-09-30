@@ -1,33 +1,48 @@
 Scene:
   Name: Untitled
   SceneType: Scene3D
-  Skybox: assets\environment\skybox\LDR\kloofendal_48d_partly_cloudy_puresky_2k.png
+  Skybox: resources/skybox/snowy_forest_path_01_2k.png
   Entities:
-    - Entity: "{67B130DE-D580-42C1-A835-78C10A5A22E6}"
-      TagComponent:
-        Tag: Cube
-      TransformComponent:
-        Position: [0, 0, 0]
-        Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
-      ModelComponent:
-        Path: resources/objects/cube.fbx
-      MaterialComponent:
-        Type: Blinn-Phone
-        Data:
-          Ambient: [0.247250006, 0.199499995, 0.074500002]
-          Diffuse: [0.751640022, 0.606480002, 0.226480007]
-          Specular: [0.628280997, 0.555801988, 0.366064996]
-          Shininess: 0.400000006
-    - Entity: "{4185CC76-9441-4761-811D-B53C6A9D8FED}"
+    - Entity: "{0720057D-7A1B-4A77-933E-C5E82F739690}"
       TagComponent:
         Tag: Direction Light
       TransformComponent:
-        Position: [0, 4.80557728, 0]
-        Rotation: [-21.5959339, 6.28253031, 15.4534616]
-        Scale: [0.999999881, 0.999999881, 0.999999702]
+        Position: [0, 2.00267363, 0]
+        Rotation: [-100.620033, 0, 0]
+        Scale: [1, 0.999999881, 0.999999881]
       LightComponent:
         Type: Direction Light
         Data:
-          Light Color: [0.953667939, 0.893972099, 0.139920384]
+          Light Color: [1, 1, 1]
           Intensity: 1
+    - Entity: "{698A86D8-4574-4E17-BB49-5E613BA40E1E}"
+      TagComponent:
+        Tag: Point Light
+      TransformComponent:
+        Position: [-3.59049058, 1.31234658, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      LightComponent:
+        Type: Point Light
+        Data:
+          Light Color: [1, 1, 1]
+          Intensity: 1
+          Constant: 1
+          Linear: 0.0700000003
+          Quadratic: 0.0170000009
+    - Entity: "{85C8DAFF-B8F3-481B-83CB-A9D2A2B6169D}"
+      TagComponent:
+        Tag: Sphere
+      TransformComponent:
+        Position: [-1.49011612e-08, 0, 0]
+        Rotation: [-102.292442, -8.55792236, 134.496719]
+        Scale: [0.999998212, 0.999998927, 0.999999821]
+      ModelComponent:
+        Path: resources/objects/sphere.fbx
+      MaterialComponent:
+        Type: Blinn-Phone
+        Data:
+          Ambient: [0.478764474, 0.288367808, 0.288367808]
+          Diffuse: [0, 0, 0]
+          Specular: [1, 1, 1]
+          Shininess: 11.3999996
