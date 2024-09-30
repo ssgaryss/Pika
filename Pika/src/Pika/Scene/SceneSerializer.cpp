@@ -252,6 +252,8 @@ namespace Pika {
 											Out << YAML::Key << "Diffuse" << YAML::Value << Data.m_Diffuse;
 											Out << YAML::Key << "Specular" << YAML::Value << Data.m_Specular;
 											Out << YAML::Key << "Shininess" << YAML::Value << Data.m_Shininess;
+											Out << YAML::Key << "Diffuse Map" << YAML::Value << (Data.m_DiffuseMap ? Data.m_DiffuseMap->getPath().string() : "None");
+											Out << YAML::Key << "Specular Map" << YAML::Value << (Data.m_SpecularMap ? Data.m_DiffuseMap->getPath().string() : "None");
 										}
 										Out << YAML::EndMap;
 									}
@@ -442,6 +444,10 @@ namespace Pika {
 							Data.m_Diffuse = DataNode["Diffuse"].as<glm::vec3>();
 							Data.m_Specular = DataNode["Specular"].as<glm::vec3>();
 							Data.m_Shininess = DataNode["Shininess"].as<float>();
+							std::string DiffuseMapPath = DataNode["Diffuse Map"].as<std::string>();
+							Data.m_DiffuseMap = DiffuseMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(DiffuseMapPath));
+							std::string SpecularMapPath = DataNode["Specular Map"].as<std::string>();
+							Data.m_SpecularMap = SpecularMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(SpecularMapPath));
 							MC.m_Material = CreateRef<BlinnPhoneMaterial>(Data);
 						}
 					}

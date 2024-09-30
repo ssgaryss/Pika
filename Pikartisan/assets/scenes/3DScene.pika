@@ -3,21 +3,6 @@ Scene:
   SceneType: Scene3D
   Skybox: assets\environment\skybox\LDR\kloofendal_48d_partly_cloudy_puresky_2k.png
   Entities:
-    - Entity: "{167CB1D1-0ABF-4E96-AC83-F096017F7900}"
-      TagComponent:
-        Tag: Point Light
-      TransformComponent:
-        Position: [-0.0247471929, 4.3036375, 3.54962468]
-        Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
-      LightComponent:
-        Type: Point Light
-        Data:
-          Light Color: [1, 1, 1]
-          Intensity: 1
-          Constant: 1
-          Linear: 0.0700000003
-          Quadratic: 0.0170000009
     - Entity: "{72F435AD-7ECD-4320-A3B8-8E803E2EFA34}"
       TagComponent:
         Tag: Mary
@@ -30,7 +15,24 @@ Scene:
       MaterialComponent:
         Type: Blinn-Phone
         Data:
-          Ambient: [0.247250006, 0.199499995, 0.074500002]
-          Diffuse: [0.751640022, 0.606480002, 0.226480007]
-          Specular: [0.628280997, 0.555801988, 0.366064996]
+          Ambient: [1, 1, 1]
+          Diffuse: [1, 1, 1]
+          Specular: [1, 1, 1]
           Shininess: 0.400000006
+          Diffuse Map: assets\objects\mary\MC003_Kozakura_Mari.png
+          Specular Map: assets\objects\mary\MC003_Kozakura_Mari.png
+    - Entity: "{167CB1D1-0ABF-4E96-AC83-F096017F7900}"
+      TagComponent:
+        Tag: Point Light
+      TransformComponent:
+        Position: [-0.0247471929, 4.3036375, 3.54962468]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      LightComponent:
+        Type: Point Light
+        Data:
+          Light Color: [1, 1, 1]
+          Intensity: 0.649999976
+          Constant: 1
+          Linear: 0.0700000003
+          Quadratic: 0.0170000009
