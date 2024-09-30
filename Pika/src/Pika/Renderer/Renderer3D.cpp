@@ -58,6 +58,16 @@ namespace Pika {
 			m_TextureIndex++;
 			return TextureIndex;
 		}
+		void resetTextureSlots() {
+			m_TextureIndex = 1;
+			m_TextureSlots.fill(nullptr);
+			m_TextureSlots[0] = m_WhiteTexture;
+		}
+		void bindTextureSlots() {
+			uint32_t SupportSlotsNum = std::min(m_TextureIndex, m_MaxTextureSlots);
+			for (uint32_t i = 0; i < SupportSlotsNum; ++i)
+				m_TextureSlots[i]->bind(i);
+		}
 		std::array<Ref<Texture2D>, 128> m_TextureSlots; // for now : 默认不多于128个texture
 		Ref<Texture2D> m_WhiteTexture; // Default at texture slot 0
 		uint32_t m_TextureIndex = 1;
@@ -155,7 +165,7 @@ namespace Pika {
 				for (uint32_t i = 0; i < s_MaxDirectionLightsNumber; ++i) {
 					if (i < DirectionLightsDataSize) {
 						auto [Transform, Light] = vLightsData.m_DirectionLights[i];
-						glm::vec3 DefaultDirection = glm::vec3(0.0f, -1.0f, 0.0f); // TODO : Change to -z！
+						glm::vec3 DefaultDirection = glm::vec3(0.0f, 0.0f, -1.0f);
 						m_DirectionLightsData[i].m_Direction = glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) * glm::vec4(DefaultDirection, 1.0f);
 						if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.m_Light.get())) {
 							const auto& Data = pDirectionLight->getData();
@@ -229,7 +239,7 @@ namespace Pika {
 		s_Data.m_BlinnPhoneShader = Shader::Create("resources/shaders/Renderer3D/DefaultBlinnPhoneShader.glsl");
 		s_Data.m_BlinnPhoneShader->bind();
 		std::vector<int32_t> Textures(s_Data.m_MaxTextureSlots);
-		for (int32_t i = 0; i < 32; ++i)
+		for (int32_t i = 0; i < s_Data.m_MaxTextureSlots; ++i)
 			Textures[i] = i;
 		s_Data.m_BlinnPhoneShader->setIntArray("u_Textures", Textures.data(), static_cast<uint32_t>(Textures.size()));
 		s_Data.m_BlinnPhoneShader->unbind();
@@ -298,7 +308,7 @@ namespace Pika {
 		s_Data.m_WhiteTexture = Texture2D::Create(TS);
 		uint32_t Data = 0xffffffff;
 		s_Data.m_WhiteTexture->setData(&Data, sizeof(Data));
-		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture;
+		s_Data.resetTextureSlots();
 
 		// Uniform Buffers
 		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0);     // glsl中binding = 0
@@ -323,6 +333,9 @@ namespace Pika {
 			sizeof(s_Data.m_LightsData.m_DirectionLightsData));
 		s_Data.m_PointLightsDataUniformBuffer->setData(&s_Data.m_LightsData.m_PointLightsData,
 			sizeof(s_Data.m_LightsData.m_PointLightsData));
+
+		for (uint32_t i = 0; i < s_Data.m_TextureIndex; ++i)
+			s_Data.m_TextureSlots[i]->bind(i);
 
 		ResetStatistics();
 		StartBatch();
@@ -397,10 +410,12 @@ namespace Pika {
 			s_Data.m_BlinnPhoneShader->bind();
 			const auto& MaterialData = pBlinnPhoneMaterial->getData();
 			s_Data.setData(MaterialData);
-			s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&s_Data.m_BlinnPhoneMaterialUniformBufferData, 
+			s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&s_Data.m_BlinnPhoneMaterialUniformBufferData,
 				sizeof(s_Data.m_BlinnPhoneMaterialUniformBufferData));
 		}
+		s_Data.bindTextureSlots();
 		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
+		s_Data.m_TextureIndex = 1;
 		s_Data.m_Statistics.m_DrawCalls++;
 		s_Data.m_Statistics.m_MeshCount++;
 	}
@@ -418,6 +433,7 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 
+		s_Data.resetTextureSlots();
 		for (auto& Mesh : vModel.m_Model->getMeshes()) {
 			DrawStaticMesh(vTransform, Mesh, vMaterial, vEntityID);
 		}

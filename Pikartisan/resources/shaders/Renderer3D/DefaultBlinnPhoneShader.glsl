@@ -13,12 +13,14 @@ layout(std140, binding = 0) uniform CameraData
 };
 
 out vec3 v_Normal;
+out vec2 v_TexCoord;
 out vec3 v_Position;
 out vec3 v_ViewPosition;
 out flat highp int v_EntityID;
 
 void main() {
 	v_Normal = a_Normal;
+	v_TexCoord = a_TexCoord;
 	v_Position = a_Position;
 	v_ViewPosition = inverse(u_ViewMatrix)[3].xyz;
 	v_EntityID = a_EntityID;
@@ -62,13 +64,14 @@ layout(std140, binding = 4) uniform BlinnPhoneMaterial
 	vec3 u_Diffuse;
 	vec3 u_Specular;
 	float u_Shininess;
-	uint u_DiffuseTextureSlot;
-	uint u_SpecularTextureSlot;
+	uint u_DiffuseMapSlot;
+	uint u_SpecularMapSlot;
 };
 
 uniform sampler2D u_Textures[32];
 
 in vec3 v_Normal;
+in vec2 v_TexCoord;
 in vec3 v_Position;
 in vec3 v_ViewPosition;
 in flat highp int v_EntityID;
@@ -97,9 +100,9 @@ vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewDir
 	float Diff = max(dot(Normal, LightDir), 0.0);
 	float Spec = pow(max(dot(Normal, HalfDir), 0.0), u_Shininess);
 	float AmbientStrength = 0.1;
-	vec3 Diffuse = Diff * vLight.m_LightColor * u_Diffuse;
-	vec3 Specular = Spec * vLight.m_LightColor * u_Specular;
-	vec3 Ambient = AmbientStrength * vLight.m_LightColor * u_Ambient;
+	vec3 Diffuse = Diff * vLight.m_LightColor * u_Diffuse * vec3(texture(u_Textures[u_DiffuseMapSlot], v_TexCoord));
+	vec3 Specular = Spec * vLight.m_LightColor * u_Specular * vec3(texture(u_Textures[u_SpecularMapSlot], v_TexCoord));
+	vec3 Ambient = AmbientStrength * vLight.m_LightColor * u_Ambient * vec3(texture(u_Textures[u_DiffuseMapSlot], v_TexCoord));
 	return (Diffuse + Specular) * vLight.m_Intensity + Ambient;
 }
 
