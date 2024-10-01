@@ -180,6 +180,7 @@ namespace Pika {
 		}
 		else if (m_ColorAttachments.empty()) {
 			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
 		}
 
 		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height);  // 当FBO resize后须调用
