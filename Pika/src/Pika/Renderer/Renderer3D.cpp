@@ -135,6 +135,7 @@ namespace Pika {
 				alignas(16) glm::vec3 m_Direction = glm::vec3(0.0f);    // 方向
 				alignas(16) glm::vec3 m_LightColor = glm::vec3(1.0f);   // 光源颜色
 				float m_Intensity = 0.0f;                               // 光源强度
+				uint32_t m_ShadowMapIndex = 0;
 				void setData(const glm::vec3& vDirection, const DirectionLight::Data& vDirectionLightData) {
 					m_Direction = vDirection;
 					m_LightColor = vDirectionLightData.m_LightColor;
@@ -150,6 +151,7 @@ namespace Pika {
 				float m_Constant = 1.0f;                                // 常数衰减项
 				float m_Linear = 0.07f;                                 // 线性衰减项
 				float m_Quadratic = 0.017f;                             // 二次衰减项
+				uint32_t m_ShadowMapIndex = 0;
 				void setData(const glm::vec3& vPosition, const PointLight::Data& vPointLightData) {
 					m_Position = vPosition;
 					m_LightColor = vPointLightData.m_LightColor;
@@ -206,6 +208,9 @@ namespace Pika {
 			}
 			std::array<UniformBufferSTD140DirectionLightData, s_MaxDirectionLightsNumber> m_DirectionLightsData;
 			std::array<UniformBufferSTD140PointLightData, s_MaxPointLightsNumber> m_PointLightsData;
+			// Shadow Maps
+			std::array<Texture2D, s_MaxDirectionLightsNumber> m_DirectionLightShadowMaps;
+			std::array<Texture2D, s_MaxPointLightsNumber> m_PointLightShadowMaps;
 		};
 		LightsUniformBufferData m_LightsData;
 		Ref<UniformBuffer> m_DirectionLightsDataUniformBuffer = nullptr;

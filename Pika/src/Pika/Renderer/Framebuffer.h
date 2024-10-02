@@ -22,7 +22,7 @@ namespace Pika
 
 	struct  FramebufferSpecification
 	{
-		uint32_t m_Width, m_Height;
+		uint32_t m_Width = 0, m_Height = 0;
 		uint32_t m_Samples = 1; // MSAA sample points nums (can be 2, 4, 8 or 16 ...)
 		FramebufferAttachmentSpecification m_FramebufferAttachments;
 		bool m_IsSwapChainTarget = false;

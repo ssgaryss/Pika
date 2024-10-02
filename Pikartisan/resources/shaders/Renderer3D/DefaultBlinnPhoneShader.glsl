@@ -37,6 +37,7 @@ layout(location = 1) out highp int o_EntityID;
 struct DirectionLight {
 	vec3 m_Direction;
 	vec3 m_LightColor;
+	uint u_ShawdowMapIndex;
 	float m_Intensity;
 };
 layout(std140, binding = 1) uniform DirectionLights
@@ -52,6 +53,7 @@ struct PointLight {
 	float m_Constant;
 	float m_Linear;
 	float m_Quadratic;
+	uint u_ShawdowMapIndex;
 };
 layout(std140, binding = 2) uniform PointLights
 {

@@ -1509,6 +1509,7 @@
     <ClInclude Include="src\Pika\Scene\Materials.h" />
     <ClInclude Include="src\Pika\Scene\Lights.h" />
     <ClInclude Include="src\Pika\Scene\RenderDataExtractor.h" />
+    <ClInclude Include="src\Pika\Scene\ShadowRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1647,5 +1648,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\Pika\Scene\RenderDataExtractor.cpp" />
+    <ClCompile Include="src\Pika\Scene\ShadowRenderer.cpp" />
   </ItemGroup>
 </Project>

@@ -27,7 +27,7 @@ namespace Pika {
 		m_Framebuffer->unbind();
 	}
 
-	void SceneRenderer::render()
+	void SceneRenderer::render	()
 	{
 		if (!m_PrimaryCamera)
 			return;

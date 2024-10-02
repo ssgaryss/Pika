@@ -143,6 +143,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Pika\Scene\ShadowRenderer.h" />
     <ClInclude Include="src\Pika\Scene\RenderDataExtractor.h" />
     <ClInclude Include="src\Pika\Scene\Lights.h" />
     <ClInclude Include="src\Pika\Scene\Materials.h" />
@@ -627,6 +628,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Pika\Scene\ShadowRenderer.cpp" />
     <ClCompile Include="src\Pika\Scene\RenderDataExtractor.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
