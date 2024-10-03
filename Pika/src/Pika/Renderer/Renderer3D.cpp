@@ -262,11 +262,12 @@ namespace Pika {
 		s_Data.m_StaticMeshVertexArray->unbind();
 
 		// Line
-		s_Data.m_LineVertexDataBatch = CreateRef<RenderBatch<LineVertexData>>(Renderer3DData::s_MaxLineIndicesPerBatch);
+		s_Data.m_LineVertexDataBatch = CreateRef<RenderBatch<LineVertexData>>(Renderer3DData::s_MaxLineVerticesPerBatch);
 		s_Data.m_LineVertexArray = VertexArray::Create();
 		s_Data.m_LineVertexArray->bind();
-		Ref<IndexBuffer> LineIndexBuffer = IndexBuffer::Create(s_Data.m_LineVertexDataBatch->getIndices().data(),
-			Renderer3DData::s_MaxLineIndicesPerBatch); // 使用RenderBatch默认的Index
+		std::vector<uint32_t> Indices(Renderer3DData::s_MaxLineIndicesPerBatch);
+		std::iota(Indices.begin(), Indices.end(), 0);
+		Ref<IndexBuffer> LineIndexBuffer = IndexBuffer::Create(Indices.data(), Renderer3DData::s_MaxLineIndicesPerBatch);
 		s_Data.m_LineVertexArray->setIndexBuffer(LineIndexBuffer);
 
 		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer3DData::s_MaxLineVerticesPerBatch * sizeof(LineVertexData));
@@ -547,7 +548,8 @@ namespace Pika {
 		//try {
 		//	if (s_Data.m_VertexPositionIndexCount >= Renderer3DData::s_MaxTriangleIndicesPerBatch)
 		//		NextBatch();
-		//	s_Data.m_LineVertexDataBatch->add({ vStartPosition, vColor, -1 });
+		//	for ()
+		//		s_Data.m_LineVertexDataBatch->add({ vStartPosition, vColor, -1 });
 		//	s_Data.m_LineVertexDataBatch->add({ vEndPosition, vColor, -1 });
 		//	s_Data.m_VertexPositionIndexCount += 2;
 		//}
