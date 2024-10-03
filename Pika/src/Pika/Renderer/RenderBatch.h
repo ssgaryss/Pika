@@ -19,18 +19,25 @@ namespace Pika {
 		T* data();
 		uint32_t size() const;     // 返回已有数据byte size
 
+		const std::vector<uint32_t>& getIndices() const;
+
 		T& operator[](uint32_t vIndex);
 		const T& operator[](uint32_t vIndex) const;
 	private:
 		uint32_t m_RenderBatchSize = 1000;
 		std::vector<T> m_Buffer;
 		uint32_t m_BufferIndex = 0;        // 最后一个有效实例的Index
+		std::vector<uint32_t> m_Indices;
+		uint32_t m_IndexCount = 0;
 	};
 
 	template<typename T>
 	inline RenderBatch<T>::RenderBatch(uint32_t vSize)
-		: m_RenderBatchSize{ vSize }, m_Buffer{ m_RenderBatchSize }
+		: m_RenderBatchSize{ vSize }
 	{
+		m_Buffer.resize(m_RenderBatchSize);
+		m_Indices.resize(m_RenderBatchSize);
+		std::iota(m_Indices.begin(), m_Indices.end(), 0);
 	}
 
 	template<typename T>
@@ -76,6 +83,12 @@ namespace Pika {
 	inline uint32_t RenderBatch<T>::size() const
 	{
 		return m_BufferIndex * sizeof(T);
+	}
+
+	template<typename T>
+	inline const std::vector<uint32_t>& RenderBatch<T>::getIndices() const
+	{
+		return m_Indices;
 	}
 
 	template<typename T>

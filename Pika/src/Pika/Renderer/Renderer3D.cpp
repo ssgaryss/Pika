@@ -17,6 +17,7 @@ namespace Pika {
 	public:
 		static const uint32_t s_MaxTrianglesPerBatch = MAX_TRIANGLES_PER_BATCH;
 		static const uint32_t s_MaxTriangleVerticesPerBatch = s_MaxTrianglesPerBatch * 3; // 此处是为了先创建Buffer提高性能
+		static const uint32_t s_MaxTriangleIndicesPerBatch = s_MaxTrianglesPerBatch * 3;
 		// StaticMesh
 		Ref<VertexArray> m_StaticMeshVertexArray = nullptr;
 		Ref<VertexBuffer> m_StaticMeshVertexBuffer = nullptr;
@@ -33,7 +34,7 @@ namespace Pika {
 		Ref<Shader> m_LineShader = nullptr;
 		float m_LineThickness = 0.5f;
 
-		uint32_t m_LineIndexCount = 0;
+		uint32_t m_LineIndexCount = 0; // Index Buffer 数据计数
 		Ref<RenderBatch<LineVertexData>> m_LineVertexDataBatch = nullptr;
 
 		// Skybox
@@ -219,6 +220,8 @@ namespace Pika {
 		Ref<VertexArray> m_VertexPositionArray = nullptr;
 		Ref<VertexBuffer> m_VertexPositionBuffer = nullptr;
 		Ref<Shader> m_Texture2DShadowMapShader = nullptr;
+		uint32_t m_VertexPositionIndexCount = 0; // Index Buffer 数据计数
+		Ref<RenderBatch<VertexPosition>> m_VertexPositionDataBatch = nullptr;
 
 		Renderer3D::Statistics m_Statistics; // Record the renderer states
 	};
@@ -259,17 +262,12 @@ namespace Pika {
 		s_Data.m_StaticMeshVertexArray->unbind();
 
 		// Line
+		s_Data.m_LineVertexDataBatch = CreateRef<RenderBatch<LineVertexData>>(Renderer3DData::s_MaxLineIndicesPerBatch);
 		s_Data.m_LineVertexArray = VertexArray::Create();
 		s_Data.m_LineVertexArray->bind();
-		uint32_t* LineIndicesPerBatch = new uint32_t[Renderer3DData::s_MaxLineIndicesPerBatch];
-		{
-			for (uint32_t i = 0; i < Renderer3DData::s_MaxLineIndicesPerBatch; i++) {
-				LineIndicesPerBatch[i] = i;
-			}
-		}
-		Ref<IndexBuffer> LineIndexBuffer = IndexBuffer::Create(LineIndicesPerBatch, Renderer3DData::s_MaxLineIndicesPerBatch);
+		Ref<IndexBuffer> LineIndexBuffer = IndexBuffer::Create(s_Data.m_LineVertexDataBatch->getIndices().data(),
+			Renderer3DData::s_MaxLineIndicesPerBatch); // 使用RenderBatch默认的Index
 		s_Data.m_LineVertexArray->setIndexBuffer(LineIndexBuffer);
-		delete[] LineIndicesPerBatch;
 
 		s_Data.m_LineVertexBuffer = VertexBuffer::Create(Renderer3DData::s_MaxLineVerticesPerBatch * sizeof(LineVertexData));
 		BufferLayout LineLayout = {
@@ -280,8 +278,6 @@ namespace Pika {
 		s_Data.m_LineVertexBuffer->setLayout(LineLayout);
 		s_Data.m_LineVertexArray->addVertexBuffer(s_Data.m_LineVertexBuffer);
 		s_Data.m_LineShader = Shader::Create("resources/shaders/Renderer3D/DefaultLineShader.glsl");
-
-		s_Data.m_LineVertexDataBatch = CreateRef<RenderBatch<LineVertexData>>(Renderer3DData::s_MaxLineVerticesPerBatch);
 		s_Data.m_LineVertexArray->unbind();
 
 		// Skybox
@@ -333,13 +329,14 @@ namespace Pika {
 		// Shadow
 		s_Data.m_VertexPositionArray = VertexArray::Create();
 		s_Data.m_VertexPositionArray->bind();
-		s_Data.m_VertexPositionBuffer = VertexBuffer::Create(10000);
+		s_Data.m_VertexPositionBuffer = VertexBuffer::Create(Renderer3DData::s_MaxTriangleVerticesPerBatch * sizeof(VertexPosition));
 		BufferLayout VertexPositionLayout = {
 			{Pika::ShaderDataType::Float3, "a_Position"},
 		};
 		s_Data.m_VertexPositionBuffer->setLayout(VertexPositionLayout);
 		s_Data.m_VertexPositionArray->addVertexBuffer(s_Data.m_VertexPositionBuffer);
 		s_Data.m_Texture2DShadowMapShader = Shader::Create("resources/shaders/Renderer3D/Texture2DShadowMap.glsl");
+		s_Data.m_VertexPositionDataBatch = CreateRef<RenderBatch<VertexPosition>>(Renderer3DData::s_MaxTriangleVerticesPerBatch);
 		s_Data.m_VertexPositionArray->unbind();
 
 		PK_CORE_INFO("Success to initialize Pika 3D Renderer!");
@@ -542,6 +539,22 @@ namespace Pika {
 			s_Data.m_SkyboxShader->unbind();
 			RenderCommand::DepthMask(true);
 		}
+	}
+
+	void Renderer3D::DrawVerticesPosition(const glm::mat4& vTransform, const StaticMesh& vMesh)
+	{
+		//PK_PROFILE_FUNCTION();
+		//try {
+		//	if (s_Data.m_VertexPositionIndexCount >= Renderer3DData::s_MaxTriangleIndicesPerBatch)
+		//		NextBatch();
+		//	s_Data.m_LineVertexDataBatch->add({ vStartPosition, vColor, -1 });
+		//	s_Data.m_LineVertexDataBatch->add({ vEndPosition, vColor, -1 });
+		//	s_Data.m_VertexPositionIndexCount += 2;
+		//}
+		//catch (const std::runtime_error& e) {
+		//	PK_CORE_WARN("RenderBatch : {}", e.what());
+		//}
+		//s_Data.m_Statistics.m_LineCount++;
 	}
 
 	void Renderer3D::DrawShadowMaps(const LightsData& vLightsData, const SceneData& vSceneData)

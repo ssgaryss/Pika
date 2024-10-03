@@ -34,6 +34,7 @@ namespace Pika
 		// Skybox
 		static void RenderSkybox(const Ref<Cubemap>& vSkybox);
 		// Shadow
+		static void DrawVerticesPosition(const glm::mat4& vTransform, const StaticMesh& vMesh); // Shadow Map需要的场景数据
 		static void DrawShadowMaps(const LightsData& vLightsData, const SceneData& vSceneData);
 
 		struct Statistics {
