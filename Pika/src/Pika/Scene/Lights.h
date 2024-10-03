@@ -20,6 +20,8 @@ namespace Pika {
 		{
 			glm::vec3 m_LightColor = glm::vec3(1.0f);               // 光源颜色
 			float m_Intensity = 1.0f;                               // 强度
+			bool m_EnableShadow = false;
+			Ref<Texture2D> m_ShadowMap = nullptr;
 		};
 	public:
 		DirectionLight() = default;  // 由于基类申明了析构函数，这里不能偷懒，满足rule of five，因为Component之后可能会多次拷贝等

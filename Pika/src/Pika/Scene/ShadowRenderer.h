@@ -9,7 +9,7 @@ namespace Pika {
 	public:
 		ShadowRenderer();
 
-		Ref<Texture2D> render();
+		Ref<Texture2D> renderDirectionLightShadowMap();
 	private:
 		uint32_t m_Width = 0;
 		uint32_t m_Height = 0;

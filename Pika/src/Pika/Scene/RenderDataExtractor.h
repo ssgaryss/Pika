@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Entity.h"
 #include "Components.h"
+#include "Mesh.h"
 
 namespace Pika {
 
@@ -15,6 +16,14 @@ namespace Pika {
 			m_DirectionLights.reserve(4);
 			m_PointLights.reserve(8);
 			m_SpotLights.reserve(8); // 防止vector扩容增大开销
+		}
+	};
+
+	struct SceneData
+	{
+		std::vector<std::tuple<TransformComponent&, ModelComponent&>> m_Models;
+		SceneData() {
+			m_Models.reserve(10); // 防止vector扩容增大开销
 		}
 	};
 
@@ -63,5 +72,6 @@ namespace Pika {
 	public:
 		Ref<Scene> m_Scene = nullptr;
 	};
+
 
 }

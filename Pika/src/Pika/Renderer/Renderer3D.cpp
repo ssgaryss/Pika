@@ -208,13 +208,17 @@ namespace Pika {
 			}
 			std::array<UniformBufferSTD140DirectionLightData, s_MaxDirectionLightsNumber> m_DirectionLightsData;
 			std::array<UniformBufferSTD140PointLightData, s_MaxPointLightsNumber> m_PointLightsData;
-			// Shadow Maps
-			std::array<Texture2D, s_MaxDirectionLightsNumber> m_DirectionLightShadowMaps;
-			std::array<Texture2D, s_MaxPointLightsNumber> m_PointLightShadowMaps;
 		};
 		LightsUniformBufferData m_LightsData;
 		Ref<UniformBuffer> m_DirectionLightsDataUniformBuffer = nullptr;
 		Ref<UniformBuffer> m_PointLightsDataUniformBuffer = nullptr;
+
+		// Shadow
+		static const uint32_t s_MaxDirectionLightShadowNumber = 1;
+		static const uint32_t s_MaxPointLightShadowNumber = 2;
+		Ref<VertexArray> m_VertexPositionArray = nullptr;
+		Ref<VertexBuffer> m_VertexPositionBuffer = nullptr;
+		Ref<Shader> m_Texture2DShadowMapShader = nullptr;
 
 		Renderer3D::Statistics m_Statistics; // Record the renderer states
 	};
@@ -325,6 +329,18 @@ namespace Pika {
 		s_Data.m_PointLightsDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_LightsData.m_PointLightsData), 2);
 		//TODO : Spot light
 		s_Data.m_BlinnPhoneMaterialDataUniformBuffer = UniformBuffer::Create(sizeof(BlinnPhoneMaterial::Data), 4); // 注意由于GLSL std140内存对齐vec3是4bytes，所以这里需要手动计算
+
+		// Shadow
+		s_Data.m_VertexPositionArray = VertexArray::Create();
+		s_Data.m_VertexPositionArray->bind();
+		s_Data.m_VertexPositionBuffer = VertexBuffer::Create(10000);
+		BufferLayout VertexPositionLayout = {
+			{Pika::ShaderDataType::Float3, "a_Position"},
+		};
+		s_Data.m_VertexPositionBuffer->setLayout(VertexPositionLayout);
+		s_Data.m_VertexPositionArray->addVertexBuffer(s_Data.m_VertexPositionBuffer);
+		s_Data.m_Texture2DShadowMapShader = Shader::Create("resources/shaders/Renderer3D/Texture2DShadowMap.glsl");
+		s_Data.m_VertexPositionArray->unbind();
 
 		PK_CORE_INFO("Success to initialize Pika 3D Renderer!");
 	}
@@ -526,6 +542,31 @@ namespace Pika {
 			s_Data.m_SkyboxShader->unbind();
 			RenderCommand::DepthMask(true);
 		}
+	}
+
+	void Renderer3D::DrawShadowMaps(const LightsData& vLightsData, const SceneData& vSceneData)
+	{
+		PK_PROFILE_FUNCTION();
+
+		// Direction Light Shadow
+		for (uint32_t i = 0; i < s_Data.s_MaxDirectionLightShadowNumber; ++i) {
+			//Ref<IndexBuffer> StaticMeshIndexBuffer = IndexBuffer::Create(vMesh.getIndicesData(), vMesh.getIndicesCount());
+
+		}
+
+		//s_Data.m_StaticMeshVertexArray->setIndexBuffer(StaticMeshIndexBuffer);
+		//auto TransformVertices = vMesh.getVertices();
+		//for (auto& Vertex : TransformVertices) {
+		//	Vertex.m_Position = static_cast<glm::mat4>(vTransform) * glm::vec4(Vertex.m_Position, 1.0f);
+		//	Vertex.m_Normal = glm::toMat4(glm::quat(glm::radians(vTransform.m_Rotation))) * glm::vec4(Vertex.m_Normal, 1.0f);
+		//	Vertex.m_EntityID = vEntityID;
+		//}
+		//s_Data.m_StaticMeshVertexBuffer->setData(TransformVertices.data(), vMesh.getVerticesSize());
+
+		//s_Data.m_StaticMeshShader->bind();
+		//RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
+		//s_Data.m_Statistics.m_DrawCalls++;
+		//s_Data.m_Statistics.m_MeshCount++;
 	}
 
 	void Renderer3D::ResetStatistics()

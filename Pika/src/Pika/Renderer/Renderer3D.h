@@ -33,6 +33,8 @@ namespace Pika
 		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f); // 与2D不同,vIdentityMatrix默认为单位矩阵即在平面XOZ, vSize为中心到边的距离
 		// Skybox
 		static void RenderSkybox(const Ref<Cubemap>& vSkybox);
+		// Shadow
+		static void DrawShadowMaps(const LightsData& vLightsData, const SceneData& vSceneData);
 
 		struct Statistics {
 			uint32_t m_DrawCalls = 0;

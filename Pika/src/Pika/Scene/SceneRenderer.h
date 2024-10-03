@@ -40,7 +40,6 @@ namespace Pika {
 		// Settings
 		inline bool* showGrid() { return &m_Settings.m_ShowGrid; }
 
-
 		void resize(uint32_t vWidth, uint32_t vHeight); // resize FBO
 	private:
 		RendererSettings m_Settings;

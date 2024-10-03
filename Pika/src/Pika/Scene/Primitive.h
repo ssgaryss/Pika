@@ -22,6 +22,11 @@ namespace Pika {
 		int m_EntityID = -1;
 	};
 
+	struct VertexPosition 
+	{
+		glm::vec3 m_Position = glm::vec3(0.0f);
+	};
+
 	struct StaticMeshVertexData
 	{
 		glm::vec3 m_Position;                   // ∂•µ„Œª÷√ (x, y, z)
