@@ -237,4 +237,27 @@ namespace Pika {
 			GL_INT, &value);
 	}
 
+	void OpenGLFramebuffer::setDepthStencilAttachment(const Ref<Texture2D>& vTexture)
+	{
+		if (vTexture->getWidth() != m_Specification.m_Width || vTexture->getHeight() != m_Specification.m_Height) {
+			PK_CORE_ERROR("OpenGLFramebuffer : Try to set a inappropriate depth texture to frame buffer.");
+			return;
+		}
+		if (!m_RendererID)
+		{
+			bool IsMultisample = m_Specification.m_Samples > 1;
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+			glDeleteTextures(1, &m_DepthStencilAttachment);
+			m_DepthStencilAttachment = 0;
+		}
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, vTexture->getRendererID(), 0);
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer is incomplete!");
+	}
+
+	void OpenGLFramebuffer::setColorAttachment(uint32_t vIndex, const Ref<Texture2D>& vTexture)
+	{
+		// TODO!
+	}
+
 }

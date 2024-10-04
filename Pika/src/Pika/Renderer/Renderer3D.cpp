@@ -402,19 +402,6 @@ namespace Pika {
 			s_Data.m_LineShader->unbind();
 		}
 
-		// Shadow Maps
-		if (!s_Data.m_VertexPositionDataBatch->empty()) {
-			s_Data.m_VertexPositionBuffer->setData(s_Data.m_VertexPositionDataBatch->data(), s_Data.m_VertexPositionDataBatch->size());
-			const std::vector<uint32_t> Indices = s_Data.m_VertexPositionDataBatch->getIndices();
-			uint32_t IndicesCount = s_Data.m_VertexPositionDataBatch->getIndicesCount();
-			Ref<IndexBuffer> VertexPositionIndexBuffer = IndexBuffer::Create(Indices.data(), IndicesCount);
-			s_Data.m_VertexPositionArray->setIndexBuffer(VertexPositionIndexBuffer);
-			s_Data.m_Texture2DShadowMapShader->bind();
-			RenderCommand::DrawIndexed(s_Data.m_VertexPositionArray.get(), s_Data.m_VertexPositionIndexCount);
-			s_Data.m_Statistics.m_DrawCalls++;
-			s_Data.m_Texture2DShadowMapShader->unbind();
-		}
-
 	}
 
 	void Renderer3D::DrawStaticMesh(const TransformComponent& vTransform, const StaticMesh& vMesh, int vEntityID)
@@ -568,8 +555,6 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 		try {
-			if (s_Data.m_VertexPositionIndexCount >= Renderer3DData::s_MaxTriangleIndicesPerBatch)
-				NextBatch();
 			uint32_t IndicesNumber = vMesh.getIndicesCount();
 			s_Data.m_VertexPositionDataBatch->add(vMesh.getVertices(), vMesh.getIndices());
 			s_Data.m_VertexPositionIndexCount += IndicesNumber;
@@ -582,8 +567,13 @@ namespace Pika {
 	void Renderer3D::DrawShadowMaps(const LightsData& vLightsData, const SceneData& vSceneData)
 	{
 		PK_PROFILE_FUNCTION();
-
+		// TODO : 暂时认为Batch足够容纳整个场景数据
 		if (!vLightsData.empty()) {
+			// Start Batch
+			s_Data.m_VertexPositionDataBatch->reset();
+			s_Data.m_VertexPositionIndexCount = 0;
+
+			// Scene Data
 			for (const auto& ModelData : vSceneData.m_Models) {
 				const auto& Model = std::get<1>(ModelData);
 				if (Model.m_Model) {
@@ -594,12 +584,40 @@ namespace Pika {
 					}
 				}
 			}
-			Flush();
-			// Direction Light Shadow
-			for (uint32_t i = 0; i < s_Data.s_MaxDirectionLightShadowNumber; ++i) {
-				//Ref<IndexBuffer> StaticMeshIndexBuffer = IndexBuffer::Create(vMesh.getIndicesData(), vMesh.getIndicesCount());
-
+			s_Data.m_ShadowMapBuffer->bind();
+			// Direction Light
+			if (!vLightsData.m_DirectionLights.empty()) {
+				uint32_t DirectionLightsNumber = static_cast<uint32_t>(vLightsData.m_DirectionLights.size());
+				uint32_t ShadowMapsNumber = 0;
+				for (uint32_t i = 0; i < s_Data.s_MaxDirectionLightsNumber; ++i) {
+					if (i < DirectionLightsNumber && ShadowMapsNumber <= s_Data.s_MaxDirectionLightShadowNumber) {
+						const auto& Light = std::get<1>(vLightsData.m_DirectionLights[i]).m_Light;
+						if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.get())) {
+							auto& Data = pDirectionLight->getData();
+							if (Data.m_EnableShadow) {
+								const auto& ShadowBufferInfo = s_Data.m_ShadowMapBuffer->getFramebufferSpecification();
+								Data.m_ShadowMap = Texture2D::Create({ ShadowBufferInfo.m_Width, ShadowBufferInfo.m_Height,
+									TextureFormat::DEPTH24STENCIL8, false });
+								s_Data.m_ShadowMapBuffer->setDepthStencilAttachment(Data.m_ShadowMap);
+								s_Data.m_VertexPositionBuffer->setData(s_Data.m_VertexPositionDataBatch->data(), s_Data.m_VertexPositionDataBatch->size());
+								const std::vector<uint32_t> Indices = s_Data.m_VertexPositionDataBatch->getIndices();
+								uint32_t IndicesCount = s_Data.m_VertexPositionDataBatch->getIndicesCount();
+								Ref<IndexBuffer> VertexPositionIndexBuffer = IndexBuffer::Create(Indices.data(), IndicesCount);
+								s_Data.m_VertexPositionArray->setIndexBuffer(VertexPositionIndexBuffer);
+								s_Data.m_Texture2DShadowMapShader->bind();
+								RenderCommand::DrawIndexed(s_Data.m_VertexPositionArray.get(), s_Data.m_VertexPositionIndexCount);
+								s_Data.m_Statistics.m_DrawCalls++;
+								s_Data.m_Texture2DShadowMapShader->unbind();
+								ShadowMapsNumber++;
+							}
+							else {
+								continue;
+							}
+						}
+					}
+				}
 			}
+			s_Data.m_ShadowMapBuffer->unbind();
 		}
 
 	}
@@ -619,10 +637,6 @@ namespace Pika {
 		// Lines
 		s_Data.m_LineVertexDataBatch->reset();
 		s_Data.m_LineIndexCount = 0;
-
-		// Shadow Maps
-		s_Data.m_VertexPositionDataBatch->reset();
-		s_Data.m_VertexPositionIndexCount = 0;
 	}
 
 	void Renderer3D::NextBatch()

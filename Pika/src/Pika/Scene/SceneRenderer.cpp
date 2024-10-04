@@ -81,7 +81,7 @@ namespace Pika {
 		{
 			auto LightsData = m_RenderDataExtractor->extractLightsData();
 			auto SceneData = m_RenderDataExtractor->extractSceneData();
-			//Renderer3D::DrawShadowMaps(LightsData, SceneData); // Shadow Map
+			Renderer3D::DrawShadowMaps(LightsData, SceneData); // Shadow Map
 			beginFrame();
 			Renderer3D::BeginScene(vEditorCamera, LightsData);
 			Renderer3D::RenderSkybox(m_RenderDataExtractor->extractSkybox());
