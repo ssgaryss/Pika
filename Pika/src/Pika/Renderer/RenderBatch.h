@@ -15,6 +15,7 @@ namespace Pika {
 		bool isFull() const;
 		bool empty() const;
 		void add(const T& vElement);
+		void add(const std::vector<T>& vElements, const std::vector<uint32_t>& vIndices);
 		void reset();
 		T* data();
 		uint32_t size() const;     // 返回已有数据byte size
@@ -36,8 +37,7 @@ namespace Pika {
 		: m_RenderBatchSize{ vSize }
 	{
 		m_Buffer.resize(m_RenderBatchSize);
-		m_Indices.resize(m_RenderBatchSize);
-		std::iota(m_Indices.begin(), m_Indices.end(), 0);
+		m_Indices.reserve(m_RenderBatchSize);
 	}
 
 	template<typename T>
@@ -64,13 +64,34 @@ namespace Pika {
 		if (m_BufferIndex > m_RenderBatchSize)
 			throw std::runtime_error("RenderBatch : Batch is full, flush it first !");
 		m_Buffer[m_BufferIndex] = vElement;
+		m_Indices.emplace_back(m_BufferIndex);
 		m_BufferIndex++;
+		m_IndexCount++;
+	}
+
+	template<typename T>
+	inline void RenderBatch<T>::add(const std::vector<T>& vElements, const std::vector<uint32_t>& vIndices)
+	{
+		uint32_t IndicesNumber = static_cast<uint32_t>(vIndices.size());
+		for (uint32_t i = 0; i < IndicesNumber; ++i) {
+			m_Indices.emplace_back(vIndices[i] + m_BufferIndex);
+			m_IndexCount++;
+		}
+		uint32_t ElementsNumber = static_cast<uint32_t>(vElements.size());
+		if (m_BufferIndex + ElementsNumber > m_RenderBatchSize)
+			throw std::runtime_error("RenderBatch : Batch has not enough space, flush it first !");
+		for (uint32_t i = 0; i < static_cast<uint32_t>(vElements.size()); ++i) {
+			m_Buffer[m_BufferIndex] = vElements[i];
+			m_BufferIndex++;
+		}
 	}
 
 	template<typename T>
 	inline void RenderBatch<T>::reset()
 	{
 		m_BufferIndex = 0;
+		m_IndexCount = 0;
+		m_Indices.clear();
 	}
 
 	template<typename T>
