@@ -10,8 +10,7 @@ namespace Pika
 	public:
 		static void Initialize(uint32_t vFlags = 0);
 		static void Clear();
-		static void SetClearColor();
-		static void SetClearColor(const Color& vColor);
+		static void SetClearColor(const glm::vec4& vColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		static void DrawIndexed(const VertexArray* vVertexArray, uint32_t vIndexCount = UINT_MAX);
 		static void DrawLines(const VertexArray* vVertexArray, uint32_t vIndexCount = UINT_MAX);
 		static void SetLineThickness(float vThickness);

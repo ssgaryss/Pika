@@ -10,12 +10,13 @@
 namespace Pika
 {
 
+
 	class Renderer3D
 	{
 	public:
 		Renderer3D() = delete;
 		static void Initialize();
-		//static void BeginScene(const EditorCamera& vEditorCamera, const LightsData& vLights);
+		
 		static void BeginScene(const EditorCamera& vEditorCamera, const LightsData& vLightsData);
 		static void BeginScene(const Camera& vCamera, const glm::mat4& vTramsform); // TODO : Lights
 		static void EndScene();

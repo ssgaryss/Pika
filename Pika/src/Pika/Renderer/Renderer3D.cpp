@@ -223,6 +223,7 @@ namespace Pika {
 		Ref<Shader> m_Texture2DShadowMapShader = nullptr;
 		uint32_t m_VertexPositionIndexCount = 0; // Index Buffer 数据计数
 		Ref<RenderBatch<StaticMeshVertexData>> m_VertexPositionDataBatch = nullptr;
+		Ref<Framebuffer> m_ShadowMapBuffer = nullptr;
 
 		Renderer3D::Statistics m_Statistics; // Record the renderer states
 	};
