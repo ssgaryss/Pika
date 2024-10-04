@@ -3,10 +3,10 @@
 
 namespace Pika {
 
-	ShadowRenderer::ShadowRenderer()
+
+	ShadowRenderer::ShadowRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer)
+		: m_ShadowBuffer{ vFramebuffer }
 	{
-		m_ShadowBuffer = Framebuffer::Create({ m_Width, m_Height, 1,
-			{ TextureFormat::DEPTH24STENCIL8 }, false });
 	}
 
 }

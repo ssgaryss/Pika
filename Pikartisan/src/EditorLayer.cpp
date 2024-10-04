@@ -81,12 +81,13 @@ namespace Pika
 			m_EditorCamera.setViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 		}
 
+		m_ActiveScene->onUpdate(vTimestep);
+
 		m_Renderer->beginFrame();
 		RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 		RenderCommand::Clear(); // 会影响所有FBO中的Texture而非一个
 		m_Renderer->getFramebuffer()->clearAttachment(1, -1); // 所有EntityID其余区域赋值-1
 
-		m_ActiveScene->onUpdate(vTimestep);
 		switch (m_SceneStatePanel->getSceneState())
 		{
 		case Pika::Scene::SceneState::Edit:
@@ -109,6 +110,7 @@ namespace Pika
 			break;
 		}
 		}
+		m_Renderer->endFrame();
 
 		// 计算鼠标在FBO中EntityID texture的坐标
 		auto MousePos = ImGui::GetMousePos(); // 屏幕绝对坐标
@@ -119,7 +121,6 @@ namespace Pika
 			m_MouseHoveredEntity = EntityID == -1 ? Entity{} : Entity{ static_cast<entt::entity>(EntityID), m_ActiveScene.get() };
 		}
 
-		m_Renderer->endFrame();
 	}
 
 	void EditorLayer::onImGuiRender()

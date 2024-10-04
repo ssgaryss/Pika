@@ -87,4 +87,11 @@ namespace Pika {
 		return Data;
 	}
 
+	SceneData RenderDataExtractor::extractSceneData() const
+	{
+		SceneData Data;
+		Data.m_Models = extractComponents<TransformComponent, ModelComponent>();
+		return Data;
+	}
+
 }

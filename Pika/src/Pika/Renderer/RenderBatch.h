@@ -21,6 +21,7 @@ namespace Pika {
 		uint32_t size() const;     // 返回已有数据byte size
 
 		const std::vector<uint32_t>& getIndices() const;
+		uint32_t getIndicesCount() const;
 
 		T& operator[](uint32_t vIndex);
 		const T& operator[](uint32_t vIndex) const;
@@ -110,6 +111,12 @@ namespace Pika {
 	inline const std::vector<uint32_t>& RenderBatch<T>::getIndices() const
 	{
 		return m_Indices;
+	}
+
+	template<typename T>
+	inline uint32_t RenderBatch<T>::getIndicesCount() const
+	{
+		return static_cast<uint32_t>(m_Indices.size());
 	}
 
 	template<typename T>

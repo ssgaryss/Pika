@@ -5,6 +5,7 @@
 #include "UniformBuffer.h"
 #include "RenderBatch.h"
 #include "Texture.h"
+#include "Framebuffer.h"
 #include "Pika/Scene/Primitive.h"
 
 namespace Pika {
@@ -398,6 +399,19 @@ namespace Pika {
 			s_Data.m_LineShader->unbind();
 		}
 
+		// Shadow Maps
+		if (!s_Data.m_VertexPositionDataBatch->empty()) {
+			s_Data.m_VertexPositionBuffer->setData(s_Data.m_VertexPositionDataBatch->data(), s_Data.m_VertexPositionDataBatch->size());
+			const std::vector<uint32_t> Indices = s_Data.m_VertexPositionDataBatch->getIndices();
+			uint32_t IndicesCount = s_Data.m_VertexPositionDataBatch->getIndicesCount();
+			Ref<IndexBuffer> VertexPositionIndexBuffer = IndexBuffer::Create(Indices.data(), IndicesCount);
+			s_Data.m_VertexPositionArray->setIndexBuffer(VertexPositionIndexBuffer);
+			s_Data.m_Texture2DShadowMapShader->bind();
+			RenderCommand::DrawIndexed(s_Data.m_VertexPositionArray.get(), s_Data.m_VertexPositionIndexCount);
+			s_Data.m_Statistics.m_DrawCalls++;
+			s_Data.m_Texture2DShadowMapShader->unbind();
+		}
+
 	}
 
 	void Renderer3D::DrawStaticMesh(const TransformComponent& vTransform, const StaticMesh& vMesh, int vEntityID)
@@ -551,6 +565,8 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 		try {
+			if (s_Data.m_VertexPositionIndexCount >= Renderer3DData::s_MaxTriangleIndicesPerBatch)
+				NextBatch();
 			uint32_t IndicesNumber = vMesh.getIndicesCount();
 			s_Data.m_VertexPositionDataBatch->add(vMesh.getVertices(), vMesh.getIndices());
 			s_Data.m_VertexPositionIndexCount += IndicesNumber;
@@ -564,28 +580,25 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 
-		for (const auto& ModelData : vSceneData.m_Models) {
-			//DrawVerticesPosition(ModelData.get<0>())
+		if (!vLightsData.empty()) {
+			for (const auto& ModelData : vSceneData.m_Models) {
+				const auto& Model = std::get<1>(ModelData);
+				if (Model.m_Model) {
+					const auto& Transform = std::get<0>(ModelData);
+					const std::vector<StaticMesh> StaticMeshes = Model.m_Model->getMeshes();
+					for (const auto& StaticMesh : StaticMeshes) {
+						DrawVerticesPosition(Transform, StaticMesh);
+					}
+				}
+			}
+			Flush();
+			// Direction Light Shadow
+			for (uint32_t i = 0; i < s_Data.s_MaxDirectionLightShadowNumber; ++i) {
+				//Ref<IndexBuffer> StaticMeshIndexBuffer = IndexBuffer::Create(vMesh.getIndicesData(), vMesh.getIndicesCount());
+
+			}
 		}
-		// Direction Light Shadow
-		for (uint32_t i = 0; i < s_Data.s_MaxDirectionLightShadowNumber; ++i) {
-			//Ref<IndexBuffer> StaticMeshIndexBuffer = IndexBuffer::Create(vMesh.getIndicesData(), vMesh.getIndicesCount());
 
-		}
-
-		//s_Data.m_StaticMeshVertexArray->setIndexBuffer(StaticMeshIndexBuffer);
-		//auto TransformVertices = vMesh.getVertices();
-		//for (auto& Vertex : TransformVertices) {
-		//	Vertex.m_Position = static_cast<glm::mat4>(vTransform) * glm::vec4(Vertex.m_Position, 1.0f);
-		//	Vertex.m_Normal = glm::toMat4(glm::quat(glm::radians(vTransform.m_Rotation))) * glm::vec4(Vertex.m_Normal, 1.0f);
-		//	Vertex.m_EntityID = vEntityID;
-		//}
-		//s_Data.m_StaticMeshVertexBuffer->setData(TransformVertices.data(), vMesh.getVerticesSize());
-
-		//s_Data.m_StaticMeshShader->bind();
-		//RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
-		//s_Data.m_Statistics.m_DrawCalls++;
-		//s_Data.m_Statistics.m_MeshCount++;
 	}
 
 	void Renderer3D::ResetStatistics()
@@ -600,9 +613,13 @@ namespace Pika {
 
 	void Renderer3D::StartBatch()
 	{
-		// Line
+		// Lines
 		s_Data.m_LineVertexDataBatch->reset();
 		s_Data.m_LineIndexCount = 0;
+
+		// Shadow Maps
+		s_Data.m_VertexPositionDataBatch->reset();
+		s_Data.m_VertexPositionIndexCount = 0;
 	}
 
 	void Renderer3D::NextBatch()

@@ -17,7 +17,7 @@ namespace Pika {
 			bool m_ShowGrid = true;
 		};
 	public:
-		SceneRenderer();
+		SceneRenderer() = default;
 		SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer);
 
 		void initialize();  // 初始化Renderer
@@ -27,9 +27,9 @@ namespace Pika {
 		void render();   // TODO : render(Camera)       // render with primary camera
 		void render(const EditorCamera& vEditorCamera); // render with EditorCamera
 
-		inline const Ref<RenderDataExtractor>& getRenderDataExtractor() const { return m_RenderDataExtracor; }
+		inline const Ref<RenderDataExtractor>& getRenderDataExtractor() const { return m_RenderDataExtractor; }
 		inline void setRenderDataExtractor(const Ref<RenderDataExtractor>& vRenderDataExtractor) {
-			m_RenderDataExtracor = vRenderDataExtractor;
+			m_RenderDataExtractor = vRenderDataExtractor;
 			m_PrimaryCamera = {};
 		}
 		inline const Ref<Framebuffer>& getFramebuffer() const { return m_Framebuffer; }
@@ -43,7 +43,7 @@ namespace Pika {
 		void resize(uint32_t vWidth, uint32_t vHeight); // resize FBO
 	private:
 		RendererSettings m_Settings;
-		Ref<RenderDataExtractor> m_RenderDataExtracor = nullptr;
+		Ref<RenderDataExtractor> m_RenderDataExtractor = nullptr;
 		Ref<Framebuffer> m_Framebuffer = nullptr;
 		Ref<ShaderLibrary> m_ShaderLibray = nullptr; // TODO : 自己创建的Shaders
 

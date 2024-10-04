@@ -6,15 +6,10 @@
 namespace Pika {
 
 
-	SceneRenderer::SceneRenderer()
-	{
-
-	}
-
 	SceneRenderer::SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer)
 		: m_Framebuffer{ vFramebuffer }
 	{
-		m_RenderDataExtracor = CreateRef<RenderDataExtractor>(vScene);
+		m_RenderDataExtractor = CreateRef<RenderDataExtractor>(vScene);
 	}
 
 	void SceneRenderer::beginFrame()
@@ -27,11 +22,11 @@ namespace Pika {
 		m_Framebuffer->unbind();
 	}
 
-	void SceneRenderer::render	()
+	void SceneRenderer::render()
 	{
 		if (!m_PrimaryCamera)
 			return;
-		switch (m_RenderDataExtracor->extractSceneType())
+		switch (m_RenderDataExtractor->extractSceneType())
 		{
 		case Scene::SceneType::Scene2D:
 		{
@@ -39,7 +34,7 @@ namespace Pika {
 			const auto& ViewMatrix = glm::inverse(glm::translate(glm::mat4(1.0f), TC.m_Position) *
 				glm::toMat4(glm::quat(glm::radians(TC.m_Rotation))));
 			Renderer2D::BeginScene(m_PrimaryCamera.getComponent<CameraComponent>().m_Camera, ViewMatrix);
-			auto SpritesData = m_RenderDataExtracor->extractComponentsWithEntityID<TransformComponent, SpriteRendererComponent>();
+			auto SpritesData = m_RenderDataExtractor->extractComponentsWithEntityID<TransformComponent, SpriteRendererComponent>();
 			for (const auto& SpriteData : SpritesData) {
 				auto [Transform, SpriteRenderer, EntityID] = SpriteData;
 				Renderer2D::DrawSprite(Transform, SpriteRenderer, EntityID);
@@ -58,14 +53,14 @@ namespace Pika {
 
 	void SceneRenderer::render(const EditorCamera& vEditorCamera)
 	{
-		switch (m_RenderDataExtracor->extractSceneType())
+		switch (m_RenderDataExtractor->extractSceneType())
 		{
 		case Scene::SceneType::Scene2D:
 		{
 			Renderer2D::BeginScene(vEditorCamera);
 			if (m_Settings.m_ShowGrid)
 				Renderer2D::DrawGrid(glm::mat4(1.0f), 100.5f);
-			auto SpritesData = m_RenderDataExtracor->extractComponentsWithEntityID<TransformComponent, SpriteRendererComponent>();
+			auto SpritesData = m_RenderDataExtractor->extractComponentsWithEntityID<TransformComponent, SpriteRendererComponent>();
 			for (const auto& SpriteData : SpritesData) {
 				auto [Transform, SpriteRenderer, EntityID] = SpriteData;
 				Renderer2D::DrawSprite(Transform, SpriteRenderer, EntityID);
@@ -75,17 +70,19 @@ namespace Pika {
 		}
 		case Scene::SceneType::Scene3D:
 		{
-			auto LightsData = m_RenderDataExtracor->extractLightsData();
+			auto LightsData = m_RenderDataExtractor->extractLightsData();
+			auto SceneData = m_RenderDataExtractor->extractSceneData();
+			Renderer3D::DrawShadowMaps(LightsData, SceneData); // Shadow Map
 			Renderer3D::BeginScene(vEditorCamera, LightsData);
-			Renderer3D::RenderSkybox(m_RenderDataExtracor->extractSkybox());
+			Renderer3D::RenderSkybox(m_RenderDataExtractor->extractSkybox());
 			if (m_Settings.m_ShowGrid)
 				Renderer3D::DrawGrid(glm::mat4(1.0f), 100.5f);
-			auto NoMaterialModelsData = m_RenderDataExtracor->extractNoMaterialModelsWithEntityID();
+			auto NoMaterialModelsData = m_RenderDataExtractor->extractNoMaterialModelsWithEntityID();
 			for (const auto& NoMaterialModelData : NoMaterialModelsData) {
 				auto [Transform, Model, EntityID] = NoMaterialModelData;
 				Renderer3D::DrawModel(Transform, Model, EntityID);
 			}
-			auto BlinnPhoneMaterialModelsData = m_RenderDataExtracor->extractBlinnPhoneMaterialModelsWithEntityID();
+			auto BlinnPhoneMaterialModelsData = m_RenderDataExtractor->extractBlinnPhoneMaterialModelsWithEntityID();
 			for (const auto& BlinnPhoneMaterialModelData : BlinnPhoneMaterialModelsData) {
 				auto [Transform, Model, Material, EntityID] = BlinnPhoneMaterialModelData;
 				Renderer3D::DrawModel(Transform, Model, Material, EntityID);
@@ -104,7 +101,7 @@ namespace Pika {
 
 	void SceneRenderer::initialize()
 	{
-		switch (m_RenderDataExtracor->extractSceneType())
+		switch (m_RenderDataExtractor->extractSceneType())
 		{
 		case Pika::Scene::SceneType::Scene2D:
 		{
