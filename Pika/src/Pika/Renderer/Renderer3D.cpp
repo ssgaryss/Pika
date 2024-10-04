@@ -584,17 +584,18 @@ namespace Pika {
 					}
 				}
 			}
-			s_Data.m_ShadowMapBuffer->bind();
 			// Direction Light
 			if (!vLightsData.m_DirectionLights.empty()) {
 				uint32_t DirectionLightsNumber = static_cast<uint32_t>(vLightsData.m_DirectionLights.size());
 				uint32_t ShadowMapsNumber = 0;
 				for (uint32_t i = 0; i < s_Data.s_MaxDirectionLightsNumber; ++i) {
 					if (i < DirectionLightsNumber && ShadowMapsNumber <= s_Data.s_MaxDirectionLightShadowNumber) {
+						const auto& Transform = std::get<0>(vLightsData.m_DirectionLights[i]);
 						const auto& Light = std::get<1>(vLightsData.m_DirectionLights[i]).m_Light;
 						if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.get())) {
 							auto& Data = pDirectionLight->getData();
 							if (Data.m_EnableShadow) {
+								s_Data.m_ShadowMapBuffer->bind();
 								const auto& ShadowBufferInfo = s_Data.m_ShadowMapBuffer->getFramebufferSpecification();
 								Data.m_ShadowMap = Texture2D::Create({ ShadowBufferInfo.m_Width, ShadowBufferInfo.m_Height,
 									TextureFormat::DEPTH24STENCIL8, false });
@@ -605,9 +606,22 @@ namespace Pika {
 								Ref<IndexBuffer> VertexPositionIndexBuffer = IndexBuffer::Create(Indices.data(), IndicesCount);
 								s_Data.m_VertexPositionArray->setIndexBuffer(VertexPositionIndexBuffer);
 								s_Data.m_Texture2DShadowMapShader->bind();
+								// Light Space Matrix
+								float Pitch = Transform.m_Rotation.x;
+								float Yaw = Transform.m_Rotation.y;
+								glm::vec3 DefaultDirection = glm::vec3(0.0f, 0.0f, -1.0f);
+								glm::vec3 Direction = glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) * glm::vec4(DefaultDirection, 1.0f);
+								glm::mat4 LightViewMatrix = glm::lookAt(Transform.m_Position, Transform.m_Position + Direction,
+									glm::rotate(glm::quat(glm::radians(glm::vec3(-Pitch, -Yaw, 0.0f))), glm::vec3{ 0.0f, 1.0f, 0.0f }));
+								glm::mat4 LightProjectionMatrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, -1000.0f, 1000.0f);
+								glm::mat4 LightSpaceMatrix = LightProjectionMatrix * LightViewMatrix;
+								s_Data.m_Texture2DShadowMapShader->setMat4("u_LightSpaceMatrix", LightSpaceMatrix);
+								RenderCommand::Clear();
 								RenderCommand::DrawIndexed(s_Data.m_VertexPositionArray.get(), s_Data.m_VertexPositionIndexCount);
 								s_Data.m_Statistics.m_DrawCalls++;
 								s_Data.m_Texture2DShadowMapShader->unbind();
+								s_Data.m_ShadowMapBuffer->unbind();
+
 								ShadowMapsNumber++;
 							}
 							else {
@@ -617,7 +631,6 @@ namespace Pika {
 					}
 				}
 			}
-			s_Data.m_ShadowMapBuffer->unbind();
 		}
 
 	}

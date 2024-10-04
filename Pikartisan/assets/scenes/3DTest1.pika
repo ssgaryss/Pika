@@ -3,6 +3,18 @@ Scene:
   SceneType: Scene3D
   Skybox: resources/skybox/snowy_forest_path_01_2k.png
   Entities:
+    - Entity: "{0720057D-7A1B-4A77-933E-C5E82F739690}"
+      TagComponent:
+        Tag: Direction Light
+      TransformComponent:
+        Position: [-0.480129838, 2.5671463, 0.850686133]
+        Rotation: [-141.159058, 21.0450764, 93.4610596]
+        Scale: [1, 0.999999881, 1.00000024]
+      LightComponent:
+        Type: Direction Light
+        Data:
+          Light Color: [1, 1, 1]
+          Intensity: 1
     - Entity: "{85C8DAFF-B8F3-481B-83CB-A9D2A2B6169D}"
       TagComponent:
         Tag: Sphere
@@ -21,30 +33,3 @@ Scene:
           Shininess: 11.3999996
           Diffuse Map: None
           Specular Map: None
-    - Entity: "{698A86D8-4574-4E17-BB49-5E613BA40E1E}"
-      TagComponent:
-        Tag: Point Light
-      TransformComponent:
-        Position: [-3.59049058, 1.31234658, 0]
-        Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
-      LightComponent:
-        Type: Point Light
-        Data:
-          Light Color: [1, 1, 1]
-          Intensity: 1
-          Constant: 1
-          Linear: 0.0700000003
-          Quadratic: 0.0170000009
-    - Entity: "{0720057D-7A1B-4A77-933E-C5E82F739690}"
-      TagComponent:
-        Tag: Direction Light
-      TransformComponent:
-        Position: [0, 2.00267363, 0]
-        Rotation: [-100.620033, 0, 0]
-        Scale: [1, 0.999999881, 0.999999881]
-      LightComponent:
-        Type: Direction Light
-        Data:
-          Light Color: [1, 1, 1]
-          Intensity: 1

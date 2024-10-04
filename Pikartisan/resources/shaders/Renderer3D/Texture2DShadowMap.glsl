@@ -3,7 +3,6 @@
 layout(location = 0) in vec3 a_Position;
 
 uniform mat4 u_LightSpaceMatrix;
-uniform mat4 u_ModelMatrix;
 
 void main() {
 	gl_Position = u_LightSpaceMatrix * vec4(a_Position, 1.0f);
@@ -14,6 +13,6 @@ void main() {
 #version 460 core
 
 void main() {
-	// gl_FragDepth = gl_FragCoord.z;
+	//gl_FragDepth = gl_FragCoord.z;
 }
 #FRAGMENT_END()
