@@ -100,6 +100,7 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height); // 一定要跟新Viewport因为FBO切换会导致视口问题
 	}
 
 	void OpenGLFramebuffer::unbind()
