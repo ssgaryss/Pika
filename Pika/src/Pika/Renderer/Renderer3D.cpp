@@ -625,6 +625,7 @@ namespace Pika {
 								ShadowMapsNumber++;
 							}
 							else {
+								Data.m_ShadowMap = nullptr;
 								continue;
 							}
 						}

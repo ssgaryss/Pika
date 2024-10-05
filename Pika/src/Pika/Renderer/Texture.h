@@ -27,6 +27,10 @@ namespace Pika
 		virtual void bind(uint32_t vSlot = 0) const = 0;
 		virtual void unbind(uint32_t vSlot = 0) const = 0;
 		virtual bool operator==(const Texture& rhs) const = 0;
+
+		inline TextureFormat getTextureFormat() const { return m_Format; }
+	protected:
+		TextureFormat m_Format = TextureFormat::None;
 	};
 
 	class Texture2D : public Texture

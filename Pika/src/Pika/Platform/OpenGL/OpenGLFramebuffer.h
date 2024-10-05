@@ -27,6 +27,8 @@ namespace Pika
 		inline const FramebufferSpecification& getFramebufferSpecification() const override { return m_Specification; }
 
 	private:
+		void checkFramebufferStatus() const;
+	private:
 		uint32_t m_RendererID = 0;
 		FramebufferSpecification m_Specification;
 

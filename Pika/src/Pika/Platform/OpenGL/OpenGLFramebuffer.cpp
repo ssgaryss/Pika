@@ -187,7 +187,7 @@ namespace Pika {
 		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height);  // 当FBO resize后须调用
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer is incomplete!");
+			checkFramebufferStatus();
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -239,7 +239,8 @@ namespace Pika {
 
 	void OpenGLFramebuffer::setDepthStencilAttachment(const Ref<Texture2D>& vTexture)
 	{
-		if (vTexture->getWidth() != m_Specification.m_Width || vTexture->getHeight() != m_Specification.m_Height) {
+		if (vTexture->getWidth() != m_Specification.m_Width || vTexture->getHeight() != m_Specification.m_Height
+			|| vTexture->getTextureFormat() != TextureFormat::DEPTH24STENCIL8 || vTexture->getRendererID() == 0) {
 			PK_CORE_ERROR("OpenGLFramebuffer : Try to set a inappropriate depth texture to frame buffer.");
 			return;
 		}
@@ -249,8 +250,9 @@ namespace Pika {
 		m_DepthStencilAttachment = 0;
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, vTexture->getRendererID(), 0);
+		m_DepthStencilAttachment = vTexture->getRendererID();
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer is incomplete!");
+			checkFramebufferStatus();
 
 		m_DepthStencilAttachment = vTexture->getRendererID();
 	}
@@ -258,6 +260,42 @@ namespace Pika {
 	void OpenGLFramebuffer::setColorAttachment(uint32_t vIndex, const Ref<Texture2D>& vTexture)
 	{
 		// TODO!
+	}
+
+	void OpenGLFramebuffer::checkFramebufferStatus() const
+	{
+		GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		switch (Status) {
+		case GL_FRAMEBUFFER_COMPLETE:
+			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer is incomplete!");
+			break;
+		case GL_FRAMEBUFFER_UNDEFINED:
+			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer undefined!");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer incomplete: Attachment is NOT complete!");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer incomplete: No image is attached to FBO!");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer incomplete: Draw buffer!");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer incomplete: Read buffer!");
+			break;
+		case GL_FRAMEBUFFER_UNSUPPORTED:
+			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer incomplete: Unsupported by FBO implementation!");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer incomplete: Multisample!");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer incomplete: Layer targets!");
+			break;
+		default:
+			PK_CORE_ERROR("OpenGLFramebuffer : Framebuffer incomplete: Unknown error!");
+		}
 	}
 
 }

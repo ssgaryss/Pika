@@ -33,6 +33,7 @@ namespace Pika {
 		: m_Width{ vTextureSpecification.m_Width }, m_Height{ vTextureSpecification.m_Height },
 		m_RequiredMips{ vTextureSpecification.m_RequiredMips }
 	{
+		m_Format = vTextureSpecification.m_Format;
 		m_InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(vTextureSpecification.m_Format);
 		m_DataFormat = Utils::PikaTextureFormatToGLDataFormat(vTextureSpecification.m_Format);
 
@@ -116,14 +117,17 @@ namespace Pika {
 		if (Channels == 4) {
 			InternalFormat = GL_RGBA8;
 			DataFormat = GL_RGBA;
+			m_Format = TextureFormat::RGBA8;
 		}
 		else if (Channels == 3) {
 			InternalFormat = GL_RGB8;
 			DataFormat = GL_RGB;
+			m_Format = TextureFormat::RGB8;
 		}
 		else if (Channels == 1) {
 			InternalFormat = GL_RED;
 			DataFormat = GL_RED;
+			m_Format = TextureFormat::R8;
 		}
 		m_InternalFormat = InternalFormat;
 		m_DataFormat = DataFormat;
@@ -219,14 +223,17 @@ namespace Pika {
 		if (Channels == 4) {
 			InternalFormat = GL_RGBA8;
 			DataFormat = GL_RGBA;
+			m_Format = TextureFormat::RGBA8;
 		}
 		else if (Channels == 3) {
 			InternalFormat = GL_RGB8;
 			DataFormat = GL_RGB;
+			m_Format = TextureFormat::RGB8;
 		}
 		else if (Channels == 1) {
 			InternalFormat = GL_RED;
 			DataFormat = GL_RED;
+			m_Format = TextureFormat::R8;
 		}
 		m_InternalFormat = InternalFormat;
 		m_DataFormat = DataFormat;
