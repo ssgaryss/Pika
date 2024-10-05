@@ -39,6 +39,7 @@ struct DirectionLight {
 	vec3 m_LightColor;
 	float m_Intensity;
 	uint u_ShawdowMapIndex;
+	mat4 u_LightSpaceMatrix;
 };
 layout(std140, binding = 1) uniform DirectionLights
 {

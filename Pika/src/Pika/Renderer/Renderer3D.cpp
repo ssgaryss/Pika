@@ -84,7 +84,7 @@ namespace Pika {
 		Ref<UniformBuffer> m_CameraDataUniformBuffer = nullptr;
 
 		// Materials
-		struct UniformBufferSTD140BlinnPhoneMaterialData
+		struct BlinnPhoneMaterialUniformBufferData
 		{
 			alignas(16) glm::vec3 m_Ambient = glm::vec3(1.0f);
 			alignas(16) glm::vec3 m_Diffuse = glm::vec3(1.0f);
@@ -93,7 +93,7 @@ namespace Pika {
 			uint32_t m_DiffuseMapIndex = 0;
 			uint32_t m_SpecularMapIndex = 0;
 		};
-		UniformBufferSTD140BlinnPhoneMaterialData m_BlinnPhoneMaterialUniformBufferData;
+		BlinnPhoneMaterialUniformBufferData m_BlinnPhoneMaterialUniformBufferData;
 		void setBlinnPhoneMaterialData(const BlinnPhoneMaterial::Data& vBlinnPhoneMaterialData) {
 			m_BlinnPhoneMaterialUniformBufferData.m_Ambient = vBlinnPhoneMaterialData.m_Ambient;
 			m_BlinnPhoneMaterialUniformBufferData.m_Diffuse = vBlinnPhoneMaterialData.m_Diffuse;
@@ -133,19 +133,20 @@ namespace Pika {
 
 		struct LightsUniformBufferData {
 
-			struct UniformBufferSTD140DirectionLightData
+			struct DirectionLightUniformBufferData
 			{
 				alignas(16) glm::vec3 m_Direction = glm::vec3(0.0f);    // 方向
 				alignas(16) glm::vec3 m_LightColor = glm::vec3(1.0f);   // 光源颜色
 				float m_Intensity = 0.0f;                               // 光源强度
 				uint32_t m_ShadowMapIndex = 0;
+				glm::mat4 m_LightSpaceMatrix = glm::mat4(1.0f);
 				void setData(const glm::vec3& vDirection, const DirectionLight::Data& vDirectionLightData) {
 					m_Direction = vDirection;
 					m_LightColor = vDirectionLightData.m_LightColor;
 					m_Intensity = vDirectionLightData.m_Intensity;
 				}
 			};
-			struct UniformBufferSTD140PointLightData
+			struct PointLightUniformBufferData
 			{
 				// 这里内存对齐是为了满足std140中vec3对齐到16字节
 				alignas(16) glm::vec3 m_Position = glm::vec3(0.0f);     // 光源位置
@@ -165,8 +166,8 @@ namespace Pika {
 				}
 			};
 
-			std::array<UniformBufferSTD140DirectionLightData, s_MaxDirectionLightsNumber> m_DirectionLightsData;
-			std::array<UniformBufferSTD140PointLightData, s_MaxPointLightsNumber> m_PointLightsData;
+			std::array<DirectionLightUniformBufferData, s_MaxDirectionLightsNumber> m_DirectionLightsData;
+			std::array<PointLightUniformBufferData, s_MaxPointLightsNumber> m_PointLightsData;
 		};
 		LightsUniformBufferData m_LightsData;
 		void setLightsData(const LightsData& vLightsData) {
@@ -178,10 +179,10 @@ namespace Pika {
 			for (uint32_t i = 0; i < s_MaxDirectionLightsNumber; ++i) {
 				if (i < DirectionLightsDataSize) {
 					auto [Transform, Light] = vLightsData.m_DirectionLights[i];
-					glm::vec3 DefaultDirection = glm::vec3(0.0f, 0.0f, -1.0f);
-					m_LightsData.m_DirectionLightsData[i].m_Direction = glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) * glm::vec4(DefaultDirection, 1.0f);
 					if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.m_Light.get())) {
 						const auto& Data = pDirectionLight->getData();
+						glm::vec3 DefaultDirection = Data.s_DefaultDirection;
+						m_LightsData.m_DirectionLightsData[i].m_Direction = glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) * glm::vec4(DefaultDirection, 1.0f);
 						m_LightsData.m_DirectionLightsData[i].m_LightColor = Data.m_LightColor;
 						m_LightsData.m_DirectionLightsData[i].m_Intensity = Data.m_Intensity;
 						if (Data.m_ShadowMap) {
@@ -568,7 +569,11 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 		try {
 			uint32_t IndicesNumber = vMesh.getIndicesCount();
-			s_Data.m_VertexPositionDataBatch->add(vMesh.getVertices(), vMesh.getIndices());
+			auto TransformVertices = vMesh.getVertices();
+			for (auto& Vertex : TransformVertices) {
+				Vertex.m_Position = static_cast<glm::mat4>(vTransform) * glm::vec4(Vertex.m_Position, 1.0f);
+			}
+			s_Data.m_VertexPositionDataBatch->add(TransformVertices, vMesh.getIndices());
 			s_Data.m_VertexPositionIndexCount += IndicesNumber;
 		}
 		catch (const std::runtime_error& e) {
@@ -623,7 +628,7 @@ namespace Pika {
 								float Yaw = Transform.m_Rotation.y;
 								glm::vec3 DefaultDirection = glm::vec3(0.0f, 0.0f, -1.0f);
 								glm::vec3 Direction = glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) * glm::vec4(DefaultDirection, 1.0f);
-								glm::mat4 LightViewMatrix = glm::lookAt(Transform.m_Position, Transform.m_Position + Direction,
+								glm::mat4 LightViewMatrix = glm::lookAt(glm::vec3(0.0f), Direction,
 									glm::rotate(glm::quat(glm::radians(glm::vec3(-Pitch, -Yaw, 0.0f))), glm::vec3{ 0.0f, 1.0f, 0.0f }));
 								glm::mat4 LightProjectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
 								glm::mat4 LightSpaceMatrix = LightProjectionMatrix * LightViewMatrix;

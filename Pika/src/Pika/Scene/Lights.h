@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Pika {
 
@@ -22,6 +23,12 @@ namespace Pika {
 			float m_Intensity = 1.0f;                               // 强度
 			bool m_EnableShadow = false;
 			Ref<Texture2D> m_ShadowMap = nullptr;
+			float m_LightRegionSize = 100.0f;                            // 计算LightProjectionMatrix所需参数
+
+			inline static const glm::vec3 s_DefaultDirection = glm::vec3(0.0f, 0.0f, -1.0f); // 默认照向-z方向
+			glm::mat4 getLightProjectionMatrix() const {
+				return glm::ortho(-m_LightRegionSize, m_LightRegionSize, -m_LightRegionSize, m_LightRegionSize, -m_LightRegionSize, m_LightRegionSize);
+			}
 		};
 	public:
 		DirectionLight() = default;  // 由于基类申明了析构函数，这里不能偷懒，满足rule of five，因为Component之后可能会多次拷贝等
