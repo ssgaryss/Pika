@@ -94,7 +94,7 @@ namespace Pika {
 			uint32_t m_SpecularMapIndex = 0;
 		};
 		UniformBufferSTD140BlinnPhoneMaterialData m_BlinnPhoneMaterialUniformBufferData;
-		void setData(const BlinnPhoneMaterial::Data& vBlinnPhoneMaterialData) {
+		void setBlinnPhoneMaterialData(const BlinnPhoneMaterial::Data& vBlinnPhoneMaterialData) {
 			m_BlinnPhoneMaterialUniformBufferData.m_Ambient = vBlinnPhoneMaterialData.m_Ambient;
 			m_BlinnPhoneMaterialUniformBufferData.m_Diffuse = vBlinnPhoneMaterialData.m_Diffuse;
 			m_BlinnPhoneMaterialUniformBufferData.m_Specular = vBlinnPhoneMaterialData.m_Specular;
@@ -132,6 +132,7 @@ namespace Pika {
 		static const uint32_t s_MaxSpotLightsNumber = 4;
 
 		struct LightsUniformBufferData {
+
 			struct UniformBufferSTD140DirectionLightData
 			{
 				alignas(16) glm::vec3 m_Direction = glm::vec3(0.0f);    // 方向
@@ -164,54 +165,65 @@ namespace Pika {
 				}
 			};
 
-			void setData(const LightsData& vLightsData) {
-				// Direction Lights
-				uint32_t DirectionLightsDataSize = static_cast<uint32_t>(vLightsData.m_DirectionLights.size());
-				if (DirectionLightsDataSize > s_MaxDirectionLightsNumber)
-					PK_CORE_WARN("Renderer3D : There are {} direction lights, but renderer only support {}.",
-						DirectionLightsDataSize, s_MaxDirectionLightsNumber);
-				for (uint32_t i = 0; i < s_MaxDirectionLightsNumber; ++i) {
-					if (i < DirectionLightsDataSize) {
-						auto [Transform, Light] = vLightsData.m_DirectionLights[i];
-						glm::vec3 DefaultDirection = glm::vec3(0.0f, 0.0f, -1.0f);
-						m_DirectionLightsData[i].m_Direction = glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) * glm::vec4(DefaultDirection, 1.0f);
-						if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.m_Light.get())) {
-							const auto& Data = pDirectionLight->getData();
-							m_DirectionLightsData[i].m_LightColor = Data.m_LightColor;
-							m_DirectionLightsData[i].m_Intensity = Data.m_Intensity;
-						}
-					}
-					else {
-						m_DirectionLightsData[i].m_Intensity = 0.0f; // 重置
-					}
-				}
-				// Point Lights
-				uint32_t PointLightsDataSize = static_cast<uint32_t>(vLightsData.m_PointLights.size());
-				if (PointLightsDataSize > s_MaxPointLightsNumber)
-					PK_CORE_WARN("Renderer3D : There are {} point lights, but renderer only support {}.",
-						PointLightsDataSize, s_MaxPointLightsNumber);
-				for (uint32_t i = 0; i < s_MaxPointLightsNumber; ++i) {
-					if (i < PointLightsDataSize) {
-						auto [Transform, Light] = vLightsData.m_PointLights[i];
-						m_PointLightsData[i].m_Position = Transform.m_Position;
-						if (auto pPointLight = dynamic_cast<PointLight*>(Light.m_Light.get())) {
-							const auto& Data = pPointLight->getData();
-							m_PointLightsData[i].m_LightColor = Data.m_LightColor;
-							m_PointLightsData[i].m_Intensity = Data.m_Intensity;
-							m_PointLightsData[i].m_Constant = Data.m_Constant;
-							m_PointLightsData[i].m_Linear = Data.m_Linear;
-							m_PointLightsData[i].m_Quadratic = Data.m_Quadratic;
-						}
-					}
-					else {
-						m_PointLightsData[i].m_Intensity = 0.0f; // 重置
-					}
-				}
-			}
 			std::array<UniformBufferSTD140DirectionLightData, s_MaxDirectionLightsNumber> m_DirectionLightsData;
 			std::array<UniformBufferSTD140PointLightData, s_MaxPointLightsNumber> m_PointLightsData;
 		};
 		LightsUniformBufferData m_LightsData;
+		void setLightsData(const LightsData& vLightsData) {
+			// Direction Lights
+			uint32_t DirectionLightsDataSize = static_cast<uint32_t>(vLightsData.m_DirectionLights.size());
+			if (DirectionLightsDataSize > s_MaxDirectionLightsNumber)
+				PK_CORE_WARN("Renderer3D : There are {} direction lights, but renderer only support {}.",
+					DirectionLightsDataSize, s_MaxDirectionLightsNumber);
+			for (uint32_t i = 0; i < s_MaxDirectionLightsNumber; ++i) {
+				if (i < DirectionLightsDataSize) {
+					auto [Transform, Light] = vLightsData.m_DirectionLights[i];
+					glm::vec3 DefaultDirection = glm::vec3(0.0f, 0.0f, -1.0f);
+					m_LightsData.m_DirectionLightsData[i].m_Direction = glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) * glm::vec4(DefaultDirection, 1.0f);
+					if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.m_Light.get())) {
+						const auto& Data = pDirectionLight->getData();
+						m_LightsData.m_DirectionLightsData[i].m_LightColor = Data.m_LightColor;
+						m_LightsData.m_DirectionLightsData[i].m_Intensity = Data.m_Intensity;
+						if (Data.m_ShadowMap) {
+							uint32_t ShadowMapTextureIndex = static_cast<uint32_t>(findTextureIndex(Data.m_ShadowMap).value_or(0));
+							if (ShadowMapTextureIndex == 0) {
+								auto Success = addTexture(Data.m_ShadowMap);
+								if (Success.has_value())
+									ShadowMapTextureIndex = static_cast<int>(Success.value());
+								else
+									PK_CORE_ERROR("Renderer3D : Fail to add Blinn-Phone diffuse texture to texture slots.");
+							}
+							m_LightsData.m_DirectionLightsData[i].m_ShadowMapIndex = ShadowMapTextureIndex;
+						}
+					}
+				}
+				else {
+					m_LightsData.m_DirectionLightsData[i].m_Intensity = 0.0f; // 重置
+				}
+			}
+			// Point Lights
+			uint32_t PointLightsDataSize = static_cast<uint32_t>(vLightsData.m_PointLights.size());
+			if (PointLightsDataSize > s_MaxPointLightsNumber)
+				PK_CORE_WARN("Renderer3D : There are {} point lights, but renderer only support {}.",
+					PointLightsDataSize, s_MaxPointLightsNumber);
+			for (uint32_t i = 0; i < s_MaxPointLightsNumber; ++i) {
+				if (i < PointLightsDataSize) {
+					auto [Transform, Light] = vLightsData.m_PointLights[i];
+					m_LightsData.m_PointLightsData[i].m_Position = Transform.m_Position;
+					if (auto pPointLight = dynamic_cast<PointLight*>(Light.m_Light.get())) {
+						const auto& Data = pPointLight->getData();
+						m_LightsData.m_PointLightsData[i].m_LightColor = Data.m_LightColor;
+						m_LightsData.m_PointLightsData[i].m_Intensity = Data.m_Intensity;
+						m_LightsData.m_PointLightsData[i].m_Constant = Data.m_Constant;
+						m_LightsData.m_PointLightsData[i].m_Linear = Data.m_Linear;
+						m_LightsData.m_PointLightsData[i].m_Quadratic = Data.m_Quadratic;
+					}
+				}
+				else {
+					m_LightsData.m_PointLightsData[i].m_Intensity = 0.0f; // 重置
+				}
+			}
+		}
 		Ref<UniformBuffer> m_DirectionLightsDataUniformBuffer = nullptr;
 		Ref<UniformBuffer> m_PointLightsDataUniformBuffer = nullptr;
 
@@ -358,7 +370,7 @@ namespace Pika {
 		s_Data.m_CameraData.m_ProjectionMatrix = vEditorCamera.getProjectionMatrix();
 		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
 
-		s_Data.m_LightsData.setData(vLightsData);
+		s_Data.setLightsData(vLightsData);
 		s_Data.m_DirectionLightsDataUniformBuffer->setData(&s_Data.m_LightsData.m_DirectionLightsData,
 			sizeof(s_Data.m_LightsData.m_DirectionLightsData));
 		s_Data.m_PointLightsDataUniformBuffer->setData(&s_Data.m_LightsData.m_PointLightsData,
@@ -441,7 +453,7 @@ namespace Pika {
 		if (auto pBlinnPhoneMaterial = dynamic_cast<BlinnPhoneMaterial*>(vMaterial.m_Material.get())) {
 			s_Data.m_BlinnPhoneShader->bind();
 			const auto& MaterialData = pBlinnPhoneMaterial->getData();
-			s_Data.setData(MaterialData);
+			s_Data.setBlinnPhoneMaterialData(MaterialData);
 			s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&s_Data.m_BlinnPhoneMaterialUniformBufferData,
 				sizeof(s_Data.m_BlinnPhoneMaterialUniformBufferData));
 		}
@@ -613,7 +625,7 @@ namespace Pika {
 								glm::vec3 Direction = glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) * glm::vec4(DefaultDirection, 1.0f);
 								glm::mat4 LightViewMatrix = glm::lookAt(Transform.m_Position, Transform.m_Position + Direction,
 									glm::rotate(glm::quat(glm::radians(glm::vec3(-Pitch, -Yaw, 0.0f))), glm::vec3{ 0.0f, 1.0f, 0.0f }));
-								glm::mat4 LightProjectionMatrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, -1000.0f, 1000.0f);
+								glm::mat4 LightProjectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
 								glm::mat4 LightSpaceMatrix = LightProjectionMatrix * LightViewMatrix;
 								s_Data.m_Texture2DShadowMapShader->setMat4("u_LightSpaceMatrix", LightSpaceMatrix);
 								RenderCommand::Clear();
