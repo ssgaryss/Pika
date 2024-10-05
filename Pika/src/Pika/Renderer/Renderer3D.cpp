@@ -79,17 +79,6 @@ namespace Pika {
 			m_TextureIndex++;
 			return TextureIndex;
 		}
-		void deleteTexture(const Ref<Texture2D>& vTexture) {
-			uint32_t TextureIndex = static_cast<uint32_t>(findTextureIndex(vTexture).value_or(0));
-			if (TextureIndex == 0) {
-				PK_CORE_WARN("Renderer3D : The texture is not exist in texture slots.");
-				return;
-			}
-			else {
-				m_TextureSlots[TextureIndex]->unbind(TextureIndex);
-				m_TextureSlots[TextureIndex] = nullptr;
-			}
-		}
 		void resetTextureSlots() {
 			for (uint32_t i = 1; i < m_MaxTextureSlots; ++i) {
 				if (m_TextureSlots[i]) {
@@ -229,7 +218,7 @@ namespace Pika {
 								if (Success.has_value())
 									ShadowMapTextureIndex = static_cast<int>(Success.value());
 								else
-									PK_CORE_ERROR("Renderer3D : Fail to add Blinn-Phone diffuse texture to texture slots.");
+									PK_CORE_ERROR("Renderer3D : Fail to add direction light shadow map to texture slots.");
 							}
 							m_LightsData.m_DirectionLightsData[i].m_ShadowMapIndex = ShadowMapTextureIndex;
 							m_LightsData.m_DirectionLightsData[i].m_LightSpaceMatrix = Utils::getLightSpaceMatrix(Transform.m_Rotation, Data);
@@ -495,7 +484,6 @@ namespace Pika {
 
 		s_Data.bindTextureSlots();
 		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
-		s_Data.m_TextureIndex = 1;
 		s_Data.m_Statistics.m_DrawCalls++;
 		s_Data.m_Statistics.m_MeshCount++;
 	}
@@ -656,8 +644,10 @@ namespace Pika {
 							if (Data.m_EnableShadow) {
 								s_Data.m_ShadowMapBuffer->bind();
 								const auto& ShadowBufferInfo = s_Data.m_ShadowMapBuffer->getFramebufferSpecification();
-								Data.m_ShadowMap = Texture2D::Create({ ShadowBufferInfo.m_Width, ShadowBufferInfo.m_Height,
-									TextureFormat::DEPTH24STENCIL8, false });
+								if (!Data.m_ShadowMap) {
+									Data.m_ShadowMap = Texture2D::Create({ ShadowBufferInfo.m_Width, ShadowBufferInfo.m_Height,
+										TextureFormat::DEPTH24STENCIL8, false });
+								}
 								s_Data.m_ShadowMapBuffer->setDepthStencilAttachment(Data.m_ShadowMap);
 								s_Data.m_VertexPositionBuffer->setData(s_Data.m_VertexPositionDataBatch->data(), s_Data.m_VertexPositionDataBatch->size());
 								const std::vector<uint32_t> Indices = s_Data.m_VertexPositionDataBatch->getIndices();

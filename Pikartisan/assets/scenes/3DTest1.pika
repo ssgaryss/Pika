@@ -1,17 +1,17 @@
 Scene:
   Name: Untitled
   SceneType: Scene3D
-  Skybox: resources/skybox/snowy_forest_path_01_2k.png
+  Skybox: assets\environment\skybox\LDR\kloofendal_48d_partly_cloudy_puresky_2k.png
   Entities:
-    - Entity: "{3F0FC21A-2B3B-4927-943C-C54D020590A8}"
+    - Entity: "{09B3A03D-5067-41BB-B515-D52F9819CDE5}"
       TagComponent:
-        Tag: Plane
+        Tag: Cylinder
       TransformComponent:
-        Position: [0, 0, 0]
+        Position: [-3.72796202, 1.07368362, -4.70946264]
         Rotation: [0, -0, 0]
-        Scale: [6.81119967, 6.81119776, 6.81119776]
+        Scale: [1, 1, 1]
       ModelComponent:
-        Path: resources/objects/plane.fbx
+        Path: resources/objects/cylinder.fbx
       MaterialComponent:
         Type: Blinn-Phone
         Data:
@@ -21,11 +21,65 @@ Scene:
           Shininess: 0.100000001
           Diffuse Map: None
           Specular Map: None
+    - Entity: "{B9B57A28-A05A-4D23-8B35-B9ECCAFC06A8}"
+      TagComponent:
+        Tag: Cone
+      TransformComponent:
+        Position: [-4.79704332, 0, 4.48578882]
+        Rotation: [0, -0, 0]
+        Scale: [1.61000001, 1.61000001, 1.61000001]
+      ModelComponent:
+        Path: resources/objects/cone.fbx
+      MaterialComponent:
+        Type: Blinn-Phone
+        Data:
+          Ambient: [0.247250006, 0.199499995, 0.074500002]
+          Diffuse: [0.751640022, 0.606480002, 0.226480007]
+          Specular: [0.628280997, 0.555801988, 0.366064996]
+          Shininess: 0.400000006
+          Diffuse Map: None
+          Specular Map: None
+    - Entity: "{C52CED0C-4F85-48B0-882D-C2DCB35D804F}"
+      TagComponent:
+        Tag: Monkey
+      TransformComponent:
+        Position: [1.8776803, 1.36913753, -0.808527827]
+        Rotation: [104.334984, -77.3539276, -105.064262]
+        Scale: [0.999999881, 1, 0.999999881]
+      ModelComponent:
+        Path: resources/objects/monkey.fbx
+      MaterialComponent:
+        Type: Blinn-Phone
+        Data:
+          Ambient: [0.135000005, 0.222499996, 0.157499999]
+          Diffuse: [0.540000021, 0.889999986, 0.629999995]
+          Specular: [0.316228002, 0.316228002, 0.316228002]
+          Shininess: 0.100000001
+          Diffuse Map: None
+          Specular Map: None
+    - Entity: "{3F0FC21A-2B3B-4927-943C-C54D020590A8}"
+      TagComponent:
+        Tag: Plane
+      TransformComponent:
+        Position: [0, 3.92186159e-08, 0]
+        Rotation: [0, -0, 0]
+        Scale: [6.81119967, 6.81119776, 6.81119776]
+      ModelComponent:
+        Path: resources/objects/plane.fbx
+      MaterialComponent:
+        Type: Blinn-Phone
+        Data:
+          Ambient: [0.25, 0.207249999, 0.207249999]
+          Diffuse: [1, 0.828999996, 0.828999996]
+          Specular: [0.296647996, 0.296647996, 0.296647996]
+          Shininess: 0.0879999995
+          Diffuse Map: None
+          Specular Map: None
     - Entity: "{85C8DAFF-B8F3-481B-83CB-A9D2A2B6169D}"
       TagComponent:
         Tag: Sphere
       TransformComponent:
-        Position: [-1.49011612e-08, 2.66340137, 0]
+        Position: [-1.49011612e-08, 2.66340137, 2.42920732]
         Rotation: [0, -0, 0]
         Scale: [0.999998212, 0.999998927, 0.999999821]
       ModelComponent:
@@ -50,7 +104,7 @@ Scene:
         Type: Direction Light
         Data:
           Light Color: [1, 1, 1]
-          Intensity: 1
+          Intensity: 0.449999988
           Enable Shadow: true
           Light Region Size: 10
     - Entity: "{72CC4FD9-2650-4D5C-AFC8-A89A2E0A8C61}"
@@ -58,8 +112,8 @@ Scene:
         Tag: Mary
       TransformComponent:
         Position: [0, 0, -3.89679265]
-        Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
+        Rotation: [0, -58.6648445, 0]
+        Scale: [1.31000006, 1.30999994, 1.31000006]
       ModelComponent:
         Path: assets\objects\mary\Marry.obj
       MaterialComponent:
@@ -69,5 +123,23 @@ Scene:
           Diffuse: [0.751640022, 0.606480002, 0.226480007]
           Specular: [0.628280997, 0.555801988, 0.366064996]
           Shininess: 0.400000006
+          Diffuse Map: assets\objects\mary\MC003_Kozakura_Mari.png
+          Specular Map: assets\objects\mary\MC003_Kozakura_Mari.png
+    - Entity: "{486463E2-0833-4B3E-B95C-1FA774CCEFC8}"
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [-2.60176468, 0.486685634, 4.47042894]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      ModelComponent:
+        Path: resources/objects/cube.fbx
+      MaterialComponent:
+        Type: Blinn-Phone
+        Data:
+          Ambient: [0.25, 0.207249999, 0.207249999]
+          Diffuse: [1, 0.828999996, 0.828999996]
+          Specular: [0.296647996, 0.296647996, 0.296647996]
+          Shininess: 0.0879999995
           Diffuse Map: None
           Specular Map: None
