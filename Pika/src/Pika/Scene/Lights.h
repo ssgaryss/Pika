@@ -23,7 +23,7 @@ namespace Pika {
 			float m_Intensity = 1.0f;                               // 强度
 			bool m_EnableShadow = false;
 			Ref<Texture2D> m_ShadowMap = nullptr;
-			float m_LightRegionSize = 100.0f;                            // 计算LightProjectionMatrix所需参数
+			float m_LightRegionSize = 10.0f;                            // 计算LightProjectionMatrix所需参数
 
 			inline static const glm::vec3 s_DefaultDirection = glm::vec3(0.0f, 0.0f, -1.0f); // 默认照向-z方向
 			glm::mat4 getLightProjectionMatrix() const {

@@ -10,6 +10,24 @@
 
 namespace Pika {
 
+
+	namespace Utils {
+
+		static glm::mat4 getLightSpaceMatrix(const glm::vec3& vRotation, const DirectionLight::Data& vDirectionLightData) {
+			const auto& Data = vDirectionLightData;
+			glm::vec3 DefaultDirection = Data.s_DefaultDirection;
+			glm::vec3 Direction = glm::toMat4(glm::quat(glm::radians(vRotation))) * glm::vec4(DefaultDirection, 1.0f);
+			// Direction Light理论上是无限大，这里我不想和位置有关
+			glm::mat4 LightViewMatrix = glm::lookAt(glm::vec3(0.0f), Direction,
+				glm::rotate(glm::quat(glm::radians(glm::vec3(-vRotation.x, -vRotation.y, -vRotation.z))), glm::vec3(0.0f, 1.0f, 0.0f)));
+			glm::mat4 LightProjectionMatrix = glm::ortho(-Data.m_LightRegionSize, Data.m_LightRegionSize,
+				-Data.m_LightRegionSize, Data.m_LightRegionSize, -Data.m_LightRegionSize, Data.m_LightRegionSize);
+			return LightProjectionMatrix * LightViewMatrix;
+		}
+
+	}
+
+
 #define MAX_TRIANGLES_PER_BATCH 10000 // for now
 #define MAX_LINES_PER_BATCH 10000 // for now
 
@@ -170,6 +188,7 @@ namespace Pika {
 			std::array<PointLightUniformBufferData, s_MaxPointLightsNumber> m_PointLightsData;
 		};
 		LightsUniformBufferData m_LightsData;
+
 		void setLightsData(const LightsData& vLightsData) {
 			// Direction Lights
 			uint32_t DirectionLightsDataSize = static_cast<uint32_t>(vLightsData.m_DirectionLights.size());
@@ -195,6 +214,10 @@ namespace Pika {
 									PK_CORE_ERROR("Renderer3D : Fail to add Blinn-Phone diffuse texture to texture slots.");
 							}
 							m_LightsData.m_DirectionLightsData[i].m_ShadowMapIndex = ShadowMapTextureIndex;
+							m_LightsData.m_DirectionLightsData[i].m_LightSpaceMatrix = Utils::getLightSpaceMatrix(Transform.m_Rotation, Data);
+						}
+						else {
+							m_LightsData.m_DirectionLightsData[i].m_ShadowMapIndex = 0;
 						}
 					}
 				}
@@ -225,6 +248,7 @@ namespace Pika {
 				}
 			}
 		}
+
 		Ref<UniformBuffer> m_DirectionLightsDataUniformBuffer = nullptr;
 		Ref<UniformBuffer> m_PointLightsDataUniformBuffer = nullptr;
 
@@ -624,14 +648,7 @@ namespace Pika {
 								s_Data.m_VertexPositionArray->setIndexBuffer(VertexPositionIndexBuffer);
 								s_Data.m_Texture2DShadowMapShader->bind();
 								// Light Space Matrix
-								float Pitch = Transform.m_Rotation.x;
-								float Yaw = Transform.m_Rotation.y;
-								glm::vec3 DefaultDirection = glm::vec3(0.0f, 0.0f, -1.0f);
-								glm::vec3 Direction = glm::toMat4(glm::quat(glm::radians(Transform.m_Rotation))) * glm::vec4(DefaultDirection, 1.0f);
-								glm::mat4 LightViewMatrix = glm::lookAt(glm::vec3(0.0f), Direction,
-									glm::rotate(glm::quat(glm::radians(glm::vec3(-Pitch, -Yaw, 0.0f))), glm::vec3{ 0.0f, 1.0f, 0.0f }));
-								glm::mat4 LightProjectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
-								glm::mat4 LightSpaceMatrix = LightProjectionMatrix * LightViewMatrix;
+								glm::mat4 LightSpaceMatrix = Utils::getLightSpaceMatrix(Transform.m_Rotation, Data);
 								s_Data.m_Texture2DShadowMapShader->setMat4("u_LightSpaceMatrix", LightSpaceMatrix);
 								RenderCommand::Clear();
 								RenderCommand::DrawIndexed(s_Data.m_VertexPositionArray.get(), s_Data.m_VertexPositionIndexCount);

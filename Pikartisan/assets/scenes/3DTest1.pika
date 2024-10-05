@@ -7,9 +7,9 @@ Scene:
       TagComponent:
         Tag: Direction Light
       TransformComponent:
-        Position: [-0.480129838, 2.5671463, 0.850686133]
-        Rotation: [-141.159058, 21.0450764, 93.4610596]
-        Scale: [1, 0.999999881, 1.00000024]
+        Position: [0, 0, 0]
+        Rotation: [-90, 0, 0]
+        Scale: [1, 1.00000012, 1]
       LightComponent:
         Type: Direction Light
         Data:
@@ -19,8 +19,8 @@ Scene:
       TagComponent:
         Tag: Sphere
       TransformComponent:
-        Position: [-1.49011612e-08, 0, 0]
-        Rotation: [-102.292442, -8.55792236, 134.496719]
+        Position: [-1.49011612e-08, 2.66340137, 0]
+        Rotation: [0, -0, 0]
         Scale: [0.999998212, 0.999998927, 0.999999821]
       ModelComponent:
         Path: resources/objects/sphere.fbx
@@ -31,5 +31,23 @@ Scene:
           Diffuse: [0, 0, 0]
           Specular: [1, 1, 1]
           Shininess: 11.3999996
+          Diffuse Map: None
+          Specular Map: None
+    - Entity: "{3F0FC21A-2B3B-4927-943C-C54D020590A8}"
+      TagComponent:
+        Tag: Plane
+      TransformComponent:
+        Position: [0, 0, 0]
+        Rotation: [0, -0, 0]
+        Scale: [6.81119967, 6.81119776, 6.81119776]
+      ModelComponent:
+        Path: resources/objects/plane.fbx
+      MaterialComponent:
+        Type: Blinn-Phone
+        Data:
+          Ambient: [0.135000005, 0.222499996, 0.157499999]
+          Diffuse: [0.540000021, 0.889999986, 0.629999995]
+          Specular: [0.316228002, 0.316228002, 0.316228002]
+          Shininess: 0.100000001
           Diffuse Map: None
           Specular Map: None
