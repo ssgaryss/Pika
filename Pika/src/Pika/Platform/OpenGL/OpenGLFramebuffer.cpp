@@ -244,17 +244,20 @@ namespace Pika {
 			PK_CORE_ERROR("OpenGLFramebuffer : Try to set a inappropriate depth texture to frame buffer.");
 			return;
 		}
+		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		bool IsMultisample = m_Specification.m_Samples > 1;
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
-		glDeleteTextures(1, &m_DepthStencilAttachment);
-		m_DepthStencilAttachment = 0;
-
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, vTexture->getRendererID(), 0);
-		m_DepthStencilAttachment = vTexture->getRendererID();
+		uint32_t LastDepthStencilAttachment = m_DepthStencilAttachment;
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
+			m_DepthStencilAttachment = vTexture->getRendererID();
+		}
+		else {
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, LastDepthStencilAttachment, 0);
+			m_DepthStencilAttachment = 0;
+		}
+
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			checkFramebufferStatus();
-
-		m_DepthStencilAttachment = vTexture->getRendererID();
 	}
 
 	void OpenGLFramebuffer::setColorAttachment(uint32_t vIndex, const Ref<Texture2D>& vTexture)

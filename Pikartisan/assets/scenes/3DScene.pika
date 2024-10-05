@@ -3,6 +3,20 @@ Scene:
   SceneType: Scene3D
   Skybox: assets\environment\skybox\LDR\kloofendal_48d_partly_cloudy_puresky_2k.png
   Entities:
+    - Entity: "{34EA6DBD-266E-4A17-8884-6EE48CE83CC9}"
+      TagComponent:
+        Tag: Direction Light
+      TransformComponent:
+        Position: [0, 0, 0]
+        Rotation: [-39.1285934, 0, 0]
+        Scale: [1, 0.999999762, 0.999999762]
+      LightComponent:
+        Type: Direction Light
+        Data:
+          Light Color: [1, 1, 1]
+          Intensity: 0.100000001
+          Enable Shadow: true
+          Light Region Size: 10
     - Entity: "{9C0E85E0-D0CD-4AE9-A9A9-D8B295E9B9EB}"
       TagComponent:
         Tag: Plane
@@ -25,7 +39,7 @@ Scene:
       TagComponent:
         Tag: Point Light
       TransformComponent:
-        Position: [-0.0247471929, 4.04552317, 2.63047361]
+        Position: [-0.871411383, 4.04552317, -2.18765926]
         Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
       LightComponent:

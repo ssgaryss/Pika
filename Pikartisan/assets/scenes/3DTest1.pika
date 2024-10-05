@@ -3,36 +3,24 @@ Scene:
   SceneType: Scene3D
   Skybox: resources/skybox/snowy_forest_path_01_2k.png
   Entities:
-    - Entity: "{72CC4FD9-2650-4D5C-AFC8-A89A2E0A8C61}"
+    - Entity: "{3F0FC21A-2B3B-4927-943C-C54D020590A8}"
       TagComponent:
-        Tag: Mary
+        Tag: Plane
       TransformComponent:
-        Position: [0, 0, -3.89679265]
+        Position: [0, 0, 0]
         Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
+        Scale: [6.81119967, 6.81119776, 6.81119776]
       ModelComponent:
-        Path: assets\objects\mary\Marry.obj
+        Path: resources/objects/plane.fbx
       MaterialComponent:
         Type: Blinn-Phone
         Data:
-          Ambient: [0.247250006, 0.199499995, 0.074500002]
-          Diffuse: [0.751640022, 0.606480002, 0.226480007]
-          Specular: [0.628280997, 0.555801988, 0.366064996]
-          Shininess: 0.400000006
+          Ambient: [0.135000005, 0.222499996, 0.157499999]
+          Diffuse: [0.540000021, 0.889999986, 0.629999995]
+          Specular: [0.316228002, 0.316228002, 0.316228002]
+          Shininess: 0.100000001
           Diffuse Map: None
           Specular Map: None
-    - Entity: "{0720057D-7A1B-4A77-933E-C5E82F739690}"
-      TagComponent:
-        Tag: Direction Light
-      TransformComponent:
-        Position: [0.253156424, 0, 0]
-        Rotation: [-110.031433, 22.5442963, 46.4403]
-        Scale: [0.999999464, 1.00000048, 1]
-      LightComponent:
-        Type: Direction Light
-        Data:
-          Light Color: [1, 1, 1]
-          Intensity: 1
     - Entity: "{85C8DAFF-B8F3-481B-83CB-A9D2A2B6169D}"
       TagComponent:
         Tag: Sphere
@@ -51,21 +39,35 @@ Scene:
           Shininess: 11.3999996
           Diffuse Map: None
           Specular Map: None
-    - Entity: "{3F0FC21A-2B3B-4927-943C-C54D020590A8}"
+    - Entity: "{0720057D-7A1B-4A77-933E-C5E82F739690}"
       TagComponent:
-        Tag: Plane
+        Tag: Direction Light
       TransformComponent:
-        Position: [0, 0, 0]
+        Position: [0.253156424, 0, 0]
+        Rotation: [-110.031433, 22.5442963, 46.4403]
+        Scale: [0.999999464, 1.00000048, 1]
+      LightComponent:
+        Type: Direction Light
+        Data:
+          Light Color: [1, 1, 1]
+          Intensity: 1
+          Enable Shadow: true
+          Light Region Size: 10
+    - Entity: "{72CC4FD9-2650-4D5C-AFC8-A89A2E0A8C61}"
+      TagComponent:
+        Tag: Mary
+      TransformComponent:
+        Position: [0, 0, -3.89679265]
         Rotation: [0, -0, 0]
-        Scale: [6.81119967, 6.81119776, 6.81119776]
+        Scale: [1, 1, 1]
       ModelComponent:
-        Path: resources/objects/plane.fbx
+        Path: assets\objects\mary\Marry.obj
       MaterialComponent:
         Type: Blinn-Phone
         Data:
-          Ambient: [0.135000005, 0.222499996, 0.157499999]
-          Diffuse: [0.540000021, 0.889999986, 0.629999995]
-          Specular: [0.316228002, 0.316228002, 0.316228002]
-          Shininess: 0.100000001
+          Ambient: [0.247250006, 0.199499995, 0.074500002]
+          Diffuse: [0.751640022, 0.606480002, 0.226480007]
+          Specular: [0.628280997, 0.555801988, 0.366064996]
+          Shininess: 0.400000006
           Diffuse Map: None
           Specular Map: None

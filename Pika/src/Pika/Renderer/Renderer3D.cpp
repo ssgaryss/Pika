@@ -72,15 +72,32 @@ namespace Pika {
 			return std::nullopt;
 		}
 		std::optional<uint32_t> addTexture(const Ref<Texture2D>& vTexture) {
-			if (m_TextureIndex >= m_MaxTextureSlots) return std::nullopt;
+			if (m_TextureIndex >= m_MaxTextureSlots)
+				return std::nullopt;
 			uint32_t TextureIndex = m_TextureIndex;
 			m_TextureSlots[TextureIndex] = vTexture;
 			m_TextureIndex++;
 			return TextureIndex;
 		}
+		void deleteTexture(const Ref<Texture2D>& vTexture) {
+			uint32_t TextureIndex = static_cast<uint32_t>(findTextureIndex(vTexture).value_or(0));
+			if (TextureIndex == 0) {
+				PK_CORE_WARN("Renderer3D : The texture is not exist in texture slots.");
+				return;
+			}
+			else {
+				m_TextureSlots[TextureIndex]->unbind(TextureIndex);
+				m_TextureSlots[TextureIndex] = nullptr;
+			}
+		}
 		void resetTextureSlots() {
+			for (uint32_t i = 1; i < m_MaxTextureSlots; ++i) {
+				if (m_TextureSlots[i]) {
+					m_TextureSlots[i]->unbind(i);
+					m_TextureSlots[i] = nullptr;
+				}
+			}
 			m_TextureIndex = 1;
-			m_TextureSlots.fill(nullptr);
 			m_TextureSlots[0] = m_WhiteTexture;
 		}
 		void bindTextureSlots() {
@@ -476,13 +493,6 @@ namespace Pika {
 		}
 		s_Data.m_StaticMeshVertexBuffer->setData(TransformVertices.data(), vMesh.getVerticesSize());
 
-		if (auto pBlinnPhoneMaterial = dynamic_cast<BlinnPhoneMaterial*>(vMaterial.m_Material.get())) {
-			s_Data.m_BlinnPhoneShader->bind();
-			const auto& MaterialData = pBlinnPhoneMaterial->getData();
-			s_Data.setBlinnPhoneMaterialData(MaterialData);
-			s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&s_Data.m_BlinnPhoneMaterialUniformBufferData,
-				sizeof(s_Data.m_BlinnPhoneMaterialUniformBufferData));
-		}
 		s_Data.bindTextureSlots();
 		RenderCommand::DrawIndexed(s_Data.m_StaticMeshVertexArray.get(), StaticMeshIndexBuffer->getCount());
 		s_Data.m_TextureIndex = 1;
@@ -495,7 +505,6 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 
 		if (vModel.m_Model) {
-			s_Data.resetTextureSlots();
 			for (auto& Mesh : vModel.m_Model->getMeshes()) {
 				DrawStaticMesh(vTransform, Mesh, vEntityID);
 			}
@@ -507,7 +516,15 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 
 		if (vModel.m_Model) {
-			s_Data.resetTextureSlots();
+
+			if (auto pBlinnPhoneMaterial = dynamic_cast<BlinnPhoneMaterial*>(vMaterial.m_Material.get())) {
+				s_Data.m_BlinnPhoneShader->bind();
+				const auto& MaterialData = pBlinnPhoneMaterial->getData();
+				s_Data.setBlinnPhoneMaterialData(MaterialData);
+				s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&s_Data.m_BlinnPhoneMaterialUniformBufferData,
+					sizeof(s_Data.m_BlinnPhoneMaterialUniformBufferData));
+			}
+
 			for (auto& Mesh : vModel.m_Model->getMeshes()) {
 				DrawStaticMesh(vTransform, Mesh, vMaterial, vEntityID);
 			}

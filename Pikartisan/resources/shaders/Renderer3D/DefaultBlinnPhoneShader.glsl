@@ -110,6 +110,8 @@ void main() {
 }
 
 vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewPosition, vec3 vPosition) {
+	if (vLight.m_Intensity == 0.0)
+		return vec3(0.0);
 	vec3 LightDir = normalize(-vLight.m_Direction);
 	vec3 ViewDir = normalize(vViewPosition - vPosition);
 	vec3 Normal = normalize(vNormal);
@@ -144,6 +146,8 @@ vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewPos
 }
 
 vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vViewPosition, vec3 vPosition) {
+	if (vLight.m_Intensity == 0.0)
+		return vec3(0.0);
 	vec3 LightDir = normalize(vLight.m_Position - v_Position);
 	vec3 ViewDir = normalize(vViewPosition - vPosition);
 	vec3 Normal = normalize(vNormal);
