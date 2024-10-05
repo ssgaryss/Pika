@@ -3,13 +3,31 @@ Scene:
   SceneType: Scene3D
   Skybox: resources/skybox/snowy_forest_path_01_2k.png
   Entities:
+    - Entity: "{72CC4FD9-2650-4D5C-AFC8-A89A2E0A8C61}"
+      TagComponent:
+        Tag: Mary
+      TransformComponent:
+        Position: [0, 0, -3.89679265]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      ModelComponent:
+        Path: assets\objects\mary\Marry.obj
+      MaterialComponent:
+        Type: Blinn-Phone
+        Data:
+          Ambient: [0.247250006, 0.199499995, 0.074500002]
+          Diffuse: [0.751640022, 0.606480002, 0.226480007]
+          Specular: [0.628280997, 0.555801988, 0.366064996]
+          Shininess: 0.400000006
+          Diffuse Map: None
+          Specular Map: None
     - Entity: "{0720057D-7A1B-4A77-933E-C5E82F739690}"
       TagComponent:
         Tag: Direction Light
       TransformComponent:
-        Position: [0, 0, 0]
-        Rotation: [-90, 0, 0]
-        Scale: [1, 1.00000012, 1]
+        Position: [0.253156424, 0, 0]
+        Rotation: [-110.031433, 22.5442963, 46.4403]
+        Scale: [0.999999464, 1.00000048, 1]
       LightComponent:
         Type: Direction Light
         Data:
@@ -28,7 +46,7 @@ Scene:
         Type: Blinn-Phone
         Data:
           Ambient: [0.478764474, 0.288367808, 0.288367808]
-          Diffuse: [0, 0, 0]
+          Diffuse: [0.872586846, 0.766311824, 0.232465237]
           Specular: [1, 1, 1]
           Shininess: 11.3999996
           Diffuse Map: None

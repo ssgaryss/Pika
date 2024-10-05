@@ -153,11 +153,12 @@ namespace Pika {
 
 			struct DirectionLightUniformBufferData
 			{
+				glm::mat4 m_LightSpaceMatrix = glm::mat4(1.0f); // std140中mat放前面，不然有问题，具体原因我还不知道
 				alignas(16) glm::vec3 m_Direction = glm::vec3(0.0f);    // 方向
 				alignas(16) glm::vec3 m_LightColor = glm::vec3(1.0f);   // 光源颜色
 				float m_Intensity = 0.0f;                               // 光源强度
 				uint32_t m_ShadowMapIndex = 0;
-				glm::mat4 m_LightSpaceMatrix = glm::mat4(1.0f);
+
 				void setData(const glm::vec3& vDirection, const DirectionLight::Data& vDirectionLightData) {
 					m_Direction = vDirection;
 					m_LightColor = vDirectionLightData.m_LightColor;

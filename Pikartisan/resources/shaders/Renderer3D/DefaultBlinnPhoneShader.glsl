@@ -35,11 +35,11 @@ layout(location = 1) out highp int o_EntityID;
 
 #define MAX_NUM_OF_DIRECTION_LIGHTS 1
 struct DirectionLight {
+	mat4 m_LightSpaceMatrix;
 	vec3 m_Direction;
 	vec3 m_LightColor;
 	float m_Intensity;
 	uint m_ShawdowMapIndex;
-	mat4 m_LightSpaceMatrix;
 };
 layout(std140, binding = 1) uniform DirectionLights
 {
@@ -132,12 +132,14 @@ vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewPos
 	else {
 		Specular = Spec * vLight.m_LightColor * texture(u_Textures[u_SpecularMapSlot], v_TexCoord).rgb;
 	}
+
 	if (vLight.m_ShawdowMapIndex == 0) {
 		Shadow = 0.0;
 	}
 	else {
 		Shadow = calculateDirectionLightShadow(vLight, vPosition);
 	}
+
 	return (Diffuse + Specular) * (1.0 - Shadow) * vLight.m_Intensity;
 }
 

@@ -78,7 +78,7 @@ namespace Pika {
 		LightsData extractLightsData() const;
 		SceneData extractSceneData() const;
 
-	public:
+	private:
 		Ref<Scene> m_Scene = nullptr;
 	};
 

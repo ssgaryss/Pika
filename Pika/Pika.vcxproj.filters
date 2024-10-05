@@ -228,6 +228,12 @@
     <ClInclude Include="src\Pika\Scene\Entity.h">
       <Filter>src\Pika\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Pika\Scene\Lights.h">
+      <Filter>src\Pika\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Scene\Materials.h">
+      <Filter>src\Pika\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Pika\Scene\Mesh.h">
       <Filter>src\Pika\Scene</Filter>
     </ClInclude>
@@ -235,6 +241,9 @@
       <Filter>src\Pika\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Scene\Primitive.h">
+      <Filter>src\Pika\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Scene\RenderDataExtractor.h">
       <Filter>src\Pika\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Scene\Scene.h">
@@ -247,6 +256,9 @@
       <Filter>src\Pika\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Scene\SceneSerializer.h">
+      <Filter>src\Pika\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pika\Scene\ShadowRenderer.h">
       <Filter>src\Pika\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Pika\Utils\PlatformUtils.h">
@@ -1506,10 +1518,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pika\Scene\Materials.h" />
-    <ClInclude Include="src\Pika\Scene\Lights.h" />
-    <ClInclude Include="src\Pika\Scene\RenderDataExtractor.h" />
-    <ClInclude Include="src\Pika\Scene\ShadowRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pika\Core\Application.cpp">
@@ -1629,6 +1637,9 @@
     <ClCompile Include="src\Pika\Scene\Model.cpp">
       <Filter>src\Pika\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Scene\RenderDataExtractor.cpp">
+      <Filter>src\Pika\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Pika\Scene\Scene.cpp">
       <Filter>src\Pika\Scene</Filter>
     </ClCompile>
@@ -1641,13 +1652,14 @@
     <ClCompile Include="src\Pika\Scene\SceneSerializer.cpp">
       <Filter>src\Pika\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Pika\Scene\ShadowRenderer.cpp">
+      <Filter>src\Pika\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\pkpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pika\Scene\RenderDataExtractor.cpp" />
-    <ClCompile Include="src\Pika\Scene\ShadowRenderer.cpp" />
   </ItemGroup>
 </Project>
