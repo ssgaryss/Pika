@@ -279,6 +279,8 @@ namespace Pika {
 											const auto& Data = pDirectionLight->getData();
 											Out << YAML::Key << "Light Color" << YAML::Value << Data.m_LightColor;
 											Out << YAML::Key << "Intensity" << YAML::Value << Data.m_Intensity;
+											Out << YAML::Key << "Enable Shadow" << YAML::Value << Data.m_EnableShadow;
+											Out << YAML::Key << "Light Region Size" << YAML::Value << Data.m_LightRegionSize;
 										}
 										Out << YAML::EndMap;
 									}
@@ -466,6 +468,8 @@ namespace Pika {
 							DirectionLight::Data Data;
 							Data.m_LightColor = DataNode["Light Color"].as<glm::vec3>();
 							Data.m_Intensity = DataNode["Intensity"].as<float>();
+							Data.m_EnableShadow = DataNode["Enable Shadow"].as<bool>();
+							Data.m_LightRegionSize = DataNode["Light Region Size"].as<float>();
 							LC.m_Light = CreateRef<DirectionLight>(Data);
 						}
 						else if (Type == "Point Light") {

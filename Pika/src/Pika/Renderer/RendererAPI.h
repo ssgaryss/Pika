@@ -3,16 +3,6 @@
 
 namespace Pika {
 
-	struct Color {
-		float m_Red = 0.0f;
-		float m_Green = 0.0f;
-		float m_Blue = 0.0f;
-		float m_Alpha = 1.0f;
-		Color() = default;
-		Color(float vRed, float vGreen, float vBlue, float vAlpha)
-			:m_Red{ vRed }, m_Green{ vGreen }, m_Blue{ vBlue }, m_Alpha{ vAlpha } {}
-	};
-
 	class RendererAPI
 	{
 	public:
@@ -36,8 +26,7 @@ namespace Pika {
 
 		virtual void Initialize(uint32_t vFlags = 0) = 0;
 		virtual void clear() = 0;
-		virtual void setClearColor() = 0;
-		virtual void setClearColor(Color vColor) = 0;
+		virtual void setClearColor(const glm::vec4& vColor) = 0;
 		virtual void drawIndexed(const VertexArray* vVertexArray, uint32_t vIndexCount) = 0;
 		virtual void drawLines(const VertexArray* vVertexArray, uint32_t vIndexCount) = 0;
 		virtual void setLineThickness(float vThickness) = 0;

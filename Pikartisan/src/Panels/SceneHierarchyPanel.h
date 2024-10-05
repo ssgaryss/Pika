@@ -7,7 +7,7 @@ namespace Pika
 	class SceneHierarchyPanel
 	{
 	public:
-		SceneHierarchyPanel() = default;
+		SceneHierarchyPanel();
 		SceneHierarchyPanel(const Ref<Scene>& vContext);
 		inline void setContext(const Ref<Scene>& vContext) { m_Context = vContext; m_SelectedEntity = {}; }
 		inline const Entity getSelectedEntity() const { return m_SelectedEntity; }
@@ -21,6 +21,7 @@ namespace Pika
 	private:
 		Ref<Scene> m_Context = nullptr; // Scene data
 		Entity m_SelectedEntity;
+		Ref<Texture2D> m_DefaultTexture = nullptr; // 不存在Texture时默认显示的纹理
 		bool m_IsShowSceneHirarchy = true;
 	};
 

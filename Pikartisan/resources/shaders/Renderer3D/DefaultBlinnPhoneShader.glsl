@@ -35,9 +35,11 @@ layout(location = 1) out highp int o_EntityID;
 
 #define MAX_NUM_OF_DIRECTION_LIGHTS 1
 struct DirectionLight {
+	mat4 m_LightSpaceMatrix;
 	vec3 m_Direction;
 	vec3 m_LightColor;
 	float m_Intensity;
+	uint m_ShawdowMapIndex;
 };
 layout(std140, binding = 1) uniform DirectionLights
 {
@@ -52,6 +54,7 @@ struct PointLight {
 	float m_Constant;
 	float m_Linear;
 	float m_Quadratic;
+	uint m_ShawdowMapIndex;
 };
 layout(std140, binding = 2) uniform PointLights
 {
@@ -76,8 +79,12 @@ in vec3 v_Position;
 in vec3 v_ViewPosition;
 in flat highp int v_EntityID;
 
-vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewDir);
-vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vPosition, vec3 vViewDir);
+// Lights Calculation
+vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewPosition, vec3 vPosition);
+vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vViewPosition, vec3 vPosition);
+
+// Shadow Calculation
+float calculateDirectionLightShadow(DirectionLight vLight, vec3 vPosition);
 
 void main() {
 	vec3 Result = vec3(0.0);
@@ -91,26 +98,29 @@ void main() {
 	}
 	// Direction Lights
 	for (int i = 0; i < MAX_NUM_OF_DIRECTION_LIGHTS; ++i) {
-		Result += calculateDirectionLights(u_DirectionLight[i], v_Normal, v_ViewPosition - v_Position);
+		Result += calculateDirectionLights(u_DirectionLight[i], v_Normal, v_ViewPosition, v_Position);
 	}
 	// Point Lights
 	for (int i = 0; i < MAX_NUM_OF_POINT_LIGHTS; ++i) {
-		Result += calculatePointLights(u_PointLight[i], v_Normal, v_Position, v_ViewPosition - v_Position);
+		Result += calculatePointLights(u_PointLight[i], v_Normal, v_ViewPosition, v_Position);
 	}
 	o_FragmentColor = vec4(Result, 1.0);
 
 	o_EntityID = v_EntityID;
 }
 
-vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewDir) {
+vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewPosition, vec3 vPosition) {
+	if (vLight.m_Intensity == 0.0)
+		return vec3(0.0);
 	vec3 LightDir = normalize(-vLight.m_Direction);
-	vec3 ViewDir = normalize(vViewDir);
+	vec3 ViewDir = normalize(vViewPosition - vPosition);
 	vec3 Normal = normalize(vNormal);
 	vec3 HalfDir = normalize(LightDir + ViewDir);
 	float Diff = max(dot(Normal, LightDir), 0.0);
 	float Spec = pow(max(dot(Normal, HalfDir), 0.0), u_Shininess);
 	vec3 Diffuse = vec3(1.0);
 	vec3 Specular = vec3(1.0);
+	float Shadow = 0.0;
 	if (u_DiffuseMapSlot == 0) {
 		Diffuse = Diff * vLight.m_LightColor * u_Diffuse;
 	}
@@ -124,12 +134,22 @@ vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewDir
 	else {
 		Specular = Spec * vLight.m_LightColor * texture(u_Textures[u_SpecularMapSlot], v_TexCoord).rgb;
 	}
-	return (Diffuse + Specular) * vLight.m_Intensity;
+
+	if (vLight.m_ShawdowMapIndex == 0) {
+		Shadow = 0.0;
+	}
+	else {
+		Shadow = calculateDirectionLightShadow(vLight, vPosition);
+	}
+
+	return (Diffuse + Specular) * (1.0 - Shadow) * vLight.m_Intensity;
 }
 
-vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vPosition, vec3 vViewDir) {
+vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vViewPosition, vec3 vPosition) {
+	if (vLight.m_Intensity == 0.0)
+		return vec3(0.0);
 	vec3 LightDir = normalize(vLight.m_Position - v_Position);
-	vec3 ViewDir = normalize(vViewDir);
+	vec3 ViewDir = normalize(vViewPosition - vPosition);
 	vec3 Normal = normalize(vNormal);
 	vec3 HalfDir = normalize(LightDir + ViewDir);
 	float Distance = length(vLight.m_Position - vPosition);
@@ -152,6 +172,17 @@ vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vPosition, vec3 
 		Specular = Spec * vLight.m_LightColor * texture(u_Textures[u_SpecularMapSlot], v_TexCoord).rgb;
 	}
 	return (Diffuse + Specular) * vLight.m_Intensity * Attenuation;
+}
+
+float calculateDirectionLightShadow(DirectionLight vLight, vec3 vPosition) {
+	vec4 LightSpacePosition = vLight.m_LightSpaceMatrix * vec4(vPosition, 1.0);
+	vec3 ProjectionCoords = LightSpacePosition.xyz / LightSpacePosition.w; // 从齐次坐标转换为欧拉坐标
+	ProjectionCoords = ProjectionCoords * 0.5 + 0.5; // range[0, 1]
+	float ClosestDepth = texture(u_Textures[vLight.m_ShawdowMapIndex], ProjectionCoords.xy).r;
+	float CurrentDepth = ProjectionCoords.z;
+	float Bias = 0.005; // 偏移量，可以根据场景调整大小
+	float Shadow = (CurrentDepth - Bias) > ClosestDepth ? 1.0 : 0.0;
+	return Shadow;
 }
 
 #FRAGMENT_END()

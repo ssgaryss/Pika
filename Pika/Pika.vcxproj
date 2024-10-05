@@ -143,9 +143,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Pika\Scene\RenderDataExtractor.h" />
-    <ClInclude Include="src\Pika\Scene\Lights.h" />
-    <ClInclude Include="src\Pika\Scene\Materials.h" />
     <ClInclude Include="src\Pika.h" />
     <ClInclude Include="src\Pika\Core\Application.h" />
     <ClInclude Include="src\Pika\Core\Base.h" />
@@ -199,13 +196,17 @@
     <ClInclude Include="src\Pika\Renderer\VertexArray.h" />
     <ClInclude Include="src\Pika\Scene\Components.h" />
     <ClInclude Include="src\Pika\Scene\Entity.h" />
+    <ClInclude Include="src\Pika\Scene\Lights.h" />
+    <ClInclude Include="src\Pika\Scene\Materials.h" />
     <ClInclude Include="src\Pika\Scene\Mesh.h" />
     <ClInclude Include="src\Pika\Scene\Model.h" />
     <ClInclude Include="src\Pika\Scene\Primitive.h" />
+    <ClInclude Include="src\Pika\Scene\RenderDataExtractor.h" />
     <ClInclude Include="src\Pika\Scene\Scene.h" />
     <ClInclude Include="src\Pika\Scene\SceneCamera.h" />
     <ClInclude Include="src\Pika\Scene\SceneRenderer.h" />
     <ClInclude Include="src\Pika\Scene\SceneSerializer.h" />
+    <ClInclude Include="src\Pika\Scene\ShadowRenderer.h" />
     <ClInclude Include="src\Pika\Utils\PlatformUtils.h" />
     <ClInclude Include="src\pkpch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
@@ -627,7 +628,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Pika\Scene\RenderDataExtractor.cpp" />
     <ClCompile Include="src\Pika\Core\Application.cpp" />
     <ClCompile Include="src\Pika\Core\Layer.cpp" />
     <ClCompile Include="src\Pika\Core\LayerStack.cpp" />
@@ -667,10 +667,12 @@
     <ClCompile Include="src\Pika\Scene\Entity.cpp" />
     <ClCompile Include="src\Pika\Scene\Mesh.cpp" />
     <ClCompile Include="src\Pika\Scene\Model.cpp" />
+    <ClCompile Include="src\Pika\Scene\RenderDataExtractor.cpp" />
     <ClCompile Include="src\Pika\Scene\Scene.cpp" />
     <ClCompile Include="src\Pika\Scene\SceneCamera.cpp" />
     <ClCompile Include="src\Pika\Scene\SceneRenderer.cpp" />
     <ClCompile Include="src\Pika\Scene\SceneSerializer.cpp" />
+    <ClCompile Include="src\Pika\Scene\ShadowRenderer.cpp" />
     <ClCompile Include="src\pkpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

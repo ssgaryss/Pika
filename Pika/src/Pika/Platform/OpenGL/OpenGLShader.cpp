@@ -1,6 +1,7 @@
 #include "pkpch.h"
 #include "OpenGLShader.h"
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Pika
 {
@@ -170,7 +171,7 @@ namespace Pika
 			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
-		glUniformMatrix3fv(Location, 1, GL_FALSE, &vValue[0][0]);
+		glUniformMatrix3fv(Location, 1, GL_FALSE, glm::value_ptr(vValue));
 	}
 
 	void OpenGLShader::setMat4(const std::string& vName, const glm::mat4& vValue) const
@@ -181,7 +182,7 @@ namespace Pika
 			PK_CORE_WARN(R"(OpenGLShader : Can not find variable "{0}" in shader "{1}"!)", vName, m_Name);
 			return;
 		}
-		glUniformMatrix4fv(Location, 1, GL_FALSE, &vValue[0][0]);
+		glUniformMatrix4fv(Location, 1, GL_FALSE, glm::value_ptr(vValue));
 	}
 
 	void OpenGLShader::setBool(const std::string& vName, const bool vValue) const

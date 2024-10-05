@@ -17,12 +17,7 @@ namespace Pika {
 		s_RendererAPI->clear();
 	}
 
-	void RenderCommand::SetClearColor()
-	{
-		s_RendererAPI->setClearColor();
-	}
-
-	void RenderCommand::SetClearColor(const Color& vColor)
+	void RenderCommand::SetClearColor(const glm::vec4& vColor)
 	{
 		s_RendererAPI->setClearColor(vColor);
 	}

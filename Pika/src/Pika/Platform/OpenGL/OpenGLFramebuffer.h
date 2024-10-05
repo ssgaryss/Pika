@@ -20,10 +20,14 @@ namespace Pika
 		// TODO : readRegion()
 		void clearAttachment(uint32_t vAttachmentIndex, int value) override;
 
+		void setDepthStencilAttachment(const Ref<Texture2D>& vTexture) override;
+		void setColorAttachment(uint32_t vIndex, const Ref<Texture2D>& vTexture) override;
 		inline uint32_t getDepthStencilAttachmentRendererID() const override { return m_DepthStencilAttachment; }
 		inline uint32_t getColorAttachmentRendererID(uint32_t vIndex = 0) const override { return m_ColorAttachments[vIndex]; }
 		inline const FramebufferSpecification& getFramebufferSpecification() const override { return m_Specification; }
 
+	private:
+		void checkFramebufferStatus() const;
 	private:
 		uint32_t m_RendererID = 0;
 		FramebufferSpecification m_Specification;

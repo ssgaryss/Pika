@@ -6,9 +6,16 @@
 
 namespace Pika {
 
+
+	SceneHierarchyPanel::SceneHierarchyPanel()
+	{
+		m_DefaultTexture = Texture2D::Create("resources/icons/ComponentPanel/DefaultTexture.png");
+	}
+
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& vContext)
 	{
 		setContext(vContext);
+		m_DefaultTexture = Texture2D::Create("resources/icons/ComponentPanel/DefaultTexture.png");
 	}
 
 	void SceneHierarchyPanel::onImGuiRender()
@@ -404,17 +411,15 @@ namespace Pika {
 
 		// Only 2D 
 		if (m_Context->getSceneType() == Scene::SceneType::Scene2D) {
-			drawEntityComponent<SpriteRendererComponent>("Sprite Renderer", vEntity, [](auto& vSpriteRendererComponent) {
-				static Ref<Texture2D> DefaultTexture = Texture2D::Create("resources/icons/ComponentPanel/DefaultTexture.png");
-				uintptr_t Texture = vSpriteRendererComponent.m_Texture ? static_cast<uintptr_t>(vSpriteRendererComponent.m_Texture->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
+			drawEntityComponent<SpriteRendererComponent>("Sprite Renderer", vEntity, [this](auto& vSpriteRendererComponent) {
+				uintptr_t Texture = vSpriteRendererComponent.m_Texture ? static_cast<uintptr_t>(vSpriteRendererComponent.m_Texture->getRendererID()) 
+					: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
 
-				//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 });
 				ImGui::Columns(2);
 				ImGui::SetColumnWidth(0, 100.0f);
 				ImGui::Text("Texture");
 				ImGui::NextColumn();
 				ImGui::ImageButton(reinterpret_cast<ImTextureID>(Texture), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
-				ImGui::NextColumn();
 				if (ImGui::BeginDragDropTarget()) {
 					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
 						std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
@@ -423,7 +428,15 @@ namespace Pika {
 					}
 					ImGui::EndDragDropTarget();
 				}
-				//ImGui::PopStyleVar();
+				if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+					ImGui::OpenPopup("SpriteTexture");
+				}
+				if (ImGui::BeginPopup("SpriteTexture")) {
+					if (ImGui::MenuItem("Delete"))
+						vSpriteRendererComponent.m_Texture = nullptr;
+					ImGui::EndPopup();
+				}
+				ImGui::NextColumn();
 				ImGui::Text("Tile Factor");
 				ImGui::NextColumn();
 				ImGui::DragFloat2("##Tiling Factor", glm::value_ptr(vSpriteRendererComponent.m_TilingFactor), 0.05f, 0.0f, 100000.0f);
@@ -456,7 +469,7 @@ namespace Pika {
 
 		// Only 3D 
 		if (m_Context->getSceneType() == Scene::SceneType::Scene3D) {
-			drawEntityComponent<LightComponent>("Light", vEntity, [](auto& vLightComponent) {
+			drawEntityComponent<LightComponent>("Light", vEntity, [this](auto& vLightComponent) {
 				auto& Light = vLightComponent.m_Light;
 				std::string Type = Light ? Light->getType() : "None";
 				ImGui::Columns(2);
@@ -474,6 +487,20 @@ namespace Pika {
 					ImGui::Text("Intensity");
 					ImGui::NextColumn();
 					ImGui::DragFloat("##Intensity", &LightData.m_Intensity, 0.05f, 0.0f, 100000.0f);
+					ImGui::NextColumn();
+					ImGui::Text("Shadow");
+					ImGui::NextColumn();
+					ImGui::Checkbox("##Shadow", &LightData.m_EnableShadow);
+					ImGui::NextColumn();
+					ImGui::Text("Shadow Map");
+					ImGui::NextColumn();
+					uintptr_t ShadowMap = LightData.m_ShadowMap ? static_cast<uintptr_t>(LightData.m_ShadowMap->getRendererID())
+						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
+					ImGui::ImageButton(reinterpret_cast<ImTextureID>(ShadowMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					ImGui::NextColumn();
+					ImGui::Text("Light Size");
+					ImGui::NextColumn();
+					ImGui::DragFloat("##Light Size", &LightData.m_LightRegionSize, 0.1f, 10.0f, 1000.0f);
 					ImGui::NextColumn();
 				}
 				else if (auto pPointLight = dynamic_cast<PointLight*>(vLightComponent.m_Light.get())) {
@@ -505,7 +532,7 @@ namespace Pika {
 				}
 				ImGui::Columns();
 				});
-			drawEntityComponent<MaterialComponent>("Material", vEntity, [](auto& vMaterialComponent) {
+			drawEntityComponent<MaterialComponent>("Material", vEntity, [this](auto& vMaterialComponent) {
 				auto& Material = vMaterialComponent.m_Material;
 				std::string Type = Material ? Material->getType() : "None";
 				ImGui::Columns(2);
@@ -534,8 +561,8 @@ namespace Pika {
 					ImGui::NextColumn();
 					ImGui::Text("Diffuse Map");
 					ImGui::NextColumn();
-					static Ref<Texture2D> DefaultTexture = Texture2D::Create("resources/icons/ComponentPanel/DefaultTexture.png");
-					uintptr_t DiffuseMap = MaterialData.m_DiffuseMap ? static_cast<uintptr_t>(MaterialData.m_DiffuseMap->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
+					uintptr_t DiffuseMap = MaterialData.m_DiffuseMap ? static_cast<uintptr_t>(MaterialData.m_DiffuseMap->getRendererID()) 
+						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
 					ImGui::ImageButton(reinterpret_cast<ImTextureID>(DiffuseMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
 					if (ImGui::BeginDragDropTarget()) {
 						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
@@ -556,7 +583,8 @@ namespace Pika {
 					ImGui::NextColumn();
 					ImGui::Text("Specular Map");
 					ImGui::NextColumn();
-					uintptr_t SpecularMap = MaterialData.m_SpecularMap ? static_cast<uintptr_t>(MaterialData.m_SpecularMap->getRendererID()) : static_cast<uintptr_t>(DefaultTexture->getRendererID());
+					uintptr_t SpecularMap = MaterialData.m_SpecularMap ? static_cast<uintptr_t>(MaterialData.m_SpecularMap->getRendererID()) 
+						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
 					ImGui::ImageButton(reinterpret_cast<ImTextureID>(SpecularMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
 					if (ImGui::BeginDragDropTarget()) {
 						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中

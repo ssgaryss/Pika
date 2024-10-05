@@ -24,9 +24,9 @@ namespace Pika {
 
 	struct StaticMeshVertexData
 	{
-		glm::vec3 m_Position;                   // 顶点位置 (x, y, z)
-		glm::vec3 m_Normal;                     // 顶点法线
-		glm::vec2 m_TexCoords;                  // 纹理坐标 (u, v)
+		glm::vec3 m_Position = glm::vec3(0.0f);      // 顶点位置 (x, y, z)
+		glm::vec3 m_Normal = glm::vec3(0.0f);        // 顶点法线
+		glm::vec2 m_TexCoords = glm::vec2(0.0f);     // 纹理坐标 (u, v)
 
 		int m_EntityID = -1;
 		StaticMeshVertexData() = default;

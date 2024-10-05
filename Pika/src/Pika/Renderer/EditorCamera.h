@@ -27,9 +27,9 @@ namespace Pika {
 		inline float getYaw() const { return m_Yaw; }
 		inline const glm::mat4& getViewMatrix() const { return m_ViewMatrix; }
 		inline glm::mat4 getViewProjectionMatrix() const { return m_ProjectionMatrix * m_ViewMatrix; }
-		inline glm::vec3 getUpDirection() const { return glm::rotate(getOrientation(), glm::vec3{ 0.0f, 1.0f, 0.0f }); }
-		inline glm::vec3 getRightDirection() const { return glm::rotate(getOrientation(), glm::vec3{ 1.0f, 0.0f, 0.0f }); }
-		inline glm::vec3 getForwardDirection() const { return glm::rotate(getOrientation(), glm::vec3{ 0.0f, 0.0f, -1.0f }); } // 满足OpenGL习惯，相机看向-z
+		inline glm::vec3 getUpDirection() const { return glm::rotate(getOrientation(), glm::vec3(0.0f, 1.0f, 0.0f)); }
+		inline glm::vec3 getRightDirection() const { return glm::rotate(getOrientation(), glm::vec3(1.0f, 0.0f, 0.0f)); }
+		inline glm::vec3 getForwardDirection() const { return glm::rotate(getOrientation(), glm::vec3(0.0f, 0.0f, -1.0f)); } // 满足OpenGL习惯，相机看向-z
 		inline glm::quat getOrientation() const { return glm::quat(glm::radians(glm::vec3(-m_Pitch, -m_Yaw, 0.0f))); } // 将世界坐标系转换到相机坐标系的四元数
 	private:
 		void updateCameraViewMatrix();
