@@ -500,7 +500,7 @@ namespace Pika {
 					ImGui::NextColumn();
 					ImGui::Text("Light Size");
 					ImGui::NextColumn();
-					ImGui::DragFloat("##Light Size", &LightData.m_LightRegionSize, 0.1f, 10.0f, 1000.0f);
+					ImGui::DragFloat("##Direction Light Size", &LightData.m_LightSize, 0.1f, 10.0f, 1000.0f);
 					ImGui::NextColumn();
 				}
 				else if (auto pPointLight = dynamic_cast<PointLight*>(vLightComponent.m_Light.get())) {
@@ -523,6 +523,11 @@ namespace Pika {
 						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
 					ImGui::ImageButton(reinterpret_cast<ImTextureID>(ShadowMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
 					ImGui::NextColumn();
+					ImGui::Text("Light Size");
+					ImGui::NextColumn();
+					ImGui::DragFloat("##Point Light Size", &LightData.m_LightSize, 0.1f, 5.0f, 100000.0f);
+					ImGui::NextColumn();
+
 				}
 				ImGui::Columns();
 				});

@@ -3,27 +3,49 @@ Scene:
   SceneType: Scene3D
   Skybox: assets\environment\skybox\LDR\kloofendal_48d_partly_cloudy_puresky_2k.png
   Entities:
-    - Entity: "{34EA6DBD-266E-4A17-8884-6EE48CE83CC9}"
+    - Entity: "{76C3B237-1621-42F3-A754-8D8945B31A63}"
       TagComponent:
-        Tag: Direction Light
+        Tag: Plane
       TransformComponent:
-        Position: [0, 0, 0]
-        Rotation: [-39.1285934, 0, 0]
-        Scale: [1, 0.999999762, 0.999999762]
-      LightComponent:
-        Type: Direction Light
+        Position: [0, 5, -5]
+        Rotation: [89.9999847, -0, 0]
+        Scale: [10, 4.99965906, 4.99983454]
+      ModelComponent:
+        Path: resources/objects/plane.fbx
+      MaterialComponent:
+        Type: Blinn-Phone
         Data:
-          Light Color: [1, 1, 1]
-          Intensity: 0.100000001
-          Enable Shadow: true
-          Light Region Size: 10
+          Ambient: [0.247250006, 0.199499995, 0.074500002]
+          Diffuse: [0.751640022, 0.606480002, 0.226480007]
+          Specular: [0.628280997, 0.555801988, 0.366064996]
+          Shininess: 0.400000006
+          Diffuse Map: None
+          Specular Map: None
+    - Entity: "{72F435AD-7ECD-4320-A3B8-8E803E2EFA34}"
+      TagComponent:
+        Tag: Mary
+      TransformComponent:
+        Position: [0, 0, -1.09509921]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      ModelComponent:
+        Path: assets\objects\mary\Marry.obj
+      MaterialComponent:
+        Type: Blinn-Phone
+        Data:
+          Ambient: [1, 1, 1]
+          Diffuse: [1, 1, 1]
+          Specular: [1, 1, 1]
+          Shininess: 0.400000006
+          Diffuse Map: assets\objects\mary\MC003_Kozakura_Mari.png
+          Specular Map: assets\objects\mary\MC003_Kozakura_Mari.png
     - Entity: "{9C0E85E0-D0CD-4AE9-A9A9-D8B295E9B9EB}"
       TagComponent:
         Tag: Plane
       TransformComponent:
         Position: [0, 0, 0]
         Rotation: [0, -0, 0]
-        Scale: [5.31999969, 5.31999969, 5.31999969]
+        Scale: [10, 5, 5]
       ModelComponent:
         Path: resources/objects/plane.fbx
       MaterialComponent:
@@ -39,7 +61,7 @@ Scene:
       TagComponent:
         Tag: Point Light
       TransformComponent:
-        Position: [-0.871411383, 4.04552317, -2.18765926]
+        Position: [0.171244919, 3.19342422, 0.626421332]
         Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
       LightComponent:
@@ -50,21 +72,5 @@ Scene:
           Constant: 1
           Linear: 0.0700000003
           Quadratic: 0.0170000009
-    - Entity: "{72F435AD-7ECD-4320-A3B8-8E803E2EFA34}"
-      TagComponent:
-        Tag: Mary
-      TransformComponent:
-        Position: [0, 0, 0.317122698]
-        Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
-      ModelComponent:
-        Path: assets\objects\mary\Marry.obj
-      MaterialComponent:
-        Type: Blinn-Phone
-        Data:
-          Ambient: [1, 1, 1]
-          Diffuse: [1, 1, 1]
-          Specular: [1, 1, 1]
-          Shininess: 0.400000006
-          Diffuse Map: assets\objects\mary\MC003_Kozakura_Mari.png
-          Specular Map: assets\objects\mary\MC003_Kozakura_Mari.png
+          Enable Shadow: true
+          Light Size: 7.9000001

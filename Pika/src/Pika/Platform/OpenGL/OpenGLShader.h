@@ -32,14 +32,14 @@ namespace Pika
 		void setBool(const std::string& vName, const bool vValue) const override;
 		void setIntArray(const std::string& vName, const int* vValue, uint32_t vCount) const override;
 	private:
-		void compileAndLinkShader(const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc);
+		void compileAndLinkShader();
 		std::string readFile(const std::filesystem::path& vPath);
 		std::unordered_map<GLenum, std::string> preProcess(const std::string& vSources); //Analyse the shaders in file
 	private:
 		uint32_t m_RendererID = 0; //shader program ID
-		std::string m_Name;
+		std::string m_Name = "Untitled";
 		std::filesystem::path m_FilePath;
-		std::unordered_map<GLenum, std::string> m_OpenGLSourceCode;
+		std::unordered_map<GLenum, std::string> m_ShadersSourceCode;
 
 	};
 

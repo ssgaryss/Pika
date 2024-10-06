@@ -3,6 +3,40 @@ Scene:
   SceneType: Scene3D
   Skybox: assets\environment\skybox\LDR\kloofendal_48d_partly_cloudy_puresky_2k.png
   Entities:
+    - Entity: "{231A0D6F-D6B4-425C-A496-D0502332F726}"
+      TagComponent:
+        Tag: Point Light
+      TransformComponent:
+        Position: [4.40913725, 1.16791773, -4.71681881]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      LightComponent:
+        Type: Point Light
+        Data:
+          Light Color: [0.926640928, 0.132377267, 0.132377267]
+          Intensity: 0.300000012
+          Constant: 1
+          Linear: 0.0700000003
+          Quadratic: 0.0170000009
+          Enable Shadow: true
+          Light Size: 12.8999996
+    - Entity: "{F300151F-5767-45E6-A8F8-87A6DBE4134E}"
+      TagComponent:
+        Tag: Point Light
+      TransformComponent:
+        Position: [-0.745692372, 2.74122596, 0.101824284]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      LightComponent:
+        Type: Point Light
+        Data:
+          Light Color: [0.815538824, 0.826254845, 0.271164715]
+          Intensity: 0.349999994
+          Constant: 1
+          Linear: 0.0700000003
+          Quadratic: 0.0170000009
+          Enable Shadow: true
+          Light Size: 8.30000019
     - Entity: "{486463E2-0833-4B3E-B95C-1FA774CCEFC8}"
       TagComponent:
         Tag: Cube
@@ -52,7 +86,7 @@ Scene:
           Light Color: [1, 1, 1]
           Intensity: 0.449999988
           Enable Shadow: true
-          Light Region Size: 10
+          Light Size: 10
     - Entity: "{85C8DAFF-B8F3-481B-83CB-A9D2A2B6169D}"
       TagComponent:
         Tag: Sphere
