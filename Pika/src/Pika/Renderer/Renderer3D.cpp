@@ -193,6 +193,11 @@ namespace Pika {
 
 			std::array<DirectionLightUniformBufferData, s_MaxDirectionLightsNumber> m_DirectionLightsData;
 			std::array<PointLightUniformBufferData, s_MaxPointLightsNumber> m_PointLightsData;
+			// TODO : Spot Lights
+			// Shadow Maps
+			std::array<Ref<Texture2D>, s_MaxDirectionLightsNumber> m_DirectionLightShadowMaps;
+			std::array<Ref<Cubemap>, s_MaxPointLightsNumber> m_PointLightShadowMaps;
+			// TODO : Spot Lights
 		};
 		LightsUniformBufferData m_LightsData;
 
