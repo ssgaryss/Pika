@@ -18,7 +18,7 @@ Visual Studio 2022 is recommended, Pika is officially untested on other developm
    Run the Windows-GenProject.bat file found in scripts folder. This will build the project with VS2022.
 ## Demo
 ### Pika3D (Shadow map)
-![Shadow map.](examples/Demo3D_Shadow.png)
+![Shadow map.](examples/Demo3D_Shadows.png)
 ### Pika3D (Point Lights & Blinn-Phone Material)
 ![Point Lights & Blinn-Phone Material.](examples/Demo3D_Blinn-Phone.png)
 ### Pika2D (2D Physical effects)
