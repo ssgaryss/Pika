@@ -20,5 +20,5 @@ Visual Studio 2022 is recommended, Pika is officially untested on other developm
 ### Pika3D (Multi-lights with Shadows, Direction Light & Point Lights)
 ![Shadow map.](examples/Demo3D_Shadows.png)
 ### Pika2D (2D Physical effects)
-![2D Physical effects.](examples/Demo2D_Phsics2D.png)
+![2D Physical effects.](examples/Demo2D_Physics2D.png)
    
