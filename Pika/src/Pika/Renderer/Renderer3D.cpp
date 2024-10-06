@@ -395,7 +395,7 @@ namespace Pika {
 		s_Data.m_CubemapShadowMapShader = Shader::Create("resources/shaders/Renderer3D/CubemapShadowMap.glsl");
 		s_Data.m_VertexPositionDataBatch = CreateRef<RenderBatch<StaticMeshVertexData>>(Renderer3DData::s_MaxTriangleVerticesPerBatch);
 		s_Data.m_ShadowMapBuffer = Framebuffer::Create({ 2048, 2048, 1,
-			{ TextureFormat::DEPTH24STENCIL8 }, false });
+			{ TextureFormat::DEPTH32F }, false });
 		s_Data.m_VertexPositionArray->unbind();
 
 		PK_CORE_INFO("Success to initialize Pika 3D Renderer!");
@@ -706,21 +706,13 @@ namespace Pika {
 										TextureFormat::DEPTH24STENCIL8, false });
 								}
 								s_Data.m_ShadowMapBuffer->setDepthStencilAttachment(Data.m_ShadowMap);
-								//// Mesh数据及索引
-								//s_Data.m_VertexPositionBuffer->setData(s_Data.m_VertexPositionDataBatch->data(), s_Data.m_VertexPositionDataBatch->size());
-								//const std::vector<uint32_t> Indices = s_Data.m_VertexPositionDataBatch->getIndices();
-								//uint32_t IndicesCount = s_Data.m_VertexPositionDataBatch->getIndicesCount();
-								//Ref<IndexBuffer> VertexPositionIndexBuffer = IndexBuffer::Create(Indices.data(), IndicesCount);
-								//s_Data.m_VertexPositionArray->setIndexBuffer(VertexPositionIndexBuffer);
-								//// 渲染Shadow Map
-								//s_Data.m_Texture2DShadowMapShader->bind();
-								//glm::mat4 LightSpaceMatrix = Utils::getLightSpaceMatrix(Transform.m_Rotation, Data);
-								//s_Data.m_Texture2DShadowMapShader->setMat4("u_LightSpaceMatrix", LightSpaceMatrix);
-								//RenderCommand::Clear();
-								//RenderCommand::DrawIndexed(s_Data.m_VertexPositionArray.get(), s_Data.m_VertexPositionIndexCount);
-								//// 结束
-								//s_Data.m_Statistics.m_DrawCalls++;
-								//s_Data.m_Texture2DShadowMapShader->unbind();
+								// 渲染Shadow Map
+								s_Data.m_CubemapShadowMapShader->bind();
+								RenderCommand::Clear();
+								RenderCommand::DrawIndexed(s_Data.m_VertexPositionArray.get(), s_Data.m_VertexPositionIndexCount);
+								// 结束
+								s_Data.m_Statistics.m_DrawCalls++;
+								s_Data.m_CubemapShadowMapShader->unbind();
 								s_Data.m_ShadowMapBuffer->unbind();
 
 								ShadowMapsNumber++;

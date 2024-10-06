@@ -145,9 +145,15 @@ namespace Pika {
 			Utils::BindTexuture(IsMultisample, m_DepthStencilAttachment);
 			switch (m_DepthStencilAttachmentSpecification.m_TextureFormat)
 			{
+			case Pika::TextureFormat::DEPTH32F:
+				Utils::AttachDepthTexture(m_DepthStencilAttachment, m_Specification.m_Samples,
+					Utils::PikaTextureFormatToGLInternalFormat(m_DepthStencilAttachmentSpecification.m_TextureFormat),
+					GL_DEPTH_ATTACHMENT, m_Specification.m_Width, m_Specification.m_Height);
+				break;
 			case Pika::TextureFormat::DEPTH24STENCIL8:
 				Utils::AttachDepthTexture(m_DepthStencilAttachment, m_Specification.m_Samples,
-					GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.m_Width, m_Specification.m_Height);
+					Utils::PikaTextureFormatToGLInternalFormat(m_DepthStencilAttachmentSpecification.m_TextureFormat),
+					GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.m_Width, m_Specification.m_Height);
 				break;
 			default:
 				PK_CORE_WARN("OpenGLFramebuffer : Unknown type of depth attachment.");

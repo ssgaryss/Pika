@@ -8,6 +8,7 @@ namespace Pika {
 
 		GLenum PikaTextureFormatToGLDataFormat(TextureFormat vFormat);
 		GLenum PikaTextureFormatToGLInternalFormat(TextureFormat vFormat);
+		GLenum PikaTextureFormatToGLDataType(TextureFormat vFormat);
 
 	}
 
