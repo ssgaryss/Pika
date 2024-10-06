@@ -84,7 +84,7 @@ namespace Pika {
 			Renderer3D::DrawShadowMaps(LightsData, SceneData); // Shadow Map
 			beginFrame();
 			Renderer3D::BeginScene(vEditorCamera, LightsData);
-			Renderer3D::RenderSkybox(m_RenderDataExtractor->extractSkybox());
+			Renderer3D::DrawSkybox(m_RenderDataExtractor->extractSkybox());
 			if (m_Settings.m_ShowGrid)
 				Renderer3D::DrawGrid(glm::mat4(1.0f), 100.5f);
 			auto NoMaterialModelsData = m_RenderDataExtractor->extractNoMaterialModelsWithEntityID();

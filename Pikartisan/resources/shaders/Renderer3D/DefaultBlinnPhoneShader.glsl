@@ -39,7 +39,7 @@ struct DirectionLight {
 	vec3 m_Direction;
 	vec3 m_LightColor;
 	float m_Intensity;
-	uint m_ShawdowMapIndex;
+	int m_ShawdowMapIndex;
 };
 layout(std140, binding = 1) uniform DirectionLights
 {
@@ -54,7 +54,8 @@ struct PointLight {
 	float m_Constant;
 	float m_Linear;
 	float m_Quadratic;
-	uint m_ShawdowMapIndex;
+	int m_ShawdowMapIndex;
+	float m_LightSize;
 };
 layout(std140, binding = 2) uniform PointLights
 {
@@ -71,7 +72,9 @@ layout(std140, binding = 4) uniform BlinnPhoneMaterial
 	uint u_SpecularMapSlot;
 };
 
-uniform sampler2D u_Textures[32];
+uniform sampler2D u_Textures[27]; // Slots : 0, 1, 2, ..., 26
+uniform sampler2D u_DirectionLightShadowMap; // Slots : 27
+uniform samplerCube u_PointLightShadowMaps[4]; // Slots : 28, 29, 30, 31
 
 in vec3 v_Normal;
 in vec2 v_TexCoord;
@@ -85,6 +88,7 @@ vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vViewPosition, v
 
 // Shadow Calculation
 float calculateDirectionLightShadow(DirectionLight vLight, vec3 vPosition);
+float calculatePointLightShadow(PointLight vLight, vec3 vPosition);
 
 void main() {
 	vec3 Result = vec3(0.0);
@@ -135,12 +139,7 @@ vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewPos
 		Specular = Spec * vLight.m_LightColor * texture(u_Textures[u_SpecularMapSlot], v_TexCoord).rgb;
 	}
 
-	if (vLight.m_ShawdowMapIndex == 0) {
-		Shadow = 0.0;
-	}
-	else {
-		Shadow = calculateDirectionLightShadow(vLight, vPosition);
-	}
+	Shadow = calculateDirectionLightShadow(vLight, vPosition);
 
 	return (Diffuse + Specular) * (1.0 - Shadow) * vLight.m_Intensity;
 }
@@ -158,6 +157,7 @@ vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vViewPosition, v
 	float Spec = pow(max(dot(Normal, HalfDir), 0.0), u_Shininess);
 	vec3 Diffuse = vec3(1.0);
 	vec3 Specular = vec3(1.0);
+	float Shadow = 0.0;
 	if (u_DiffuseMapSlot == 0) {
 		Diffuse = Diff * vLight.m_LightColor * u_Diffuse;
 	}
@@ -171,15 +171,31 @@ vec3 calculatePointLights(PointLight vLight, vec3 vNormal, vec3 vViewPosition, v
 	else {
 		Specular = Spec * vLight.m_LightColor * texture(u_Textures[u_SpecularMapSlot], v_TexCoord).rgb;
 	}
-	return (Diffuse + Specular) * vLight.m_Intensity * Attenuation;
+
+	Shadow = calculatePointLightShadow(vLight, vPosition);
+
+	return (Diffuse + Specular) * (1.0 - Shadow) * vLight.m_Intensity * Attenuation;
 }
 
 float calculateDirectionLightShadow(DirectionLight vLight, vec3 vPosition) {
+	if (vLight.m_ShawdowMapIndex == -1)
+		return 0.0;
 	vec4 LightSpacePosition = vLight.m_LightSpaceMatrix * vec4(vPosition, 1.0);
 	vec3 ProjectionCoords = LightSpacePosition.xyz / LightSpacePosition.w; // 从齐次坐标转换为欧拉坐标
 	ProjectionCoords = ProjectionCoords * 0.5 + 0.5; // range[0, 1]
-	float ClosestDepth = texture(u_Textures[vLight.m_ShawdowMapIndex], ProjectionCoords.xy).r;
+	float ClosestDepth = texture(u_DirectionLightShadowMap, ProjectionCoords.xy).r;
 	float CurrentDepth = ProjectionCoords.z;
+	float Bias = 0.005; // 偏移量，可以根据场景调整大小
+	float Shadow = (CurrentDepth - Bias) > ClosestDepth ? 1.0 : 0.0;
+	return Shadow;
+}
+
+float calculatePointLightShadow(PointLight vLight, vec3 vPosition) {
+	if (vLight.m_ShawdowMapIndex == -1)
+		return 0.0;
+	vec3 LightToPosition = vPosition - vLight.m_Position;
+	float ClosestDepth = texture(u_PointLightShadowMaps[vLight.m_ShawdowMapIndex], LightToPosition).r;
+	float CurrentDepth = length(LightToPosition / vLight.m_LightSize);
 	float Bias = 0.005; // 偏移量，可以根据场景调整大小
 	float Shadow = (CurrentDepth - Bias) > ClosestDepth ? 1.0 : 0.0;
 	return Shadow;

@@ -145,9 +145,15 @@ namespace Pika {
 			Utils::BindTexuture(IsMultisample, m_DepthStencilAttachment);
 			switch (m_DepthStencilAttachmentSpecification.m_TextureFormat)
 			{
+			case Pika::TextureFormat::DEPTH32F:
+				Utils::AttachDepthTexture(m_DepthStencilAttachment, m_Specification.m_Samples,
+					Utils::PikaTextureFormatToGLInternalFormat(m_DepthStencilAttachmentSpecification.m_TextureFormat),
+					GL_DEPTH_ATTACHMENT, m_Specification.m_Width, m_Specification.m_Height);
+				break;
 			case Pika::TextureFormat::DEPTH24STENCIL8:
 				Utils::AttachDepthTexture(m_DepthStencilAttachment, m_Specification.m_Samples,
-					GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.m_Width, m_Specification.m_Height);
+					Utils::PikaTextureFormatToGLInternalFormat(m_DepthStencilAttachmentSpecification.m_TextureFormat),
+					GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.m_Width, m_Specification.m_Height);
 				break;
 			default:
 				PK_CORE_WARN("OpenGLFramebuffer : Unknown type of depth attachment.");
@@ -246,13 +252,35 @@ namespace Pika {
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		bool IsMultisample = m_Specification.m_Samples > 1;
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, vTexture->getRendererID(), 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, vTexture->getRendererID(), 0);
 		uint32_t LastDepthStencilAttachment = m_DepthStencilAttachment;
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
 			m_DepthStencilAttachment = vTexture->getRendererID();
 		}
 		else {
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, LastDepthStencilAttachment, 0);
+			glDeleteTextures(1, &m_DepthStencilAttachment);
+			m_DepthStencilAttachment = 0;
+		}
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			checkFramebufferStatus();
+	}
+
+	void OpenGLFramebuffer::setDepthStencilAttachment(const Ref<Cubemap>& vTexture) {
+		if (vTexture->getWidth() != m_Specification.m_Width || vTexture->getHeight() != m_Specification.m_Height
+			|| vTexture->getTextureFormat() != TextureFormat::DEPTH24STENCIL8 || vTexture->getRendererID() == 0) {
+			PK_CORE_ERROR("OpenGLFramebuffer : Try to set a inappropriate cubemap depth texture to frame buffer.");
+			return;
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		bool IsMultisample = m_Specification.m_Samples > 1;
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, vTexture->getRendererID(), 0);
+		uint32_t LastDepthStencilAttachment = m_DepthStencilAttachment;
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
+			m_DepthStencilAttachment = vTexture->getRendererID();
+		}
+		else {
+			glDeleteTextures(1, &m_DepthStencilAttachment);
 			m_DepthStencilAttachment = 0;
 		}
 

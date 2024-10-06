@@ -280,7 +280,7 @@ namespace Pika {
 											Out << YAML::Key << "Light Color" << YAML::Value << Data.m_LightColor;
 											Out << YAML::Key << "Intensity" << YAML::Value << Data.m_Intensity;
 											Out << YAML::Key << "Enable Shadow" << YAML::Value << Data.m_EnableShadow;
-											Out << YAML::Key << "Light Region Size" << YAML::Value << Data.m_LightRegionSize;
+											Out << YAML::Key << "Light Size" << YAML::Value << Data.m_LightSize;
 										}
 										Out << YAML::EndMap;
 									}
@@ -293,6 +293,8 @@ namespace Pika {
 											Out << YAML::Key << "Constant" << YAML::Value << Data.m_Constant;
 											Out << YAML::Key << "Linear" << YAML::Value << Data.m_Linear;
 											Out << YAML::Key << "Quadratic" << YAML::Value << Data.m_Quadratic;
+											Out << YAML::Key << "Enable Shadow" << YAML::Value << Data.m_EnableShadow;
+											Out << YAML::Key << "Light Size" << YAML::Value << Data.m_LightSize;
 										}
 										Out << YAML::EndMap;
 									}
@@ -469,7 +471,7 @@ namespace Pika {
 							Data.m_LightColor = DataNode["Light Color"].as<glm::vec3>();
 							Data.m_Intensity = DataNode["Intensity"].as<float>();
 							Data.m_EnableShadow = DataNode["Enable Shadow"].as<bool>();
-							Data.m_LightRegionSize = DataNode["Light Region Size"].as<float>();
+							Data.m_LightSize = DataNode["Light Size"].as<float>();
 							LC.m_Light = CreateRef<DirectionLight>(Data);
 						}
 						else if (Type == "Point Light") {
@@ -480,6 +482,8 @@ namespace Pika {
 							Data.m_Constant = DataNode["Constant"].as<float>();
 							Data.m_Linear = DataNode["Linear"].as<float>();
 							Data.m_Quadratic = DataNode["Quadratic"].as<float>();
+							Data.m_EnableShadow = DataNode["Enable Shadow"].as<bool>();
+							Data.m_LightSize = DataNode["Light Size"].as<float>();
 							LC.m_Light = CreateRef<PointLight>(Data);
 						}
 					}

@@ -13,10 +13,10 @@ namespace Pika
 	{
 		std::string VertexShaderBegin = R"(#VERTEX_BEGIN())";
 		std::string VertexShaderEnd = R"(#VERTEX_END())";
+		std::string GeometryShaderBegin = R"(#GEOMETRY_BEGIN())";
+		std::string GeometryShaderEnd = R"(#GEOMETRY_END())";
 		std::string FragmentShaderBegin = R"(#FRAGMENT_BEGIN())";
 		std::string FragmentShaderEnd = R"(#FRAGMENT_END())";
-		std::string PixelShaderBegin = R"(#PIXEL_BEGIN())";
-		std::string PixelShaderEnd = R"(#PIXEL_END())";
 		ShaderSourceMarkers() = default;
 	};
 

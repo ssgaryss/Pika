@@ -13,8 +13,8 @@ namespace Pika
 		try
 		{
 			std::string Source = readFile(vFilePath);
-			m_OpenGLSourceCode = preProcess(Source);
-			compileAndLinkShader(m_OpenGLSourceCode[GL_VERTEX_SHADER], m_OpenGLSourceCode[GL_FRAGMENT_SHADER]);
+			m_ShadersSourceCode = preProcess(Source);
+			compileAndLinkShader();
 		}
 		catch (const std::runtime_error& e)
 		{
@@ -37,7 +37,7 @@ namespace Pika
 
 		try
 		{
-			compileAndLinkShader(vVertexShaderSrc, vFragmentShaderSrc);
+			compileAndLinkShader();
 		}
 		catch (const std::runtime_error& e)
 		{
@@ -207,12 +207,12 @@ namespace Pika
 		glUniform1iv(Location, vCount, vValue);
 	}
 
-	void OpenGLShader::compileAndLinkShader(const std::string& vVertexShaderSrc, const std::string& vFragmentShaderSrc)
+	void OpenGLShader::compileAndLinkShader()
 	{
 		PK_PROFILE_FUNCTION();
-
+		// Vertex Shader
 		GLuint VertexShader = glCreateShader(GL_VERTEX_SHADER);
-		const GLchar* Source = (const GLchar*)vVertexShaderSrc.c_str();
+		const GLchar* Source = (const GLchar*)m_ShadersSourceCode[GL_VERTEX_SHADER].c_str();
 		glShaderSource(VertexShader, 1, &Source, 0);
 		glCompileShader(VertexShader);
 		GLint IsCompiled = 0;
@@ -220,27 +220,49 @@ namespace Pika
 		if (IsCompiled == GL_FALSE)
 		{
 			PK_CORE_ERROR("Shader : {0}'s vertex part fail to compile!", m_Name);
-			GLint maxLength = 0;
-			glGetShaderiv(VertexShader, GL_INFO_LOG_LENGTH, &maxLength);
-			std::vector<GLchar> InfoLog(maxLength);
-			glGetShaderInfoLog(VertexShader, maxLength, &maxLength, &InfoLog[0]);
+			GLint MaxLength = 0;
+			glGetShaderiv(VertexShader, GL_INFO_LOG_LENGTH, &MaxLength);
+			std::vector<GLchar> InfoLog(MaxLength);
+			glGetShaderInfoLog(VertexShader, MaxLength, &MaxLength, &InfoLog[0]);
 			glDeleteShader(VertexShader);
 			const std::string Information(InfoLog.begin(), InfoLog.end());
 			throw std::runtime_error(Information);
 		}
-
+		bool HasGeometryShader = m_ShadersSourceCode.count(GL_GEOMETRY_SHADER);
+		GLuint GeometryShader = 0;
+		if (HasGeometryShader) {
+			// Geometry Shader
+			GeometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+			const GLchar* Source = (const GLchar*)m_ShadersSourceCode[GL_GEOMETRY_SHADER].c_str();
+			glShaderSource(GeometryShader, 1, &Source, 0);
+			glCompileShader(GeometryShader);
+			GLint IsCompiled = 0;
+			glGetShaderiv(GeometryShader, GL_COMPILE_STATUS, &IsCompiled);
+			if (IsCompiled == GL_FALSE)
+			{
+				PK_CORE_ERROR("Shader : {0}'s geometry part fail to compile!", m_Name);
+				GLint MaxLength = 0;
+				glGetShaderiv(GeometryShader, GL_INFO_LOG_LENGTH, &MaxLength);
+				std::vector<GLchar> InfoLog(MaxLength);
+				glGetShaderInfoLog(GeometryShader, MaxLength, &MaxLength, &InfoLog[0]);
+				glDeleteShader(GeometryShader);
+				const std::string Information(InfoLog.begin(), InfoLog.end());
+				throw std::runtime_error(Information);
+			}
+		}
+		// Fragment Shader
 		GLuint FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		Source = (const GLchar*)vFragmentShaderSrc.c_str();
+		Source = (const GLchar*)m_ShadersSourceCode[GL_FRAGMENT_SHADER].c_str();
 		glShaderSource(FragmentShader, 1, &Source, 0);
 		glCompileShader(FragmentShader);
 		glGetShaderiv(FragmentShader, GL_COMPILE_STATUS, &IsCompiled);
 		if (IsCompiled == GL_FALSE)
 		{
 			PK_CORE_ERROR("Shader : {0}'s fragment part fail to compile!", m_Name);
-			GLint maxLength = 0;
-			glGetShaderiv(FragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
-			std::vector<GLchar> InfoLog(maxLength);
-			glGetShaderInfoLog(FragmentShader, maxLength, &maxLength, &InfoLog[0]);
+			GLint MaxLength = 0;
+			glGetShaderiv(FragmentShader, GL_INFO_LOG_LENGTH, &MaxLength);
+			std::vector<GLchar> InfoLog(MaxLength);
+			glGetShaderInfoLog(FragmentShader, MaxLength, &MaxLength, &InfoLog[0]);
 			glDeleteShader(FragmentShader);
 			glDeleteShader(VertexShader);
 			const std::string Information(InfoLog.begin(), InfoLog.end());
@@ -249,6 +271,8 @@ namespace Pika
 
 		m_RendererID = glCreateProgram();
 		glAttachShader(m_RendererID, VertexShader);
+		if (HasGeometryShader)
+			glAttachShader(m_RendererID, GeometryShader);
 		glAttachShader(m_RendererID, FragmentShader);
 		glLinkProgram(m_RendererID);
 		GLint IsLinked = 0;
@@ -256,17 +280,20 @@ namespace Pika
 		if (IsLinked == GL_FALSE)
 		{
 			PK_CORE_ERROR("Shader : {0} fail to link!", m_Name);
-			GLint maxLength = 0;
-			glGetProgramiv(m_RendererID, GL_INFO_LOG_LENGTH, &maxLength);
-			std::vector<GLchar> InfoLog(maxLength);
-			glGetProgramInfoLog(m_RendererID, maxLength, &maxLength, &InfoLog[0]);
+			GLint MaxLength = 0;
+			glGetProgramiv(m_RendererID, GL_INFO_LOG_LENGTH, &MaxLength);
+			std::vector<GLchar> InfoLog(MaxLength);
+			glGetProgramInfoLog(m_RendererID, MaxLength, &MaxLength, &InfoLog[0]);
 			glDeleteProgram(m_RendererID);
 			glDeleteShader(VertexShader);
+			if(HasGeometryShader)
+				glDeleteShader(GeometryShader);
 			glDeleteShader(FragmentShader);
 			const std::string Information(InfoLog.begin(), InfoLog.end());
 			throw std::runtime_error(Information);
 		}
 		glDetachShader(m_RendererID, VertexShader);
+		glDetachShader(m_RendererID, GeometryShader);
 		glDetachShader(m_RendererID, FragmentShader);
 	}
 
@@ -301,7 +328,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 
 		std::unordered_map<GLenum, std::string> ShaderSources;
-		//vertex shader
+		//Vertex Shader
 		size_t Begin = vSources.find(Shader::s_FileMarkers.VertexShaderBegin);
 		size_t End = vSources.find(Shader::s_FileMarkers.VertexShaderEnd);
 		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
@@ -309,21 +336,21 @@ namespace Pika
 			ShaderSources[GL_VERTEX_SHADER] = vSources.substr(Begin, End - Begin);
 			PK_CORE_TRACE("GL_VERTEX_SHADER content: {}", ShaderSources[GL_VERTEX_SHADER]);
 		}
-		//fragment shader
+		//Geometry Shader
+		Begin = vSources.find(Shader::s_FileMarkers.GeometryShaderBegin);
+		End = vSources.find(Shader::s_FileMarkers.GeometryShaderEnd);
+		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
+			Begin += Shader::s_FileMarkers.GeometryShaderBegin.length();
+			ShaderSources[GL_GEOMETRY_SHADER] = vSources.substr(Begin, End - Begin);
+			PK_CORE_TRACE("GL_GEOMETRY_SHADER content:{}", ShaderSources[GL_GEOMETRY_SHADER]);
+		}
+		//Fragment Shader
 		Begin = vSources.find(Shader::s_FileMarkers.FragmentShaderBegin);
 		End = vSources.find(Shader::s_FileMarkers.FragmentShaderEnd);
 		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
 			Begin += Shader::s_FileMarkers.FragmentShaderBegin.length();
 			ShaderSources[GL_FRAGMENT_SHADER] = vSources.substr(Begin, End - Begin);
 			PK_CORE_TRACE("GL_FRAGMENT_SHADER content:{}", ShaderSources[GL_FRAGMENT_SHADER]);
-		}
-		//pixel shader
-		Begin = vSources.find(Shader::s_FileMarkers.PixelShaderBegin);
-		End = vSources.find(Shader::s_FileMarkers.PixelShaderEnd);
-		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
-			Begin += Shader::s_FileMarkers.PixelShaderBegin.length();
-			ShaderSources[GL_FRAGMENT_SHADER] = vSources.substr(Begin, End - Begin);
-			PK_CORE_TRACE("{}", ShaderSources[GL_FRAGMENT_SHADER]);
 		}
 
 		return ShaderSources;
