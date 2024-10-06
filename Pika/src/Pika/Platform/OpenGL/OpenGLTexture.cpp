@@ -42,10 +42,13 @@ namespace Pika {
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		if (m_RequiredMips)
+		if (m_RequiredMips) {
 			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		else
+			glGenerateTextureMipmap(m_RendererID);
+		}
+		else {
 			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		}
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 
@@ -153,7 +156,40 @@ namespace Pika {
 	}
 	////////////////////////////////// Texture2D ///////////////////////////////////
 
+
 	/////////////////////////////////// Cubemap ////////////////////////////////////
+	OpenGLCubemap::OpenGLCubemap(const TextureSpecification& vTextureSpecification)
+		: m_Width{ vTextureSpecification.m_Width }, m_Height{ vTextureSpecification.m_Height },
+		m_RequiredMips{ vTextureSpecification.m_RequiredMips }
+	{
+		m_Format = vTextureSpecification.m_Format;
+		m_InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(vTextureSpecification.m_Format);
+		m_DataFormat = Utils::PikaTextureFormatToGLDataFormat(vTextureSpecification.m_Format);
+
+		//glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID);
+		//glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
+		//for (uint32_t i = 0; i < 6; ++i) {
+		//	glTextureSubImage3D(m_RendererID, 0, 0, 0, i, m_Width, m_Height, 1, m_DataFormat, GL_FLOAT, NULL);
+		//}
+		glGenTextures(1, &m_RendererID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
+		for (uint32_t i = 0; i < 6; ++i) {
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_DataFormat, 
+                     m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, NULL); 
+		}
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); // 通常对于 Cubemap 纹理，使用 GL_CLAMP_TO_EDGE 会更合适，避免在面之间出现边缘接缝
+		if (m_RequiredMips) {
+			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glGenerateTextureMipmap(m_RendererID);
+		}
+		else {
+			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		}
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+
 	OpenGLCubemap::OpenGLCubemap(const std::filesystem::path& vPath, bool vRequiredMips)
 		: m_Path{ vPath }, m_RequiredMips{ vRequiredMips }
 	{

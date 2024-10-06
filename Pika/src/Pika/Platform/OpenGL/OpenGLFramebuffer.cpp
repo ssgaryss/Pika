@@ -260,6 +260,28 @@ namespace Pika {
 			checkFramebufferStatus();
 	}
 
+	void OpenGLFramebuffer::setDepthStencilAttachment(const Ref<Cubemap>& vTexture) {
+		if (vTexture->getWidth() != m_Specification.m_Width || vTexture->getHeight() != m_Specification.m_Height
+			|| vTexture->getTextureFormat() != TextureFormat::DEPTH24STENCIL8 || vTexture->getRendererID() == 0) {
+			PK_CORE_ERROR("OpenGLFramebuffer : Try to set a inappropriate cubemap depth texture to frame buffer.");
+			return;
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		bool IsMultisample = m_Specification.m_Samples > 1;
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_CUBE_MAP, vTexture->getRendererID(), 0);
+		uint32_t LastDepthStencilAttachment = m_DepthStencilAttachment;
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
+			m_DepthStencilAttachment = vTexture->getRendererID();
+		}
+		else {
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, LastDepthStencilAttachment, 0);
+			m_DepthStencilAttachment = 0;
+		}
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			checkFramebufferStatus();
+	}
+
 	void OpenGLFramebuffer::setColorAttachment(uint32_t vIndex, const Ref<Texture2D>& vTexture)
 	{
 		// TODO!

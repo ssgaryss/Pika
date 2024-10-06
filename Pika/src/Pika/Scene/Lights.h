@@ -62,6 +62,9 @@ namespace Pika {
 			float m_Linear = 0.07f;                                 // 线性衰减项
 			float m_Quadratic = 0.017f;                             // 二次衰减项
 			// I = m_Intensity / ( m_Constant + m_Linear * distance + m_Quadratic * distance * distance )
+
+			bool m_EnableShadow = false;
+			Ref<Cubemap> m_ShadowMap = nullptr;
 		};
 	public:
 		PointLight() = default;  // 由于基类申明了析构函数，这里不能偷懒，满足rule of five，因为Component之后可能会多次拷贝等

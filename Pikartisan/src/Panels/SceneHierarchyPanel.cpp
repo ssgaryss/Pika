@@ -490,7 +490,7 @@ namespace Pika {
 					ImGui::NextColumn();
 					ImGui::Text("Shadow");
 					ImGui::NextColumn();
-					ImGui::Checkbox("##Shadow", &LightData.m_EnableShadow);
+					ImGui::Checkbox("##Direction Light Shadow", &LightData.m_EnableShadow);
 					ImGui::NextColumn();
 					ImGui::Text("Shadow Map");
 					ImGui::NextColumn();
@@ -512,6 +512,16 @@ namespace Pika {
 					ImGui::Text("Intensity");
 					ImGui::NextColumn();
 					ImGui::DragFloat("##Intensity", &LightData.m_Intensity, 0.05f, 0.0f, 100000.0f);
+					ImGui::NextColumn();
+					ImGui::Text("Shadow");
+					ImGui::NextColumn();
+					ImGui::Checkbox("##Point Light Shadow", &LightData.m_EnableShadow);
+					ImGui::NextColumn();
+					ImGui::Text("Shadow Map");
+					ImGui::NextColumn();
+					uintptr_t ShadowMap = LightData.m_ShadowMap ? static_cast<uintptr_t>(LightData.m_ShadowMap->getRendererID())
+						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
+					ImGui::ImageButton(reinterpret_cast<ImTextureID>(ShadowMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
 					ImGui::NextColumn();
 				}
 				ImGui::Columns();

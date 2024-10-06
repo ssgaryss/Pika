@@ -43,6 +43,7 @@ namespace Pika
 	class Cubemap : public Texture
 	{
 	public:
+		static Ref<Cubemap> Create(const TextureSpecification& vTextureSpecification);
 		static Ref<Cubemap> Create(const std::filesystem::path& vPath, bool vRequiredMips = true);
 	};
 

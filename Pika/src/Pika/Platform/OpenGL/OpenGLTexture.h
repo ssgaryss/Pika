@@ -39,6 +39,7 @@ namespace Pika
 	class OpenGLCubemap : public Cubemap
 	{
 	public:
+		OpenGLCubemap(const TextureSpecification& vTextureSpecification);
 		OpenGLCubemap(const std::filesystem::path& vPath, bool vRequiredMips = true);
 		~OpenGLCubemap();
 		inline uint32_t getWidth() const override { return m_Width; }

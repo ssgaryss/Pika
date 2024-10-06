@@ -266,10 +266,11 @@ namespace Pika {
 
 		// Shadow
 		static const uint32_t s_MaxDirectionLightShadowNumber = 1;
-		static const uint32_t s_MaxPointLightShadowNumber = 2;
+		static const uint32_t s_MaxPointLightShadowNumber = 4;
 		Ref<VertexArray> m_VertexPositionArray = nullptr;
 		Ref<VertexBuffer> m_VertexPositionBuffer = nullptr;
 		Ref<Shader> m_Texture2DShadowMapShader = nullptr;
+		Ref<Shader> m_CubemapShadowMapShader = nullptr;
 		uint32_t m_VertexPositionIndexCount = 0; // Index Buffer 数据计数
 		Ref<RenderBatch<StaticMeshVertexData>> m_VertexPositionDataBatch = nullptr;
 		Ref<Framebuffer> m_ShadowMapBuffer = nullptr;
@@ -391,6 +392,7 @@ namespace Pika {
 		s_Data.m_VertexPositionBuffer->setLayout(VertexPositionLayout);
 		s_Data.m_VertexPositionArray->addVertexBuffer(s_Data.m_VertexPositionBuffer);
 		s_Data.m_Texture2DShadowMapShader = Shader::Create("resources/shaders/Renderer3D/Texture2DShadowMap.glsl");
+		s_Data.m_CubemapShadowMapShader = Shader::Create("resources/shaders/Renderer3D/CubemapShadowMap.glsl");
 		s_Data.m_VertexPositionDataBatch = CreateRef<RenderBatch<StaticMeshVertexData>>(Renderer3DData::s_MaxTriangleVerticesPerBatch);
 		s_Data.m_ShadowMapBuffer = Framebuffer::Create({ 2048, 2048, 1,
 			{ TextureFormat::DEPTH24STENCIL8 }, false });
@@ -636,17 +638,26 @@ namespace Pika {
 					}
 				}
 			}
+			// Mesh及索引数据设置
+			// TODO : 暂未考虑Batch不足flush的情况！
+			s_Data.m_VertexPositionBuffer->setData(s_Data.m_VertexPositionDataBatch->data(), s_Data.m_VertexPositionDataBatch->size());
+			const std::vector<uint32_t> Indices = s_Data.m_VertexPositionDataBatch->getIndices();
+			uint32_t IndicesCount = s_Data.m_VertexPositionDataBatch->getIndicesCount();
+			Ref<IndexBuffer> VertexPositionIndexBuffer = IndexBuffer::Create(Indices.data(), IndicesCount);
+			s_Data.m_VertexPositionArray->setIndexBuffer(VertexPositionIndexBuffer);
+
 			// Direction Light
 			if (!vLightsData.m_DirectionLights.empty()) {
 				uint32_t DirectionLightsNumber = static_cast<uint32_t>(vLightsData.m_DirectionLights.size());
 				uint32_t ShadowMapsNumber = 0;
 				for (uint32_t i = 0; i < s_Data.s_MaxDirectionLightsNumber; ++i) {
-					if (i < DirectionLightsNumber && ShadowMapsNumber <= s_Data.s_MaxDirectionLightShadowNumber) {
+					if (i < DirectionLightsNumber && ShadowMapsNumber < s_Data.s_MaxDirectionLightShadowNumber) {
 						const auto& Transform = std::get<0>(vLightsData.m_DirectionLights[i]);
 						const auto& Light = std::get<1>(vLightsData.m_DirectionLights[i]).m_Light;
 						if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.get())) {
 							auto& Data = pDirectionLight->getData();
 							if (Data.m_EnableShadow) {
+								// 绑定Shadow Map到ShadowMapBuffer
 								s_Data.m_ShadowMapBuffer->bind();
 								const auto& ShadowBufferInfo = s_Data.m_ShadowMapBuffer->getFramebufferSpecification();
 								if (!Data.m_ShadowMap) {
@@ -654,19 +665,62 @@ namespace Pika {
 										TextureFormat::DEPTH24STENCIL8, false });
 								}
 								s_Data.m_ShadowMapBuffer->setDepthStencilAttachment(Data.m_ShadowMap);
-								s_Data.m_VertexPositionBuffer->setData(s_Data.m_VertexPositionDataBatch->data(), s_Data.m_VertexPositionDataBatch->size());
-								const std::vector<uint32_t> Indices = s_Data.m_VertexPositionDataBatch->getIndices();
-								uint32_t IndicesCount = s_Data.m_VertexPositionDataBatch->getIndicesCount();
-								Ref<IndexBuffer> VertexPositionIndexBuffer = IndexBuffer::Create(Indices.data(), IndicesCount);
-								s_Data.m_VertexPositionArray->setIndexBuffer(VertexPositionIndexBuffer);
+								// 渲染Shadow Map
 								s_Data.m_Texture2DShadowMapShader->bind();
-								// Light Space Matrix
 								glm::mat4 LightSpaceMatrix = Utils::getLightSpaceMatrix(Transform.m_Rotation, Data);
 								s_Data.m_Texture2DShadowMapShader->setMat4("u_LightSpaceMatrix", LightSpaceMatrix);
 								RenderCommand::Clear();
 								RenderCommand::DrawIndexed(s_Data.m_VertexPositionArray.get(), s_Data.m_VertexPositionIndexCount);
+								// 结束
 								s_Data.m_Statistics.m_DrawCalls++;
 								s_Data.m_Texture2DShadowMapShader->unbind();
+								s_Data.m_ShadowMapBuffer->unbind();
+
+								ShadowMapsNumber++;
+							}
+							else {
+								Data.m_ShadowMap = nullptr;
+								continue;
+							}
+						}
+					}
+				}
+			}
+
+			// Point Light
+			if (!vLightsData.m_PointLights.empty()) {
+				uint32_t PointLightsNumber = static_cast<uint32_t>(vLightsData.m_PointLights.size());
+				uint32_t ShadowMapsNumber = 0;
+				for (uint32_t i = 0; i < s_Data.s_MaxPointLightsNumber; ++i) {
+					if (i < PointLightsNumber && ShadowMapsNumber < s_Data.s_MaxPointLightShadowNumber) {
+						const auto& Transform = std::get<0>(vLightsData.m_PointLights[i]);
+						const auto& Light = std::get<1>(vLightsData.m_PointLights[i]).m_Light;
+						if (auto pPointLight = dynamic_cast<PointLight*>(Light.get())) {
+							auto& Data = pPointLight->getData();
+							if (Data.m_EnableShadow) {
+								// 绑定Shadow Map到ShadowMapBuffer
+								s_Data.m_ShadowMapBuffer->bind();
+								const auto& ShadowBufferInfo = s_Data.m_ShadowMapBuffer->getFramebufferSpecification();
+								if (!Data.m_ShadowMap) {
+									Data.m_ShadowMap = Cubemap::Create({ ShadowBufferInfo.m_Width, ShadowBufferInfo.m_Height,
+										TextureFormat::DEPTH24STENCIL8, false });
+								}
+								s_Data.m_ShadowMapBuffer->setDepthStencilAttachment(Data.m_ShadowMap);
+								//// Mesh数据及索引
+								//s_Data.m_VertexPositionBuffer->setData(s_Data.m_VertexPositionDataBatch->data(), s_Data.m_VertexPositionDataBatch->size());
+								//const std::vector<uint32_t> Indices = s_Data.m_VertexPositionDataBatch->getIndices();
+								//uint32_t IndicesCount = s_Data.m_VertexPositionDataBatch->getIndicesCount();
+								//Ref<IndexBuffer> VertexPositionIndexBuffer = IndexBuffer::Create(Indices.data(), IndicesCount);
+								//s_Data.m_VertexPositionArray->setIndexBuffer(VertexPositionIndexBuffer);
+								//// 渲染Shadow Map
+								//s_Data.m_Texture2DShadowMapShader->bind();
+								//glm::mat4 LightSpaceMatrix = Utils::getLightSpaceMatrix(Transform.m_Rotation, Data);
+								//s_Data.m_Texture2DShadowMapShader->setMat4("u_LightSpaceMatrix", LightSpaceMatrix);
+								//RenderCommand::Clear();
+								//RenderCommand::DrawIndexed(s_Data.m_VertexPositionArray.get(), s_Data.m_VertexPositionIndexCount);
+								//// 结束
+								//s_Data.m_Statistics.m_DrawCalls++;
+								//s_Data.m_Texture2DShadowMapShader->unbind();
 								s_Data.m_ShadowMapBuffer->unbind();
 
 								ShadowMapsNumber++;
