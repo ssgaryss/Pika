@@ -252,13 +252,13 @@ namespace Pika {
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		bool IsMultisample = m_Specification.m_Samples > 1;
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, vTexture->getRendererID(), 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, vTexture->getRendererID(), 0);
 		uint32_t LastDepthStencilAttachment = m_DepthStencilAttachment;
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
 			m_DepthStencilAttachment = vTexture->getRendererID();
 		}
 		else {
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, LastDepthStencilAttachment, 0);
+			glDeleteTextures(1, &m_DepthStencilAttachment);
 			m_DepthStencilAttachment = 0;
 		}
 
@@ -274,13 +274,13 @@ namespace Pika {
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		bool IsMultisample = m_Specification.m_Samples > 1;
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_CUBE_MAP, vTexture->getRendererID(), 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, vTexture->getRendererID(), 0);
 		uint32_t LastDepthStencilAttachment = m_DepthStencilAttachment;
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
 			m_DepthStencilAttachment = vTexture->getRendererID();
 		}
 		else {
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, LastDepthStencilAttachment, 0);
+			glDeleteTextures(1, &m_DepthStencilAttachment);
 			m_DepthStencilAttachment = 0;
 		}
 

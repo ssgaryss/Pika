@@ -395,7 +395,7 @@ namespace Pika {
 		s_Data.m_CubemapShadowMapShader = Shader::Create("resources/shaders/Renderer3D/CubemapShadowMap.glsl");
 		s_Data.m_VertexPositionDataBatch = CreateRef<RenderBatch<StaticMeshVertexData>>(Renderer3DData::s_MaxTriangleVerticesPerBatch);
 		s_Data.m_ShadowMapBuffer = Framebuffer::Create({ 2048, 2048, 1,
-			{ TextureFormat::DEPTH32F }, false });
+			{ TextureFormat::DEPTH24STENCIL8 }, false });
 		s_Data.m_VertexPositionArray->unbind();
 
 		PK_CORE_INFO("Success to initialize Pika 3D Renderer!");
