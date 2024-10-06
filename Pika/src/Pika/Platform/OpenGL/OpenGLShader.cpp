@@ -301,7 +301,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 
 		std::unordered_map<GLenum, std::string> ShaderSources;
-		//vertex shader
+		//Vertex Shader
 		size_t Begin = vSources.find(Shader::s_FileMarkers.VertexShaderBegin);
 		size_t End = vSources.find(Shader::s_FileMarkers.VertexShaderEnd);
 		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
@@ -309,21 +309,21 @@ namespace Pika
 			ShaderSources[GL_VERTEX_SHADER] = vSources.substr(Begin, End - Begin);
 			PK_CORE_TRACE("GL_VERTEX_SHADER content: {}", ShaderSources[GL_VERTEX_SHADER]);
 		}
-		//fragment shader
+		//Geometry Shader
+		Begin = vSources.find(Shader::s_FileMarkers.GeometryShaderBegin);
+		End = vSources.find(Shader::s_FileMarkers.GeometryShaderEnd);
+		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
+			Begin += Shader::s_FileMarkers.GeometryShaderBegin.length();
+			ShaderSources[GL_GEOMETRY_SHADER] = vSources.substr(Begin, End - Begin);
+			PK_CORE_TRACE("GL_GEOMETRY_SHADER content:{}", ShaderSources[GL_GEOMETRY_SHADER]);
+		}
+		//Fragment Shader
 		Begin = vSources.find(Shader::s_FileMarkers.FragmentShaderBegin);
 		End = vSources.find(Shader::s_FileMarkers.FragmentShaderEnd);
 		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
 			Begin += Shader::s_FileMarkers.FragmentShaderBegin.length();
 			ShaderSources[GL_FRAGMENT_SHADER] = vSources.substr(Begin, End - Begin);
 			PK_CORE_TRACE("GL_FRAGMENT_SHADER content:{}", ShaderSources[GL_FRAGMENT_SHADER]);
-		}
-		//pixel shader
-		Begin = vSources.find(Shader::s_FileMarkers.PixelShaderBegin);
-		End = vSources.find(Shader::s_FileMarkers.PixelShaderEnd);
-		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
-			Begin += Shader::s_FileMarkers.PixelShaderBegin.length();
-			ShaderSources[GL_FRAGMENT_SHADER] = vSources.substr(Begin, End - Begin);
-			PK_CORE_TRACE("{}", ShaderSources[GL_FRAGMENT_SHADER]);
 		}
 
 		return ShaderSources;

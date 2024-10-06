@@ -22,6 +22,7 @@ namespace Pika
 	private:
 		// Scene Manipulations
 		void newScene(const std::string& vName = "Untitled", Scene::SceneType vType = Scene::SceneType::Scene2D);
+		void resetEditorState();
 		void openScene();
 		void openScene(const std::filesystem::path& vScenePath);
 		void saveScene();

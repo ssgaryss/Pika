@@ -366,6 +366,7 @@ namespace Pika {
 		s_Data.m_SkyboxVertexArray->unbind();
 
 		// Texture
+		s_Data.resetTextureSlots();
 		TextureSpecification TS;
 		s_Data.m_WhiteTexture = Texture2D::Create(TS);
 		uint32_t Data = 0xffffffff;
@@ -588,7 +589,7 @@ namespace Pika {
 		}
 	}
 
-	void Renderer3D::RenderSkybox(const Ref<Cubemap>& vSkybox)
+	void Renderer3D::DrawSkybox(const Ref<Cubemap>& vSkybox)
 	{
 		if (vSkybox) {
 			RenderCommand::DepthMask(false);

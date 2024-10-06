@@ -328,7 +328,17 @@ namespace Pika
 		m_SceneStatePanel->setContext(m_ActiveScene);
 		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
 		m_Renderer->initialize();
+		resetEditorState();
 		m_ActiveScenePath = std::filesystem::path(); // 重置为空
+	}
+
+	void EditorLayer::resetEditorState()
+	{
+		// 重置一些和场景相关的变量
+		m_MouseHoveredEntity = {};
+		m_GizmoType = 0;
+		bool m_IsViewportFocus = false;
+		bool m_IsViewportHovered = false;
 	}
 
 	void EditorLayer::openScene()
