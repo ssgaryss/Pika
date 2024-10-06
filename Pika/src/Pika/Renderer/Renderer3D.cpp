@@ -137,6 +137,7 @@ namespace Pika {
 			uint32_t m_SpecularMapIndex = 0;
 		};
 		BlinnPhoneMaterialUniformBufferData m_BlinnPhoneMaterialUniformBufferData;
+
 		void setBlinnPhoneMaterialData(const BlinnPhoneMaterial::Data& vBlinnPhoneMaterialData) {
 			m_BlinnPhoneMaterialUniformBufferData.m_Ambient = vBlinnPhoneMaterialData.m_Ambient;
 			m_BlinnPhoneMaterialUniformBufferData.m_Diffuse = vBlinnPhoneMaterialData.m_Diffuse;
@@ -312,6 +313,12 @@ namespace Pika {
 				| RendererAPI::EnableLineSmooth | RendererAPI::EnableCullBackFace;
 			RenderCommand::Initialize(Flags);
 		}
+
+		// Reset Data
+		s_Data.m_LightsData = {};
+		s_Data.m_DirectionLightShadowMaps = {};
+		s_Data.m_PointLightShadowMaps = {};
+		s_Data.m_BlinnPhoneMaterialUniformBufferData = {};
 
 		// StaticMesh
 		s_Data.m_StaticMeshVertexArray = VertexArray::Create();
