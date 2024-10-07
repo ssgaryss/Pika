@@ -18,7 +18,7 @@ namespace Pika
 		static void Initialize();
 		
 		static void BeginScene(const EditorCamera& vEditorCamera, const LightsData& vLightsData);
-		static void BeginScene(const Camera& vCamera, const glm::mat4& vTramsform); // TODO : Lights
+		static void BeginScene(const Camera& vCamera, const glm::mat4& vViewMatrix, const LightsData& vLightsData);
 		static void EndScene();
 		static void Flush();
 
