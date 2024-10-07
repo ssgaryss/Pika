@@ -51,8 +51,27 @@ namespace Pika {
 		}
 		case Scene::SceneType::Scene3D:
 		{
-			// TODO
-			//PK_CORE_ERROR("No 3d play mode yet");
+			auto LightsData = m_RenderDataExtractor->extractLightsData();
+			auto SceneData = m_RenderDataExtractor->extractSceneData();
+			Renderer3D::DrawShadowMaps(LightsData, SceneData); // Shadow Map
+			beginFrame();
+			const auto& TC = m_PrimaryCamera.getComponent<TransformComponent>();
+			const auto& ViewMatrix = glm::inverse(glm::translate(glm::mat4(1.0f), TC.m_Position) *
+				glm::toMat4(glm::quat(glm::radians(TC.m_Rotation))));
+			beginFrame();
+			Renderer3D::BeginScene(m_PrimaryCamera.getComponent<CameraComponent>().m_Camera, ViewMatrix, LightsData);
+			auto NoMaterialModelsData = m_RenderDataExtractor->extractNoMaterialModelsWithEntityID();
+			for (const auto& NoMaterialModelData : NoMaterialModelsData) {
+				auto [Transform, Model, EntityID] = NoMaterialModelData;
+				Renderer3D::DrawModel(Transform, Model, EntityID);
+			}
+			auto BlinnPhoneMaterialModelsData = m_RenderDataExtractor->extractBlinnPhoneMaterialModelsWithEntityID();
+			for (const auto& BlinnPhoneMaterialModelData : BlinnPhoneMaterialModelsData) {
+				auto [Transform, Model, Material, EntityID] = BlinnPhoneMaterialModelData;
+				Renderer3D::DrawModel(Transform, Model, Material, EntityID);
+			}
+			Renderer3D::EndScene();
+			endFrame();
 			return;
 		}
 		}

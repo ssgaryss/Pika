@@ -439,6 +439,7 @@ namespace Pika {
 	void Renderer3D::BeginScene(const EditorCamera& vEditorCamera, const LightsData& vLightsData)
 	{
 		PK_PROFILE_FUNCTION();
+
 		s_Data.m_CameraData.m_ViewProjectionMatrix = vEditorCamera.getViewProjectionMatrix();
 		s_Data.m_CameraData.m_ViewMatrix = vEditorCamera.getViewMatrix();
 		s_Data.m_CameraData.m_ProjectionMatrix = vEditorCamera.getProjectionMatrix();
@@ -455,11 +456,23 @@ namespace Pika {
 		ResetStatistics();
 		StartBatch();
 	}
-
-	void Renderer3D::BeginScene(const Camera& vCamera, const glm::mat4& vTramsform)
+	
+	void Renderer3D::BeginScene(const Camera& vCamera, const glm::mat4& vViewMatrix, const LightsData& vLightsData)
 	{
 		PK_PROFILE_FUNCTION();
-		// TODO !
+		
+		s_Data.m_CameraData.m_ViewProjectionMatrix = vCamera.getProjectionMatrix() * vViewMatrix;
+		s_Data.m_CameraData.m_ViewMatrix = vViewMatrix;
+		s_Data.m_CameraData.m_ProjectionMatrix = vCamera.getProjectionMatrix();
+		s_Data.m_CameraDataUniformBuffer->setData(&s_Data.m_CameraData, sizeof(s_Data.m_CameraData));
+
+		s_Data.setLightsData(vLightsData);
+		s_Data.resetTextureSlots();
+		s_Data.bindShadowMaps();
+		s_Data.m_DirectionLightsDataUniformBuffer->setData(&s_Data.m_LightsData.m_DirectionLightsData,
+			sizeof(s_Data.m_LightsData.m_DirectionLightsData));
+		s_Data.m_PointLightsDataUniformBuffer->setData(&s_Data.m_LightsData.m_PointLightsData,
+			sizeof(s_Data.m_LightsData.m_PointLightsData));
 
 		ResetStatistics();
 		StartBatch();
