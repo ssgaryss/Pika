@@ -334,7 +334,7 @@ namespace Pika
 		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
 			Begin += Shader::s_FileMarkers.VertexShaderBegin.length();
 			ShaderSources[GL_VERTEX_SHADER] = vSources.substr(Begin, End - Begin);
-			PK_CORE_TRACE("GL_VERTEX_SHADER content: {}", ShaderSources[GL_VERTEX_SHADER]);
+			//PK_CORE_TRACE("GL_VERTEX_SHADER content: {}", ShaderSources[GL_VERTEX_SHADER]);
 		}
 		//Geometry Shader
 		Begin = vSources.find(Shader::s_FileMarkers.GeometryShaderBegin);
@@ -342,7 +342,7 @@ namespace Pika
 		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
 			Begin += Shader::s_FileMarkers.GeometryShaderBegin.length();
 			ShaderSources[GL_GEOMETRY_SHADER] = vSources.substr(Begin, End - Begin);
-			PK_CORE_TRACE("GL_GEOMETRY_SHADER content:{}", ShaderSources[GL_GEOMETRY_SHADER]);
+			//PK_CORE_TRACE("GL_GEOMETRY_SHADER content:{}", ShaderSources[GL_GEOMETRY_SHADER]);
 		}
 		//Fragment Shader
 		Begin = vSources.find(Shader::s_FileMarkers.FragmentShaderBegin);
@@ -350,7 +350,7 @@ namespace Pika
 		if (Begin != std::string::npos && End != std::string::npos && Begin < End) {
 			Begin += Shader::s_FileMarkers.FragmentShaderBegin.length();
 			ShaderSources[GL_FRAGMENT_SHADER] = vSources.substr(Begin, End - Begin);
-			PK_CORE_TRACE("GL_FRAGMENT_SHADER content:{}", ShaderSources[GL_FRAGMENT_SHADER]);
+			//PK_CORE_TRACE("GL_FRAGMENT_SHADER content:{}", ShaderSources[GL_FRAGMENT_SHADER]);
 		}
 
 		return ShaderSources;

@@ -306,7 +306,7 @@ namespace Pika {
 	void Renderer3D::Initialize()
 	{
 		PK_PROFILE_FUNCTION();
-		PK_CORE_INFO("Try to initialize Pika 3D Renderer ...");
+		PK_CORE_TRACE("Try to initialize Pika 3D Renderer ...");
 
 		{
 			uint32_t Flags = RendererAPI::EnableBlend | RendererAPI::EnableDepthTest
@@ -643,6 +643,7 @@ namespace Pika {
 			vSkybox->bind(0);
 			s_Data.m_SkyboxShader->setInt("u_Skybox", 0);
 			RenderCommand::DrawIndexed(s_Data.m_SkyboxVertexArray.get(), 36);
+			s_Data.m_Statistics.m_DrawCalls++;
 			s_Data.m_SkyboxShader->unbind();
 			RenderCommand::DepthMask(true);
 		}
