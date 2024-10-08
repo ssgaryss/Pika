@@ -183,6 +183,8 @@ float calculateDirectionLightShadow(DirectionLight vLight, vec3 vPosition) {
 	vec4 LightSpacePosition = vLight.m_LightSpaceMatrix * vec4(vPosition, 1.0);
 	vec3 ProjectionCoords = LightSpacePosition.xyz / LightSpacePosition.w; // 从齐次坐标转换为欧拉坐标
 	ProjectionCoords = ProjectionCoords * 0.5 + 0.5; // range[0, 1]
+	if (ProjectionCoords.x >= 1.0 || ProjectionCoords.x <= 0.0 || ProjectionCoords.y >= 1.0 || ProjectionCoords.y <= 0.0)
+		return 0.0;
 	float ClosestDepth = texture(u_DirectionLightShadowMap, ProjectionCoords.xy).r;
 	float CurrentDepth = ProjectionCoords.z;
 	float Bias = 0.005; // 偏移量，可以根据场景调整大小
