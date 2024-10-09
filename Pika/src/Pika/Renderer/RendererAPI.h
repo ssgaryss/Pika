@@ -9,7 +9,8 @@ namespace Pika {
 		enum class GraphicsAPI {
 			None = 0,
 			OpenGL = 1,
-			DirectX = 2
+			DirectX = 2,
+			Vulkan = 3
 		};
 	public:
 		enum RendererAPISettingFlags : uint32_t {
