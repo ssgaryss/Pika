@@ -122,24 +122,15 @@ namespace Pika {
 		m_Width = Width;
 		m_Height = Height;
 
-		GLenum InternalFormat = 0, DataFormat = 0;
-		if (Channels == 4) {
-			InternalFormat = GL_RGBA8;
-			DataFormat = GL_RGBA;
+		if (Channels == 4)
 			m_Format = TextureFormat::RGBA8;
-		}
-		else if (Channels == 3) {
-			InternalFormat = GL_RGB8;
-			DataFormat = GL_RGB;
+		else if (Channels == 3)
 			m_Format = TextureFormat::RGB8;
-		}
-		else if (Channels == 1) {
-			InternalFormat = GL_RED;
-			DataFormat = GL_RED;
+		else if (Channels == 1)
 			m_Format = TextureFormat::R8;
-		}
-		m_InternalFormat = InternalFormat;
-		m_DataFormat = DataFormat;
+
+		m_InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(m_Format);
+		m_DataFormat = Utils::PikaTextureFormatToGLDataFormat(m_Format);
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
@@ -249,31 +240,22 @@ namespace Pika {
 
 		if (!Utils::IsHDR(vPath))
 			throw std::runtime_error(std::format(R"(OpenGLCubemap : Fail to load the texture with unsupported format at "{0}".)", vPath.string()));
-	
+
 		float* Data = stbi_loadf(vPath.string().c_str(), &Width, &Height, &Channels, 0); // 0 means desired channels = Channels
 		if (!Data)
 			throw std::runtime_error(std::format(R"(OpenGLCubemap : Fail to load cubemap at "{0}".)", vPath.string()));
 		m_Width = Width;
 		m_Height = Height;
 
-		GLenum InternalFormat = 0, DataFormat = 0;
-		if (Channels == 4) {
-			InternalFormat = GL_RGBA8;
-			DataFormat = GL_RGBA;
+		if (Channels == 4)
 			m_Format = TextureFormat::RGBA32F;
-		}
-		else if (Channels == 3) {
-			InternalFormat = GL_RGB8;
-			DataFormat = GL_RGB;
+		else if (Channels == 3)
 			m_Format = TextureFormat::RGB32F;
-		}
-		else if (Channels == 1) {
-			InternalFormat = GL_RED;
-			DataFormat = GL_RED;
+		else if (Channels == 1)
 			m_Format = TextureFormat::R32F;
-		}
-		m_InternalFormat = InternalFormat;
-		m_DataFormat = DataFormat;
+
+		m_InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(m_Format);
+		m_DataFormat = Utils::PikaTextureFormatToGLDataFormat(m_Format);
 
 		TextureSpecification TS{ m_Width, m_Height, m_Format, false };
 		Ref<OpenGLTexture2D> PanoramaHDRTexture = CreateRef<OpenGLTexture2D>(TS);
@@ -297,24 +279,16 @@ namespace Pika {
 		m_Width = Width;
 		m_Height = Height;
 
-		GLenum InternalFormat = 0, DataFormat = 0;
-		if (Channels == 4) {
-			InternalFormat = GL_RGBA8;
-			DataFormat = GL_RGBA;
+
+		if (Channels == 4)
 			m_Format = TextureFormat::RGBA8;
-		}
-		else if (Channels == 3) {
-			InternalFormat = GL_RGB8;
-			DataFormat = GL_RGB;
+		else if (Channels == 3)
 			m_Format = TextureFormat::RGB8;
-		}
-		else if (Channels == 1) {
-			InternalFormat = GL_RED;
-			DataFormat = GL_RED;
+		else if (Channels == 1)
 			m_Format = TextureFormat::R8;
-		}
-		m_InternalFormat = InternalFormat;
-		m_DataFormat = DataFormat;
+
+		m_InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(m_Format);
+		m_DataFormat = Utils::PikaTextureFormatToGLDataFormat(m_Format);
 
 		uint32_t FaceWidth = m_Width / 4;
 		uint32_t FaceHeight = m_Height / 3; // 暂时支持十字型Cubemap贴图
