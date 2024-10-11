@@ -226,8 +226,10 @@ namespace Pika
 		}
 
 		// Panels
-		if (m_IsShowRendererStatistics) showRendererStatistics(&m_IsShowRendererStatistics);
-		if (m_IsShowSceneRendererSettings) showSceneRendererSettings(&m_IsShowSceneRendererSettings);
+		if (m_IsShowRendererStatistics)
+			showRendererStatistics(&m_IsShowRendererStatistics);
+		if (m_IsShowSceneRendererSettings)
+			showSceneRendererSettings(&m_IsShowSceneRendererSettings);
 		m_SceneHierarchyPanel->onImGuiRender();
 		m_ContentBrowserPanel->onImGuiRender();
 		m_SceneStatePanel->onImGuiRender();
@@ -374,7 +376,7 @@ namespace Pika
 		m_ActiveScenePath = std::filesystem::path(Path); // 绝对路径
 		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
 		m_Renderer->initialize();   // 要在deserialize之后才会确定SceneType
-
+		resetEditorState();
 	}
 
 	void EditorLayer::saveScene()
