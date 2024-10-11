@@ -540,7 +540,7 @@ namespace Pika
 				if (ImGui::BeginDragDropTarget()) {
 					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ∂‘”¶ContentBrowserPanel÷–
 						std::filesystem::path Path = reinterpret_cast<const wchar_t*>(Payload->Data);
-						if (Path.extension().string() == ".png") {
+						if (Path.extension().string() == ".png" || Path.extension().string() == ".hdr") {
 							m_ActiveScene->setSkybox(Cubemap::Create(Path));
 						}
 						//TODO : HDR
