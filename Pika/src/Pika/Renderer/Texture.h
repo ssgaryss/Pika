@@ -10,8 +10,6 @@ namespace Pika
 		uint32_t m_Height = 1;
 		TextureFormat m_Format = TextureFormat::RGBA8;
 		bool m_RequiredMips = true;
-
-
 	};
 
 	class Texture

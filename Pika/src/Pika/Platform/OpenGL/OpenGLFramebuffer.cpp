@@ -243,7 +243,7 @@ namespace Pika {
 			GL_INT, &value);
 	}
 
-	void OpenGLFramebuffer::setDepthStencilAttachment(const Ref<Texture2D>& vTexture)
+	void OpenGLFramebuffer::setDepthStencilAttachment(const Ref<Texture>& vTexture)
 	{
 		if (vTexture->getWidth() != m_Specification.m_Width || vTexture->getHeight() != m_Specification.m_Height
 			|| vTexture->getTextureFormat() != TextureFormat::DEPTH24STENCIL8 || vTexture->getRendererID() == 0) {
@@ -266,31 +266,27 @@ namespace Pika {
 			checkFramebufferStatus();
 	}
 
-	void OpenGLFramebuffer::setDepthStencilAttachment(const Ref<Cubemap>& vTexture) {
+	void OpenGLFramebuffer::setColorAttachment(uint32_t vIndex, const Ref<Texture>& vTexture)
+	{
 		if (vTexture->getWidth() != m_Specification.m_Width || vTexture->getHeight() != m_Specification.m_Height
-			|| vTexture->getTextureFormat() != TextureFormat::DEPTH24STENCIL8 || vTexture->getRendererID() == 0) {
-			PK_CORE_ERROR("OpenGLFramebuffer : Try to set a inappropriate cubemap depth texture to frame buffer.");
+			|| vTexture->getRendererID() == 0) {
+			PK_CORE_ERROR("OpenGLFramebuffer : Try to set a inappropriate cubemap color attachment to frame buffer.");
 			return;
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		bool IsMultisample = m_Specification.m_Samples > 1;
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, vTexture->getRendererID(), 0);
-		uint32_t LastDepthStencilAttachment = m_DepthStencilAttachment;
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + vIndex, vTexture->getRendererID(), 0);
+		uint32_t LastColorAttachment = m_ColorAttachments[vIndex];
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
-			m_DepthStencilAttachment = vTexture->getRendererID();
+			LastColorAttachment = vTexture->getRendererID();
 		}
 		else {
-			glDeleteTextures(1, &m_DepthStencilAttachment);
-			m_DepthStencilAttachment = 0;
+			glDeleteTextures(1, &LastColorAttachment);
+			LastColorAttachment = 0;
 		}
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			checkFramebufferStatus();
-	}
-
-	void OpenGLFramebuffer::setColorAttachment(uint32_t vIndex, const Ref<Texture2D>& vTexture)
-	{
-		// TODO!
 	}
 
 	void OpenGLFramebuffer::checkFramebufferStatus() const
