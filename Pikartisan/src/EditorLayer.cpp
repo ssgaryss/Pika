@@ -57,7 +57,7 @@ namespace Pika
 		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 		m_SceneStatePanel = CreateScope<SceneStatePanel>(m_ActiveScene);
 		// Initialize Default Skybox
-		m_ActiveScene->setSkybox(Cubemap::Create("resources/skybox/snowy_forest_path_01_2k.png"));
+		m_ActiveScene->setSkybox(Cubemap::Create("resources/skybox/kloofendal_48d_partly_cloudy_puresky_2k.png"));
 	}
 
 	void EditorLayer::onDetach()

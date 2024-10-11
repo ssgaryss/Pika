@@ -245,6 +245,11 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 
 		int Width, Height, Channels;
+		stbi_set_flip_vertically_on_load(true);
+
+		if (!Utils::IsHDR(vPath))
+			throw std::runtime_error(std::format(R"(OpenGLCubemap : Fail to load the texture with unsupported format at "{0}".)", vPath.string()));
+	
 		float* Data = stbi_loadf(vPath.string().c_str(), &Width, &Height, &Channels, 0); // 0 means desired channels = Channels
 		if (!Data)
 			throw std::runtime_error(std::format(R"(OpenGLCubemap : Fail to load cubemap at "{0}".)", vPath.string()));
@@ -255,17 +260,17 @@ namespace Pika {
 		if (Channels == 4) {
 			InternalFormat = GL_RGBA8;
 			DataFormat = GL_RGBA;
-			m_Format = TextureFormat::RGBA8;
+			m_Format = TextureFormat::RGBA32F;
 		}
 		else if (Channels == 3) {
 			InternalFormat = GL_RGB8;
 			DataFormat = GL_RGB;
-			m_Format = TextureFormat::RGB8;
+			m_Format = TextureFormat::RGB32F;
 		}
 		else if (Channels == 1) {
 			InternalFormat = GL_RED;
 			DataFormat = GL_RED;
-			m_Format = TextureFormat::R8;
+			m_Format = TextureFormat::R32F;
 		}
 		m_InternalFormat = InternalFormat;
 		m_DataFormat = DataFormat;
@@ -377,7 +382,7 @@ namespace Pika {
 		PK_ASSERT(FaceHeight == FaceWidth, "FaceWidth != FaceHeight");
 		for (uint32_t i = 0; i < 6; ++i) {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_InternalFormat,
-				FaceWidth, FaceHeight, 0, m_DataFormat, GL_UNSIGNED_BYTE, nullptr);
+				FaceWidth, FaceHeight, 0, m_DataFormat, GL_FLOAT, nullptr);
 		}
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -397,7 +402,8 @@ namespace Pika {
 		glCreateFramebuffers(1, &Buffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, Buffer);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_RendererID, 0);
-		glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
+		glViewport(0, 0, FaceWidth, FaceHeight);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		Shader->setInt("u_Panorama", 0);
 		Shader->bind();
@@ -405,6 +411,10 @@ namespace Pika {
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		vPanorama->unbind(0);
 		Shader->unbind();
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
+			PK_CORE_INFO("OpenGLCubemap : Success to convert panorama to cubemap!");
+		else
+			PK_CORE_INFO("OpenGLCubemap : Fail to convert panorama to cubemap!");
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDeleteFramebuffers(1, &Buffer);
 	}
