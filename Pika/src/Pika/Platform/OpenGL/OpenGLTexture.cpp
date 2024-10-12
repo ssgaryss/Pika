@@ -236,7 +236,6 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 
 		int Width, Height, Channels;
-		stbi_set_flip_vertically_on_load(true);
 
 		if (!Utils::IsHDR(vPath))
 			throw std::runtime_error(std::format(R"(OpenGLCubemap : Fail to load the texture with unsupported format at "{0}".)", vPath.string()));
@@ -376,6 +375,8 @@ namespace Pika {
 		glCreateFramebuffers(1, &Buffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, Buffer);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_RendererID, 0);
+		GLenum Buffers = { GL_COLOR_ATTACHMENT0 };
+		glDrawBuffers(1, &Buffers);
 		glViewport(0, 0, FaceWidth, FaceHeight);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

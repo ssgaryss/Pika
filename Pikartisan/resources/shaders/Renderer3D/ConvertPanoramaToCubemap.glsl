@@ -55,7 +55,7 @@ vec3 convertUVToXYZ(int vFace, vec2 vUV) {
 }
 
 vec2 convertDirToUV(vec3 vDirection) {
-	return vec2(0.5f + 0.5f * atan(vDirection.z, vDirection.x) / 3.14159265359, 1.f - acos(vDirection.y) / 3.14159265359);
+	return vec2(0.5f + 0.5f * atan(vDirection.z, vDirection.x) / 3.14159265359, 1.0f - acos(vDirection.y) / 3.14159265359);
 }
 
 #GEOMETRY_END()
