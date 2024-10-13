@@ -1,6 +1,6 @@
-examples/* filter=lfs diff=lfs merge=lfs -text
-Pikartisan/resources/skybox/* filter=lfs diff=lfs merge=lfs -text
-Pikartisan/assets/environment/skybox/LDR/* filter=lfs diff=lfs merge=lfs -text
-Pikartisan/assets/environment/skybox/HDR/* filter=lfs diff=lfs merge=lfs -text
-Pikartisan/assets/objects/* filter=lfs diff=lfs merge=lfs -text
-Pikartisan/assets/textures/* filter=lfs diff=lfs merge=lfs -text
+examples filter=lfs diff=lfs merge=lfs -text
+Pikartisan/resources/skybox filter=lfs diff=lfs merge=lfs -text
+Pikartisan/assets/environment/skybox/LDR filter=lfs diff=lfs merge=lfs -text
+Pikartisan/assets/environment/skybox/HDR filter=lfs diff=lfs merge=lfs -text
+Pikartisan/assets/objects filter=lfs diff=lfs merge=lfs -text
+Pikartisan/assets/textures filter=lfs diff=lfs merge=lfs -text
