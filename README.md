@@ -9,7 +9,7 @@ Visual Studio 2022 is recommended, Pika is officially untested on other developm
 
 1. Downloading the repository:
    
-   Start by cloning the repository with git clone --recursive git@github.com:ssgaryss/Pika.git.
+   Start by cloning the repository. `git clone --recursive git@github.com:ssgaryss/Pika.git`
    
    If the repository was cloned non-recursively previously, use git submodule update --init to clone the necessary submodules.
 
