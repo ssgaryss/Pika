@@ -1,25 +1,25 @@
 [submodule "Pika/vendor/imgui"]
 	path = Pika/vendor/imgui
-	url = git@github.com:ssgaryss/imgui.git
+	url = https://github.com/ssgaryss/imgui.git
 	branch = docking
 [submodule "Pika/vendor/GLFW"]
 	path = Pika/vendor/GLFW
-	url = git@github.com:ssgaryss/glfw.git
+	url = https://github.com/ssgaryss/glfw.git
 [submodule "Pika/vendor/yaml-cpp"]
 	path = Pika/vendor/yaml-cpp
-	url = git@github.com:ssgaryss/yaml-cpp.git
+	url = https://github.com/ssgaryss/yaml-cpp.git
 [submodule "Pika/vendor/ImGuizmo"]
 	path = Pika/vendor/ImGuizmo
-	url = git@github.com:ssgaryss/ImGuizmo.git
+	url = https://github.com/ssgaryss/ImGuizmo.git
 [submodule "Pika/vendor/Box2D"]
 	path = Pika/vendor/Box2D
-	url = git@github.com:ssgaryss/box2d.git
+	url = https://github.com/ssgaryss/box2d.git
 [submodule "Pika/vendor/glm"]
 	path = Pika/vendor/glm
-	url = git@github.com:ssgaryss/glm.git
+	url = https://github.com/ssgaryss/glm.git
 [submodule "Pika/vendor/spdlog"]
 	path = Pika/vendor/spdlog
-	url = git@github.com:ssgaryss/spdlog.git
+	url = https://github.com/ssgaryss/spdlog.git
 [submodule "Pika/vendor/assimp"]
 	path = Pika/vendor/assimp
-	url = git@github.com:ssgaryss/assimp.git
+	url = https://github.com/ssgaryss/assimp.git

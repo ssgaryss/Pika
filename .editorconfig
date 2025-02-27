@@ -1,0 +1,21 @@
+# EditorConfig file for Visual Studio
+root = true
+
+[*]
+# Use tabs for indentation
+indent_style = tab
+
+# Set tab width to 2 spaces
+indent_size = 2
+
+# Ensure newlines are consistent
+end_of_line = lf
+
+# UTF-8 encoding
+charset = utf-8
+
+# Remove trailing whitespace
+trim_trailing_whitespace = true
+
+# Ensure files end with a newline
+insert_final_newline = true
