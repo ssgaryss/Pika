@@ -5,7 +5,7 @@
 #include <yaml-cpp/yaml.h>
 
 
-// TODO : yaml¶ÔÓÚglmÊı¾İÀàĞÍÊäÈëÁ÷ÔËËã·ûÖØÔØ£¬ÔİÊ±·ÅÕâ
+// TODO : yamlå¯¹äºglmæ•°æ®ç±»å‹è¾“å…¥æµè¿ç®—ç¬¦é‡è½½ï¼Œæš‚æ—¶æ”¾è¿™
 namespace YAML {
 
 	template<>
@@ -175,18 +175,18 @@ namespace Pika {
 		std::string SceneName = m_Scene->getSceneName();
 		YAML::Emitter Out;
 
-		Out << YAML::BeginMap; // Ã¿¸öScene
+		Out << YAML::BeginMap; // æ¯ä¸ªScene
 		{
 			Out << YAML::Key << "Scene" << YAML::Value << YAML::BeginMap;
 			{
 				Out << YAML::Key << "Name" << YAML::Value << SceneName;
 				Out << YAML::Key << "SceneType" << YAML::Value << Utils::SceneTypeToString(m_Scene->getSceneType());
 				Out << YAML::Key << "Skybox" << YAML::Value << (m_Scene->m_Skybox ? m_Scene->m_Skybox->getPath().string() : "None");
-				Out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // ËùÓĞEntities
+				Out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // æ‰€æœ‰Entities
 				{
 					m_Scene->m_Registry.view<IDComponent>().each([&Out, this](auto vEntity, auto& vTagComponent) {
 						Entity Entity{ vEntity, m_Scene.get() };
-						Out << YAML::BeginMap; // Ã¿¸öEntity
+						Out << YAML::BeginMap; // æ¯ä¸ªEntity
 						if (Entity.hasComponent<IDComponent>()) {
 							Out << YAML::Key << "Entity" << YAML::Value << Entity.getComponent<IDComponent>().m_ID;
 						}
@@ -254,6 +254,22 @@ namespace Pika {
 											Out << YAML::Key << "Shininess" << YAML::Value << Data.m_Shininess;
 											Out << YAML::Key << "Diffuse Map" << YAML::Value << (Data.m_DiffuseMap ? Data.m_DiffuseMap->getPath().string() : "None");
 											Out << YAML::Key << "Specular Map" << YAML::Value << (Data.m_SpecularMap ? Data.m_DiffuseMap->getPath().string() : "None");
+										}
+										Out << YAML::EndMap;
+									}
+									else if (auto pStandardPBRMaterial = dynamic_cast<StandardPBRMaterial*>(Material.m_Material.get())) {
+										Out << YAML::Key << "Data" << YAML::Value << YAML::BeginMap;
+										{
+											const auto& Data = pStandardPBRMaterial->getData();
+											Out << YAML::Key << "Albedo" << YAML::Value << Data.m_Albedo;
+											Out << YAML::Key << "Metallic" << YAML::Value << Data.m_Metallic;
+											Out << YAML::Key << "Roughness" << YAML::Value << Data.m_Roughness;
+											Out << YAML::Key << "Ambient Occlusion" << YAML::Value << Data.m_AmbientOcclusion;
+											Out << YAML::Key << "Albedo Map" << YAML::Value << (Data.m_AlbedoMap ? Data.m_AlbedoMap->getPath().string() : "None");
+											Out << YAML::Key << "Metallic Map" << YAML::Value << (Data.m_MetallicMap ? Data.m_MetallicMap->getPath().string() : "None");
+											Out << YAML::Key << "Roughness Map" << YAML::Value << (Data.m_RoughnessMap ? Data.m_RoughnessMap->getPath().string() : "None");
+											Out << YAML::Key << "Ambient Occlusion Map" << YAML::Value << (Data.m_AmbientOcclusionMap ? Data.m_AmbientOcclusionMap->getPath().string() : "None");
+											Out << YAML::Key << "Normal Map" << YAML::Value << (Data.m_NormalMap ? Data.m_NormalMap->getPath().string() : "None");
 										}
 										Out << YAML::EndMap;
 									}
@@ -453,6 +469,25 @@ namespace Pika {
 							std::string SpecularMapPath = DataNode["Specular Map"].as<std::string>();
 							Data.m_SpecularMap = SpecularMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(SpecularMapPath));
 							MC.m_Material = CreateRef<BlinnPhoneMaterial>(Data);
+						}
+						else if(Type == "Standard PBR") {
+							auto DataNode = MaterialComponentNode["Data"];
+							StandardPBRMaterial::Data Data;
+							Data.m_Albedo = DataNode["Albedo"].as<glm::vec3>();
+							Data.m_Metallic = DataNode["Metallic"].as<float>();
+							Data.m_Roughness = DataNode["Roughness"].as<float>();
+							Data.m_AmbientOcclusion = DataNode["Ambient Occlusion"].as<float>();
+							std::string AlbedoMapPath = DataNode["Albedo Map"].as<std::string>();
+							Data.m_AlbedoMap = AlbedoMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(AlbedoMapPath));
+							std::string MetallicMapPath = DataNode["Metallic Map"].as<std::string>();
+							Data.m_MetallicMap = MetallicMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(MetallicMapPath));
+							std::string RoughnessMapPath = DataNode["Roughness Map"].as<std::string>();
+							Data.m_RoughnessMap = RoughnessMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(RoughnessMapPath));
+							std::string AmbientOcclusionMapPath = DataNode["Ambient Occlusion Map"].as<std::string>();
+							Data.m_AmbientOcclusionMap = AmbientOcclusionMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(AmbientOcclusionMapPath));
+							std::string NormalMapPath = DataNode["Normal Map"].as<std::string>();
+							Data.m_NormalMap = NormalMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(NormalMapPath));
+							MC.m_Material = CreateRef<StandardPBRMaterial>(Data);
 						}
 					}
 					else {
