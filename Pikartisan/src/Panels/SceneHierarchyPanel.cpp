@@ -30,11 +30,11 @@ namespace Pika {
 					drawEntityNode(Entity);
 					});
 
-				// ◊Ûº¸ø’∞◊«¯”Ú»°œ˚—°÷–
+				// Â∑¶ÈîÆÁ©∫ÁôΩÂå∫ÂüüÂèñÊ∂àÈÄâ‰∏≠
 				if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
 					m_SelectedEntity = {};
 
-				// ”“º¸ø’∞◊«¯”ÚµØ≥ˆ≤Àµ•
+				// Âè≥ÈîÆÁ©∫ÁôΩÂå∫ÂüüÂºπÂá∫ËèúÂçï
 				if (ImGui::BeginPopupContextWindow("Create entity", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
 					if (ImGui::BeginMenu("Create Entity")) {
 						if (ImGui::MenuItem("Empty entity"))
@@ -129,10 +129,10 @@ namespace Pika {
 			ImGui::EndDragDropSource();
 		}
 
-		// ◊Ûº¸µ•ª˜—°÷–Entity
+		// Â∑¶ÈîÆÂçïÂáªÈÄâ‰∏≠Entity
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			m_SelectedEntity = vEntity;
-		// TODO : ◊Ûº¸À´ª˜Focus
+		// TODO : Â∑¶ÈîÆÂèåÂáªFocus
 
 		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
 			ImGui::OpenPopup(std::format("EntitySettings##{0}", (uint32_t)vEntity).c_str());
@@ -157,7 +157,7 @@ namespace Pika {
 			m_Context->destroyEntity(vEntity);
 	}
 
-	// ÷˜“™∏¯drawEntityComponents() π”√µƒƒ£∞Â
+	// ‰∏ªË¶ÅÁªôdrawEntityComponents()‰ΩøÁî®ÁöÑÊ®°Êùø
 	template <typename T, typename UIFunction>
 	void drawEntityComponent(const std::string& vName, Entity vEntity, UIFunction vFunction) {
 		if (vEntity.hasComponent<T>()) {
@@ -170,11 +170,11 @@ namespace Pika {
 			};
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
-			// typeid(T).hash_code()±£÷§ ˜Ω⁄µ„±Í∫≈≤ªÕ¨
+			// typeid(T).hash_code()‰øùËØÅÊ†ëËäÇÁÇπÊ†áÂè∑‰∏çÂêå
 			bool Opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), TreeNodeFlags, vName.c_str());
 			ImGui::PopStyleVar();
 
-			// TODO : ≤ª «À˘”–component∂ºƒ‹…æ≥˝
+			// TODO : ‰∏çÊòØÊâÄÊúâcomponentÈÉΩËÉΩÂà†Èô§
 			if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
 				ImGui::OpenPopup(std::format("ComponentSettings##{0}", vName).c_str());
 			}
@@ -208,8 +208,8 @@ namespace Pika {
 		ImGui::SetColumnWidth(0, vColWidth);
 		ImGui::Text(vLabel.c_str());
 		ImGui::NextColumn();
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth()); // push 3∏ˆItemWidth
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 }); // ≤ª“™padding
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth()); // push 3‰∏™ItemWidth
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 }); // ‰∏çË¶Åpadding
 		float LineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 		ImVec2 ButtonSize = { LineHeight + 3.0f, LineHeight };
 
@@ -223,7 +223,7 @@ namespace Pika {
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		ImGui::DragFloat("##X", &vValue.x, 0.1f);
-		ImGui::PopItemWidth(); // pop µ⁄“ª∏ˆ
+		ImGui::PopItemWidth(); // pop Á¨¨‰∏Ä‰∏™
 
 		ImGui::SameLine();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
@@ -236,7 +236,7 @@ namespace Pika {
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		ImGui::DragFloat("##Y", &vValue.y, 0.1f);
-		ImGui::PopItemWidth(); // pop µ⁄∂˛∏ˆ
+		ImGui::PopItemWidth(); // pop Á¨¨‰∫å‰∏™
 
 		ImGui::SameLine();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
@@ -249,10 +249,10 @@ namespace Pika {
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		ImGui::DragFloat("##Z", &vValue.z, 0.1f);
-		ImGui::PopItemWidth(); // pop µ⁄»˝∏ˆ
+		ImGui::PopItemWidth(); // pop Á¨¨‰∏â‰∏™
 		ImGui::PopStyleVar();
 
-		ImGui::Columns(); // …Ë÷√ªÿƒ¨»œµƒµ•¡–
+		ImGui::Columns(); // ËÆæÁΩÆÂõûÈªòËÆ§ÁöÑÂçïÂàó
 		ImGui::PopID();
 	}
 
@@ -267,7 +267,7 @@ namespace Pika {
 				vTagComponent.m_Tag = std::string(Buffer);
 			});
 
-		// µ„ª˜AddComponent∞¥≈•µØ≥ˆº”»ÎcomponentµØ¥∞
+		// ÁÇπÂáªAddComponentÊåâÈíÆÂºπÂá∫Âä†ÂÖ•componentÂºπÁ™ó
 		ImGui::SameLine();
 		ImGui::PushItemWidth(-1);
 		if (ImGui::Button("Add component"))
@@ -336,6 +336,13 @@ namespace Pika {
 									{ 0.316228,0.316228,0.316228 },
 									0.1f
 									});
+							}
+							ImGui::EndMenu();
+						}
+						if (ImGui::BeginMenu("Standard PBR")) {
+							if (ImGui::MenuItem("Default")) {
+								auto& MC = m_SelectedEntity.addComponent<MaterialComponent>();
+								MC.m_Material = CreateRef<StandardPBRMaterial>();
 							}
 							ImGui::EndMenu();
 						}
@@ -412,7 +419,7 @@ namespace Pika {
 		// Only 2D 
 		if (m_Context->getSceneType() == Scene::SceneType::Scene2D) {
 			drawEntityComponent<SpriteRendererComponent>("Sprite Renderer", vEntity, [this](auto& vSpriteRendererComponent) {
-				uintptr_t Texture = vSpriteRendererComponent.m_Texture ? static_cast<uintptr_t>(vSpriteRendererComponent.m_Texture->getRendererID()) 
+				uintptr_t Texture = vSpriteRendererComponent.m_Texture ? static_cast<uintptr_t>(vSpriteRendererComponent.m_Texture->getRendererID())
 					: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
 
 				ImGui::Columns(2);
@@ -421,7 +428,7 @@ namespace Pika {
 				ImGui::NextColumn();
 				ImGui::ImageButton(reinterpret_cast<ImTextureID>(Texture), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
 				if (ImGui::BeginDragDropTarget()) {
-					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ∂‘”¶ContentBrowserPanel÷–
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ÂØπÂ∫îContentBrowserPanel‰∏≠
 						std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
 						const auto& Texture2D = Texture2D::Create(Path);
 						vSpriteRendererComponent.m_Texture = Texture2D->getIsLoaded() ? Texture2D : nullptr;
@@ -539,7 +546,7 @@ namespace Pika {
 				ImGui::NextColumn();
 				ImGui::Button(Path.c_str());
 				if (ImGui::BeginDragDropTarget()) {
-					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ∂‘”¶ContentBrowserPanel÷–
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ÂØπÂ∫îContentBrowserPanel‰∏≠
 						std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
 						vModelComponent.m_Model = CreateRef<Model>(Path);
 					}
@@ -576,11 +583,11 @@ namespace Pika {
 					ImGui::NextColumn();
 					ImGui::Text("Diffuse Map");
 					ImGui::NextColumn();
-					uintptr_t DiffuseMap = MaterialData.m_DiffuseMap ? static_cast<uintptr_t>(MaterialData.m_DiffuseMap->getRendererID()) 
+					uintptr_t DiffuseMap = MaterialData.m_DiffuseMap ? static_cast<uintptr_t>(MaterialData.m_DiffuseMap->getRendererID())
 						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
 					ImGui::ImageButton(reinterpret_cast<ImTextureID>(DiffuseMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
 					if (ImGui::BeginDragDropTarget()) {
-						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ∂‘”¶ContentBrowserPanel÷–
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ÂØπÂ∫îContentBrowserPanel‰∏≠
 							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
 							const auto& Texture2D = Texture2D::Create(Path);
 							MaterialData.m_DiffuseMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
@@ -598,11 +605,11 @@ namespace Pika {
 					ImGui::NextColumn();
 					ImGui::Text("Specular Map");
 					ImGui::NextColumn();
-					uintptr_t SpecularMap = MaterialData.m_SpecularMap ? static_cast<uintptr_t>(MaterialData.m_SpecularMap->getRendererID()) 
+					uintptr_t SpecularMap = MaterialData.m_SpecularMap ? static_cast<uintptr_t>(MaterialData.m_SpecularMap->getRendererID())
 						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
 					ImGui::ImageButton(reinterpret_cast<ImTextureID>(SpecularMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
 					if (ImGui::BeginDragDropTarget()) {
-						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ∂‘”¶ContentBrowserPanel÷–
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ÂØπÂ∫îContentBrowserPanel‰∏≠
 							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
 							const auto& Texture2D = Texture2D::Create(Path);
 							MaterialData.m_SpecularMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
@@ -619,7 +626,135 @@ namespace Pika {
 					}
 					ImGui::NextColumn();
 				}
-				// TODO : PBR Material
+				else if (auto pStandardPBR = dynamic_cast<StandardPBRMaterial*>(Material.get())) {
+					auto& MaterialData = pStandardPBR->getData();
+					ImGui::Text("Albedo");
+					ImGui::NextColumn();
+					ImGui::ColorEdit3("##Albedo", glm::value_ptr(MaterialData.m_Albedo));
+					ImGui::NextColumn();
+					ImGui::Text("Metallic");
+					ImGui::NextColumn();
+					ImGui::DragFloat("##Metallic", &MaterialData.m_Metallic, 0.01f, 0.0f, 1.0f);
+					ImGui::NextColumn();
+					ImGui::Text("Roughness");
+					ImGui::NextColumn();
+					ImGui::DragFloat("##Roughness", &MaterialData.m_Roughness, 0.01f, 0.0f, 1.0f);
+					ImGui::NextColumn();
+					ImGui::Text("AO");
+					ImGui::NextColumn();
+					ImGui::DragFloat("##Ambient Occlusion", &MaterialData.m_AmbientOcclusion, 0.01f, 0.0f, 1.0f);
+					ImGui::NextColumn();
+					ImGui::Text("Albedo Map");
+					ImGui::NextColumn();
+					uintptr_t AlbedoMap = MaterialData.m_AlbedoMap ? static_cast<uintptr_t>(MaterialData.m_AlbedoMap->getRendererID())
+						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
+					ImGui::ImageButton(reinterpret_cast<ImTextureID>(AlbedoMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					if (ImGui::BeginDragDropTarget()) {
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ÂØπÂ∫îContentBrowserPanel‰∏≠
+							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+							const auto& Texture2D = Texture2D::Create(Path);
+							MaterialData.m_AlbedoMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
+						}
+						ImGui::EndDragDropTarget();
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("AlbedoMap");
+					}
+					if (ImGui::BeginPopup("AlbedoMap")) {
+						if (ImGui::MenuItem("Delete"))
+							MaterialData.m_AlbedoMap = nullptr;
+						ImGui::EndPopup();
+					}
+					ImGui::NextColumn();
+					ImGui::Text("Metallic Map");
+					ImGui::NextColumn();
+					uintptr_t MetallicMap = MaterialData.m_MetallicMap ? static_cast<uintptr_t>(MaterialData.m_MetallicMap->getRendererID())
+						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
+					ImGui::ImageButton(reinterpret_cast<ImTextureID>(MetallicMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					if (ImGui::BeginDragDropTarget()) {
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ÂØπÂ∫îContentBrowserPanel‰∏≠
+							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+							const auto& Texture2D = Texture2D::Create(Path);
+							MaterialData.m_MetallicMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
+						}
+						ImGui::EndDragDropTarget();
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("MetallicMap");
+					}
+					if (ImGui::BeginPopup("MetallicMap")) {
+						if (ImGui::MenuItem("Delete"))
+							MaterialData.m_MetallicMap = nullptr;
+						ImGui::EndPopup();
+					}
+					ImGui::NextColumn();
+					ImGui::Text("Roughness Map");
+					ImGui::NextColumn();
+					uintptr_t RoughnessMap = MaterialData.m_RoughnessMap ? static_cast<uintptr_t>(MaterialData.m_RoughnessMap->getRendererID())
+						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
+					ImGui::ImageButton(reinterpret_cast<ImTextureID>(RoughnessMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					if (ImGui::BeginDragDropTarget()) {
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ÂØπÂ∫îContentBrowserPanel‰∏≠
+							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+							const auto& Texture2D = Texture2D::Create(Path);
+							MaterialData.m_RoughnessMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
+						}
+						ImGui::EndDragDropTarget();
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("RoughnessMap");
+					}
+					if (ImGui::BeginPopup("RoughnessMap")) {
+						if (ImGui::MenuItem("Delete"))
+							MaterialData.m_RoughnessMap = nullptr;
+						ImGui::EndPopup();
+					}
+					ImGui::NextColumn();
+					ImGui::Text("AO Map");
+					ImGui::NextColumn();
+					uintptr_t AmbientOcclusionMap = MaterialData.m_AmbientOcclusionMap ? static_cast<uintptr_t>(MaterialData.m_AmbientOcclusionMap->getRendererID())
+						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
+					ImGui::ImageButton(reinterpret_cast<ImTextureID>(AmbientOcclusionMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					if (ImGui::BeginDragDropTarget()) {
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ÂØπÂ∫îContentBrowserPanel‰∏≠
+							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+							const auto& Texture2D = Texture2D::Create(Path);
+							MaterialData.m_AmbientOcclusionMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
+						}
+						ImGui::EndDragDropTarget();
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("AmbientOcclusionMap");
+					}
+					if (ImGui::BeginPopup("AmbientOcclusionMap")) {
+						if (ImGui::MenuItem("Delete"))
+							MaterialData.m_AmbientOcclusionMap = nullptr;
+						ImGui::EndPopup();
+					}
+					ImGui::NextColumn();
+					ImGui::Text("Normal Map");
+					ImGui::NextColumn();
+					uintptr_t NormalMap = MaterialData.m_NormalMap ? static_cast<uintptr_t>(MaterialData.m_NormalMap->getRendererID())
+						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
+					ImGui::ImageButton(reinterpret_cast<ImTextureID>(NormalMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
+					if (ImGui::BeginDragDropTarget()) {
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ÂØπÂ∫îContentBrowserPanel‰∏≠
+							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+							const auto& Texture2D = Texture2D::Create(Path);
+							MaterialData.m_NormalMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
+						}
+						ImGui::EndDragDropTarget();
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("NormalMap");
+					}
+					if (ImGui::BeginPopup("NormalMap")) {
+						if (ImGui::MenuItem("Delete"))
+							MaterialData.m_NormalMap = nullptr;
+						ImGui::EndPopup();
+					}
+					ImGui::NextColumn();
+				}
 				ImGui::Columns();
 				});
 		}
