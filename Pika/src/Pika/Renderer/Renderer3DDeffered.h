@@ -7,18 +7,15 @@
 #include "Pika/Scene/RenderDataExtractor.h"
 #include "Pika/Scene/Materials.h"
 
-namespace Pika
-{
+namespace Pika {
 
-
-	class Renderer3D
+	class Renderer3DDeffered
 	{
 	public:
-		Renderer3D() = delete;
-		static void Initialize();
-		
-		static void BeginScene(const EditorCamera& vEditorCamera, const LightsData& vLightsData);
-		static void BeginScene(const Camera& vCamera, const glm::mat4& vViewMatrix, const LightsData& vLightsData);
+		Renderer3DDeffered() = delete;
+
+		static void BeginScene(const EditorCamera& vEditorCamera);
+		static void BeginScene(const Camera& vCamera, const glm::mat4& vViewMatrix);
 		static void EndScene();
 		static void Flush();
 
@@ -55,3 +52,4 @@ namespace Pika
 	};
 
 }
+

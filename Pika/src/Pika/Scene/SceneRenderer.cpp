@@ -17,8 +17,8 @@ namespace Pika {
 	{
 		m_Framebuffer->bind();
 		RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-		RenderCommand::Clear(); // »áÓ°ÏìËùÓÐFBOÖÐµÄTexture¶ø·ÇÒ»¸ö
-		m_Framebuffer->clearAttachment(1, -1); // ËùÓÐEntityIDÆäÓàÇøÓò¸³Öµ-1
+		RenderCommand::Clear(); // ä¼šå½±å“æ‰€æœ‰FBOä¸­çš„Textureè€Œéžä¸€ä¸ª
+		m_Framebuffer->clearAttachment(1, -1); // æ‰€æœ‰EntityIDå…¶ä½™åŒºåŸŸèµ‹å€¼-1
 
 	}
 
@@ -128,7 +128,7 @@ namespace Pika {
 		m_Framebuffer->resize(vWidth, vHeight);
 	}
 
-	void SceneRenderer::initialize()
+	void SceneRenderer::Initialize()
 	{
 		switch (m_RenderDataExtractor->extractSceneType())
 		{

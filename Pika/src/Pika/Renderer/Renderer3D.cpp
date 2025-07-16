@@ -6,6 +6,7 @@
 #include "RenderBatch.h"
 #include "Texture.h"
 #include "Framebuffer.h"
+#include "Bakers.h"
 #include "Pika/Scene/Primitive.h"
 
 namespace Pika {
@@ -17,7 +18,7 @@ namespace Pika {
 			const auto& Data = vDirectionLightData;
 			glm::vec3 DefaultDirection = Data.s_DefaultDirection;
 			glm::vec3 Direction = glm::toMat4(glm::quat(glm::radians(vRotation))) * glm::vec4(DefaultDirection, 1.0f);
-			// Direction LightÀíÂÛÉÏÊÇÎŞÏŞ´ó£¬ÕâÀïÎÒ²»ÏëºÍÎ»ÖÃÓĞ¹Ø
+			// Direction Lightç†è®ºä¸Šæ˜¯æ— é™å¤§ï¼Œè¿™é‡Œæˆ‘ä¸æƒ³å’Œä½ç½®æœ‰å…³
 			glm::mat4 LightViewMatrix = glm::lookAt(glm::vec3(0.0f), Direction,
 				glm::rotate(glm::quat(glm::radians(glm::vec3(-vRotation.x, -vRotation.y, -vRotation.z))), glm::vec3(0.0f, 1.0f, 0.0f)));
 			glm::mat4 LightProjectionMatrix = glm::ortho(-Data.m_LightSize, Data.m_LightSize,
@@ -50,7 +51,7 @@ namespace Pika {
 	{
 	public:
 		static const uint32_t s_MaxTrianglesPerBatch = MAX_TRIANGLES_PER_BATCH;
-		static const uint32_t s_MaxTriangleVerticesPerBatch = s_MaxTrianglesPerBatch * 3; // ´Ë´¦ÊÇÎªÁËÏÈ´´½¨BufferÌá¸ßĞÔÄÜ
+		static const uint32_t s_MaxTriangleVerticesPerBatch = s_MaxTrianglesPerBatch * 3; // æ­¤å¤„æ˜¯ä¸ºäº†å…ˆåˆ›å»ºBufferæé«˜æ€§èƒ½
 		static const uint32_t s_MaxTriangleIndicesPerBatch = s_MaxTrianglesPerBatch * 3;
 		// StaticMesh
 		Ref<VertexArray> m_StaticMeshVertexArray = nullptr;
@@ -68,7 +69,7 @@ namespace Pika {
 		Ref<Shader> m_LineShader = nullptr;
 		float m_LineThickness = 0.5f;
 
-		uint32_t m_LineIndexCount = 0; // Index Buffer Êı¾İ¼ÆÊı
+		uint32_t m_LineIndexCount = 0; // Index Buffer æ•°æ®è®¡æ•°
 		Ref<RenderBatch<LineVertexData>> m_LineVertexDataBatch = nullptr;
 
 		// Skybox
@@ -77,8 +78,8 @@ namespace Pika {
 		Ref<Shader> m_SkyboxShader = nullptr;
 
 		// Textures
-		static const uint32_t m_MaxTextureSlots = 28; // TODO : Õâ¸öÓ¦¸ÃºÍÓ²¼şÓĞ¹Ø£¡ºóËÄ¸öÔİÊ±Ö»¸øµã¹âÔ´ShadowÓÃ
-		std::optional<uint32_t> findTextureIndex(const Ref<Texture2D>& vTexture) {  // ÒÑ´æÔÚTextureÔò·µ»ØÆäindex
+		static const uint32_t m_MaxTextureSlots = 28; // TODO : è¿™ä¸ªåº”è¯¥å’Œç¡¬ä»¶æœ‰å…³ï¼åå››ä¸ªæš‚æ—¶åªç»™ç‚¹å…‰æºShadowç”¨
+		std::optional<uint32_t> findTextureIndex(const Ref<Texture2D>& vTexture) {  // å·²å­˜åœ¨Textureåˆ™è¿”å›å…¶index
 			for (uint32_t i = 1; i < m_TextureIndex; ++i) {
 				if (m_TextureSlots[i]) {
 					if (*vTexture.get() == *m_TextureSlots[i].get()) {
@@ -113,7 +114,7 @@ namespace Pika {
 					m_TextureSlots[i]->bind(i);
 			}
 		}
-		std::array<Ref<Texture2D>, 128> m_TextureSlots; // for now : Ä¬ÈÏ²»¶àÓÚ128¸ötexture
+		std::array<Ref<Texture2D>, 128> m_TextureSlots; // for now : é»˜è®¤ä¸å¤šäº128ä¸ªtexture
 		Ref<Texture2D> m_WhiteTexture; // Default at texture slot 0
 		uint32_t m_TextureIndex = 1;
 
@@ -121,7 +122,7 @@ namespace Pika {
 		struct CameraUniformBufferData {
 			glm::mat4 m_ViewProjectionMatrix = glm::mat4(1.0f);
 			glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
-			glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f); // SkyboxäÖÈ¾ĞèÒª
+			glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f); // Skyboxæ¸²æŸ“éœ€è¦
 		};
 		CameraUniformBufferData m_CameraData;
 		Ref<UniformBuffer> m_CameraDataUniformBuffer = nullptr;
@@ -138,7 +139,7 @@ namespace Pika {
 		};
 		BlinnPhoneMaterialUniformBufferData m_BlinnPhoneMaterialUniformBufferData;
 
-		void setBlinnPhoneMaterialData(const BlinnPhoneMaterial::Data& vBlinnPhoneMaterialData) {
+		void setBlinnPhoneMaterialUniformBufferData(const BlinnPhoneMaterial::Data& vBlinnPhoneMaterialData) {
 			m_BlinnPhoneMaterialUniformBufferData.m_Ambient = vBlinnPhoneMaterialData.m_Ambient;
 			m_BlinnPhoneMaterialUniformBufferData.m_Diffuse = vBlinnPhoneMaterialData.m_Diffuse;
 			m_BlinnPhoneMaterialUniformBufferData.m_Specular = vBlinnPhoneMaterialData.m_Specular;
@@ -169,6 +170,14 @@ namespace Pika {
 			}
 		}
 
+		struct StandardPBRMaterialUniformBufferData {
+			// TODO
+		};
+		StandardPBRMaterialUniformBufferData m_StandardPBRMaterialUniformBufferData;
+
+		void setStandardPBRMaterialUniformBufferData(const StandardPBRMaterial::Data& vStandardPBRMaterialData) {
+			// TODO
+		}
 
 		// Lights
 		static const uint32_t s_MaxDirectionLightsNumber = 1;
@@ -179,10 +188,10 @@ namespace Pika {
 
 			struct DirectionLightUniformBufferData
 			{
-				glm::mat4 m_LightSpaceMatrix = glm::mat4(1.0f); // std140ÖĞmat·ÅÇ°Ãæ£¬²»È»ÓĞÎÊÌâ£¬¾ßÌåÔ­ÒòÎÒ»¹²»ÖªµÀ
-				alignas(16) glm::vec3 m_Direction = glm::vec3(0.0f);    // ·½Ïò
-				alignas(16) glm::vec3 m_LightColor = glm::vec3(1.0f);   // ¹âÔ´ÑÕÉ«
-				float m_Intensity = 0.0f;                               // ¹âÔ´Ç¿¶È
+				glm::mat4 m_LightSpaceMatrix = glm::mat4(1.0f); // std140ä¸­matæ”¾å‰é¢ï¼Œä¸ç„¶æœ‰é—®é¢˜ï¼Œå…·ä½“åŸå› æˆ‘è¿˜ä¸çŸ¥é“
+				alignas(16) glm::vec3 m_Direction = glm::vec3(0.0f);    // æ–¹å‘
+				alignas(16) glm::vec3 m_LightColor = glm::vec3(1.0f);   // å…‰æºé¢œè‰²
+				float m_Intensity = 0.0f;                               // å…‰æºå¼ºåº¦
 				int32_t m_ShadowMapIndex = -1;
 
 				void setData(const glm::vec3& vDirection, const DirectionLight::Data& vDirectionLightData) {
@@ -193,15 +202,15 @@ namespace Pika {
 			};
 			struct PointLightUniformBufferData
 			{
-				// ÕâÀïÄÚ´æ¶ÔÆëÊÇÎªÁËÂú×ãstd140ÖĞvec3¶ÔÆëµ½16×Ö½Ú
-				alignas(16) glm::vec3 m_Position = glm::vec3(0.0f);     // ¹âÔ´Î»ÖÃ
-				alignas(16) glm::vec3 m_LightColor = glm::vec3(1.0f);   // ¹âÔ´ÑÕÉ«
-				float m_Intensity = 0.0f;                               // ¹âÔ´Ç¿¶È
-				float m_Constant = 1.0f;                                // ³£ÊıË¥¼õÏî
-				float m_Linear = 0.07f;                                 // ÏßĞÔË¥¼õÏî
-				float m_Quadratic = 0.017f;                             // ¶ş´ÎË¥¼õÏî
+				// è¿™é‡Œå†…å­˜å¯¹é½æ˜¯ä¸ºäº†æ»¡è¶³std140ä¸­vec3å¯¹é½åˆ°16å­—èŠ‚
+				alignas(16) glm::vec3 m_Position = glm::vec3(0.0f);     // å…‰æºä½ç½®
+				alignas(16) glm::vec3 m_LightColor = glm::vec3(1.0f);   // å…‰æºé¢œè‰²
+				float m_Intensity = 0.0f;                               // å…‰æºå¼ºåº¦
+				float m_Constant = 1.0f;                                // å¸¸æ•°è¡°å‡é¡¹
+				float m_Linear = 0.07f;                                 // çº¿æ€§è¡°å‡é¡¹
+				float m_Quadratic = 0.017f;                             // äºŒæ¬¡è¡°å‡é¡¹
 				int32_t m_ShadowMapIndex = -1;
-				float m_LightSize = 5.0f;                               // ShadowµÄFarClip
+				float m_LightSize = 5.0f;                               // Shadowçš„FarClip
 				void setData(const glm::vec3& vPosition, const PointLight::Data& vPointLightData) {
 					m_Position = vPosition;
 					m_LightColor = vPointLightData.m_LightColor;
@@ -240,7 +249,7 @@ namespace Pika {
 					}
 				}
 				else {
-					m_LightsData.m_DirectionLightsData[i].m_Intensity = 0.0f; // ÖØÖÃ
+					m_LightsData.m_DirectionLightsData[i].m_Intensity = 0.0f; // é‡ç½®
 				}
 			}
 			// Point Lights
@@ -265,7 +274,7 @@ namespace Pika {
 					}
 				}
 				else {
-					m_LightsData.m_PointLightsData[i].m_Intensity = 0.0f; // ÖØÖÃ
+					m_LightsData.m_PointLightsData[i].m_Intensity = 0.0f; // é‡ç½®
 				}
 			}
 		}
@@ -280,7 +289,7 @@ namespace Pika {
 		Ref<VertexBuffer> m_VertexPositionBuffer = nullptr;
 		Ref<Shader> m_Texture2DShadowMapShader = nullptr;
 		Ref<Shader> m_CubemapShadowMapShader = nullptr;
-		uint32_t m_VertexPositionIndexCount = 0; // Index Buffer Êı¾İ¼ÆÊı
+		uint32_t m_VertexPositionIndexCount = 0; // Index Buffer æ•°æ®è®¡æ•°
 		Ref<RenderBatch<StaticMeshVertexData>> m_VertexPositionDataBatch = nullptr;
 		Ref<Framebuffer> m_ShadowMapBuffer = nullptr;
 		std::array<Ref<Texture2D>, s_MaxDirectionLightShadowNumber> m_DirectionLightShadowMaps;
@@ -333,6 +342,9 @@ namespace Pika {
 		s_Data.m_StaticMeshVertexBuffer->setLayout(StaticMeshLayout);
 		s_Data.m_StaticMeshVertexArray->addVertexBuffer(s_Data.m_StaticMeshVertexBuffer);
 		s_Data.m_StaticMeshShader = Shader::Create("resources/shaders/Renderer3D/DefaultStaticMeshShader.glsl");
+		s_Data.m_StaticMeshVertexArray->unbind();
+
+		// BlinnPhone Material
 		s_Data.m_BlinnPhoneShader = Shader::Create("resources/shaders/Renderer3D/DefaultBlinnPhoneShader.glsl");
 		s_Data.m_BlinnPhoneShader->bind();
 		std::vector<int32_t> Textures(s_Data.m_MaxTextureSlots);
@@ -345,7 +357,8 @@ namespace Pika {
 			PointLightShadows[i] = 28 + i;
 		s_Data.m_BlinnPhoneShader->setIntArray("u_PointLightShadowMaps", PointLightShadows.data(), static_cast<uint32_t>(PointLightShadows.size()));
 		s_Data.m_BlinnPhoneShader->unbind();
-		s_Data.m_StaticMeshVertexArray->unbind();
+
+
 
 		// Line
 		s_Data.m_LineVertexDataBatch = CreateRef<RenderBatch<LineVertexData>>(Renderer3DData::s_MaxLineVerticesPerBatch);
@@ -370,7 +383,7 @@ namespace Pika {
 		// Skybox
 		s_Data.m_SkyboxVertexArray = VertexArray::Create();
 		s_Data.m_SkyboxVertexArray->bind();
-		uint32_t SkyboxIndices[] = {
+		constexpr uint32_t SkyboxIndices[] = {
 			0, 1, 2,   2, 3, 0,  // Back face
 			4, 6, 5,   6, 4, 7,  // Front face
 			4, 5, 1,   1, 0, 4,  // Left face
@@ -380,7 +393,7 @@ namespace Pika {
 		};
 		Ref<IndexBuffer> SkyboxIndexBuffer = IndexBuffer::Create(SkyboxIndices, 36);
 		s_Data.m_SkyboxVertexArray->setIndexBuffer(SkyboxIndexBuffer);
-		float SkyboxVertices[] = {
+		constexpr float SkyboxVertices[] = {
 			-1.0f,  1.0f, -1.0f, //0
 			-1.0f, -1.0f, -1.0f, //1
 			 1.0f, -1.0f, -1.0f, //2
@@ -388,7 +401,7 @@ namespace Pika {
 			-1.0f,  1.0f,  1.0f, //4
 			-1.0f, -1.0f,  1.0f, //5
 			 1.0f, -1.0f,  1.0f, //6
-			 1.0f,  1.0f,  1.0f, //7 // 8¸ö¶¥µã
+			 1.0f,  1.0f,  1.0f, //7 // 8ä¸ªé¡¶ç‚¹
 		};
 		s_Data.m_SkyboxVertexBuffer = VertexBuffer::Create(SkyboxVertices, sizeof(SkyboxVertices));
 		BufferLayout SkyboxLayout = {
@@ -408,11 +421,11 @@ namespace Pika {
 		s_Data.resetTextureSlots();
 
 		// Uniform Buffers
-		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0);     // glslÖĞbinding = 0
+		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0);     // glslä¸­binding = 0
 		s_Data.m_DirectionLightsDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_LightsData.m_DirectionLightsData), 1);
 		s_Data.m_PointLightsDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_LightsData.m_PointLightsData), 2);
 		//TODO : Spot light
-		s_Data.m_BlinnPhoneMaterialDataUniformBuffer = UniformBuffer::Create(sizeof(BlinnPhoneMaterial::Data), 4); // ×¢ÒâÓÉÓÚGLSL std140ÄÚ´æ¶ÔÆëvec3ÊÇ4bytes£¬ËùÒÔÕâÀïĞèÒªÊÖ¶¯¼ÆËã
+		s_Data.m_BlinnPhoneMaterialDataUniformBuffer = UniformBuffer::Create(sizeof(BlinnPhoneMaterial::Data), 4); // æ³¨æ„ç”±äºGLSL std140å†…å­˜å¯¹é½vec3æ˜¯4bytesï¼Œæ‰€ä»¥è¿™é‡Œéœ€è¦æ‰‹åŠ¨è®¡ç®—
 
 		// Shadow
 		s_Data.m_VertexPositionArray = VertexArray::Create();
@@ -562,7 +575,7 @@ namespace Pika {
 			if (auto pBlinnPhoneMaterial = dynamic_cast<BlinnPhoneMaterial*>(vMaterial.m_Material.get())) {
 				s_Data.m_BlinnPhoneShader->bind();
 				const auto& MaterialData = pBlinnPhoneMaterial->getData();
-				s_Data.setBlinnPhoneMaterialData(MaterialData);
+				s_Data.setBlinnPhoneMaterialUniformBufferData(MaterialData);
 				s_Data.m_BlinnPhoneMaterialDataUniformBuffer->setData(&s_Data.m_BlinnPhoneMaterialUniformBufferData,
 					sizeof(s_Data.m_BlinnPhoneMaterialUniformBufferData));
 			}
@@ -669,7 +682,7 @@ namespace Pika {
 	void Renderer3D::DrawShadowMaps(const LightsData& vLightsData, const SceneData& vSceneData)
 	{
 		PK_PROFILE_FUNCTION();
-		// TODO : ÔİÊ±ÈÏÎªBatch×ã¹»ÈİÄÉÕû¸ö³¡¾°Êı¾İ
+		// TODO : æš‚æ—¶è®¤ä¸ºBatchè¶³å¤Ÿå®¹çº³æ•´ä¸ªåœºæ™¯æ•°æ®
 		if (!vLightsData.empty()) {
 			// Start Batch
 			s_Data.m_VertexPositionDataBatch->reset();
@@ -686,8 +699,8 @@ namespace Pika {
 					}
 				}
 			}
-			// Mesh¼°Ë÷ÒıÊı¾İÉèÖÃ
-			// TODO : ÔİÎ´¿¼ÂÇBatch²»×ãflushµÄÇé¿ö£¡
+			// MeshåŠç´¢å¼•æ•°æ®è®¾ç½®
+			// TODO : æš‚æœªè€ƒè™‘Batchä¸è¶³flushçš„æƒ…å†µï¼
 			s_Data.m_VertexPositionBuffer->setData(s_Data.m_VertexPositionDataBatch->data(), s_Data.m_VertexPositionDataBatch->size());
 			const std::vector<uint32_t> Indices = s_Data.m_VertexPositionDataBatch->getIndices();
 			uint32_t IndicesCount = s_Data.m_VertexPositionDataBatch->getIndicesCount();
@@ -705,7 +718,7 @@ namespace Pika {
 						if (auto pDirectionLight = dynamic_cast<DirectionLight*>(Light.get())) {
 							auto& Data = pDirectionLight->getData();
 							if (Data.m_EnableShadow) {
-								// °ó¶¨Shadow Mapµ½ShadowMapBuffer
+								// ç»‘å®šShadow Mapåˆ°ShadowMapBuffer
 								s_Data.m_ShadowMapBuffer->bind();
 								const auto& ShadowBufferInfo = s_Data.m_ShadowMapBuffer->getFramebufferSpecification();
 								if (!Data.m_ShadowMap) {
@@ -713,13 +726,13 @@ namespace Pika {
 										TextureFormat::DEPTH24STENCIL8, false });
 								}
 								s_Data.m_ShadowMapBuffer->setDepthStencilAttachment(Data.m_ShadowMap);
-								// äÖÈ¾Shadow Map
+								// æ¸²æŸ“Shadow Map
 								s_Data.m_Texture2DShadowMapShader->bind();
 								glm::mat4 LightSpaceMatrix = Utils::getDirectionLightSpaceMatrix(Transform.m_Rotation, Data);
 								s_Data.m_Texture2DShadowMapShader->setMat4("u_LightSpaceMatrix", LightSpaceMatrix);
 								RenderCommand::Clear();
 								RenderCommand::DrawIndexed(s_Data.m_VertexPositionArray.get(), s_Data.m_VertexPositionIndexCount);
-								// ½áÊø
+								// ç»“æŸ
 								s_Data.m_Statistics.m_DrawCalls++;
 								s_Data.m_Texture2DShadowMapShader->unbind();
 								s_Data.m_ShadowMapBuffer->unbind();
@@ -746,7 +759,7 @@ namespace Pika {
 						if (auto pPointLight = dynamic_cast<PointLight*>(Light.get())) {
 							auto& Data = pPointLight->getData();
 							if (Data.m_EnableShadow) {
-								// °ó¶¨Shadow Mapµ½ShadowMapBuffer
+								// ç»‘å®šShadow Mapåˆ°ShadowMapBuffer
 								s_Data.m_ShadowMapBuffer->bind();
 								const auto& ShadowBufferInfo = s_Data.m_ShadowMapBuffer->getFramebufferSpecification();
 								if (!Data.m_ShadowMap) {
@@ -754,7 +767,7 @@ namespace Pika {
 										TextureFormat::DEPTH24STENCIL8, false });
 								}
 								s_Data.m_ShadowMapBuffer->setDepthStencilAttachment(Data.m_ShadowMap);
-								// äÖÈ¾Shadow Map
+								// æ¸²æŸ“Shadow Map
 								s_Data.m_CubemapShadowMapShader->bind();
 								auto LightSpaceMatrices = Utils::getPointLightSpaceMatrices(Transform.m_Position, Data.m_LightSize);
 								s_Data.m_CubemapShadowMapShader->setFloat3("u_PointLightPosition", Transform.m_Position);
@@ -763,7 +776,7 @@ namespace Pika {
 									s_Data.m_CubemapShadowMapShader->setMat4(std::format("u_LightSpaceMatrices[{0}]", i), LightSpaceMatrices[i]);
 								RenderCommand::Clear();
 								RenderCommand::DrawIndexed(s_Data.m_VertexPositionArray.get(), s_Data.m_VertexPositionIndexCount);
-								// ½áÊø
+								// ç»“æŸ
 								s_Data.m_Statistics.m_DrawCalls++;
 								s_Data.m_CubemapShadowMapShader->unbind();
 								s_Data.m_ShadowMapBuffer->unbind();

@@ -47,8 +47,8 @@ namespace Pika
 		m_Renderer = CreateRef<SceneRenderer>();
 		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
 		m_Renderer->setFramebuffer(Framebuffer::Create({ 1920, 1080, 1,
-			{TextureFormat::RGBA8, TextureFormat::R32I, TextureFormat::DEPTH24STENCIL8}, false })); // ÕâÀïEntityIDÒ»¶¨ÓÃR32I£¬ÒòÎªR16I»á·¢Éú½×¶Îµ¼ÖÂbug£¡£¡£¡
-		m_Renderer->initialize();
+			{TextureFormat::RGBA8, TextureFormat::R32I, TextureFormat::DEPTH24STENCIL8}, false })); // è¿™é‡ŒEntityIDä¸€å®šç”¨R32Iï¼Œå› ä¸ºR16Iä¼šå‘ç”Ÿé˜¶æ®µå¯¼è‡´bugï¼ï¼ï¼
+		m_Renderer->Initialize();
 
 		// Initialize Shortcuts
 		initializeShortcutLibrary();
@@ -70,9 +70,9 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 		m_LastFrameTime = vTimestep;
 
-		// ¸üĞÂSceneºÍSceneÖĞËùÓĞCamerasµÄViewportSize
+		// æ›´æ–°Sceneå’ŒSceneä¸­æ‰€æœ‰Camerasçš„ViewportSize
 		m_ActiveScene->onViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
-		// ¸üĞÂFBO¡¢EditorCameraºÍCameraControllerµÄSize£¬Ê¹Æä´óĞ¡ÓëViewport±£³ÖÒ»ÖÂ
+		// æ›´æ–°FBOã€EditorCameraå’ŒCameraControllerçš„Sizeï¼Œä½¿å…¶å¤§å°ä¸Viewportä¿æŒä¸€è‡´
 		if (const FramebufferSpecification& FS = m_Renderer->getFramebuffer()->getFramebufferSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f
 			&& (m_ViewportSize.x != FS.m_Width || m_ViewportSize.y != FS.m_Height))
@@ -106,8 +106,8 @@ namespace Pika
 		}
 		}
 
-		// ¼ÆËãÊó±êÔÚFBOÖĞEntityID textureµÄ×ø±ê
-		auto MousePos = ImGui::GetMousePos(); // ÆÁÄ»¾ø¶Ô×ø±ê
+		// è®¡ç®—é¼ æ ‡åœ¨FBOä¸­EntityID textureçš„åæ ‡
+		auto MousePos = ImGui::GetMousePos(); // å±å¹•ç»å¯¹åæ ‡
 		int EntityIDTextureX = static_cast<int>(MousePos.x - m_ViewportBounds[0].x);
 		int EntityIDTextureY = static_cast<int>(m_ViewportBounds[1].y - MousePos.y);
 		if (EntityIDTextureX >= 0 && EntityIDTextureX < (int)m_ViewportSize.x && EntityIDTextureY >= 0 && EntityIDTextureY < (int)m_ViewportSize.y) {
@@ -236,29 +236,29 @@ namespace Pika
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");
-		// ViewportÊó±êÊÂ¼şµÄblockÌõ¼ş
+		// Viewporté¼ æ ‡äº‹ä»¶çš„blockæ¡ä»¶
 		m_IsViewportFocus = ImGui::IsWindowFocused();
 		m_IsViewportHovered = ImGui::IsWindowHovered();
-		Application::GetInstance().getImGuiLayer()->setBlockEvents(!m_IsViewportFocus || !m_IsViewportHovered); // ImGuiLayerÄ¬ÈÏÊÇ»áBlockÊÂ¼şµÄ
+		Application::GetInstance().getImGuiLayer()->setBlockEvents(!m_IsViewportFocus || !m_IsViewportHovered); // ImGuiLayeré»˜è®¤æ˜¯ä¼šBlockäº‹ä»¶çš„
 
 		// m_ViewportBounds
-		auto WindowContentMinPoint = ImGui::GetWindowContentRegionMin();  // ImGuiÏà¶Ô×ø±êÏµ£¨Viewport±êÖ¾×óÏÂ½Ç²ÅÊÇContent¿ªÊ¼µã, ÈôÒş²ØÔòÊÇ£¨0£¬ 0£©£©
-		auto WindowContentMaxPoint = ImGui::GetWindowContentRegionMax();  // ImGuiÏà¶Ô×ø±êÏµ£¨ViewportÓÒÏÂ½ÇµÄÏà¶Ô×ø±êÏµ£©
-		auto ViewportOffset = ImGui::GetWindowPos(); // ÆÁÄ»¾ø¶Ô×ø±ê
-		m_ViewportBounds[0] = { WindowContentMinPoint.x + ViewportOffset.x, WindowContentMinPoint.y + ViewportOffset.y }; // ¾ø¶Ô×ø±ê¼ÓContentµÄÏà¶Ô×ø±ê = ContentµÄÆÁÄ»¾ø¶Ô×ø±ê
-		m_ViewportBounds[1] = { WindowContentMaxPoint.x + ViewportOffset.x, WindowContentMaxPoint.y + ViewportOffset.y }; // ¾ø¶Ô×ø±ê¼ÓContentµÄÏà¶Ô×ø±ê = ContentµÄÆÁÄ»¾ø¶Ô×ø±ê
+		auto WindowContentMinPoint = ImGui::GetWindowContentRegionMin();  // ImGuiç›¸å¯¹åæ ‡ç³»ï¼ˆViewportæ ‡å¿—å·¦ä¸‹è§’æ‰æ˜¯Contentå¼€å§‹ç‚¹, è‹¥éšè—åˆ™æ˜¯ï¼ˆ0ï¼Œ 0ï¼‰ï¼‰
+		auto WindowContentMaxPoint = ImGui::GetWindowContentRegionMax();  // ImGuiç›¸å¯¹åæ ‡ç³»ï¼ˆViewportå³ä¸‹è§’çš„ç›¸å¯¹åæ ‡ç³»ï¼‰
+		auto ViewportOffset = ImGui::GetWindowPos(); // å±å¹•ç»å¯¹åæ ‡
+		m_ViewportBounds[0] = { WindowContentMinPoint.x + ViewportOffset.x, WindowContentMinPoint.y + ViewportOffset.y }; // ç»å¯¹åæ ‡åŠ Contentçš„ç›¸å¯¹åæ ‡ = Contentçš„å±å¹•ç»å¯¹åæ ‡
+		m_ViewportBounds[1] = { WindowContentMaxPoint.x + ViewportOffset.x, WindowContentMaxPoint.y + ViewportOffset.y }; // ç»å¯¹åæ ‡åŠ Contentçš„ç›¸å¯¹åæ ‡ = Contentçš„å±å¹•ç»å¯¹åæ ‡
 
 		// m_ViewportSize 
-		//ImGui::SetCursorPos(ImVec2{ 0, 0 }); // Õâ»áÈÃ×é¼şÇ¿ÖÆÔÚPanelµÄ£¨0£¬0£©Î»ÖÃ£¬¼´Ê¹±»Viewport±êÇ©¸²¸Ç
-		ImVec2 ViewportPanelSize = ImGui::GetContentRegionAvail(); // °üº¬ÁËViewport±êÇ©²¿·Ö,Õû¸öViewportPanel´óĞ¡
+		//ImGui::SetCursorPos(ImVec2{ 0, 0 }); // è¿™ä¼šè®©ç»„ä»¶å¼ºåˆ¶åœ¨Panelçš„ï¼ˆ0ï¼Œ0ï¼‰ä½ç½®ï¼Œå³ä½¿è¢«Viewportæ ‡ç­¾è¦†ç›–
+		ImVec2 ViewportPanelSize = ImGui::GetContentRegionAvail(); // åŒ…å«äº†Viewportæ ‡ç­¾éƒ¨åˆ†,æ•´ä¸ªViewportPanelå¤§å°
 		if (m_ViewportSize.x != ViewportPanelSize.x || m_ViewportSize.y != ViewportPanelSize.y)
 			m_ViewportSize = { ViewportPanelSize.x, ViewportPanelSize.y };
 
 		uintptr_t TextureID = static_cast<uintptr_t>(m_Renderer->getFramebuffer()->getColorAttachmentRendererID());
 		ImGui::Image(reinterpret_cast<ImTextureID>(TextureID), { m_ViewportSize.x, m_ViewportSize.y }, { 0.0f,1.0f }, { 1.0f,0.0f });
-		// ½ÓÊÕÍÏ×§Scenes
+		// æ¥æ”¶æ‹–æ‹½Scenes
 		if (ImGui::BeginDragDropTarget()) {
-			if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ¶ÔÓ¦ContentBrowserPanelÖĞ
+			if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // å¯¹åº”ContentBrowserPanelä¸­
 				std::filesystem::path Path = reinterpret_cast<const wchar_t*>(Payload->Data);
 				if (Path.extension().string() == ".pika")
 					openScene(Path);
@@ -275,21 +275,21 @@ namespace Pika
 		Entity SelectedEntity = m_SceneHierarchyPanel->getSelectedEntity();
 		if (SelectedEntity && m_SceneStatePanel->getSceneState() == Scene::SceneState::Edit && SelectedEntity.hasComponent<TransformComponent>()) {
 			ImGuizmo::BeginFrame();
-			ImGuizmo::SetDrawlist(); // ÉèÖÃ»æÖÆÁĞ±í£¨draw list£©,¼´ImGuiÌá¹©µÄäÖÈ¾API
+			ImGuizmo::SetDrawlist(); // è®¾ç½®ç»˜åˆ¶åˆ—è¡¨ï¼ˆdraw listï¼‰,å³ImGuiæä¾›çš„æ¸²æŸ“API
 			ImGuizmo::SetOrthographic(m_EditorCamera.isOthograhic());
 			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
 				m_ViewportBounds[1].x - m_ViewportBounds[0].x,
-				m_ViewportBounds[1].y - m_ViewportBounds[0].y); // ImGuizmoµÄ»æÖÆÇøÓò
+				m_ViewportBounds[1].y - m_ViewportBounds[0].y); // ImGuizmoçš„ç»˜åˆ¶åŒºåŸŸ
 
 			auto& Transform = SelectedEntity.getComponent<TransformComponent>();
 			glm::mat4 TransformMatrix = Transform;
 			glm::vec3 Scale = Transform.m_Scale;
 			glm::quat Orientation = glm::quat(Transform.m_Rotation);
 			glm::vec3 Translation = Transform.m_Position;
-			glm::vec3 Skew; // ÇĞ±ä
-			glm::vec4 Perspective; // Í¸ÊÓ±ä»»
+			glm::vec3 Skew; // åˆ‡å˜
+			glm::vec4 Perspective; // é€è§†å˜æ¢
 			if (m_GizmoType) {
-				// TODO : ±ä»»Camera²ÎÊı
+				// TODO : å˜æ¢Cameraå‚æ•°
 				ImGuizmo::Manipulate(glm::value_ptr(m_EditorCamera.getViewMatrix()),
 					glm::value_ptr(m_EditorCamera.getProjectionMatrix()),
 					static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::LOCAL, glm::value_ptr(TransformMatrix));
@@ -329,14 +329,14 @@ namespace Pika
 		m_SceneHierarchyPanel->setContext(m_ActiveScene);
 		m_SceneStatePanel->setContext(m_ActiveScene);
 		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
-		m_Renderer->initialize();
+		m_Renderer->Initialize();
 		resetEditorState();
-		m_ActiveScenePath = std::filesystem::path(); // ÖØÖÃÎª¿Õ
+		m_ActiveScenePath = std::filesystem::path(); // é‡ç½®ä¸ºç©º
 	}
 
 	void EditorLayer::resetEditorState()
 	{
-		// ÖØÖÃÒ»Ğ©ºÍ³¡¾°Ïà¹ØµÄ±äÁ¿
+		// é‡ç½®ä¸€äº›å’Œåœºæ™¯ç›¸å…³çš„å˜é‡
 		m_MouseHoveredEntity = {};
 		m_GizmoType = 0;
 		bool m_IsViewportFocus = false;
@@ -345,7 +345,7 @@ namespace Pika
 
 	void EditorLayer::openScene()
 	{
-		std::string Path = FileDialogs::OpenFile("Pika Scene\0*.pika\0"); // Á½Á½Ò»×é£¬Ç°ÃæÏÔÊ¾ÎªÏÔÊ¾¹ıÂËÆ÷Ãû³Æ£¬ºóÃæÎªÊµ¼Êºó×ºÃû
+		std::string Path = FileDialogs::OpenFile("Pika Scene\0*.pika\0"); // ä¸¤ä¸¤ä¸€ç»„ï¼Œå‰é¢æ˜¾ç¤ºä¸ºæ˜¾ç¤ºè¿‡æ»¤å™¨åç§°ï¼Œåé¢ä¸ºå®é™…åç¼€å
 		if (Path.empty()) {
 			PK_CORE_WARN("EditorLayer : Try to open a Pika scene with null path.");
 			return;
@@ -362,7 +362,7 @@ namespace Pika
 			PK_CORE_WARN("EditorLayer : Try to open a Pika scene with null path.");
 			return;
 		}
-		// TODO : ÔİÊ±Ö»ÔÊĞí.pikaºó×ºSceneÎÄ¼ş
+		// TODO : æš‚æ—¶åªå…è®¸.pikaåç¼€Sceneæ–‡ä»¶
 		if (vScenePath.extension().string() != ".pika") {
 			PK_CORE_WARN("EditorLayer : Try to open a Pika scene with unknown extention.");
 			return;
@@ -373,9 +373,9 @@ namespace Pika
 		m_SceneStatePanel->setContext(m_ActiveScene);
 		auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
 		Serializer->deserializeYAMLText(Path);
-		m_ActiveScenePath = std::filesystem::path(Path); // ¾ø¶ÔÂ·¾¶
+		m_ActiveScenePath = std::filesystem::path(Path); // ç»å¯¹è·¯å¾„
 		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
-		m_Renderer->initialize();   // ÒªÔÚdeserializeÖ®ºó²Å»áÈ·¶¨SceneType
+		m_Renderer->Initialize();   // è¦åœ¨deserializeä¹‹åæ‰ä¼šç¡®å®šSceneType
 		resetEditorState();
 	}
 
@@ -524,7 +524,7 @@ namespace Pika
 					PrimaryCameraName = PrimaryCamera.getComponent<TagComponent>().m_Tag;
 				ImGui::Button(PrimaryCameraName.c_str());
 				if (ImGui::BeginDragDropTarget()) {
-					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("SCENE_CAMERA")) { // ¶ÔÓ¦SceneHierarchyPanelÖĞ
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("SCENE_CAMERA")) { // å¯¹åº”SceneHierarchyPanelä¸­
 						const UUID& ID = *reinterpret_cast<const UUID*>(Payload->Data);
 						Entity CameraEntity = m_ActiveScene->getEntityByUUID(ID);
 						if (CameraEntity.hasComponent<CameraComponent>())
@@ -540,7 +540,7 @@ namespace Pika
 				std::string SkyboxName = Skybox ? Skybox->getPath().filename().string() : "None";
 				ImGui::Button(SkyboxName.c_str());
 				if (ImGui::BeginDragDropTarget()) {
-					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ¶ÔÓ¦ContentBrowserPanelÖĞ
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // å¯¹åº”ContentBrowserPanelä¸­
 						std::filesystem::path Path = reinterpret_cast<const wchar_t*>(Payload->Data);
 						if (Path.extension().string() == ".png" || Path.extension().string() == ".hdr") {
 							m_ActiveScene->setSkybox(Cubemap::Create(Path));
@@ -559,12 +559,12 @@ namespace Pika
 	void EditorLayer::initializeShortcutLibrary()
 	{
 		using namespace Key;
-		// fileÖĞµÄ¿ì½İ¼ü
+		// fileä¸­çš„å¿«æ·é”®
 		m_ShortcutLibrary.addShortcut({ "New_Scene", KeyCode::N, Shortcut::Modifier::Ctrl });
 		m_ShortcutLibrary.addShortcut({ "Open_Scene", KeyCode::O, Shortcut::Modifier::Ctrl | Shortcut::Modifier::Shift });
 		m_ShortcutLibrary.addShortcut({ "Save_Scene", KeyCode::S, Shortcut::Modifier::Ctrl });
 		m_ShortcutLibrary.addShortcut({ "Save_Scene_As", KeyCode::S, Shortcut::Modifier::Ctrl | Shortcut::Modifier::Shift });
-		// Gizmo×´Ì¬ÇĞ»»¼ü
+		// GizmoçŠ¶æ€åˆ‡æ¢é”®
 		m_ShortcutLibrary.addShortcut({ "Gizmo_None", KeyCode::Q });
 		m_ShortcutLibrary.addShortcut({ "Gizmo_Translate", KeyCode::W });
 		m_ShortcutLibrary.addShortcut({ "Gizmo_Rotate", KeyCode::E });
@@ -576,7 +576,7 @@ namespace Pika
 	bool EditorLayer::onKeyPressed(KeyPressedEvent& vEvent)
 	{
 		using namespace Key;
-		// fileÖĞµÄ¿ì½İ¼ü
+		// fileä¸­çš„å¿«æ·é”®
 		if (m_ShortcutLibrary["New_Scene"].IsHandleKeyEvent(vEvent))
 			m_IsShowNewScenePanel = true;
 		if (m_ShortcutLibrary["Open_Scene"].IsHandleKeyEvent(vEvent))
@@ -585,7 +585,7 @@ namespace Pika
 			saveScene();
 		if (m_ShortcutLibrary["Save_Scene_As"].IsHandleKeyEvent(vEvent))
 			saveSceneAs();
-		// Gizmo×´Ì¬ÇĞ»»¼ü
+		// GizmoçŠ¶æ€åˆ‡æ¢é”®
 		if (m_ShortcutLibrary["Gizmo_None"].IsHandleKeyEvent(vEvent)) {
 			if (!ImGuizmo::IsUsing())
 				m_GizmoType = 0;
@@ -602,7 +602,7 @@ namespace Pika
 			if (!ImGuizmo::IsUsing())
 				m_GizmoType = ImGuizmo::OPERATION::SCALE;
 		}
-		// EditorCamera¿ì½İ¼ü
+		// EditorCameraå¿«æ·é”®
 		if (m_ShortcutLibrary["Focus_Entity"].IsHandleKeyEvent(vEvent)) {
 			auto Entity = m_SceneHierarchyPanel->getSelectedEntity();
 			m_EditorCamera.setFocalPoint(Entity.getComponent<TransformComponent>().m_Position);
@@ -617,10 +617,10 @@ namespace Pika
 		{
 		case MouseCode::ButtonLeft:
 		{
-			ImVec2 MouseScreenPos = ImGui::GetMousePos(); // ¾ø¶Ô×ø±ê
+			ImVec2 MouseScreenPos = ImGui::GetMousePos(); // ç»å¯¹åæ ‡
 			ImVec2 MouseViewportPos = { MouseScreenPos.x - m_ViewportBounds[0].x, MouseScreenPos.y - m_ViewportBounds[0].y };
 			if (m_IsViewportHovered && m_IsViewportFocus && (!m_SceneHierarchyPanel->getSelectedEntity() || !ImGuizmo::IsOver())) {
-				if (!Input::isKeyPressed(Key::KeyCode::LeftAlt) && !Input::isKeyPressed(Key::KeyCode::RightAlt)) { // TODO : ±ÜÃâºÍEditorCmara³åÍ»£¬ĞëÖØ¹¹
+				if (!Input::isKeyPressed(Key::KeyCode::LeftAlt) && !Input::isKeyPressed(Key::KeyCode::RightAlt)) { // TODO : é¿å…å’ŒEditorCmaraå†²çªï¼Œé¡»é‡æ„
 					m_SceneHierarchyPanel->setSelectedEntity(m_MouseHoveredEntity);
 					m_GizmoType = m_GizmoType == 0 ? ImGuizmo::OPERATION::TRANSLATE : m_GizmoType;
 				}

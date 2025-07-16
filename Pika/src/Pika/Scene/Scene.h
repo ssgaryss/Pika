@@ -2,6 +2,7 @@
 #include "Pika/Core/Timestep.h"
 #include "Pika/Renderer/Camera.h"
 #include "Pika/Renderer/Texture.h"
+#include "Pika/Renderer/Bakers.h"
 #include "Pika/Core/UUID.h"
 #include <entt.h>
 
@@ -38,10 +39,10 @@ namespace Pika
 
 		void onUpdate(Timestep vTiemstep);
 
-		void onViewportResize(uint32_t vWidth, uint32_t vHeight); // ¸üĞÂSceneºÍSceneCameraµÄViewport
+		void onViewportResize(uint32_t vWidth, uint32_t vHeight); // æ›´æ–°Sceneå’ŒSceneCameraçš„Viewport
 
 		Entity getEntityByUUID(const UUID& vUUID);
-		Entity getEntityByName(std::string_view vName); // ÈôÓĞÖØÃû·µ»ØÕÒµ½µÄµÚÒ»¸ö
+		Entity getEntityByName(std::string_view vName); // è‹¥æœ‰é‡åè¿”å›æ‰¾åˆ°çš„ç¬¬ä¸€ä¸ª
 
 		inline const std::string& getSceneName() const { return m_SceneName; }
 		inline void setSceneName(const std::string& vName) { m_SceneName = vName; }
@@ -58,8 +59,8 @@ namespace Pika
 		void onSimulationBegin();
 		void onSimulationEnd();
 	private:
-		void onPhysics2DBegin();  // ¹¹Ôìm_Physics2DWorld
-		void onPhysics2DEnd();    // Îö¹¹m_Physics2DWorld
+		void onPhysics2DBegin();  // æ„é€ m_Physics2DWorld
+		void onPhysics2DEnd();    // ææ„m_Physics2DWorld
 
 		// TODO!
 		//void onSimulationBegin();
@@ -75,6 +76,7 @@ namespace Pika
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0; // Scene Display
 		Ref<b2World> m_Physics2DWorld = nullptr;                      // Physics 2D World
 		Ref<Cubemap> m_Skybox = nullptr;                              // Skybox
+		Ref<IBLData> m_IBLData = nullptr;                             // IBL
 
 		friend class Entity;
 		friend class SceneRenderer; // TODO : Delete

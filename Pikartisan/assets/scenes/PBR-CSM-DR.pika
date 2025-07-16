@@ -1,0 +1,26 @@
+Scene:
+  Name: Untitled
+  SceneType: Scene3D
+  Skybox: resources/skybox/kloofendal_48d_partly_cloudy_puresky_2k.png
+  Entities:
+    - Entity: "{2FD99085-9890-4680-931C-84D20B87FE3E}"
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [0, 1.49011612e-08, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      ModelComponent:
+        Path: resources/objects/cube.fbx
+      MaterialComponent:
+        Type: Standard PBR
+        Data:
+          Albedo: [1, 1, 1]
+          Metallic: 0.439999998
+          Roughness: 0.800000012
+          Ambient Occlusion: 0.579999983
+          Albedo Map: assets\textures\2024.png
+          Metallic Map: assets\textures\blockPack_spritesheet@2.png
+          Roughness Map: None
+          Ambient Occlusion Map: None
+          Normal Map: None
