@@ -25,7 +25,7 @@ namespace Pika {
 		inline static GraphicsAPI getAPI() { return s_GraphicsAPI; }
 		inline static void setAPI(GraphicsAPI vGraphicsAPI) { s_GraphicsAPI = vGraphicsAPI; }
 
-		virtual void Initialize(uint32_t vFlags = 0) = 0;
+		virtual void initialize(uint32_t vFlags = 0) = 0;
 		virtual void clear() = 0;
 		virtual void setClearColor(const glm::vec4& vColor) = 0;
 		virtual void drawIndexed(const VertexArray* vVertexArray, uint32_t vIndexCount) = 0;

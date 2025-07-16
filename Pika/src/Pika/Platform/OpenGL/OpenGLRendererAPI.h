@@ -7,7 +7,7 @@ namespace Pika
 	{
 	public:
 
-		void Initialize(uint32_t vFlags) override;
+		void initialize(uint32_t vFlags) override;
 		void clear() override;
 		void setClearColor(const glm::vec4& vColor) override;
 		void drawIndexed(const VertexArray* vVertexArray, uint32_t vIndexCount = UINT_MAX) override;

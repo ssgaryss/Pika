@@ -12,7 +12,7 @@ namespace Pika
 		OpenGLContext() = delete;
 		OpenGLContext(GLFWwindow* vWindow);
 		~OpenGLContext() = default;
-		void Initialize() override;
+		void initialize() override;
 		void swapBuffer() override;
 
 	private:

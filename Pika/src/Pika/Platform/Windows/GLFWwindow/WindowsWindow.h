@@ -23,7 +23,7 @@ namespace Pika {
 		void setVSync(bool vEnable) override;
 		bool isVSync() const override;
 	private:
-		void Initialize(const WindowProps& vWindowProps);
+		void initialize(const WindowProps& vWindowProps);
 		void shutDown();
 	private:
 		struct WindowData {

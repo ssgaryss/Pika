@@ -48,7 +48,7 @@ namespace Pika
 		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
 		m_Renderer->setFramebuffer(Framebuffer::Create({ 1920, 1080, 1,
 			{TextureFormat::RGBA8, TextureFormat::R32I, TextureFormat::DEPTH24STENCIL8}, false })); // 这里EntityID一定用R32I，因为R16I会发生阶段导致bug！！！
-		m_Renderer->Initialize();
+		m_Renderer->initialize();
 
 		// Initialize Shortcuts
 		initializeShortcutLibrary();
@@ -329,7 +329,7 @@ namespace Pika
 		m_SceneHierarchyPanel->setContext(m_ActiveScene);
 		m_SceneStatePanel->setContext(m_ActiveScene);
 		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
-		m_Renderer->Initialize();
+		m_Renderer->initialize();
 		resetEditorState();
 		m_ActiveScenePath = std::filesystem::path(); // 重置为空
 	}
@@ -375,7 +375,7 @@ namespace Pika
 		Serializer->deserializeYAMLText(Path);
 		m_ActiveScenePath = std::filesystem::path(Path); // 绝对路径
 		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
-		m_Renderer->Initialize();   // 要在deserialize之后才会确定SceneType
+		m_Renderer->initialize();   // 要在deserialize之后才会确定SceneType
 		resetEditorState();
 	}
 

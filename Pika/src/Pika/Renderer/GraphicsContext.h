@@ -16,7 +16,7 @@ namespace Pika {
 
 		GraphicsContext() = default;
 		virtual ~GraphicsContext() = default;
-		virtual void Initialize() = 0;
+		virtual void initialize() = 0;
 		virtual void swapBuffer() = 0;
 
 		inline const GraphicsContextInformation* getInformation() const { return &m_Information; }

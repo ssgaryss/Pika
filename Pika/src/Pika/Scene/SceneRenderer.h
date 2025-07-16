@@ -20,7 +20,7 @@ namespace Pika {
 		SceneRenderer() = default;
 		SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer);
 
-		void Initialize();  // 初始化Renderer
+		void initialize();
 		void beginFrame();
 		void endFrame();
 

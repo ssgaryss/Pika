@@ -6,7 +6,6 @@
 #include "RenderBatch.h"
 #include "Texture.h"
 #include "Framebuffer.h"
-#include "Bakers.h"
 #include "Pika/Scene/Primitive.h"
 
 namespace Pika {
@@ -50,20 +49,23 @@ namespace Pika {
 	struct Renderer3DData
 	{
 	public:
-		static const uint32_t s_MaxTrianglesPerBatch = MAX_TRIANGLES_PER_BATCH;
-		static const uint32_t s_MaxTriangleVerticesPerBatch = s_MaxTrianglesPerBatch * 3; // 此处是为了先创建Buffer提高性能
-		static const uint32_t s_MaxTriangleIndicesPerBatch = s_MaxTrianglesPerBatch * 3;
+		static constexpr uint32_t s_MaxTrianglesPerBatch = MAX_TRIANGLES_PER_BATCH;
+		static constexpr uint32_t s_MaxTriangleVerticesPerBatch = s_MaxTrianglesPerBatch * 3; // 此处是为了先创建Buffer提高性能
+		static constexpr uint32_t s_MaxTriangleIndicesPerBatch = s_MaxTrianglesPerBatch * 3;
+
 		// StaticMesh
 		Ref<VertexArray> m_StaticMeshVertexArray = nullptr;
 		Ref<VertexBuffer> m_StaticMeshVertexBuffer = nullptr;
 		Ref<Shader> m_StaticMeshShader = nullptr;
 		Ref<Shader> m_BlinnPhoneShader = nullptr;
+		Ref<Shader> m_StandardPBRShader = nullptr;
 		Ref<UniformBuffer> m_BlinnPhoneMaterialDataUniformBuffer = nullptr;
+		Ref<UniformBuffer> m_StandardPBRMaterialDataUniformBuffer = nullptr;
 
 		// Line
-		static const uint32_t s_MaxLinesPerBatch = MAX_LINES_PER_BATCH;
-		static const uint32_t s_MaxLineVerticesPerBatch = s_MaxLinesPerBatch * 2;
-		static const uint32_t s_MaxLineIndicesPerBatch = s_MaxLinesPerBatch * 2;
+		static constexpr uint32_t s_MaxLinesPerBatch = MAX_LINES_PER_BATCH;
+		static constexpr uint32_t s_MaxLineVerticesPerBatch = s_MaxLinesPerBatch * 2;
+		static constexpr uint32_t s_MaxLineIndicesPerBatch = s_MaxLinesPerBatch * 2;
 		Ref<VertexArray> m_LineVertexArray = nullptr;
 		Ref<VertexBuffer> m_LineVertexBuffer = nullptr;
 		Ref<Shader> m_LineShader = nullptr;
@@ -78,7 +80,7 @@ namespace Pika {
 		Ref<Shader> m_SkyboxShader = nullptr;
 
 		// Textures
-		static const uint32_t m_MaxTextureSlots = 28; // TODO : 这个应该和硬件有关！后四个暂时只给点光源Shadow用
+		static constexpr uint32_t m_MaxTextureSlots = 28; // TODO : 这个应该和硬件有关！后四个暂时只给点光源Shadow用
 		std::optional<uint32_t> findTextureIndex(const Ref<Texture2D>& vTexture) {  // 已存在Texture则返回其index
 			for (uint32_t i = 1; i < m_TextureIndex; ++i) {
 				if (m_TextureSlots[i]) {
@@ -328,6 +330,7 @@ namespace Pika {
 		s_Data.m_DirectionLightShadowMaps = {};
 		s_Data.m_PointLightShadowMaps = {};
 		s_Data.m_BlinnPhoneMaterialUniformBufferData = {};
+		s_Data.m_StandardPBRMaterialUniformBufferData = {};
 
 		// StaticMesh
 		s_Data.m_StaticMeshVertexArray = VertexArray::Create();

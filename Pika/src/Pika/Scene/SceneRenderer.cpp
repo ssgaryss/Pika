@@ -3,6 +3,7 @@
 #include "Pika/Renderer/RenderCommand.h"
 #include "Pika/Renderer/Renderer2D.h"
 #include "Pika/Renderer/Renderer3D.h"
+#include "Pika/Renderer/Bakers.h"
 
 namespace Pika {
 
@@ -128,8 +129,12 @@ namespace Pika {
 		m_Framebuffer->resize(vWidth, vHeight);
 	}
 
-	void SceneRenderer::Initialize()
+	void SceneRenderer::initialize()
 	{
+		// 初始化 IBL 烘焙器
+		IBLBaker::Initialize();
+
+		// 初始化 Renderer
 		switch (m_RenderDataExtractor->extractSceneType())
 		{
 		case Pika::Scene::SceneType::Scene2D:

@@ -9,7 +9,7 @@ namespace Pika {
 
 	void RenderCommand::Initialize(uint32_t vFlags)
 	{
-		s_RendererAPI->Initialize(vFlags);
+		s_RendererAPI->initialize(vFlags);
 	}
 
 	void RenderCommand::Clear()
