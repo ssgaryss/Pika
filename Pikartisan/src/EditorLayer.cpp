@@ -57,7 +57,7 @@ namespace Pika
 		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 		m_SceneStatePanel = CreateScope<SceneStatePanel>(m_ActiveScene);
 		// Initialize Default Skybox
-		m_ActiveScene->setSkybox(Cubemap::Create("resources/skybox/kloofendal_48d_partly_cloudy_puresky_2k.png"));
+		m_ActiveScene->setEnvironment(CreateRef<Environment>("resources/skybox/kloofendal_48d_partly_cloudy_puresky_2k.png"));
 	}
 
 	void EditorLayer::onDetach()
@@ -357,8 +357,7 @@ namespace Pika
 
 	void EditorLayer::openScene(const std::filesystem::path& vScenePath)
 	{
-		std::string Path = vScenePath.string();
-		if (Path.empty()) {
+		if (vScenePath.empty()) {
 			PK_CORE_WARN("EditorLayer : Try to open a Pika scene with null path.");
 			return;
 		}
@@ -372,8 +371,8 @@ namespace Pika
 		m_SceneHierarchyPanel->setContext(m_ActiveScene);
 		m_SceneStatePanel->setContext(m_ActiveScene);
 		auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
-		Serializer->deserializeYAMLText(Path);
-		m_ActiveScenePath = std::filesystem::path(Path); // 绝对路径
+		Serializer->deserializeYAMLText(vScenePath);
+		m_ActiveScenePath = vScenePath; // 绝对路径
 		m_Renderer->setRenderDataExtractor(CreateRef<RenderDataExtractor>(m_ActiveScene));
 		m_Renderer->initialize();   // 要在deserialize之后才会确定SceneType
 		resetEditorState();
@@ -381,11 +380,9 @@ namespace Pika
 
 	void EditorLayer::saveScene()
 	{
-		std::string	Path = m_ActiveScenePath.string();
-
-		if (!Path.empty()) {
+		if (!m_ActiveScenePath.empty()) {
 			auto Serializer = CreateRef<SceneSerializer>(m_ActiveScene);
-			Serializer->serializeYAMLText(Path);
+			Serializer->serializeYAMLText(m_ActiveScenePath);
 		}
 		else {
 			saveSceneAs();
@@ -536,14 +533,18 @@ namespace Pika
 				}
 				ImGui::Text("Skybox");
 				ImGui::SameLine();
-				const auto& Skybox = m_ActiveScene->getSkybox();
-				std::string SkyboxName = Skybox ? Skybox->getPath().filename().string() : "None";
+				std::string SkyboxName = "None";
+				if (auto& Environment = m_ActiveScene->getEnvironment()) {
+					if (auto Skybox = Environment->getSkybox()) {
+						SkyboxName = Skybox->getPath().filename().string();
+					}
+				}
 				ImGui::Button(SkyboxName.c_str());
 				if (ImGui::BeginDragDropTarget()) {
 					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // 对应ContentBrowserPanel中
 						std::filesystem::path Path = reinterpret_cast<const wchar_t*>(Payload->Data);
 						if (Path.extension().string() == ".png" || Path.extension().string() == ".hdr") {
-							m_ActiveScene->setSkybox(Cubemap::Create(Path));
+							m_ActiveScene->setEnvironment(CreateRef<Environment>(Path));
 						}
 						//TODO : HDR
 					}

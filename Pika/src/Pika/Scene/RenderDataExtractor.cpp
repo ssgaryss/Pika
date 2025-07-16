@@ -14,7 +14,7 @@ namespace Pika {
 
 	const Ref<Cubemap>& RenderDataExtractor::extractSkybox() const
 	{
-		return m_Scene->m_Skybox;
+		return m_Scene->m_Environment->getSkybox();
 	}
 
 	std::vector<std::tuple<TransformComponent&, ModelComponent&, int>> RenderDataExtractor::extractNoMaterialModelsWithEntityID() const

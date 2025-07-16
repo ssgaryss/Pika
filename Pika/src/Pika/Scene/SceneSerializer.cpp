@@ -170,7 +170,7 @@ namespace Pika {
 	SceneSerializer::SceneSerializer(const Ref<Scene>& vScene)
 		: m_Scene{ vScene } {}
 
-	void SceneSerializer::serializeYAMLText(const std::string& vFilePath)
+	void SceneSerializer::serializeYAMLText(const std::filesystem::path& vFilePath)
 	{
 		std::string SceneName = m_Scene->getSceneName();
 		YAML::Emitter Out;
@@ -181,7 +181,7 @@ namespace Pika {
 			{
 				Out << YAML::Key << "Name" << YAML::Value << SceneName;
 				Out << YAML::Key << "SceneType" << YAML::Value << Utils::SceneTypeToString(m_Scene->getSceneType());
-				Out << YAML::Key << "Skybox" << YAML::Value << (m_Scene->m_Skybox ? m_Scene->m_Skybox->getPath().string() : "None");
+				Out << YAML::Key << "Skybox" << YAML::Value << (m_Scene->m_Environment->getSkybox()->getPath().empty() ? m_Scene->m_Environment->getSkybox()->getPath().string() : "None");
 				Out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // 所有Entities
 				{
 					m_Scene->m_Registry.view<IDComponent>().each([&Out, this](auto vEntity, auto& vTagComponent) {
@@ -366,41 +366,41 @@ namespace Pika {
 		Out << YAML::EndMap;
 
 		// Write in file
-		std::ofstream FileOut(vFilePath, std::ios_base::out | std::ios_base::trunc);
-		PK_CORE_TRACE(R"(SceneSerializer : Try to serialize .pika file at "{0}" ...)", vFilePath);
+		std::ofstream FileOut(vFilePath.string(), std::ios_base::out | std::ios_base::trunc);
+		PK_CORE_TRACE(R"(SceneSerializer : Try to serialize .pika file at "{0}" ...)", vFilePath.string());
 		if (!FileOut.is_open()) {
-			PK_CORE_ERROR(R"(SceneSerializer : Fail to open yaml file at "{0}".)", vFilePath);
+			PK_CORE_ERROR(R"(SceneSerializer : Fail to open yaml file at "{0}".)", vFilePath.string());
 			return;
 		}
 		FileOut << Out.c_str();
 		PK_CORE_INFO(R"(SceneSerializer : Success to save scene "{0}".)", SceneName);
 	}
 
-	void SceneSerializer::serializeYAMLBinary(const std::string& vFilePath)
+	void SceneSerializer::serializeYAMLBinary(const std::filesystem::path& vFilePath)
 	{
 		//TODO
 	}
 
-	bool SceneSerializer::deserializeYAMLText(const std::string& vFilePath)
+	bool SceneSerializer::deserializeYAMLText(const std::filesystem::path& vFilePath)
 	{
 		YAML::Node Data;
 		try
 		{
-			Data = YAML::LoadFile(vFilePath);
+			Data = YAML::LoadFile(vFilePath.string());
 		}
 		catch (const YAML::ParserException& e)
 		{
-			PK_CORE_ERROR(R"(SceneSerializer : Failed to load .pika file at "{0}".)", vFilePath);
+			PK_CORE_ERROR(R"(SceneSerializer : Failed to load .pika file at "{0}".)", vFilePath.string());
 			std::cerr << e.what() << std::endl;
 			return false;
 		}
 
 		if (!Data["Scene"]) {
-			PK_CORE_ERROR(R"(SceneSerializer : Not a valid scene yaml file "{0}")", vFilePath);
+			PK_CORE_ERROR(R"(SceneSerializer : Not a valid scene yaml file "{0}")", vFilePath.string());
 			return false;
 		}
 
-		PK_CORE_TRACE(R"(SceneSerializer : Try to deserialize .pika file at "{0}" ...)", vFilePath);
+		PK_CORE_TRACE(R"(SceneSerializer : Try to deserialize .pika file at "{0}" ...)", vFilePath.string());
 		auto SceneNode = Data["Scene"];
 		// Name
 		std::string SceneName = SceneNode["Name"].as<std::string>();
@@ -408,7 +408,7 @@ namespace Pika {
 		m_Scene->setSceneType(Utils::StringToSceneType(SceneNode["SceneType"].as<std::string>()));
 		std::string SkyboxPath = SceneNode["Skybox"].as<std::string>();
 		if (SkyboxPath != "None")
-			m_Scene->setSkybox(Cubemap::Create(SkyboxPath));
+			m_Scene->setEnvironment(CreateRef<Environment>(SkyboxPath));
 		// Entities
 		YAML::Node Entities = SceneNode["Entities"];
 		if (Entities) {
@@ -561,7 +561,7 @@ namespace Pika {
 		return true;
 	}
 
-	bool SceneSerializer::deserializeYAMLBinary(const std::string& vFilePath)
+	bool SceneSerializer::deserializeYAMLBinary(const std::filesystem::path& vFilePath)
 	{
 		// TODO
 		return false;

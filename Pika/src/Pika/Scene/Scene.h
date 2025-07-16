@@ -1,8 +1,7 @@
 #pragma once
+#include "Environment.h"
 #include "Pika/Core/Timestep.h"
 #include "Pika/Renderer/Camera.h"
-#include "Pika/Renderer/Texture.h"
-#include "Pika/Renderer/Bakers.h"
 #include "Pika/Core/UUID.h"
 #include <entt.h>
 
@@ -48,8 +47,8 @@ namespace Pika
 		inline void setSceneName(const std::string& vName) { m_SceneName = vName; }
 		inline SceneType getSceneType() const { return m_SceneType; }
 		inline void setSceneType(SceneType vSceneType) { m_SceneType = vSceneType; }
-		inline const Ref<Cubemap>& getSkybox() const { return m_Skybox; }
-		inline void setSkybox(const Ref<Cubemap>& vSkybox) { m_Skybox = vSkybox; }
+		inline const Ref<Environment>& getEnvironment() const { return m_Environment; }
+		inline void setEnvironment(const Ref<Environment>& vEnvironment) { m_Environment = vEnvironment; }
 	private:
 		void onUpdateEditor(Timestep vTimestep);        // SceneState::Edit
 		void onUpdateRuntime(Timestep vTimestep);       // SceneState::Play
@@ -75,8 +74,7 @@ namespace Pika
 		bool m_IsPaused = false;                                      // Play & Simulation
 		uint32_t m_SceneViewportWidth = 0, m_SceneViewportHeight = 0; // Scene Display
 		Ref<b2World> m_Physics2DWorld = nullptr;                      // Physics 2D World
-		Ref<Cubemap> m_Skybox = nullptr;                              // Skybox
-		Ref<IBLData> m_IBLData = nullptr;                             // IBL
+		Ref<Environment> m_Environment = nullptr;                     // Skybox
 
 		friend class Entity;
 		friend class SceneRenderer; // TODO : Delete

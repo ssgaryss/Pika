@@ -38,7 +38,7 @@ namespace Pika
 		void showSceneRendererSettings(bool* vIsShow);
 	private:
 		// Shortcuts
-		void initializeShortcutLibrary();          // ³õÊ¼»¯¿ì½İ¼ü  TODO : ÓĞProjectĞòÁĞ»¯ºó¶ÁÈ¡ProjectÖĞ°üº¬¿ì½İ¼üÉèÖÃ
+		void initializeShortcutLibrary();          // åˆå§‹åŒ–å¿«æ·é”®  TODO : æœ‰Projectåºåˆ—åŒ–åè¯»å–Projectä¸­åŒ…å«å¿«æ·é”®è®¾ç½®
 		// Event callbacks
 		bool onKeyPressed(KeyPressedEvent& vEvent);
 		bool onMousePressed(MouseButtonPressedEvent& vEvent);
@@ -47,11 +47,11 @@ namespace Pika
 		Timestep m_LastFrameTime = 0.0f;
 		bool m_IsViewportFocus = false;
 		bool m_IsViewportHovered = false;
-		glm::vec2 m_ViewportSize = { 0.0f, 0.0f }; // Viewport¿ÉÓÃÇøÓò³¤¿í
-		glm::vec2 m_ViewportBounds[2]{};           // Viewport¿ÉÓÃÇøÓòµÄ×óÉÏÓëÓÒÏÂµã£¨ÆÁÄ»¾ø¶Ô×ø±ê£©
+		glm::vec2 m_ViewportSize = { 0.0f, 0.0f }; // Viewportå¯ç”¨åŒºåŸŸé•¿å®½
+		glm::vec2 m_ViewportBounds[2]{};           // Viewportå¯ç”¨åŒºåŸŸçš„å·¦ä¸Šä¸å³ä¸‹ç‚¹ï¼ˆå±å¹•ç»å¯¹åæ ‡ï¼‰
 		// Gizmo
 		uint32_t m_GizmoType = 0;                  // Translate = ImGuizmo::OPERATION::TRANSLATE = 7, Rotation = 120, Scale = 896
-		Entity m_MouseHoveredEntity;               // Êó±êĞüÍ£µÄEntity
+		Entity m_MouseHoveredEntity;               // é¼ æ ‡æ‚¬åœçš„Entity
 		// Shortcuts
 		ShortcutLibrary m_ShortcutLibrary;
 	private:

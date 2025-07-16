@@ -38,3 +38,4 @@
 #include "Pika/Scene/SceneRenderer.h"
 #include "Pika/Scene/Lights.h"
 #include "Pika/Scene/RenderDataExtractor.h"
+#include "Pika/Scene/Environment.h"
