@@ -22,19 +22,19 @@ namespace Pika {
 				// Irradiance
 				m_IrradianceMapSpecification.m_Width = 32;
 				m_IrradianceMapSpecification.m_Height = 32;
-				m_IrradianceMapSpecification.m_Format = TextureFormat::RGB16F;
+				m_IrradianceMapSpecification.m_Format = TextureFormat::RGBA16F;
 				m_IrradianceMapSpecification.m_RequiredMips = false;
 
 				// Prefiltered Environment
 				m_PrefilteredEnvironmentMapSpecification.m_Width = 128;
 				m_PrefilteredEnvironmentMapSpecification.m_Height = 128;
-				m_PrefilteredEnvironmentMapSpecification.m_Format = TextureFormat::RGB16F;
+				m_PrefilteredEnvironmentMapSpecification.m_Format = TextureFormat::RGBA16F;
 				m_PrefilteredEnvironmentMapSpecification.m_RequiredMips = true;
 
 				// BRDF LUT
 				m_BRDFLUTSpecification.m_Width = 512;
 				m_BRDFLUTSpecification.m_Height = 512;
-				m_BRDFLUTSpecification.m_Format = TextureFormat::RG16F;
+				m_BRDFLUTSpecification.m_Format = TextureFormat::RGBA16F; // TODO: RG16F
 				m_BRDFLUTSpecification.m_RequiredMips = false;
 			}
 		};

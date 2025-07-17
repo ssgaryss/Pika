@@ -1,30 +1,42 @@
-// TODO: 更改代码规范，暂时直接使用LearnOpenGL的代码
-
 #VERTEX_BEGIN()
 #version 460 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoords;
+layout (location = 0) in vec3 a_Position;
+layout (location = 1) in vec2 a_TexCoord;
 
-out vec2 TexCoords;
+out vec2 v_TexCoords;
 
 void main()
 {
-    TexCoords = aTexCoords;
-	gl_Position = vec4(aPos, 1.0);
+    v_TexCoords = a_TexCoord;
+	gl_Position = vec4(a_Position, 1.0);
 }
 #VERTEX_END()
 
 #FRAGMENT_BEGIN()
 #version 460 core
-out vec2 FragColor;
-in vec2 TexCoords;
+layout (location = 0) out vec4 FragColor;
+
+in vec2 v_TexCoords;
+
+float radicalInverse_VdC(uint bits);
+vec2 hammersley(uint i, uint N);
+vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness);
+float geometrySchlickGGX(float NdotV, float roughness);
+float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
+vec2 integrateBRDF(float NdotV, float roughness);
+
+void main() 
+{
+    vec2 integratedBRDF = integrateBRDF(v_TexCoords.x, v_TexCoords.y);
+    FragColor = vec4(integratedBRDF, 0.0f, 1.0f);
+}
 
 const float PI = 3.14159265359;
-// ----------------------------------------------------------------------------
-// http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
-// efficient VanDerCorpus calculation.
-float RadicalInverse_VdC(uint bits) 
+
+float radicalInverse_VdC(uint bits) 
 {
+    // http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
+    // efficient VanDerCorpus calculation.
      bits = (bits << 16u) | (bits >> 16u);
      bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
      bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
@@ -32,13 +44,13 @@ float RadicalInverse_VdC(uint bits)
      bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
      return float(bits) * 2.3283064365386963e-10; // / 0x100000000
 }
-// ----------------------------------------------------------------------------
-vec2 Hammersley(uint i, uint N)
+
+vec2 hammersley(uint i, uint N)
 {
-	return vec2(float(i)/float(N), RadicalInverse_VdC(i));
+	return vec2(float(i)/float(N), radicalInverse_VdC(i));
 }
-// ----------------------------------------------------------------------------
-vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
+
+vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 {
 	float a = roughness*roughness;
 	
@@ -60,8 +72,8 @@ vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 	vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
 	return normalize(sampleVec);
 }
-// ----------------------------------------------------------------------------
-float GeometrySchlickGGX(float NdotV, float roughness)
+
+float geometrySchlickGGX(float NdotV, float roughness)
 {
     // note that we use a different k for IBL
     float a = roughness;
@@ -72,18 +84,18 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 
     return nom / denom;
 }
-// ----------------------------------------------------------------------------
-float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
+
+float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
     float NdotV = max(dot(N, V), 0.0);
     float NdotL = max(dot(N, L), 0.0);
-    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
-    float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+    float ggx2 = geometrySchlickGGX(NdotV, roughness);
+    float ggx1 = geometrySchlickGGX(NdotL, roughness);
 
     return ggx1 * ggx2;
 }
-// ----------------------------------------------------------------------------
-vec2 IntegrateBRDF(float NdotV, float roughness)
+
+vec2 integrateBRDF(float NdotV, float roughness)
 {
     vec3 V;
     V.x = sqrt(1.0 - NdotV*NdotV);
@@ -100,8 +112,8 @@ vec2 IntegrateBRDF(float NdotV, float roughness)
     {
         // generates a sample vector that's biased towards the
         // preferred alignment direction (importance sampling).
-        vec2 Xi = Hammersley(i, SAMPLE_COUNT);
-        vec3 H = ImportanceSampleGGX(Xi, N, roughness);
+        vec2 Xi = hammersley(i, SAMPLE_COUNT);
+        vec3 H = importanceSampleGGX(Xi, N, roughness);
         vec3 L = normalize(2.0 * dot(V, H) * H - V);
 
         float NdotL = max(L.z, 0.0);
@@ -110,7 +122,7 @@ vec2 IntegrateBRDF(float NdotV, float roughness)
 
         if(NdotL > 0.0)
         {
-            float G = GeometrySmith(N, V, L, roughness);
+            float G = geometrySmith(N, V, L, roughness);
             float G_Vis = (G * VdotH) / (NdotH * NdotV);
             float Fc = pow(1.0 - VdotH, 5.0);
 
@@ -121,11 +133,5 @@ vec2 IntegrateBRDF(float NdotV, float roughness)
     A /= float(SAMPLE_COUNT);
     B /= float(SAMPLE_COUNT);
     return vec2(A, B);
-}
-// ----------------------------------------------------------------------------
-void main() 
-{
-    vec2 integratedBRDF = IntegrateBRDF(TexCoords.x, TexCoords.y);
-    FragColor = integratedBRDF;
 }
 #FRAGMENT_END()

@@ -486,6 +486,11 @@ namespace Pika
 		ImGui::Text("Depth map :");
 		uintptr_t DepthID = static_cast<uintptr_t>(m_Renderer->getFramebuffer()->getDepthStencilAttachmentRendererID());
 		ImGui::Image(reinterpret_cast<ImTextureID>(DepthID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x) }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		if (m_ActiveScene && m_ActiveScene->getEnvironment() && m_ActiveScene->getEnvironment()->getIBLData() && m_ActiveScene->getEnvironment()->getIBLData()->m_BRDFLUT) {
+			ImGui::Text("LUT map :");
+			uintptr_t LUTID = static_cast<uintptr_t>(m_ActiveScene->getEnvironment()->getIBLData()->m_BRDFLUT->getRendererID());
+			ImGui::Image(reinterpret_cast<ImTextureID>(LUTID), { 300.0f, 300.0f * (m_ViewportSize.y / m_ViewportSize.x) }, { 0.0f,1.0f }, { 1.0f,0.0f });
+		}
 		ImGui::Separator();
 		ImGui::End(); // Renderer statistics
 
