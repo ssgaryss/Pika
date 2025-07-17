@@ -34,7 +34,7 @@ namespace Pika {
 				// BRDF LUT
 				m_BRDFLUTSpecification.m_Width = 512;
 				m_BRDFLUTSpecification.m_Height = 512;
-				m_BRDFLUTSpecification.m_Format = TextureFormat::RG16F;
+				m_BRDFLUTSpecification.m_Format = TextureFormat::RGB16F; // TODO: RG16F
 				m_BRDFLUTSpecification.m_RequiredMips = false;
 			}
 		};

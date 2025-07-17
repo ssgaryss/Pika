@@ -16,11 +16,14 @@ namespace Pika {
 
 	void Environment::refresh()
 	{
-		if (!m_Skybox) {
-			IBLBaker::IBLSpecification Specification;
-			Specification.m_EnvironmentMap = m_Skybox;
-			m_IBLData = bakingIBLData(Specification);
+		if (m_Skybox) {
+			// TODO
+
+			//IBLBaker::IBLSpecification Specification;
+			//Specification.m_EnvironmentMap = m_Skybox;
+			//m_IBLData = bakingIBLData(Specification);
 		}
+		PK_CORE_TRACE("Environment : Refresh the baking data");
 	}
 
 	Ref<IBLData> Environment::bakingIBLData(const IBLBaker::IBLSpecification& vSpecification)

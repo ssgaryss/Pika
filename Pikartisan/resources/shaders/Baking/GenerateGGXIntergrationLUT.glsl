@@ -2,21 +2,21 @@
 
 #VERTEX_BEGIN()
 #version 460 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoords;
+layout (location = 0) in vec3 a_Position;
+layout (location = 1) in vec2 a_TexCoord;
 
 out vec2 TexCoords;
 
 void main()
 {
-    TexCoords = aTexCoords;
-	gl_Position = vec4(aPos, 1.0);
+    TexCoords = a_TexCoord;
+	gl_Position = vec4(a_Position, 1.0);
 }
 #VERTEX_END()
 
 #FRAGMENT_BEGIN()
 #version 460 core
-out vec2 FragColor;
+layout (location = 0) out vec3 FragColor;
 in vec2 TexCoords;
 
 const float PI = 3.14159265359;
@@ -126,6 +126,6 @@ vec2 IntegrateBRDF(float NdotV, float roughness)
 void main() 
 {
     vec2 integratedBRDF = IntegrateBRDF(TexCoords.x, TexCoords.y);
-    FragColor = integratedBRDF;
+    FragColor = vec3(integratedBRDF, 0.0f);
 }
 #FRAGMENT_END()

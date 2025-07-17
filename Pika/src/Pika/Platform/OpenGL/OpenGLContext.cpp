@@ -22,10 +22,10 @@ namespace Pika {
 		m_Information.m_Renderer = reinterpret_cast<const char*>(glad_glGetString(GL_RENDERER));
 		m_Information.m_Version = reinterpret_cast<const char*>(glad_glGetString(GL_VERSION));
 
-		PK_CORE_INFO("OpenGL Info :");
-		PK_CORE_INFO("     Vendor : {0}", m_Information.m_Renderer);
-		PK_CORE_INFO("   Renderer : {0}", m_Information.m_Vendor);
-		PK_CORE_INFO("    Version : {0}", m_Information.m_Version);
+		PK_CORE_TRACE("OpenGL Info :");
+		PK_CORE_TRACE("     Vendor : {0}", m_Information.m_Renderer);
+		PK_CORE_TRACE("   Renderer : {0}", m_Information.m_Vendor);
+		PK_CORE_TRACE("    Version : {0}", m_Information.m_Version);
 	}
 
 	void OpenGLContext::swapBuffer()

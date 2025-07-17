@@ -131,10 +131,9 @@ namespace Pika {
 
 	void SceneRenderer::initialize()
 	{
-		// 初始化 IBL 烘焙器
+		PK_CORE_TRACE("SceneRenderer : Try to initialize ...");
 		IBLBaker::Initialize();
 
-		// 初始化 Renderer
 		switch (m_RenderDataExtractor->extractSceneType())
 		{
 		case Pika::Scene::SceneType::Scene2D:

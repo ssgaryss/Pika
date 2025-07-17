@@ -100,7 +100,7 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
-		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height); // Ò»¶¨Òª¸úÐÂViewportÒòÎªFBOÇÐ»»»áµ¼ÖÂÊÓ¿ÚÎÊÌâ
+		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height); // ä¸€å®šè¦è·Ÿæ–°Viewportå› ä¸ºFBOåˆ‡æ¢ä¼šå¯¼è‡´è§†å£é—®é¢˜
 	}
 
 	void OpenGLFramebuffer::unbind()
@@ -175,7 +175,7 @@ namespace Pika {
 		GLint MaxColorAttachments;
 		glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &MaxColorAttachments);
 
-		// Èô²»ÓÃglDrawBuffers»áÄ¬ÈÏ»æÖÆµ½GL_COLOR_ATTACHMENT0,ËùÒÔ =1 Ê±²»ÓÃ¹Ü
+		// è‹¥ä¸ç”¨glDrawBuffersä¼šé»˜è®¤ç»˜åˆ¶åˆ°GL_COLOR_ATTACHMENT0,æ‰€ä»¥ =1 æ—¶ä¸ç”¨ç®¡
 		if (m_ColorAttachments.size() > 1) {
 			if (m_ColorAttachments.size() > MaxColorAttachments) {
 				PK_CORE_WARN("OpenGLFramebuffer : Your device can support {0} color attachments, but you have {1}.",
@@ -190,7 +190,7 @@ namespace Pika {
 			glReadBuffer(GL_NONE);
 		}
 
-		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height);  // µ±FBO resizeºóÐëµ÷ÓÃ
+		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height);  // å½“FBO resizeåŽé¡»è°ƒç”¨
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			checkFramebufferStatus();
@@ -202,7 +202,11 @@ namespace Pika {
 	{
 		uint32_t Width = m_Specification.m_Width;
 		uint32_t Height = m_Specification.m_Height;
-		if (vLBX >= vRTX || vLBY >= vRTY || vLBX >= Width || vLBY >= Height || vRTX >= Width || vRTY >= Height) {
+		uint32_t ViewportWidth = vRTX - vLBX;
+		uint32_t ViewportHeight = vRTY - vLBY;
+		if (vLBX >= Width || vLBY >= Height || ViewportWidth == 0 || ViewportHeight == 0 ||
+			vLBX + ViewportWidth > Width || vLBY + ViewportHeight > Height)
+		{
 			PK_CORE_ERROR("OpenGLFramebuffer : Invalid viewport parameters!");
 			return;
 		}
@@ -223,7 +227,7 @@ namespace Pika {
 	int OpenGLFramebuffer::readPixel(uint32_t vAttachmentIndex, int x, int y)
 	{
 		PK_PROFILE_FUNCTION();
-		bind(); // glReadPixelsÊÇ¶ÁÈ¡µ±Ç°°ó¶¨µÄFramebufferÊý¾Ý£¬ÐèÒª°ó¶¨
+		bind(); // glReadPixelsæ˜¯è¯»å–å½“å‰ç»‘å®šçš„Framebufferæ•°æ®ï¼Œéœ€è¦ç»‘å®š
 		if (vAttachmentIndex >= m_ColorAttachments.size())
 			PK_CORE_ERROR("OpenGLFramebuffer : Invalid color attachment index {0}", vAttachmentIndex);
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + vAttachmentIndex);
@@ -235,12 +239,12 @@ namespace Pika {
 
 	void OpenGLFramebuffer::clearAttachment(uint32_t vAttachmentIndex, int value)
 	{
+		// TODO: Support other format
 		PK_PROFILE_FUNCTION();
 		if (vAttachmentIndex >= m_ColorAttachments.size())
 			PK_CORE_ERROR("OpenGLFramebuffer : Invalid color attachment index {0}", vAttachmentIndex);
 		glClearTexImage(m_ColorAttachments[vAttachmentIndex], 0,
-			Utils::PikaTextureFormatToGLDataFormat(m_ColorAttachmentsSpecification[vAttachmentIndex].m_TextureFormat),
-			GL_INT, &value);
+			Utils::PikaTextureFormatToGLDataFormat(m_ColorAttachmentsSpecification[vAttachmentIndex].m_TextureFormat), GL_INT, &value);
 	}
 
 	void OpenGLFramebuffer::setDepthStencilAttachment(const Ref<Texture>& vTexture)
@@ -268,9 +272,15 @@ namespace Pika {
 
 	void OpenGLFramebuffer::setColorAttachment(uint32_t vIndex, const Ref<Texture>& vTexture)
 	{
-		if (vTexture->getWidth() != m_Specification.m_Width || vTexture->getHeight() != m_Specification.m_Height
-			|| vTexture->getRendererID() == 0) {
-			PK_CORE_ERROR("OpenGLFramebuffer : Try to set a inappropriate cubemap color attachment to frame buffer.");
+		if (vTexture->getRendererID() == 0) {
+			PK_CORE_ERROR("Framebuffer: Invalid texture ID for attachment!");
+			return;
+		}
+		if (vTexture->getWidth() != m_Specification.m_Width ||
+			vTexture->getHeight() != m_Specification.m_Height) {
+			PK_CORE_ERROR("Framebuffer: Texture size mismatch! Tex={}x{}, FBO={}x{}",
+				vTexture->getWidth(), vTexture->getHeight(),
+				m_Specification.m_Width, m_Specification.m_Height);
 			return;
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
@@ -278,15 +288,12 @@ namespace Pika {
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + vIndex, vTexture->getRendererID(), 0);
 		uint32_t LastColorAttachment = m_ColorAttachments[vIndex];
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
-			LastColorAttachment = vTexture->getRendererID();
+			m_ColorAttachments[vIndex] = vTexture->getRendererID();
 		}
 		else {
-			glDeleteTextures(1, &LastColorAttachment);
-			LastColorAttachment = 0;
-		}
-
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + vIndex, m_ColorAttachments[vIndex], 0);
 			checkFramebufferStatus();
+		}
 	}
 
 	void OpenGLFramebuffer::checkFramebufferStatus() const

@@ -12,11 +12,11 @@ namespace Pika {
 
 	EditorCamera::EditorCamera(float vFOV, float vAspectRatio, float vNearClip, float vFarClip)
 	{
-		m_PerspectiveFOV = std::clamp(vFOV, 10.0f, 150.0f); // ÏŞÖÆ·¶Î§
+		m_PerspectiveFOV = std::clamp(vFOV, 10.0f, 150.0f); // é™åˆ¶èŒƒå›´
 		m_AspectRatio = std::clamp(vAspectRatio, 0.00001f, 100000.0f);
 		m_PerspectiveNear = std::clamp(vNearClip, 0.00001f, 100000.0f);
 		m_PerspectiveFar = std::clamp(vNearClip, m_PerspectiveNear + 0.00001f, m_PerspectiveNear + 100000.0f);
-		m_OthographicSize = (m_PerspectiveNear + m_PerspectiveFar) * std::tan(glm::radians(m_PerspectiveFOV) / 2.0f); // È·±£mode×ª»»¶şÕßÊÓÒ°Æ½»¬¹ı¶È
+		m_OthographicSize = (m_PerspectiveNear + m_PerspectiveFar) * std::tan(glm::radians(m_PerspectiveFOV) / 2.0f); // ç¡®ä¿modeè½¬æ¢äºŒè€…è§†é‡å¹³æ»‘è¿‡åº¦
 		m_OthographicNear = m_PerspectiveNear, m_OthographicFar = m_PerspectiveFar;
 		updateCameraViewMatrix();
 		updateCameraProjectionMatrix();
@@ -24,7 +24,7 @@ namespace Pika {
 
 	void EditorCamera::onUpdate(Timestep vTimestep)
 	{
-		// TODO : ÕâÀï²¢Ã»ÓĞÓÃShortcutÎŞ·¨¸ü¸Ä°´¼ü
+		// TODO : è¿™é‡Œå¹¶æ²¡æœ‰ç”¨Shortcutæ— æ³•æ›´æ”¹æŒ‰é”®
 		if (Input::isKeyPressed(Key::KeyCode::LeftAlt) || Input::isKeyPressed(Key::KeyCode::RightAlt)) {
 			const glm::vec2 MousePosition = Input::getMousePosition();
 			glm::vec2 Delta = (MousePosition - m_MousePosition) * 0.03f;
@@ -35,7 +35,7 @@ namespace Pika {
 				onMousePan(Delta);
 			if (Input::isMouseButtonPressed(Mouse::MouseCode::ButtonRight))
 				onMouseZoom(Delta.y);
-			updatePosition();       // ×¢Òâ¸üĞÂm_Position
+			updatePosition();       // æ³¨æ„æ›´æ–°m_Position
 		}
 		if (Input::isMouseButtonPressed(Mouse::MouseCode::ButtonRight)) {
 			const glm::vec2 MousePosition = Input::getMousePosition();
@@ -44,7 +44,7 @@ namespace Pika {
 			Delta.y = std::clamp(MousePosition.y - m_MousePosition.y, -50.0f, 50.0f) * 0.03f;
 			m_MousePosition = MousePosition;
 			onMouseRotate(Delta);
-			onKeyMove(vTimestep);   // ×¢Òâ¸üĞÂm_FocalPoint
+			onKeyMove(vTimestep);   // æ³¨æ„æ›´æ–°m_FocalPoint
 			updateFocalPoint();
 		}
 		updateCameraViewMatrix();
@@ -122,13 +122,13 @@ namespace Pika {
 	void EditorCamera::onMousePan(const glm::vec2& vDelta)
 	{
 		auto [XSpeed, YSpeed] = getPanSpeed();
-		m_FocalPoint += -getRightDirection() * vDelta.x * XSpeed * m_Distance; // ÀëµÃÔ½Ô¶ÒÆ¶¯¾ø¶Ô¾àÀëÒ²ÒªÔ½´ó
+		m_FocalPoint += -getRightDirection() * vDelta.x * XSpeed * m_Distance; // ç¦»å¾—è¶Šè¿œç§»åŠ¨ç»å¯¹è·ç¦»ä¹Ÿè¦è¶Šå¤§
 		m_FocalPoint += getUpDirection() * vDelta.y * YSpeed * m_Distance;
 	}
 
 	void EditorCamera::onMouseRotate(const glm::vec2& vDelta)
 	{
-		float YawDirection = getUpDirection().y < 0 ? -1.0f : 1.0f;  // µ±Í·³¯ÏÂµÄÊ±ºòYawĞı×ªµÄ¾ø¶Ô·½Ïò·´×ªÁË£¨±£³ÖÏà¶Ô·½Ïò²»±ä£©
+		float YawDirection = getUpDirection().y < 0 ? -1.0f : 1.0f;  // å½“å¤´æœä¸‹çš„æ—¶å€™Yawæ—‹è½¬çš„ç»å¯¹æ–¹å‘åè½¬äº†ï¼ˆä¿æŒç›¸å¯¹æ–¹å‘ä¸å˜ï¼‰
 		m_Yaw += 5.0f * YawDirection * getRotationSpeed() * vDelta.x;
 		m_Pitch += 5.0f * getRotationSpeed() * vDelta.y;
 	}
@@ -146,7 +146,7 @@ namespace Pika {
 	{
 		float YOffset = vEvent.getYOffet();
 		float SpeedFactor = std::min(std::abs(m_PerspectiveFOV - 10.0f), std::abs(m_PerspectiveFOV - 150.0f)) / 70.0f; // Normalized !
-		float ZoomSpeed = 0.5f * (1.2f - static_cast<float>(std::pow(SpeedFactor, 2))); // µ±FOV½Ó½ü×î´óÖµ150ºÍ×îĞ¡Öµ10Ê±ËÙ¶ÈÖğ½¥µ½½Ó½ü0
+		float ZoomSpeed = 0.5f * (1.2f - static_cast<float>(std::pow(SpeedFactor, 2))); // å½“FOVæ¥è¿‘æœ€å¤§å€¼150å’Œæœ€å°å€¼10æ—¶é€Ÿåº¦é€æ¸åˆ°æ¥è¿‘0
 		m_PerspectiveFOV = std::clamp(m_PerspectiveFOV - YOffset * ZoomSpeed, 10.0f, 150.0f);
 		updateCameraProjectionMatrix();
 		return false;

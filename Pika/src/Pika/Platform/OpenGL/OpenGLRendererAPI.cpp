@@ -38,7 +38,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 
 		vVertexArray->bind();
-		// vIndexCount²»ÄÜ³¬¹ıVAOµÄIndexBuffer×î´óÏŞÖÆ
+		// vIndexCountä¸èƒ½è¶…è¿‡VAOçš„IndexBufferæœ€å¤§é™åˆ¶
 		uint32_t Count = std::clamp(vIndexCount, 0u, vVertexArray->getIndexBuffer()->getCount());
 		glDrawElements(GL_TRIANGLES, Count, GL_UNSIGNED_INT, nullptr);
 		vVertexArray->unbind();
@@ -50,7 +50,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 
 		vVertexArray->bind();
-		// vIndexCount²»ÄÜ³¬¹ıVAOµÄIndexBuffer×î´óÏŞÖÆ
+		// vIndexCountä¸èƒ½è¶…è¿‡VAOçš„IndexBufferæœ€å¤§é™åˆ¶
 		uint32_t Count = std::clamp(vIndexCount, 0u, vVertexArray->getIndexBuffer()->getCount());
 		glDrawElements(GL_LINES, Count, GL_UNSIGNED_INT, nullptr);
 		vVertexArray->unbind();
@@ -73,7 +73,7 @@ namespace Pika
 		if (vAllow)
 			glDepthMask(GL_TRUE);
 		else
-			glDepthMask(GL_FALSE); // ½ûÖ¹Ğ´ÈëÉî¶È»º³åÇø
+			glDepthMask(GL_FALSE); // ç¦æ­¢å†™å…¥æ·±åº¦ç¼“å†²åŒº
 	}
 
 }

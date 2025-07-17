@@ -48,7 +48,7 @@ namespace Pika
 		inline SceneType getSceneType() const { return m_SceneType; }
 		inline void setSceneType(SceneType vSceneType) { m_SceneType = vSceneType; }
 		inline const Ref<Environment>& getEnvironment() const { return m_Environment; }
-		inline void setEnvironment(const Ref<Environment>& vEnvironment) { m_Environment = vEnvironment; }
+		inline void setEnvironment(const Ref<Environment>& vEnvironment) { m_Environment = vEnvironment; m_Environment->refresh(); }
 	private:
 		void onUpdateEditor(Timestep vTimestep);        // SceneState::Edit
 		void onUpdateRuntime(Timestep vTimestep);       // SceneState::Play
