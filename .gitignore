@@ -1,5 +1,6 @@
 # Directories
 .vs/
+.claude/
 bin/
 bin-int/
 
@@ -19,3 +20,6 @@ Pikartisan/PikaProfile-Startup.json
 
 # Assetes
 # Pikartisan/Assetes # TODO!
+
+# Mac
+.DS_Store
