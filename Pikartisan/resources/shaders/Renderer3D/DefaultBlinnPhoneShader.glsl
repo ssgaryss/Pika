@@ -1,11 +1,11 @@
 #VERTEX_BEGIN()
-#version 460 core
+#version 410 core
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoord;
 layout(location = 3) in highp int a_EntityID;
 
-layout(std140, binding = 0) uniform CameraData
+layout(std140) uniform CameraData
 {
 	mat4 u_ViewProjectionMatrix;
 	mat4 u_ViewMatrix;
@@ -16,7 +16,7 @@ out vec3 v_Normal;
 out vec2 v_TexCoord;
 out vec3 v_Position;
 out vec3 v_ViewPosition;
-out flat highp int v_EntityID;
+flat out highp int v_EntityID;
 
 void main() {
 	v_Normal = a_Normal;
@@ -29,7 +29,7 @@ void main() {
 #VERTEX_END()
 
 #FRAGMENT_BEGIN()
-#version 460 core
+#version 410 core
 layout(location = 0) out vec4 o_FragmentColor;
 layout(location = 1) out highp int o_EntityID;
 
@@ -41,7 +41,7 @@ struct DirectionLight {
 	float m_Intensity;
 	int m_ShawdowMapIndex;
 };
-layout(std140, binding = 1) uniform DirectionLights
+layout(std140) uniform DirectionLights
 {
 	DirectionLight u_DirectionLight[MAX_NUM_OF_DIRECTION_LIGHTS];
 };
@@ -57,12 +57,12 @@ struct PointLight {
 	int m_ShawdowMapIndex;
 	float m_LightSize;
 };
-layout(std140, binding = 2) uniform PointLights
+layout(std140) uniform PointLights
 {
 	PointLight u_PointLight[MAX_NUM_OF_POINT_LIGHTS];
 };
 
-layout(std140, binding = 4) uniform BlinnPhoneMaterial
+layout(std140) uniform BlinnPhoneMaterial
 {
 	vec3 u_Ambient;
 	vec3 u_Diffuse;
@@ -72,15 +72,15 @@ layout(std140, binding = 4) uniform BlinnPhoneMaterial
 	uint u_SpecularMapSlot;
 };
 
-uniform sampler2D u_Textures[27]; // Slots : 0, 1, 2, ..., 26
-uniform sampler2D u_DirectionLightShadowMap; // Slots : 27
-uniform samplerCube u_PointLightShadowMaps[4]; // Slots : 28, 29, 30, 31
+uniform sampler2D u_Textures[11]; // Slots : 0, 1, 2, ..., 10
+uniform sampler2D u_DirectionLightShadowMap; // Slots : 11
+uniform samplerCube u_PointLightShadowMaps[4]; // Slots : 12, 13, 14, 15
 
 in vec3 v_Normal;
 in vec2 v_TexCoord;
 in vec3 v_Position;
 in vec3 v_ViewPosition;
-in flat highp int v_EntityID;
+flat in highp int v_EntityID;
 
 // Lights Calculation
 vec3 calculateDirectionLights(DirectionLight vLight, vec3 vNormal, vec3 vViewPosition, vec3 vPosition);
@@ -181,13 +181,13 @@ float calculateDirectionLightShadow(DirectionLight vLight, vec3 vPosition) {
 	if (vLight.m_ShawdowMapIndex == -1)
 		return 0.0;
 	vec4 LightSpacePosition = vLight.m_LightSpaceMatrix * vec4(vPosition, 1.0);
-	vec3 ProjectionCoords = LightSpacePosition.xyz / LightSpacePosition.w; // 从齐次坐标转换为欧拉坐标
+	vec3 ProjectionCoords = LightSpacePosition.xyz / LightSpacePosition.w; // 浠庨綈娆″潗鏍囪浆鎹负娆ф媺鍧愭爣
 	ProjectionCoords = ProjectionCoords * 0.5 + 0.5; // range[0, 1]
 	if (ProjectionCoords.x >= 1.0 || ProjectionCoords.x <= 0.0 || ProjectionCoords.y >= 1.0 || ProjectionCoords.y <= 0.0)
 		return 0.0;
 	float ClosestDepth = texture(u_DirectionLightShadowMap, ProjectionCoords.xy).r;
 	float CurrentDepth = ProjectionCoords.z;
-	float Bias = 0.005; // 偏移量，可以根据场景调整大小
+	float Bias = 0.005; // 鍋忕Щ閲忥紝鍙互鏍规嵁鍦烘櫙璋冩暣澶у皬
 	float Shadow = (CurrentDepth - Bias) > ClosestDepth ? 1.0 : 0.0;
 	return Shadow;
 }
@@ -198,7 +198,7 @@ float calculatePointLightShadow(PointLight vLight, vec3 vPosition) {
 	vec3 LightToPosition = vPosition - vLight.m_Position;
 	float ClosestDepth = texture(u_PointLightShadowMaps[vLight.m_ShawdowMapIndex], LightToPosition).r;
 	float CurrentDepth = length(LightToPosition / vLight.m_LightSize);
-	float Bias = 0.005; // 偏移量，可以根据场景调整大小
+	float Bias = 0.005; // 鍋忕Щ閲忥紝鍙互鏍规嵁鍦烘櫙璋冩暣澶у皬
 	float Shadow = (CurrentDepth - Bias) > ClosestDepth ? 1.0 : 0.0;
 	return Shadow;
 }

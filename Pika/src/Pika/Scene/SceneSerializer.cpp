@@ -5,7 +5,7 @@
 #include <yaml-cpp/yaml.h>
 
 
-// TODO : yaml¶ÔÓÚglmÊı¾İÀàĞÍÊäÈëÁ÷ÔËËã·ûÖØÔØ£¬ÔİÊ±·ÅÕâ
+// TODO : yamlå¯¹äºglmæ•°æ®ç±»å‹è¾“å…¥æµè¿ç®—ç¬¦é‡è½½ï¼Œæš‚æ—¶æ”¾è¿™
 namespace YAML {
 
 	template<>
@@ -99,6 +99,14 @@ namespace Pika {
 
 	namespace Utils {
 
+		// Convert Windows-style backslash path separators to forward slashes so
+		// scene files authored on Windows load correctly on POSIX platforms.
+		static std::string NormalizePathSeparators(const std::string& vPath) {
+			std::string Result = vPath;
+			std::replace(Result.begin(), Result.end(), '\\', '/');
+			return Result;
+		}
+
 		static std::string CameraProjectionModeToString(Camera::CameraProjectionMode vMode) {
 			using namespace std::string_literals;
 			switch (vMode)
@@ -175,18 +183,18 @@ namespace Pika {
 		std::string SceneName = m_Scene->getSceneName();
 		YAML::Emitter Out;
 
-		Out << YAML::BeginMap; // Ã¿¸öScene
+		Out << YAML::BeginMap; // æ¯ä¸ªScene
 		{
 			Out << YAML::Key << "Scene" << YAML::Value << YAML::BeginMap;
 			{
 				Out << YAML::Key << "Name" << YAML::Value << SceneName;
 				Out << YAML::Key << "SceneType" << YAML::Value << Utils::SceneTypeToString(m_Scene->getSceneType());
 				Out << YAML::Key << "Skybox" << YAML::Value << (m_Scene->m_Skybox ? m_Scene->m_Skybox->getPath().string() : "None");
-				Out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // ËùÓĞEntities
+				Out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // æ‰€æœ‰Entities
 				{
 					m_Scene->m_Registry.view<IDComponent>().each([&Out, this](auto vEntity, auto& vTagComponent) {
 						Entity Entity{ vEntity, m_Scene.get() };
-						Out << YAML::BeginMap; // Ã¿¸öEntity
+						Out << YAML::BeginMap; // æ¯ä¸ªEntity
 						if (Entity.hasComponent<IDComponent>()) {
 							Out << YAML::Key << "Entity" << YAML::Value << Entity.getComponent<IDComponent>().m_ID;
 						}
@@ -390,7 +398,7 @@ namespace Pika {
 		std::string SceneName = SceneNode["Name"].as<std::string>();
 		m_Scene->setSceneName(SceneName);
 		m_Scene->setSceneType(Utils::StringToSceneType(SceneNode["SceneType"].as<std::string>()));
-		std::string SkyboxPath = SceneNode["Skybox"].as<std::string>();
+		std::string SkyboxPath = Utils::NormalizePathSeparators(SceneNode["Skybox"].as<std::string>());
 		if (SkyboxPath != "None")
 			m_Scene->setSkybox(Cubemap::Create(SkyboxPath));
 		// Entities
@@ -432,7 +440,7 @@ namespace Pika {
 				if (Entity["ModelComponent"]) {
 					auto ModelComponentNode = Entity["ModelComponent"];
 					auto& MC = DeserializedEntity.addComponent<ModelComponent>();
-					std::string ModelPath = ModelComponentNode["Path"].as<std::string>();
+					std::string ModelPath = Utils::NormalizePathSeparators(ModelComponentNode["Path"].as<std::string>());
 					MC.m_Model = ModelPath == "None" ? nullptr : CreateRef<Model>(std::filesystem::path(ModelPath));
 				}
 
@@ -448,9 +456,9 @@ namespace Pika {
 							Data.m_Diffuse = DataNode["Diffuse"].as<glm::vec3>();
 							Data.m_Specular = DataNode["Specular"].as<glm::vec3>();
 							Data.m_Shininess = DataNode["Shininess"].as<float>();
-							std::string DiffuseMapPath = DataNode["Diffuse Map"].as<std::string>();
+							std::string DiffuseMapPath = Utils::NormalizePathSeparators(DataNode["Diffuse Map"].as<std::string>());
 							Data.m_DiffuseMap = DiffuseMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(DiffuseMapPath));
-							std::string SpecularMapPath = DataNode["Specular Map"].as<std::string>();
+							std::string SpecularMapPath = Utils::NormalizePathSeparators(DataNode["Specular Map"].as<std::string>());
 							Data.m_SpecularMap = SpecularMapPath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(SpecularMapPath));
 							MC.m_Material = CreateRef<BlinnPhoneMaterial>(Data);
 						}
@@ -497,7 +505,7 @@ namespace Pika {
 					auto SpriteRendererComponentNode = Entity["SpriteRendererComponent"];
 					auto& SRC = DeserializedEntity.addComponent<SpriteRendererComponent>();
 					SRC.m_Color = SpriteRendererComponentNode["Color"].as<glm::vec4>();
-					std::string TexturePath = SpriteRendererComponentNode["Texture"].as<std::string>();
+					std::string TexturePath = Utils::NormalizePathSeparators(SpriteRendererComponentNode["Texture"].as<std::string>());
 					SRC.m_Texture = TexturePath == "None" ? nullptr : Texture2D::Create(std::filesystem::path(TexturePath));
 					SRC.m_TilingFactor = SpriteRendererComponentNode["Tiling Factor"].as<glm::vec2>();
 				}

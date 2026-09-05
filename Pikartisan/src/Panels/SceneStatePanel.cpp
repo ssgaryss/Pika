@@ -22,11 +22,11 @@ namespace Pika {
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));  // Padding = 2.0f
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
-		ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 }); // Í¸Ã÷²¿·Ö²»ÏÔÊ¾
+		ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 }); // é€æ˜éƒ¨åˆ†ä¸æ˜¾ç¤º
 		ImGui::Begin("SceneStatePanel", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
 		ImVec2 ContentRegionSize = ImGui::GetContentRegionAvail();
 		ImVec2 CursorPosition = ImGui::GetCursorPos();
-		float ButtonSize = ContentRegionSize.y - 4.0f; // ÉÏÏÂPadding¾ùÎª2.0f
+		float ButtonSize = ContentRegionSize.y - 4.0f; // ä¸Šä¸‹Paddingå‡ä¸º2.0f
 		ImVec2 ButtonsSize = { 4 * ButtonSize + 5 * 5.0f, ButtonSize };
 		ImGui::SetCursorPos({ (ContentRegionSize.x - ButtonsSize.x) / 2.0f, ImGui::GetCursorPosY() });
 

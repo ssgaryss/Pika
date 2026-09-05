@@ -1,52 +1,54 @@
 #pragma once
+
+#include <array>
+#include <cstdint>
 #include <string>
 
 namespace Pika {
 
+	// Cross-platform 128-bit universally unique identifier.
+	//
+	// Replaces the previous Windows-only GUID / CoCreateGuid implementation so
+	// the identifier works identically on Windows and macOS. It is stored as 16
+	// raw bytes and rendered in the standard RFC 4122 string form
+	// "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx".
 	class UUID
 	{
 	public:
-		UUID();
-		UUID(const GUID& vUUID);
-		UUID(const std::string& vUUID);
+		using Data = std::array<uint8_t, 16>;
+
+		UUID();                                              // generate a random (version 4) UUID
+		UUID(const Data& vBytes) : m_Data{ vBytes }, m_IsValid{ true } {}
+		explicit UUID(const std::string& vString);           // parse from string form
 		UUID(const UUID&) = default;
+		UUID& operator=(const UUID&) = default;
 
-		void setUUID(const GUID& vUUID);
-		void setUUID(const std::string& vUUID);
+		static UUID fromString(const std::string& vString);
+
+		const Data& getData() const { return m_Data; }
 		std::string toString() const;
-		operator std::string() const { return toString(); }
-		operator GUID() const { return m_UUID; }
 
-		bool operator==(const UUID& vOther) const {
-			return m_UUID.Data1 == vOther.m_UUID.Data1 &&
-				m_UUID.Data2 == vOther.m_UUID.Data2 &&
-				m_UUID.Data3 == vOther.m_UUID.Data3 &&
-				std::memcmp(m_UUID.Data4, vOther.m_UUID.Data4, 8) == 0;
-		}
+		bool isValid() const { return m_IsValid; }
+
+		operator std::string() const { return toString(); }
+
+		bool operator==(const UUID& vOther) const { return m_Data == vOther.m_Data; }
+		bool operator!=(const UUID& vOther) const { return !(*this == vOther); }
+		bool operator<(const UUID& vOther) const { return m_Data < vOther.m_Data; }
+
 	private:
-		GUID m_UUID = {};  // Universe Unique Identifier
+		Data m_Data{};
+		bool m_IsValid = false;
 	};
 
 }
 
 namespace std {
 
-	// 此处模板特化是为了unordered_map中以UUID为键
 	template<>
-	struct hash<Pika::UUID> {
-		_NODISCARD size_t operator()(const Pika::UUID& vUUID) const noexcept {
-			auto Value = static_cast<GUID>(vUUID);
-			std::size_t Hash1 = std::hash<uint32_t>()(Value.Data1);
-			std::size_t Hash2 = std::hash<uint16_t>()(Value.Data2);
-			std::size_t Hash3 = std::hash<uint16_t>()(Value.Data3);
-			std::size_t Hash4 = 0;
-			for (int i = 0; i < 8; ++i) {
-				Hash4 ^= std::hash<uint8_t>()(Value.Data4[i]) + 0x9e3779b9 + (Hash4 << 6) + (Hash4 >> 2); // 0x9e3779b9 这是一个神奇的常数，称为黄金分割率的倒数（0x9e3779b9 是 2^32 乘以 (sqrt(5) - 1) / 2 的结果）。
-			}
-			return Hash1 ^ (Hash2 << 1) ^ (Hash3 << 2) ^ (Hash4 << 3);
-		}
+	struct hash<Pika::UUID>
+	{
+		size_t operator()(const Pika::UUID& vUUID) const noexcept;
 	};
 
 }
-
-

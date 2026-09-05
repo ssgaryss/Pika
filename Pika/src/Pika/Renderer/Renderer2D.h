@@ -45,7 +45,7 @@ namespace Pika
 		static void SetLineThickness(float vThickness);
 		static float GetLineThickness();
 		static void DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor = glm::vec4(1.0f));
-		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f); // vIdentityMatrix默认为单位矩阵即在平面XOY,vSize为中心到边的距离
+		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f); // vIdentityMatrix榛樿涓哄崟浣嶇煩闃靛嵆鍦ㄥ钩闈OY,vSize涓轰腑蹇冨埌杈圭殑璺濈
 
 		static void DrawSprite(const glm::mat4& vTransform, const SpriteRendererComponent& vSprite, int vEntityID = -1);
 		//static void DrawBoxCollider(const)

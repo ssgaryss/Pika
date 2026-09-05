@@ -15,7 +15,7 @@ namespace Pika {
 		LightsData() {
 			m_DirectionLights.reserve(4);
 			m_PointLights.reserve(8);
-			m_SpotLights.reserve(8); // ·ÀÖ¹vectorÀ©ÈİÔö´ó¿ªÏú
+			m_SpotLights.reserve(8); // é˜²æ­¢vectoræ‰©å®¹å¢å¤§å¼€é”€
 		}
 
 		bool empty() const {
@@ -27,7 +27,7 @@ namespace Pika {
 	{
 		std::vector<std::tuple<TransformComponent&, ModelComponent&>> m_Models;
 		SceneData() {
-			m_Models.reserve(10); // ·ÀÖ¹vectorÀ©ÈİÔö´ó¿ªÏú
+			m_Models.reserve(10); // é˜²æ­¢vectoræ‰©å®¹å¢å¤§å¼€é”€
 		}
 
 		bool empty() const {
@@ -51,9 +51,9 @@ namespace Pika {
 		std::vector<std::tuple<Components&..., int>> extractComponentsWithEntityID() const {
 			auto View = m_Scene->m_Registry.view<Components...>();
 			std::vector<std::tuple<Components&..., int>> EntityData;
-			// ±éÀúÊµÌå£¬ÌáÈ¡Ïà¹Ø×é¼ş²¢½«ËüÃÇÓëÊµÌå ID Ò»Æğ´æÈë½á¹û
+			// éå†å®ä½“ï¼Œæå–ç›¸å…³ç»„ä»¶å¹¶å°†å®ƒä»¬ä¸å®ä½“ ID ä¸€èµ·å­˜å…¥ç»“æœ
 			for (const auto& Entt : View) {
-				auto RequiredComponents = View.get<Components...>(Entt);
+				auto RequiredComponents = View.template get<Components...>(Entt);
 				EntityData.emplace_back(std::tuple_cat(RequiredComponents, std::make_tuple(static_cast<int>(Entt))));
 			}
 			return EntityData;
@@ -64,7 +64,7 @@ namespace Pika {
 			auto View = m_Scene->m_Registry.view<Components...>();
 			std::vector<std::tuple<Components&...>> EntityData;
 			for (const auto& Entt : View)
-				EntityData.emplace_back(View.get<Components...>(Entt));
+				EntityData.emplace_back(View.template get<Components...>(Entt));
 			return EntityData;
 		}
 
@@ -74,7 +74,7 @@ namespace Pika {
 		std::vector<std::tuple<TransformComponent&, ModelComponent&, MaterialComponent&, int>> extractBlinnPhoneMaterialModelsWithEntityID() const;
 		std::vector<std::tuple<TransformComponent&, LightComponent&>> extractDirectionLights() const;
 		std::vector<std::tuple<TransformComponent&, LightComponent&>> extractPointLights() const;
-		std::vector<std::tuple<TransformComponent&, LightComponent&>> extractSpotLights() const;    // ÔİÊ±²»Ö±½ÓÌáÈ¡Êı¾İ
+		std::vector<std::tuple<TransformComponent&, LightComponent&>> extractSpotLights() const;    // æš‚æ—¶ä¸ç›´æ¥æå–æ•°æ®
 		LightsData extractLightsData() const;
 		SceneData extractSceneData() const;
 

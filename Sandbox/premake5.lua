@@ -1,5 +1,5 @@
 project "Sandbox"
-	kind "ConsoleApp"
+	kind "None" -- Sandbox has no sources yet (removefiles below); "None" skips the link step
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
@@ -16,10 +16,10 @@ project "Sandbox"
 	removefiles
     {
 		"src/**.h",
-		"src/**.cpp"  -- 暂时不需要Sandbox
+		"src/**.cpp"  -- Sandbox is not needed yet
     }
 
-	includedirs
+	sysincludedirs
 	{
 		"%{wks.location}/Pika/vendor/spdlog/include",
 		"%{wks.location}/Pika/src",
@@ -35,17 +35,16 @@ project "Sandbox"
 
 	defines
 	{
-		"GLM_ENABLE_EXPERIMENTAL" -- 允许使用glm/gtx内容
+		"GLM_ENABLE_EXPERIMENTAL" -- enable glm/gtx helpers
 	}
-
 
 	filter "system:windows"
 		systemversion "latest"
-		
-		defines
-		{
-			"PK_PLATFORM_WINDOWS"
-		}
+		defines { "PK_PLATFORM_WINDOWS" }
+		buildoptions { "/utf-8" } -- MSVC: read source as UTF-8
+
+	filter "system:macosx"
+		defines { "PK_PLATFORM_MACOS", "SPDLOG_USE_STD_FORMAT" } -- bundled fmt breaks on clang 16+
 
 	filter "configurations:Debug"
 		defines "PIKA_DEBUG"
@@ -61,4 +60,3 @@ project "Sandbox"
 		defines "PIKA_DIST"
 		runtime "Release"
 		optimize "On"
-	

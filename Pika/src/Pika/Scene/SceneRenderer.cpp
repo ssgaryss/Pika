@@ -17,8 +17,8 @@ namespace Pika {
 	{
 		m_Framebuffer->bind();
 		RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-		RenderCommand::Clear(); // »áÓ°ÏìËùÓÐFBOÖÐµÄTexture¶ø·ÇÒ»¸ö
-		m_Framebuffer->clearAttachment(1, -1); // ËùÓÐEntityIDÆäÓàÇøÓò¸³Öµ-1
+		RenderCommand::Clear(); // ä¼šå½±å“æ‰€æœ‰FBOä¸­çš„Textureè€Œéžä¸€ä¸ª
+		m_Framebuffer->clearAttachment(1, -1); // æ‰€æœ‰EntityIDå…¶ä½™åŒºåŸŸèµ‹å€¼-1
 
 	}
 
@@ -27,8 +27,21 @@ namespace Pika {
 		m_Framebuffer->unbind();
 	}
 
+	Entity SceneRenderer::findPrimaryCamera()
+	{
+		const Ref<Scene>& Scene = m_RenderDataExtractor->getScene();
+		if (!Scene)
+			return {};
+		auto View = Scene->m_Registry.view<CameraComponent, TransformComponent>();
+		if (View.begin() == View.end())
+			return {};
+		return Entity{ *View.begin(), Scene.get() };
+	}
+
 	void SceneRenderer::render()
 	{
+		if (!m_PrimaryCamera)
+			m_PrimaryCamera = findPrimaryCamera(); // auto-detect the primary camera
 		if (!m_PrimaryCamera)
 			return;
 		switch (m_RenderDataExtractor->extractSceneType())

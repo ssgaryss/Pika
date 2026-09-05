@@ -161,19 +161,19 @@ namespace Pika {
 			ss << KeyCodeToString(m_Key);
 			return ss.str();
 		}
-		// TODO : 设计还需斟酌
-		inline bool IsHandleKeyEvent(const KeyPressedEvent& vEvent) { return isModifierPressed() && m_Key == vEvent.getKeyCode(); }  // 判断键盘事件
+		// TODO : 璁捐杩橀渶鏂熼厡
+		inline bool IsHandleKeyEvent(const KeyPressedEvent& vEvent) { return isModifierPressed() && m_Key == vEvent.getKeyCode(); }  // 鍒ゆ柇閿洏浜嬩欢
 
 		operator Key::KeyCode() const { return m_Key; }
-		operator bool() const {  // 直接轮询
+		operator bool() const {  // 鐩存帴杞
 			using namespace Key;
-			bool IsKey = m_Key == KeyCode::None ? false : Input::isKeyPressed(m_Key);  // m_Key必须对应一个键
+			bool IsKey = m_Key == KeyCode::None ? false : Input::isKeyPressed(m_Key);  // m_Key蹇呴』瀵瑰簲涓�涓敭
 			return isModifierPressed() && IsKey;
 		}
 	private:
 		inline bool isModifierPressed() const {
 			using namespace Key;
-			if (!m_ModiferFlags) return true; // 若没有Modifer,Shortcut退化为单个Key
+			if (!m_ModiferFlags) return true; // 鑻ユ病鏈塎odifer,Shortcut閫�鍖栦负鍗曚釜Key
 			bool RequireControl = m_ModiferFlags & static_cast<int>(Modifier::Ctrl);
 			bool RequireShift = m_ModiferFlags & static_cast<int>(Modifier::Shift);
 			bool RequireAlt = m_ModiferFlags & static_cast<int>(Modifier::Alt);
@@ -193,7 +193,7 @@ namespace Pika {
 	{
 	public:
 		ShortcutLibrary() = default;
-		ShortcutLibrary(std::initializer_list<std::pair<const std::string, Shortcut>> vShortcuts) // unordered_map只接受const std::string的ctor
+		ShortcutLibrary(std::initializer_list<std::pair<const std::string, Shortcut>> vShortcuts) // unordered_map鍙帴鍙梒onst std::string鐨刢tor
 			: m_Shortcuts{ vShortcuts } {};
 		inline void addShortcut(const Shortcut& vShortcut) { m_Shortcuts[vShortcut.getName()] = vShortcut; }
 		inline void removeShortcut(const std::string& vName) { m_Shortcuts.erase(vName); }

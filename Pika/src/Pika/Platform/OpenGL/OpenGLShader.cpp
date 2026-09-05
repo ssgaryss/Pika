@@ -292,6 +292,20 @@ namespace Pika
 			const std::string Information(InfoLog.begin(), InfoLog.end());
 			throw std::runtime_error(Information);
 		}
+		// macOS OpenGL 4.1 lacks GLSL 4.2's `layout(binding = N)` (ARB_shading_language_420pack),
+		// so assign uniform-block binding points by name here instead.
+		std::unordered_map<std::string, uint32_t> UBOBindings = {
+			{ "CameraData", 0 },
+			{ "DirectionLights", 1 },
+			{ "PointLights", 2 },
+			{ "BlinnPhoneMaterial", 4 },
+		};
+		for (const auto& [Name, Binding] : UBOBindings) {
+			GLuint BlockIndex = glGetUniformBlockIndex(m_RendererID, Name.c_str());
+			if (BlockIndex != GL_INVALID_INDEX)
+				glUniformBlockBinding(m_RendererID, BlockIndex, Binding);
+		}
+
 		glDetachShader(m_RendererID, VertexShader);
 		glDetachShader(m_RendererID, GeometryShader);
 		glDetachShader(m_RendererID, FragmentShader);

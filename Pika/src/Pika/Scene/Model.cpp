@@ -38,11 +38,11 @@ namespace Pika {
 			aiProcess_GenSmoothNormals |
 			aiProcess_FlipUVs |
 			aiProcess_CalcTangentSpace |
-			aiProcess_OptimizeMeshes |            // ºÏ²¢Ğ¡Íø¸ñ
-			aiProcess_JoinIdenticalVertices |     // ºÏ²¢ÖØ¸´¶¥µã
-			aiProcess_ImproveCacheLocality |      // ÓÅ»¯¶¥µã»º´æÒÔÌá¸ßĞ§ÂÊ
-			aiProcess_RemoveRedundantMaterials |  // ÒÆ³ıÈßÓà²ÄÖÊ
-			aiProcess_SortByPType);               // °´ÀàĞÍÅÅĞò£¨µã¡¢Ïß¡¢Ãæ£©
+			aiProcess_OptimizeMeshes |            // åˆå¹¶å°ç½‘æ ¼
+			aiProcess_JoinIdenticalVertices |     // åˆå¹¶é‡å¤é¡¶ç‚¹
+			aiProcess_ImproveCacheLocality |      // ä¼˜åŒ–é¡¶ç‚¹ç¼“å­˜ä»¥æé«˜æ•ˆç‡
+			aiProcess_RemoveRedundantMaterials |  // ç§»é™¤å†—ä½™æè´¨
+			aiProcess_SortByPType);               // æŒ‰ç±»å‹æ’åºï¼ˆç‚¹ã€çº¿ã€é¢ï¼‰
 
 		if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
 			throw std::runtime_error(std::format(R"(Model : Fail to load the model at "{0}".)", vPath.string()) + "\nERROR::ASSIMP::" + Importer.GetErrorString());
@@ -55,13 +55,13 @@ namespace Pika {
 
 	void Model::processNode(aiNode* vNode, const aiScene* vScene)
 	{
-		// ´¦Àí½ÚµãµÄËùÓĞÍø¸ñ
+		// å¤„ç†èŠ‚ç‚¹çš„æ‰€æœ‰ç½‘æ ¼
 		for (unsigned int i = 0; i < vNode->mNumMeshes; i++) {
 			aiMesh* mesh = vScene->mMeshes[vNode->mMeshes[i]];
 			m_Meshes.emplace_back(processMesh(mesh, vScene));
 		}
 
-		// µİ¹é´¦Àí×Ó½Úµã
+		// é€’å½’å¤„ç†å­èŠ‚ç‚¹
 		for (unsigned int i = 0; i < vNode->mNumChildren; i++) {
 			processNode(vNode->mChildren[i], vScene);
 		}
@@ -72,7 +72,7 @@ namespace Pika {
 		std::vector<StaticMeshVertexData> Vertices;
 		std::vector<uint32_t> Indices;
 
-		// ±éÀúËùÓĞ¶¥µã
+		// éå†æ‰€æœ‰é¡¶ç‚¹
 		for (unsigned int i = 0; i < vMesh->mNumVertices; i++) {
 			StaticMeshVertexData Vertex;
 			Vertex.m_Position = glm::vec3(vMesh->mVertices[i].x, vMesh->mVertices[i].y, vMesh->mVertices[i].z);
@@ -93,14 +93,14 @@ namespace Pika {
 			Vertices.emplace_back(Vertex);
 		}
 
-		// ±éÀúÃ¿¸öÃæµÄË÷Òı
+		// éå†æ¯ä¸ªé¢çš„ç´¢å¼•
 		for (uint32_t i = 0; i < vMesh->mNumFaces; i++) {
 			aiFace face = vMesh->mFaces[i];
 			for (uint32_t j = 0; j < face.mNumIndices; j++) {
 				Indices.emplace_back(face.mIndices[j]);
 			}
 		}
-		// ´¦Àí²ÄÖÊ
+		// å¤„ç†æè´¨
 		aiMaterial* material = vScene->mMaterials[vMesh->mMaterialIndex];
 		//m_Textures = 
 		// TODO !

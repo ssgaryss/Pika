@@ -16,7 +16,7 @@ namespace Pika
 			const glm::vec2& vSpriteSize, const glm::vec2& vCellSize);
 	private:
 		Ref<Texture2D> m_Texture;
-		std::array<glm::vec2, 4> m_TextureCoordinates; // LB°¢RB°¢RT°¢LT
+		std::array<glm::vec2, 4> m_TextureCoordinates; // LB„ÄÅRB„ÄÅRT„ÄÅLT
 	};
 
 }

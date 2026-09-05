@@ -12,7 +12,7 @@ namespace Pika {
 
 	namespace Utils {
 
-		static void FlipImageVertically(unsigned char* vData, int vWidth, int vHeight, int vChannels) // ÊúÖ±·½Ïò·­×ª
+		static void FlipImageVertically(unsigned char* vData, int vWidth, int vHeight, int vChannels) // ç«–ç›´æ–¹å‘ç¿»è½¬
 		{
 			for (int j = 0; j < vHeight / 2; ++j) {
 				for (int i = 0; i < vWidth * vChannels; ++i) {
@@ -40,21 +40,23 @@ namespace Pika {
 		m_InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(vTextureSpecification.m_Format);
 		m_DataFormat = Utils::PikaTextureFormatToGLDataFormat(vTextureSpecification.m_Format);
 
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
+		glGenTextures(1, &m_RendererID);
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+		glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0,
+			m_DataFormat, Utils::PikaTextureFormatToGLDataType(m_Format), nullptr);
 
 		// TODO : Assign Texture Wrap
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		if (m_RequiredMips) {
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glGenerateTextureMipmap(m_RendererID);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		else {
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		}
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& vPath, bool vRequiredMips)
@@ -91,19 +93,22 @@ namespace Pika {
 		else if (m_DataFormat == GL_RGBA) BPP = 4;
 		PK_ASSERT(vSize == m_Width * m_Height * BPP, "Data must be entire texture!");
 		auto DataType = Utils::PikaTextureFormatToGLDataType(m_Format);
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, DataType, vData);
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, m_DataFormat, DataType, vData);
 	}
 
 	void OpenGLTexture2D::bind(uint32_t vSlot) const
 	{
 		PK_PROFILE_FUNCTION();
-		glBindTextureUnit(vSlot, m_RendererID);
+		glActiveTexture(GL_TEXTURE0 + vSlot);
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
 	}
 
 	void OpenGLTexture2D::unbind(uint32_t vSlot) const
 	{
 		PK_PROFILE_FUNCTION();
-		glBindTextureUnit(vSlot, 0);
+		glActiveTexture(GL_TEXTURE0 + vSlot);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void OpenGLTexture2D::loadTexture(const std::filesystem::path& vPath)
@@ -132,21 +137,23 @@ namespace Pika {
 		m_InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(m_Format);
 		m_DataFormat = Utils::PikaTextureFormatToGLDataFormat(m_Format);
 
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
+		glGenTextures(1, &m_RendererID);
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+		glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0,
+			m_DataFormat, GL_UNSIGNED_BYTE, nullptr);
 
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		if (m_RequiredMips)
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		else
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, Data);
 
 		if (m_RequiredMips)
 			glGenerateMipmap(GL_TEXTURE_2D);
-
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, Data);
 		stbi_image_free(Data);
 		PK_CORE_INFO("OpenGLTexture2D : Success to load a texture at {0}.", vPath.string());
 		m_IsLoaded = true;
@@ -169,17 +176,17 @@ namespace Pika {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_InternalFormat,
 				m_Width, m_Height, 0, m_DataFormat, Utils::PikaTextureFormatToGLDataType(m_Format), nullptr);
 		}
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); // Í¨³£¶ÔÓÚ Cubemap ÎÆÀí£¬Ê¹ÓÃ GL_CLAMP_TO_EDGE »á¸üºÏÊÊ£¬±ÜÃâÔÚÃæÖ®¼ä³öÏÖ±ßÔµ½Ó·ì
+		glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); // é€šå¸¸å¯¹äº Cubemap çº¹ç†ï¼Œä½¿ç”¨ GL_CLAMP_TO_EDGE ä¼šæ›´åˆé€‚ï¼Œé¿å…åœ¨é¢ä¹‹é—´å‡ºç°è¾¹ç¼˜æ¥ç¼
 		if (m_RequiredMips) {
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glGenerateTextureMipmap(m_RendererID);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 		}
 		else {
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		}
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 
 	OpenGLCubemap::OpenGLCubemap(const std::filesystem::path& vPath, bool vRequiredMips)
@@ -211,13 +218,15 @@ namespace Pika {
 	void OpenGLCubemap::bind(uint32_t vSlot) const
 	{
 		PK_PROFILE_FUNCTION();
-		glBindTextureUnit(vSlot, m_RendererID);
+		glActiveTexture(GL_TEXTURE0 + vSlot);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
 	}
 
 	void OpenGLCubemap::unbind(uint32_t vSlot) const
 	{
 		PK_PROFILE_FUNCTION();
-		glBindTextureUnit(vSlot, 0);
+		glActiveTexture(GL_TEXTURE0 + vSlot);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	}
 
 	void OpenGLCubemap::loadCubemap(const std::filesystem::path& vPath)
@@ -290,7 +299,7 @@ namespace Pika {
 		m_DataFormat = Utils::PikaTextureFormatToGLDataFormat(m_Format);
 
 		uint32_t FaceWidth = m_Width / 4;
-		uint32_t FaceHeight = m_Height / 3; // ÔİÊ±Ö§³ÖÊ®×ÖĞÍCubemapÌùÍ¼
+		uint32_t FaceHeight = m_Height / 3; // æš‚æ—¶æ”¯æŒåå­—å‹Cubemapè´´å›¾
 
 		stbi_uc* FaceData[6];
 		FaceData[0] = Data + (1 * FaceHeight * m_Width + 3 * FaceWidth) * Channels; // +X
@@ -300,17 +309,17 @@ namespace Pika {
 		FaceData[4] = Data + (1 * FaceHeight * m_Width + 2 * FaceWidth) * Channels; // +Z
 		FaceData[5] = Data + (1 * FaceHeight * m_Width + 0 * FaceWidth) * Channels; // -Z
 
-		// ¶¨ÒåÃ¿¸öÃæµÄÆ«ÒÆ
+		// å®šä¹‰æ¯ä¸ªé¢çš„åç§»
 		struct FaceOffset {
 			int m_X, m_Y;
 		};
 		static FaceOffset Offsets[6] = {
-			{2, 1},  // +X (ÓÒ)
-			{0, 1},  // -X (×ó)
-			{1, 2},  // +Z (ÉÏ)
-			{1, 0},  // -Z (ÏÂ)
+			{2, 1},  // +X (å³)
+			{0, 1},  // -X (å·¦)
+			{1, 2},  // +Z (ä¸Š)
+			{1, 0},  // -Z (ä¸‹)
 			{1, 1},  // +Y (Ç°)
-			{3, 1},  // -Y (ºó)
+			{3, 1},  // -Y (å)
 		};
 
 		glGenTextures(1, &m_RendererID);
@@ -329,14 +338,14 @@ namespace Pika {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_InternalFormat,
 				FaceWidth, FaceHeight, 0, m_DataFormat, GL_UNSIGNED_BYTE, FaceData.data());
 		}
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); // Í¨³£¶ÔÓÚ Cubemap ÎÆÀí£¬Ê¹ÓÃ GL_CLAMP_TO_EDGE »á¸üºÏÊÊ£¬±ÜÃâÔÚÃæÖ®¼ä³öÏÖ±ßÔµ½Ó·ì
+		glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); // é€šå¸¸å¯¹äº Cubemap çº¹ç†ï¼Œä½¿ç”¨ GL_CLAMP_TO_EDGE ä¼šæ›´åˆé€‚ï¼Œé¿å…åœ¨é¢ä¹‹é—´å‡ºç°è¾¹ç¼˜æ¥ç¼
 		if (m_RequiredMips)
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		else
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		if (m_RequiredMips)
 			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
@@ -357,22 +366,22 @@ namespace Pika {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_InternalFormat,
 				FaceWidth, FaceHeight, 0, m_DataFormat, GL_FLOAT, nullptr);
 		}
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); // Í¨³£¶ÔÓÚ Cubemap ÎÆÀí£¬Ê¹ÓÃ GL_CLAMP_TO_EDGE »á¸üºÏÊÊ£¬±ÜÃâÔÚÃæÖ®¼ä³öÏÖ±ßÔµ½Ó·ì
+		glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); // é€šå¸¸å¯¹äº Cubemap çº¹ç†ï¼Œä½¿ç”¨ GL_CLAMP_TO_EDGE ä¼šæ›´åˆé€‚ï¼Œé¿å…åœ¨é¢ä¹‹é—´å‡ºç°è¾¹ç¼˜æ¥ç¼
 		if (m_RequiredMips)
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		else
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		if (m_RequiredMips)
 			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-		// äÖÈ¾Panoramaµ½Cubemap
+		// æ¸²æŸ“Panoramaåˆ°Cubemap
 		GLuint Buffer;
 		Ref<OpenGLShader> Shader = CreateRef<OpenGLShader>(s_PanoramaToCubemapShaderPath);
-		glCreateFramebuffers(1, &Buffer);
+		glGenFramebuffers(1, &Buffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, Buffer);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_RendererID, 0);
 		GLenum Buffers = { GL_COLOR_ATTACHMENT0 };

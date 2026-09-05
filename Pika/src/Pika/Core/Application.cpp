@@ -98,7 +98,7 @@ namespace Pika {
 
 	bool Application::onMouseMovedEvent(MouseMovedEvent& vEvent)
 	{
-		// TODO : 之前用于测试，可删除
+		// TODO : 涔嬪墠鐢ㄤ簬娴嬭瘯锛屽彲鍒犻櫎
 		float X = vEvent.getMouseX();
 		float Y = vEvent.getMouseY();
 		PK_CORE_INFO("Mouse Position : ( {}, {} )", X, Y);

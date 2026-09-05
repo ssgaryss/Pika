@@ -1,5 +1,5 @@
 #include "pkpch.h"
-#include "WindowsWindow.h"
+#include "GLFWWindow.h"
 #include "Pika/Events/ApplicationEvent.h"
 #include "Pika/Events/KeyboardEvent.h"
 #include "Pika/Events/MouseEvent.h"
@@ -10,15 +10,15 @@
 namespace Pika {
 
 	static Key::KeyCode GLFWToPikaKeyCode(int vKeyCode) {
-		return static_cast<Key::KeyCode>(vKeyCode);	   // KeyCode就是GLFW版本
+		return static_cast<Key::KeyCode>(vKeyCode);	   // KeyCode灏辨槸GLFW鐗堟湰
 	}
 
 	static Mouse::MouseCode GLFWToPikaMouseCode(int vButton) {
-		return static_cast<Mouse::MouseCode>(vButton); // MouseCode就是GLFW版本
+		return static_cast<Mouse::MouseCode>(vButton); // MouseCode灏辨槸GLFW鐗堟湰
 	}
 
 	Window* Window::Create(const WindowProps& vWindowProps) {
-		return new WindowsWindow(vWindowProps);
+		return new GLFWWindow(vWindowProps);
 	}
 
 	static uint8_t s_GLFWWindowCount = 0;
@@ -27,17 +27,17 @@ namespace Pika {
 		PK_CORE_ERROR("GLFW error ({0}): {1}", error_code, description);
 	}
 
-	WindowsWindow::WindowsWindow(const WindowProps& vWindowProps)
+	GLFWWindow::GLFWWindow(const WindowProps& vWindowProps)
 	{
 		Initialize(vWindowProps);
 	}
-	WindowsWindow::~WindowsWindow()
+	GLFWWindow::~GLFWWindow()
 	{
 		PK_PROFILE_FUNCTION();
 
 		shutDown();
 	}
-	void WindowsWindow::onUpdate()
+	void GLFWWindow::onUpdate()
 	{
 		PK_PROFILE_FUNCTION();
 
@@ -45,7 +45,7 @@ namespace Pika {
 		m_Context->swapBuffer();
 	}
 
-	void WindowsWindow::setVSync(bool vEnable)
+	void GLFWWindow::setVSync(bool vEnable)
 	{
 		PK_PROFILE_FUNCTION();
 
@@ -58,17 +58,17 @@ namespace Pika {
 		m_Data.m_VSync = vEnable;
 	}
 
-	bool WindowsWindow::isVSync() const
+	bool GLFWWindow::isVSync() const
 	{
 		return m_Data.m_VSync;
 	}
 
-	void WindowsWindow::Initialize(const WindowProps& vWindowProps)
+	void GLFWWindow::Initialize(const WindowProps& vWindowProps)
 	{
 		PK_PROFILE_FUNCTION();
 
 		{
-			PK_PROFILE_SCOPE("WindowsWindow : Window set up");
+			PK_PROFILE_SCOPE("GLFWWindow : Window set up");
 
 			m_Data.m_Title = vWindowProps.m_Title;
 			m_Data.m_Width = vWindowProps.m_Width;
@@ -80,11 +80,18 @@ namespace Pika {
 				glfwSetErrorCallback(GLFWErrorCallBack);
 			}
 
+			// Request an OpenGL 4.1 core profile. macOS caps at 4.1, so 4.1 is the
+			// highest version that runs on every supported platform.
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
 			m_pWindow = glfwCreateWindow(static_cast<int>(vWindowProps.m_Width), static_cast<int>(vWindowProps.m_Height),
 				vWindowProps.m_Title.c_str(), nullptr, nullptr);
 
 			m_Context = GraphicsContext::Create(m_pWindow);
-			PK_ASSERT(m_Context, "WindowsWindow : m_pContext is nullptr!");
+			PK_ASSERT(m_Context, "GLFWWindow : m_pContext is nullptr!");
 			m_Context->Initialize();
 
 			glfwSetWindowUserPointer(m_pWindow, &m_Data);
@@ -92,7 +99,7 @@ namespace Pika {
 		}
 
 		{
-			PK_PROFILE_SCOPE("WindowsWindow : Window callbacks set up");
+			PK_PROFILE_SCOPE("GLFWWindow : Window callbacks set up");
 
 			glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow* window, int width, int height)
 				{
@@ -179,7 +186,7 @@ namespace Pika {
 		}
 	}
 
-	void WindowsWindow::shutDown()
+	void GLFWWindow::shutDown()
 	{
 		PK_PROFILE_FUNCTION();
 

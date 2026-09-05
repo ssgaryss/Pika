@@ -1,5 +1,5 @@
 #VERTEX_BEGIN()
-#version 460 core
+#version 410 core
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec4 a_Color;
 layout(location = 2) in vec2 a_TexCoord;
@@ -9,11 +9,11 @@ layout(location = 5) in highp int a_EntityID;
 
 out vec4 v_Color;
 out vec2 v_TexCoord;
-out flat int v_TextureIndex;
+flat out int v_TextureIndex;
 out vec2 v_TilingFactor;
-out flat highp int v_EntityID;
+flat out highp int v_EntityID;
 
-layout(std140, binding = 0) uniform CameraData
+layout(std140) uniform CameraData
 {
 	mat4 u_ViewProjectionMatrix;
 };
@@ -29,24 +29,24 @@ void main() {
 #VERTEX_END()
 
 #FRAGMENT_BEGIN()
-#version 460 core
+#version 410 core
 
 layout(location = 0) out vec4 o_FragmentColor;
 layout(location = 1) out highp int o_EntityID;
 
 in vec4 v_Color;
 in vec2 v_TexCoord;
-in flat int v_TextureIndex;
+flat in int v_TextureIndex;
 in vec2 v_TilingFactor;
-in flat highp int v_EntityID;
+flat in highp int v_EntityID;
 
-uniform sampler2D u_Textures[32];
+uniform sampler2D u_Textures[16];
 
 void main() {
 	o_EntityID = v_EntityID;
 	vec4 Color = texture(u_Textures[v_TextureIndex], v_TexCoord * v_TilingFactor) * v_Color;
 	float AlphaThreshold = 0.1;
-	if (Color.a < AlphaThreshold) // 不要透明部分
+	if (Color.a < AlphaThreshold) // 涓嶈閫忔槑閮ㄥ垎
 		discard;
 	o_FragmentColor = Color;
 }

@@ -16,7 +16,7 @@ namespace Pika
 
 		void setViewport(uint32_t vLBX, uint32_t vLBY, uint32_t vRTX, uint32_t vRTY) override;
 		void resize(uint32_t vWidth, uint32_t vHeight) override;
-		int readPixel(uint32_t vAttachmentIndex, int x, int y) override; // ·µ»Ø¶ÔÓÚÎ»ÖÃµÄºìÉ«Í¨µÀÖµ
+		int readPixel(uint32_t vAttachmentIndex, int x, int y) override; // è¿”å›å¯¹äºä½ç½®çš„çº¢è‰²é€šé“å€¼
 		// TODO : readRegion()
 		void clearAttachment(uint32_t vAttachmentIndex, int value) override;
 

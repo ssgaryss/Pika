@@ -13,7 +13,7 @@ project "Pikartisan"
 		"src/**.cpp"
 	}
 
-	includedirs
+	sysincludedirs
 	{
 		"%{wks.location}/Pika/src",
 		"%{wks.location}/Pika/vendor",
@@ -26,21 +26,39 @@ project "Pikartisan"
 
 	links
 	{
-		"Pika"
+		"Pika",
+		-- Pika is a static library; gmake does not propagate a static library's
+		-- links to its consumers, so the executable lists the transitive deps.
+		"GLFW",
+		"glad",
+		"ImGui",
+		"yaml-cpp",
+		"ImGuizmo",
+		"Box2D",
+		"assimp"
 	}
 
 	defines
 	{
-		"GLM_ENABLE_EXPERIMENTAL", -- 允许使用glm/gtx内容
+		"GLM_ENABLE_EXPERIMENTAL", -- enable glm/gtx helpers
 		"_CRT_SECURE_NO_WARNINGS"
 	}
 
 	filter "system:windows"
 		systemversion "latest"
-		
-		defines
+		defines { "PK_PLATFORM_WINDOWS" }
+		buildoptions { "/utf-8" } -- MSVC: read source as UTF-8
+		links { "opengl32.lib" }
+
+	filter "system:macosx"
+		defines { "PK_PLATFORM_MACOS", "SPDLOG_USE_STD_FORMAT" } -- bundled fmt breaks on clang 16+
+		links
 		{
-			"PK_PLATFORM_WINDOWS"
+			"Cocoa.framework",
+			"IOKit.framework",
+			"CoreVideo.framework",
+			"OpenGL.framework",
+			"QuartzCore.framework"
 		}
 
 	filter "configurations:Debug"

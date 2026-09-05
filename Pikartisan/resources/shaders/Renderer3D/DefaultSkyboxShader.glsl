@@ -1,8 +1,8 @@
 #VERTEX_BEGIN()
-#version 460 core
+#version 410 core
 layout(location = 0) in vec3 a_Position;
 
-layout(std140, binding = 0) uniform CameraData
+layout(std140) uniform CameraData
 {
 	mat4 u_ViewProjectionMatrix;
 	mat4 u_ViewMatrix;
@@ -20,7 +20,7 @@ void main() {
 #VERTEX_END()
 
 #FRAGMENT_BEGIN()
-#version 460 core
+#version 410 core
 layout(location = 0) out vec4 o_FragmentColor;
 layout(location = 1) out highp int o_EntityID;
 

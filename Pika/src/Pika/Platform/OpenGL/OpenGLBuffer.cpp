@@ -9,7 +9,7 @@ namespace Pika
 	{
 		PK_PROFILE_FUNCTION();
 
-		glCreateBuffers(1, &m_RendererID);
+		glGenBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ARRAY_BUFFER, vSize, nullptr, GL_DYNAMIC_DRAW);
 	}
@@ -18,7 +18,7 @@ namespace Pika
 	{
 		PK_PROFILE_FUNCTION();
 
-		glCreateBuffers(1, &m_RendererID);
+		glGenBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ARRAY_BUFFER, vSize, vVertices, GL_DYNAMIC_DRAW);
 	}
@@ -66,7 +66,7 @@ namespace Pika
 		PK_PROFILE_FUNCTION();
 
 		m_Count = vCount;
-		glCreateBuffers(1, &m_RendererID);
+		glGenBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Count * sizeof(uint32_t), vIndices, GL_DYNAMIC_DRAW);
 	}

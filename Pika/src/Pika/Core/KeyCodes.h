@@ -9,7 +9,7 @@ namespace Pika {
 
 		enum class KeyCode : uint16_t
 		{
-			None = 0,   // ÎÒ×Ô¼º¼ÓµÄ£¬ÓÃÓÚÄ¬ÈÏ³õÊ¼»¯
+			None = 0,   // æˆ‘è‡ªå·±åŠ çš„ï¼Œç”¨äºé»˜è®¤åˆå§‹åŒ–
 
 			// From glfw3.h
 			Space = 32,

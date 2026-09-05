@@ -1,5 +1,5 @@
 #VERTEX_BEGIN()
-#version 460 core
+#version 410 core
 layout(location = 0) in vec3 a_Position;
 
 void main() {
@@ -8,7 +8,7 @@ void main() {
 #VERTEX_END()
 
 #GEOMETRY_BEGIN()
-#version 460 core
+#version 410 core
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 18) out;
 
@@ -30,7 +30,7 @@ void main() {
 #GEOMETRY_END()
 
 #FRAGMENT_BEGIN()
-#version 460 core
+#version 410 core
 
 in vec4 g_Position;
 
@@ -41,7 +41,7 @@ void main() {
 	float LightDistance = length(g_Position.xyz - u_PointLightPosition);
 
 	// map to [0;1] range by dividing by far_plane
-	LightDistance = LightDistance / u_LightSize; // ��ʱΪ25.0
+	LightDistance = LightDistance / u_LightSize; // 暂时为25.0
 
 	// write this as modified depth
 	gl_FragDepth = LightDistance;

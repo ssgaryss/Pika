@@ -20,7 +20,7 @@ namespace Pika {
 		SceneRenderer() = default;
 		SceneRenderer(const Ref<Scene>& vScene, const Ref<Framebuffer>& vFramebuffer);
 
-		void initialize();  // 初始化Renderer
+		void initialize();  // 鍒濆鍖朢enderer
 		void beginFrame();
 		void endFrame();
 
@@ -36,6 +36,7 @@ namespace Pika {
 		inline void setFramebuffer(const Ref<Framebuffer>& vFramebuffer) { m_Framebuffer = vFramebuffer; }
 		inline const Entity& getPrimaryCamera() const { return m_PrimaryCamera; }
 		inline void setPrimaryCamera(const Entity& vCamera) { m_PrimaryCamera = vCamera; }
+		Entity findPrimaryCamera();         // fallback: first camera entity in the scene
 
 		// Settings
 		inline bool* showGrid() { return &m_Settings.m_ShowGrid; }
@@ -45,7 +46,7 @@ namespace Pika {
 		RendererSettings m_Settings;
 		Ref<RenderDataExtractor> m_RenderDataExtractor = nullptr;
 		Ref<Framebuffer> m_Framebuffer = nullptr;
-		Ref<ShaderLibrary> m_ShaderLibray = nullptr; // TODO : 自己创建的Shaders
+		Ref<ShaderLibrary> m_ShaderLibray = nullptr; // TODO : 鑷繁鍒涘缓鐨凷haders
 
 		// TODO : Remove all Scene Data!
 		Entity m_PrimaryCamera = {};       // TOD0 : Use C# to control it.

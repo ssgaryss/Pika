@@ -21,7 +21,7 @@ namespace Pika
 	private:
 		Ref<Scene> m_Context = nullptr; // Scene data
 		Entity m_SelectedEntity;
-		Ref<Texture2D> m_DefaultTexture = nullptr; // 不存在Texture时默认显示的纹理
+		Ref<Texture2D> m_DefaultTexture = nullptr; // 涓嶅瓨鍦═exture鏃堕粯璁ゆ樉绀虹殑绾圭悊
 		bool m_IsShowSceneHirarchy = true;
 	};
 

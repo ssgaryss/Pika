@@ -1,5 +1,6 @@
 # Directories
 .vs/
+.claude/
 bin/
 bin-int/
 
@@ -17,5 +18,13 @@ Pikartisan/PikaProfile-Startup.json
 *.vcxproj.filters
 *.vcxproj.user
 
+# Premake (gmake / xcode)
+Makefile
+*.xcodeproj
+*.xcworkspace
+
 # Assetes
 # Pikartisan/Assetes # TODO!
+
+# Mac
+.DS_Store

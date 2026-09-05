@@ -25,45 +25,46 @@ namespace Pika {
 					m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
 
-			// ÉèÖÃIcon ColumnCount
+			// è®¾ç½®Icon ColumnCount
 			static float IconSize = 128.0f;
-			static float IconPadding = 8.0f; // ×óÓÒ·Ö±ğIconPadding / 2
+			static float IconPadding = 8.0f; // å·¦å³åˆ†åˆ«IconPadding / 2
 			float CellSize = IconSize + IconPadding;
 			auto PanelWidth = ImGui::GetContentRegionAvail().x;
 			int ColumnCount = static_cast<int>(PanelWidth / CellSize);
 			if (ColumnCount < 1)
 				ColumnCount = 1;
 
-			ImGui::Columns(ColumnCount, 0, false); // ÉèÖÃfalse£¬²»ĞèÒªborder
+			ImGui::Columns(ColumnCount, 0, false); // è®¾ç½®falseï¼Œä¸éœ€è¦border
+			if (std::filesystem::exists(m_CurrentDirectory))
 			for (auto& DirectoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory)) {
-				const auto& Path = DirectoryEntry.path(); // µ±Ç°Ä¿Â¼ÎÄ¼şºÍ×ÓÄ¿Â¼Â·¾¶
-				std::string Filename = Path.filename().string(); // ÎÄ¼şÃû
+				const auto& Path = DirectoryEntry.path(); // å½“å‰ç›®å½•æ–‡ä»¶å’Œå­ç›®å½•è·¯å¾„
+				std::string Filename = Path.filename().string(); // æ–‡ä»¶å
 
 				ImGui::BeginGroup();
 				uintptr_t Icon = DirectoryEntry.is_directory() ? DirectoryIcon : FileIcon;
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + IconPadding / 2.0f);
 				ImGui::PushID(Filename.c_str());
 				ImGui::ImageButton(reinterpret_cast<ImTextureID>(Icon), { IconSize, IconSize }, { 0,1 }, { 1,0 });
-				// ¿ÉÖ±½ÓÍÏ×§UI
+				// å¯ç›´æ¥æ‹–æ‹½UI
 				if (ImGui::BeginDragDropSource()) {
-					const wchar_t* ItemPath = Path.c_str();
-					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", ItemPath, (wcslen(ItemPath) + 1) * sizeof(wchar_t)); // +1°üº¬ÖÕÖ¹·û'\0'
+					std::string ItemPath = Path.generic_string();
+					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", ItemPath.c_str(), ItemPath.size() + 1); // +1åŒ…å«ç»ˆæ­¢ç¬¦'\0'
 					ImGui::EndDragDropSource();
 				}
 
-				// ¾ÓÖĞ¶ÔÆëÏÔÊ¾
+				// å±…ä¸­å¯¹é½æ˜¾ç¤º
 				float ColumnWidth = ImGui::GetColumnWidth();
 				ImVec2 TextSize = ImGui::CalcTextSize(Filename.c_str());
 				float TextOffsetX = (ColumnWidth - TextSize.x) / 2.0f;
-				TextOffsetX = TextOffsetX > 2.0f ? TextOffsetX : 2.0f; // ²»ÔÊĞíĞ¡ÓÚ2.0f
+				TextOffsetX = TextOffsetX > 2.0f ? TextOffsetX : 2.0f; // ä¸å…è®¸å°äº2.0f
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + TextOffsetX);
-				ImVec2 TextStartPos = ImGui::GetCursorScreenPos(); // Text×óÉÏ
-				TextStartPos.x -= 1, TextStartPos.y += TextSize.y; // µ÷ÕûÎ»ÖÃ
+				ImVec2 TextStartPos = ImGui::GetCursorScreenPos(); // Textå·¦ä¸Š
+				TextStartPos.x -= 1, TextStartPos.y += TextSize.y; // è°ƒæ•´ä½ç½®
 				ImGui::TextWrapped(Filename.c_str());
-				// ÎÄ±¾Êó±êĞüÍ£ÏÂ»®Ïß
+				// æ–‡æœ¬é¼ æ ‡æ‚¬åœä¸‹åˆ’çº¿
 				if (ImGui::IsItemHovered()) {
 					ImVec2 TextEndPos{ TextStartPos.x + TextSize.x, TextStartPos.y };
-					ImDrawList* DrawList = ImGui::GetWindowDrawList(); // ImGuiµÄ»æÖÆAPI
+					ImDrawList* DrawList = ImGui::GetWindowDrawList(); // ImGuiçš„ç»˜åˆ¶API
 					DrawList->AddLine(TextStartPos, TextEndPos, IM_COL32(200, 200, 200, 255));
 				}
 				ImGui::PopID();

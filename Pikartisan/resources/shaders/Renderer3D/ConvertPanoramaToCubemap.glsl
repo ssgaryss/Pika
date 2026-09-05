@@ -1,5 +1,5 @@
 #VERTEX_BEGIN()
-#version 460 core
+#version 410 core
 precision highp float;
 
 out vec2 v_TexCoord;
@@ -15,7 +15,7 @@ void main(void)
 #VERTEX_END()
 
 #GEOMETRY_BEGIN()
-#version 460 core
+#version 410 core
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 18) out;
 

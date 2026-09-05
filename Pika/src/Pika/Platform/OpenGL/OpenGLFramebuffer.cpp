@@ -13,7 +13,8 @@ namespace Pika {
 
 		static void CreateTexture(bool vIsMultisample, uint32_t* vTextureID, uint32_t vCount) {
 			PK_PROFILE_FUNCTION();
-			glCreateTextures(TextureIsMultisample(vIsMultisample), vCount, vTextureID);
+			(void)vIsMultisample; // the target is selected when the texture is bound below
+			glGenTextures(vCount, vTextureID);
 		}
 
 		static void BindTexuture(bool vIsMultisample, uint32_t vTextureID) {
@@ -21,16 +22,18 @@ namespace Pika {
 			glBindTexture(TextureIsMultisample(vIsMultisample), vTextureID);
 		}
 
-		static void AttachColorTexture(uint32_t vID, uint32_t vSamples, GLenum vInternalFormat,
+		static void AttachColorTexture(uint32_t vID, uint32_t vSamples, TextureFormat vFormat,
 			uint32_t vWidth, uint32_t vHeight, uint32_t vIndex)
 		{
 			PK_PROFILE_FUNCTION();
 			bool IsMultisample = vSamples > 1;
+			GLenum InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(vFormat);
 			if (IsMultisample) {
-				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, vSamples, vInternalFormat, vWidth, vHeight, GL_FALSE);
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, vSamples, InternalFormat, vWidth, vHeight, GL_FALSE);
 			}
 			else {
-				glTexStorage2D(GL_TEXTURE_2D, 1, vInternalFormat, vWidth, vHeight);
+				glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, vWidth, vHeight, 0,
+					Utils::PikaTextureFormatToGLDataFormat(vFormat), Utils::PikaTextureFormatToGLDataType(vFormat), nullptr);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -40,16 +43,18 @@ namespace Pika {
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + vIndex, TextureIsMultisample(IsMultisample), vID, 0);
 		}
 
-		static void AttachDepthTexture(uint32_t vID, uint32_t vSamples, GLenum vInternalFormat,
+		static void AttachDepthTexture(uint32_t vID, uint32_t vSamples, TextureFormat vFormat,
 			GLenum vAttachmentType, uint32_t vWidth, uint32_t vHeight)
 		{
 			PK_PROFILE_FUNCTION();
 			bool IsMultisample = vSamples > 1;
+			GLenum InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(vFormat);
 			if (IsMultisample) {
-				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, vSamples, vInternalFormat, vWidth, vHeight, GL_FALSE);
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, vSamples, InternalFormat, vWidth, vHeight, GL_FALSE);
 			}
 			else {
-				glTexStorage2D(GL_TEXTURE_2D, 1, vInternalFormat, vWidth, vHeight);
+				glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, vWidth, vHeight, 0,
+					Utils::PikaTextureFormatToGLDataFormat(vFormat), Utils::PikaTextureFormatToGLDataType(vFormat), nullptr);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -100,7 +105,7 @@ namespace Pika {
 	{
 		PK_PROFILE_FUNCTION();
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
-		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height); // Ò»¶¨Òª¸úÐÂViewportÒòÎªFBOÇÐ»»»áµ¼ÖÂÊÓ¿ÚÎÊÌâ
+		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height); // ä¸€å®šè¦è·Ÿæ–°Viewportå› ä¸ºFBOåˆ‡æ¢ä¼šå¯¼è‡´è§†å£é—®é¢˜
 	}
 
 	void OpenGLFramebuffer::unbind()
@@ -121,7 +126,7 @@ namespace Pika {
 			m_ColorAttachments.clear();
 		}
 
-		glCreateFramebuffers(1, &m_RendererID);
+		glGenFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
 		bool IsMultisample = m_Specification.m_Samples > 1;
@@ -131,11 +136,11 @@ namespace Pika {
 			Utils::CreateTexture(IsMultisample, m_ColorAttachments.data(), static_cast<uint32_t>(m_ColorAttachments.size()));
 			for (uint32_t i = 0; i < m_ColorAttachments.size(); ++i) {
 				Utils::BindTexuture(IsMultisample, m_ColorAttachments[i]);
-				auto InternalFormat = Utils::PikaTextureFormatToGLInternalFormat(m_ColorAttachmentsSpecification[i].m_TextureFormat);
+				TextureFormat Format = m_ColorAttachmentsSpecification[i].m_TextureFormat;
 
 				Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.m_Samples,
-					InternalFormat, m_Specification.m_Width, m_Specification.m_Height, i);
-				if (!InternalFormat)
+					Format, m_Specification.m_Width, m_Specification.m_Height, i);
+				if (Format == TextureFormat::None)
 					PK_CORE_WARN("OpenGLFramebuffer : Unknown type of color attachment at index {0}.", i);
 			}
 		}
@@ -147,12 +152,12 @@ namespace Pika {
 			{
 			case Pika::TextureFormat::DEPTH32F:
 				Utils::AttachDepthTexture(m_DepthStencilAttachment, m_Specification.m_Samples,
-					Utils::PikaTextureFormatToGLInternalFormat(m_DepthStencilAttachmentSpecification.m_TextureFormat),
+					m_DepthStencilAttachmentSpecification.m_TextureFormat,
 					GL_DEPTH_ATTACHMENT, m_Specification.m_Width, m_Specification.m_Height);
 				break;
 			case Pika::TextureFormat::DEPTH24STENCIL8:
 				Utils::AttachDepthTexture(m_DepthStencilAttachment, m_Specification.m_Samples,
-					Utils::PikaTextureFormatToGLInternalFormat(m_DepthStencilAttachmentSpecification.m_TextureFormat),
+					m_DepthStencilAttachmentSpecification.m_TextureFormat,
 					GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.m_Width, m_Specification.m_Height);
 				break;
 			default:
@@ -175,7 +180,7 @@ namespace Pika {
 		GLint MaxColorAttachments;
 		glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &MaxColorAttachments);
 
-		// Èô²»ÓÃglDrawBuffers»áÄ¬ÈÏ»æÖÆµ½GL_COLOR_ATTACHMENT0,ËùÒÔ =1 Ê±²»ÓÃ¹Ü
+		// è‹¥ä¸ç”¨glDrawBuffersä¼šé»˜è®¤ç»˜åˆ¶åˆ°GL_COLOR_ATTACHMENT0,æ‰€ä»¥ =1 æ—¶ä¸ç”¨ç®¡
 		if (m_ColorAttachments.size() > 1) {
 			if (m_ColorAttachments.size() > MaxColorAttachments) {
 				PK_CORE_WARN("OpenGLFramebuffer : Your device can support {0} color attachments, but you have {1}.",
@@ -190,7 +195,7 @@ namespace Pika {
 			glReadBuffer(GL_NONE);
 		}
 
-		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height);  // µ±FBO resizeºóÐëµ÷ÓÃ
+		glViewport(0, 0, m_Specification.m_Width, m_Specification.m_Height);  // å½“FBO resizeåŽé¡»è°ƒç”¨
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			checkFramebufferStatus();
@@ -223,7 +228,7 @@ namespace Pika {
 	int OpenGLFramebuffer::readPixel(uint32_t vAttachmentIndex, int x, int y)
 	{
 		PK_PROFILE_FUNCTION();
-		bind(); // glReadPixelsÊÇ¶ÁÈ¡µ±Ç°°ó¶¨µÄFramebufferÊý¾Ý£¬ÐèÒª°ó¶¨
+		bind(); // glReadPixelsæ˜¯è¯»å–å½“å‰ç»‘å®šçš„Framebufferæ•°æ®ï¼Œéœ€è¦ç»‘å®š
 		if (vAttachmentIndex >= m_ColorAttachments.size())
 			PK_CORE_ERROR("OpenGLFramebuffer : Invalid color attachment index {0}", vAttachmentIndex);
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + vAttachmentIndex);
@@ -238,9 +243,8 @@ namespace Pika {
 		PK_PROFILE_FUNCTION();
 		if (vAttachmentIndex >= m_ColorAttachments.size())
 			PK_CORE_ERROR("OpenGLFramebuffer : Invalid color attachment index {0}", vAttachmentIndex);
-		glClearTexImage(m_ColorAttachments[vAttachmentIndex], 0,
-			Utils::PikaTextureFormatToGLDataFormat(m_ColorAttachmentsSpecification[vAttachmentIndex].m_TextureFormat),
-			GL_INT, &value);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		glClearBufferiv(GL_COLOR, vAttachmentIndex, &value);
 	}
 
 	void OpenGLFramebuffer::setDepthStencilAttachment(const Ref<Texture>& vTexture)

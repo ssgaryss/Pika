@@ -18,7 +18,7 @@ namespace Pika {
 		void add(const std::vector<T>& vElements, const std::vector<uint32_t>& vIndices);
 		void reset();
 		T* data();
-		uint32_t size() const;     // 返回已有数据byte size
+		uint32_t size() const;     // 杩斿洖宸叉湁鏁版嵁byte size
 
 		const std::vector<uint32_t>& getIndices() const;
 		uint32_t getIndicesCount() const;
@@ -28,7 +28,7 @@ namespace Pika {
 	private:
 		uint32_t m_RenderBatchSize = 1000;
 		std::vector<T> m_Buffer;
-		uint32_t m_BufferIndex = 0;        // 最后一个有效实例的Index
+		uint32_t m_BufferIndex = 0;        // 鏈�鍚庝竴涓湁鏁堝疄渚嬬殑Index
 		std::vector<uint32_t> m_Indices;
 		uint32_t m_IndexCount = 0;
 	};

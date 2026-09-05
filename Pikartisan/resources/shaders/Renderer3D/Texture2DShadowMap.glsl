@@ -1,5 +1,5 @@
 #VERTEX_BEGIN()
-#version 460 core
+#version 410 core
 layout(location = 0) in vec3 a_Position;
 
 uniform mat4 u_LightSpaceMatrix;
@@ -10,7 +10,7 @@ void main() {
 #VERTEX_END()
 
 #FRAGMENT_BEGIN()
-#version 460 core
+#version 410 core
 
 void main() {
 	//gl_FragDepth = gl_FragCoord.z;

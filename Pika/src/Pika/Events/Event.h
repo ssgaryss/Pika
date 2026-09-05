@@ -21,7 +21,7 @@ namespace Pika {
 		EventCategoryMouseButton = 1 << 4
 	};
 
-#define EVENT_CLASS_TYPE(type)  inline static EventType getStaticType() { return EventType::##type; }\
+#define EVENT_CLASS_TYPE(type)  inline static EventType getStaticType() { return EventType::type; }\
 								inline EventType getEventType() const override { return getStaticType(); }\
 								inline const char* getName() const override { return #type; }
 #define EVENT_CLASS_CATEGORY(category) inline int getCategoryFlags() const override { return category; }
@@ -49,7 +49,7 @@ namespace Pika {
 		EventDispatcher(Event& vEvent) :
 			m_Event{ vEvent } {}
 
-		template<typename T, typename F> //T:Event£¬F:function
+		template<typename T, typename F> //T:Eventï¼ŒF:function
 		bool dispatch(const F& vFunction) {
 			if (m_Event.getEventType() == T::getStaticType()) {
 				m_Event.m_Handled |= vFunction(*dynamic_cast<T*>(&m_Event));

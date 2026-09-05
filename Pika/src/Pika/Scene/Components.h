@@ -70,7 +70,7 @@ namespace Pika
 		Ref<Model> m_Model = nullptr;
 
 		ModelComponent() = default;
-		ModelComponent(const ModelComponent&) = default; // ¸Ğ¾õÇ³¿½±´¾ÍĞĞ£¬±Ï¾¹MeshÊı¾İÊÇ¸´ÓÃµÄ
+		ModelComponent(const ModelComponent&) = default; // æ„Ÿè§‰æµ…æ‹·è´å°±è¡Œï¼Œæ¯•ç«ŸMeshæ•°æ®æ˜¯å¤ç”¨çš„
 	};
 
 	struct MaterialComponent
@@ -79,7 +79,7 @@ namespace Pika
 
 		MaterialComponent() = default;
 		MaterialComponent(const MaterialComponent& vOther) {
-			m_Material = vOther.m_Material ? vOther.m_Material->clone() : nullptr; // ÕâÀïÉî¿½±´¸Ğ¾õºÃÒ»µã£¬ÒòÎªÎÒ²¢Ã»ÓĞ°ÑMaterial×÷ÎªÒ»ÖÖAsset£¬Ò²¾ÍÃ»ÓĞ¸´ÓÃ
+			m_Material = vOther.m_Material ? vOther.m_Material->clone() : nullptr; // è¿™é‡Œæ·±æ‹·è´æ„Ÿè§‰å¥½ä¸€ç‚¹ï¼Œå› ä¸ºæˆ‘å¹¶æ²¡æœ‰æŠŠMaterialä½œä¸ºä¸€ç§Assetï¼Œä¹Ÿå°±æ²¡æœ‰å¤ç”¨
 		}
 	};
 
@@ -103,7 +103,7 @@ namespace Pika
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const glm::vec4& vColor)
 			: m_Color{ vColor } {}
-		SpriteRendererComponent(const SpriteRendererComponent&) = default; // Texture¸´ÓÃ£¬Ç³¿½±´
+		SpriteRendererComponent(const SpriteRendererComponent&) = default; // Textureå¤ç”¨ï¼Œæµ…æ‹·è´
 	};
 
 	struct Rigidbody2DComponent
@@ -116,7 +116,7 @@ namespace Pika
 		RigidbodyType m_Type = RigidbodyType::Static;
 		bool m_IsFixedRotation = false;
 
-		void* m_RuntimeBody = nullptr; // ¼ÇÂ¼PlayÄ£Ê½µÄb2Body
+		void* m_RuntimeBody = nullptr; // è®°å½•Playæ¨¡å¼çš„b2Body
 
 		Rigidbody2DComponent() = default;
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
@@ -133,7 +133,7 @@ namespace Pika
 		float m_Restitution = 0.0f;
 		float m_RestitutionThreshold = 0.5f;
 
-		void* m_RuntimeFixture = nullptr;  // ÔİÊ±Ã»ÓÃµ½
+		void* m_RuntimeFixture = nullptr;  // æš‚æ—¶æ²¡ç”¨åˆ°
 
 		BoxCollider2DComponent() = default;
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;

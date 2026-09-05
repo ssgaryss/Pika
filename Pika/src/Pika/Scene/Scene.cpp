@@ -62,12 +62,12 @@ namespace Pika
 
 	void Scene::onUpdateEditor(Timestep vTimestep)
 	{
-		// Editor‘› ±æÕ «æ≤Ã¨≥°æ∞,√ª”–∏¸–¬
+		// EditorÊöÇÊó∂Â∞±ÊòØÈùôÊÄÅÂú∫ÊôØ,Ê≤°ÊúâÊõ¥Êñ∞
 	}
 
 	void Scene::onUpdateRuntime(Timestep vTimestep)
 	{
-		// TODO : ‘› ±∫ÕSimulation“ª÷¬£¨“ÚŒ™√ª”–C#¥˙¬Îøÿ÷∆
+		// TODO : ÊöÇÊó∂ÂíåSimulation‰∏ÄËá¥ÔºåÂõ†‰∏∫Ê≤°ÊúâC#‰ª£Á†ÅÊéßÂà∂
 		constexpr int32_t VelocityIterations = 6;
 		constexpr int32_t PositionIterations = 6;
 		m_Physics2DWorld->Step(vTimestep, VelocityIterations, PositionIterations);
@@ -137,7 +137,7 @@ namespace Pika
 			auto& TC = Entity.getComponent<TransformComponent>();
 			auto& R2DC = Entity.getComponent<Rigidbody2DComponent>();
 
-			// XOY∆Ω√Êµƒ2D Physics
+			// XOYÂπ≥Èù¢ÁöÑ2D Physics
 			b2BodyDef BodyDef;
 			BodyDef.type = static_cast<b2BodyType>(R2DC.m_Type);
 			BodyDef.position.Set(TC.m_Position.x, TC.m_Position.y);

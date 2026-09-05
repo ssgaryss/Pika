@@ -19,19 +19,19 @@ namespace Pika {
 	public:
 		struct Data
 		{
-			glm::vec3 m_LightColor = glm::vec3(1.0f);               // ¹âÔ´ÑÕÉ«
-			float m_Intensity = 1.0f;                               // Ç¿¶È
+			glm::vec3 m_LightColor = glm::vec3(1.0f);               // å…‰æºé¢œè‰²
+			float m_Intensity = 1.0f;                               // å¼ºåº¦
 			bool m_EnableShadow = false;
 			Ref<Texture2D> m_ShadowMap = nullptr;
-			float m_LightSize = 10.0f;                              // ¼ÆËãLightProjectionMatrixËùĞè²ÎÊı
+			float m_LightSize = 10.0f;                              // è®¡ç®—LightProjectionMatrixæ‰€éœ€å‚æ•°
 
-			inline static const glm::vec3 s_DefaultDirection = glm::vec3(0.0f, 0.0f, -1.0f); // Ä¬ÈÏÕÕÏò-z·½Ïò
+			inline static const glm::vec3 s_DefaultDirection = glm::vec3(0.0f, 0.0f, -1.0f); // é»˜è®¤ç…§å‘-zæ–¹å‘
 			glm::mat4 getLightProjectionMatrix() const {
 				return glm::ortho(-m_LightSize, m_LightSize, -m_LightSize, m_LightSize, -m_LightSize, m_LightSize);
 			}
 		};
 	public:
-		DirectionLight() = default;  // ÓÉÓÚ»ùÀàÉêÃ÷ÁËÎö¹¹º¯Êı£¬ÕâÀï²»ÄÜÍµÀÁ£¬Âú×ãrule of five£¬ÒòÎªComponentÖ®ºó¿ÉÄÜ»á¶à´Î¿½±´µÈ
+		DirectionLight() = default;  // ç”±äºåŸºç±»ç”³æ˜äº†ææ„å‡½æ•°ï¼Œè¿™é‡Œä¸èƒ½å·æ‡’ï¼Œæ»¡è¶³rule of fiveï¼Œå› ä¸ºComponentä¹‹åå¯èƒ½ä¼šå¤šæ¬¡æ‹·è´ç­‰
 		DirectionLight(const Data& vData)
 			:m_Data{ vData } {}
 		DirectionLight(const DirectionLight&) = default;
@@ -56,11 +56,11 @@ namespace Pika {
 	public:
 		struct Data
 		{
-			glm::vec3 m_LightColor = glm::vec3(1.0f);               // ¹âÔ´ÑÕÉ«
-			float m_Intensity = 1.0f;                               // ¹âÔ´Ç¿¶È
-			float m_Constant = 1.0f;                                // ³£ÊıË¥¼õÏî
-			float m_Linear = 0.07f;                                 // ÏßĞÔË¥¼õÏî
-			float m_Quadratic = 0.017f;                             // ¶ş´ÎË¥¼õÏî
+			glm::vec3 m_LightColor = glm::vec3(1.0f);               // å…‰æºé¢œè‰²
+			float m_Intensity = 1.0f;                               // å…‰æºå¼ºåº¦
+			float m_Constant = 1.0f;                                // å¸¸æ•°è¡°å‡é¡¹
+			float m_Linear = 0.07f;                                 // çº¿æ€§è¡°å‡é¡¹
+			float m_Quadratic = 0.017f;                             // äºŒæ¬¡è¡°å‡é¡¹
 			// I = m_Intensity / ( m_Constant + m_Linear * distance + m_Quadratic * distance * distance )
 
 			bool m_EnableShadow = false;
@@ -68,7 +68,7 @@ namespace Pika {
 			float m_LightSize = 5.0f;
 		};
 	public:
-		PointLight() = default;  // ÓÉÓÚ»ùÀàÉêÃ÷ÁËÎö¹¹º¯Êı£¬ÕâÀï²»ÄÜÍµÀÁ£¬Âú×ãrule of five£¬ÒòÎªComponentÖ®ºó¿ÉÄÜ»á¶à´Î¿½±´µÈ
+		PointLight() = default;  // ç”±äºåŸºç±»ç”³æ˜äº†ææ„å‡½æ•°ï¼Œè¿™é‡Œä¸èƒ½å·æ‡’ï¼Œæ»¡è¶³rule of fiveï¼Œå› ä¸ºComponentä¹‹åå¯èƒ½ä¼šå¤šæ¬¡æ‹·è´ç­‰
 		PointLight(const Data& vData)
 			:m_Data{ vData } {}
 		PointLight(const PointLight&) = default;

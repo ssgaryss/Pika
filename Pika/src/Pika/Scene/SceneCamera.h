@@ -32,11 +32,11 @@ namespace Pika
 		inline CameraProjectionMode getProjectionMode() const { return m_ProjectionMode; }
 		inline void setProjectionMode(CameraProjectionMode vProjectionMode) { m_ProjectionMode = vProjectionMode; updateCameraProjectionMatrix(); }
 	private:
-		void updateCameraProjectionMatrix(); // 更新相机内参矩阵(投影矩阵)
+		void updateCameraProjectionMatrix(); // 鏇存柊鐩告満鍐呭弬鐭╅樀(鎶曞奖鐭╅樀)
 	private:
 		CameraProjectionMode m_ProjectionMode = CameraProjectionMode::Othographic;
 		// Othographic
-		float m_OthographicSize = 10.0f; // 视口 Height / 2
+		float m_OthographicSize = 10.0f; // 瑙嗗彛 Height / 2
 		float m_OthographicNear = 0.1f, m_OthographicFar = 100.0f;
 		// Perspective
 		float m_PerspectiveFOV = 90.0f;

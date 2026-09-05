@@ -31,11 +31,11 @@ namespace Pika
 		static void SetLineThickness(float vThickness);
 		static float GetLineThickness();
 		static void DrawLine(const glm::vec3& vStartPosition, const glm::vec3& vEndPosition, const glm::vec4& vColor = glm::vec4(1.0f));
-		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f); // Óë2D²»Í¬,vIdentityMatrixÄ¬ÈÏÎªµ¥Î»¾ØÕó¼´ÔÚÆ½ÃæXOZ, vSizeÎªÖĞĞÄµ½±ßµÄ¾àÀë
+		static void DrawGrid(const glm::mat4& vIdentityMatrix, float vSize, const glm::vec4& vColor = glm::vec4(1.0f), float vInterval = 1.0f); // ä¸2Dä¸åŒ,vIdentityMatrixé»˜è®¤ä¸ºå•ä½çŸ©é˜µå³åœ¨å¹³é¢XOZ, vSizeä¸ºä¸­å¿ƒåˆ°è¾¹çš„è·ç¦»
 		// Skybox
 		static void DrawSkybox(const Ref<Cubemap>& vSkybox);
 		// Shadow
-		static void DrawVerticesPosition(const glm::mat4& vTransform, const StaticMesh& vMesh); // Shadow MapĞèÒªµÄ³¡¾°Êı¾İ
+		static void DrawVerticesPosition(const glm::mat4& vTransform, const StaticMesh& vMesh); // Shadow Mapéœ€è¦çš„åœºæ™¯æ•°æ®
 		static void DrawShadowMaps(const LightsData& vLightsData, const SceneData& vSceneData);
 
 		struct Statistics {

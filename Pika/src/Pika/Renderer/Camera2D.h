@@ -5,7 +5,7 @@
 
 namespace Pika
 {
-	// ÔİÊ±Ã»ÓĞÊ¹ÓÃ£¡£¡£¡
+	// æš‚æ—¶æ²¡æœ‰ä½¿ç”¨ï¼ï¼ï¼
 	
 	//In 2D mode, camera can only move at the plan where z = 0.0f, Up is +y direction and face to -z direction
 	static const float s_Z = 0.0f;

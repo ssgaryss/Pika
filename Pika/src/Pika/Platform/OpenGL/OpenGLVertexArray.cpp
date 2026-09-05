@@ -38,7 +38,7 @@ namespace Pika {
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
 		PK_PROFILE_FUNCTION();
-		glCreateVertexArrays(1, &m_RendererID);
+		glGenVertexArrays(1, &m_RendererID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
@@ -98,14 +98,14 @@ namespace Pika {
 			case ShaderDataType::Mat3:
 			case ShaderDataType::Mat4:
 			{
-				uint8_t Count = Element.getComponentCount(); // Count ¡Á Count
+				uint8_t Count = Element.getComponentCount(); // Count Ã— Count
 				for (uint8_t i = 0; i < Count; ++i) {
 					glEnableVertexAttribArray(m_VertexBufferElementIndex);
 					glVertexAttribPointer(m_VertexBufferElementIndex,
 						Count, convertShaderDataTypeToOpenGLType(Element.m_Type),
 						Element.m_Normalized ? GL_TRUE : GL_FALSE,
 						Layout.getStride(), (const void*)(Element.m_Offset + sizeof(float) * Count * i));
-					glVertexAttribDivisor(m_VertexBufferElementIndex, 1);  // Ò»°ãÇé¿öÏÂÃ¿¸öVAO¹²ÏíÒ»¸öMatÖµ
+					glVertexAttribDivisor(m_VertexBufferElementIndex, 1);  // ä¸€èˆ¬æƒ…å†µä¸‹æ¯ä¸ªVAOå…±äº«ä¸€ä¸ªMatå€¼
 					m_VertexBufferElementIndex++;
 				}
 				break;

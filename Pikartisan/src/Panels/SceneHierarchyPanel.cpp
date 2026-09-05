@@ -30,11 +30,11 @@ namespace Pika {
 					drawEntityNode(Entity);
 					});
 
-				// ×ó¼ü¿Õ°×ÇøÓòÈ¡ÏûÑ¡ÖĞ
+				// å·¦é”®ç©ºç™½åŒºåŸŸå–æ¶ˆé€‰ä¸­
 				if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
 					m_SelectedEntity = {};
 
-				// ÓÒ¼ü¿Õ°×ÇøÓòµ¯³ö²Ëµ¥
+				// å³é”®ç©ºç™½åŒºåŸŸå¼¹å‡ºèœå•
 				if (ImGui::BeginPopupContextWindow("Create entity", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
 					if (ImGui::BeginMenu("Create Entity")) {
 						if (ImGui::MenuItem("Empty entity"))
@@ -129,10 +129,10 @@ namespace Pika {
 			ImGui::EndDragDropSource();
 		}
 
-		// ×ó¼üµ¥»÷Ñ¡ÖĞEntity
+		// å·¦é”®å•å‡»é€‰ä¸­Entity
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			m_SelectedEntity = vEntity;
-		// TODO : ×ó¼üË«»÷Focus
+		// TODO : å·¦é”®åŒå‡»Focus
 
 		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
 			ImGui::OpenPopup(std::format("EntitySettings##{0}", (uint32_t)vEntity).c_str());
@@ -157,7 +157,7 @@ namespace Pika {
 			m_Context->destroyEntity(vEntity);
 	}
 
-	// Ö÷Òª¸ødrawEntityComponents()Ê¹ÓÃµÄÄ£°å
+	// ä¸»è¦ç»™drawEntityComponents()ä½¿ç”¨çš„æ¨¡æ¿
 	template <typename T, typename UIFunction>
 	void drawEntityComponent(const std::string& vName, Entity vEntity, UIFunction vFunction) {
 		if (vEntity.hasComponent<T>()) {
@@ -170,11 +170,11 @@ namespace Pika {
 			};
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
-			// typeid(T).hash_code()±£Ö¤Ê÷½Úµã±êºÅ²»Í¬
+			// typeid(T).hash_code()ä¿è¯æ ‘èŠ‚ç‚¹æ ‡å·ä¸åŒ
 			bool Opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), TreeNodeFlags, vName.c_str());
 			ImGui::PopStyleVar();
 
-			// TODO : ²»ÊÇËùÓĞcomponent¶¼ÄÜÉ¾³ı
+			// TODO : ä¸æ˜¯æ‰€æœ‰componentéƒ½èƒ½åˆ é™¤
 			if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
 				ImGui::OpenPopup(std::format("ComponentSettings##{0}", vName).c_str());
 			}
@@ -208,8 +208,8 @@ namespace Pika {
 		ImGui::SetColumnWidth(0, vColWidth);
 		ImGui::Text(vLabel.c_str());
 		ImGui::NextColumn();
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth()); // push 3¸öItemWidth
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 }); // ²»Òªpadding
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth()); // push 3ä¸ªItemWidth
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 }); // ä¸è¦padding
 		float LineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 		ImVec2 ButtonSize = { LineHeight + 3.0f, LineHeight };
 
@@ -223,7 +223,7 @@ namespace Pika {
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		ImGui::DragFloat("##X", &vValue.x, 0.1f);
-		ImGui::PopItemWidth(); // pop µÚÒ»¸ö
+		ImGui::PopItemWidth(); // pop ç¬¬ä¸€ä¸ª
 
 		ImGui::SameLine();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
@@ -236,7 +236,7 @@ namespace Pika {
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		ImGui::DragFloat("##Y", &vValue.y, 0.1f);
-		ImGui::PopItemWidth(); // pop µÚ¶ş¸ö
+		ImGui::PopItemWidth(); // pop ç¬¬äºŒä¸ª
 
 		ImGui::SameLine();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
@@ -249,10 +249,10 @@ namespace Pika {
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		ImGui::DragFloat("##Z", &vValue.z, 0.1f);
-		ImGui::PopItemWidth(); // pop µÚÈı¸ö
+		ImGui::PopItemWidth(); // pop ç¬¬ä¸‰ä¸ª
 		ImGui::PopStyleVar();
 
-		ImGui::Columns(); // ÉèÖÃ»ØÄ¬ÈÏµÄµ¥ÁĞ
+		ImGui::Columns(); // è®¾ç½®å›é»˜è®¤çš„å•åˆ—
 		ImGui::PopID();
 	}
 
@@ -261,13 +261,13 @@ namespace Pika {
 		drawEntityComponent<TagComponent>("Tag", vEntity, [](auto& vTagComponent) {
 			static char Buffer[256];
 			memset(Buffer, 0, sizeof(Buffer));
-			strcpy_s(Buffer, vTagComponent);
+			strcpy(Buffer, vTagComponent);
 
 			if (ImGui::InputText("##TagComponent", Buffer, sizeof(Buffer)))
 				vTagComponent.m_Tag = std::string(Buffer);
 			});
 
-		// µã»÷AddComponent°´Å¥µ¯³ö¼ÓÈëcomponentµ¯´°
+		// ç‚¹å‡»AddComponentæŒ‰é’®å¼¹å‡ºåŠ å…¥componentå¼¹çª—
 		ImGui::SameLine();
 		ImGui::PushItemWidth(-1);
 		if (ImGui::Button("Add component"))
@@ -421,8 +421,8 @@ namespace Pika {
 				ImGui::NextColumn();
 				ImGui::ImageButton(reinterpret_cast<ImTextureID>(Texture), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
 				if (ImGui::BeginDragDropTarget()) {
-					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ¶ÔÓ¦ContentBrowserPanelÖĞ
-						std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // å¯¹åº”ContentBrowserPanelä¸­
+						std::filesystem::path Path{ reinterpret_cast<const char*>(Payload->Data) };
 						const auto& Texture2D = Texture2D::Create(Path);
 						vSpriteRendererComponent.m_Texture = Texture2D->getIsLoaded() ? Texture2D : nullptr;
 					}
@@ -539,8 +539,8 @@ namespace Pika {
 				ImGui::NextColumn();
 				ImGui::Button(Path.c_str());
 				if (ImGui::BeginDragDropTarget()) {
-					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ¶ÔÓ¦ContentBrowserPanelÖĞ
-						std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+					if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // å¯¹åº”ContentBrowserPanelä¸­
+						std::filesystem::path Path{ reinterpret_cast<const char*>(Payload->Data) };
 						vModelComponent.m_Model = CreateRef<Model>(Path);
 					}
 					ImGui::EndDragDropTarget();
@@ -580,8 +580,8 @@ namespace Pika {
 						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
 					ImGui::ImageButton(reinterpret_cast<ImTextureID>(DiffuseMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
 					if (ImGui::BeginDragDropTarget()) {
-						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ¶ÔÓ¦ContentBrowserPanelÖĞ
-							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // å¯¹åº”ContentBrowserPanelä¸­
+							std::filesystem::path Path{ reinterpret_cast<const char*>(Payload->Data) };
 							const auto& Texture2D = Texture2D::Create(Path);
 							MaterialData.m_DiffuseMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
 						}
@@ -602,8 +602,8 @@ namespace Pika {
 						: static_cast<uintptr_t>(m_DefaultTexture->getRendererID());
 					ImGui::ImageButton(reinterpret_cast<ImTextureID>(SpecularMap), { 50.0f, 50.0f }, { 0, 1 }, { 1, 0 });
 					if (ImGui::BeginDragDropTarget()) {
-						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // ¶ÔÓ¦ContentBrowserPanelÖĞ
-							std::filesystem::path Path{ reinterpret_cast<const wchar_t*>(Payload->Data) };
+						if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) { // å¯¹åº”ContentBrowserPanelä¸­
+							std::filesystem::path Path{ reinterpret_cast<const char*>(Payload->Data) };
 							const auto& Texture2D = Texture2D::Create(Path);
 							MaterialData.m_SpecularMap = Texture2D->getIsLoaded() ? Texture2D : nullptr;
 						}

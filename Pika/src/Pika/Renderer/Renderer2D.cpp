@@ -49,7 +49,7 @@ namespace Pika {
 		//Textures
 		friend void Renderer2D::Initialize();
 		uint32_t getMaxTextureSlots() const { return m_MaxTextureSlots; }
-		std::optional<uint32_t> findTextureIndex(const Ref<Texture2D>& vTexture) {  // ÒÑ´æÔÚTextureÔò·µ»ØÆäindex
+		std::optional<uint32_t> findTextureIndex(const Ref<Texture2D>& vTexture) {  // å·²å­˜åœ¨Textureåˆ™è¿”å›å…¶index
 			for (uint32_t i = 1; i < m_TextureIndex; ++i) {
 				if (*vTexture.get() == *m_TextureSlots[i].get()) {
 					return i;
@@ -64,7 +64,7 @@ namespace Pika {
 			m_TextureIndex++;
 			return TextureIndex;
 		}
-		std::array<Ref<Texture2D>, 128> m_TextureSlots; // for now : Ä¬ÈÏ²»¶àÓÚ128¸ötexture
+		std::array<Ref<Texture2D>, 128> m_TextureSlots; // for now : é»˜è®¤ä¸å¤šäº128ä¸ªtexture
 		Ref<Texture2D> m_WhiteTexture; // Default at texture slot 0
 		uint32_t m_TextureIndex = 1;
 
@@ -166,7 +166,7 @@ namespace Pika {
 		s_Data.m_LineVertexArray->unbind();
 
 		// Texture
-		s_Data.m_MaxTextureSlots = RenderCommand::GetAvailableTextureSlots();
+		s_Data.m_MaxTextureSlots = std::min(RenderCommand::GetAvailableTextureSlots(), 16u); // macOS OpenGL 4.1 caps fragment samplers at 16
 		TextureSpecification TS;
 		s_Data.m_WhiteTexture = Texture2D::Create(TS);
 		uint32_t Data = 0xffffffff;
@@ -174,7 +174,7 @@ namespace Pika {
 		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture;
 		
 		// Uniform Buffers
-		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0); // glslÖĞbinding = 0
+		s_Data.m_CameraDataUniformBuffer = UniformBuffer::Create(sizeof(s_Data.m_CameraData), 0); // glslä¸­binding = 0
 
 		PK_CORE_INFO("Success to initialize Pika 2D Renderer!");
 	}
@@ -440,7 +440,7 @@ namespace Pika {
 			glm::vec3 HorizontalOffset = glm::vec3{ 0.0f, vInterval * i, 0.0f };
 			glm::vec3 VerticalOffset = glm::vec3{ vInterval * i, 0.0f, 0.0f };
 
-			if (vIdentityMatrix != glm::mat4(1.0f)) {     // Ò»°ãÖ»Ê¹ÓÃXOYÆ½ÃæGrid,½ÚÔ¼ËãÁ¦
+			if (vIdentityMatrix != glm::mat4(1.0f)) {     // ä¸€èˆ¬åªä½¿ç”¨XOYå¹³é¢Grid,èŠ‚çº¦ç®—åŠ›
 				glm::vec4 TransformedStartHorizontal = vIdentityMatrix * glm::vec4(StartPositionHorizontal + HorizontalOffset, 1.0f);
 				glm::vec4 TransformedEndHorizontal = vIdentityMatrix * glm::vec4(EndPositionHorizontal + HorizontalOffset, 1.0f);
 

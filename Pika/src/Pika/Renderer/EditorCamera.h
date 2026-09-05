@@ -12,7 +12,7 @@ namespace Pika {
 	{
 	public:
 		EditorCamera();
-		EditorCamera(float vFOV, float vAspectRatio, float vNearClip, float vFarClip); // Ö»¹Ø×¢Perspective mode,Õı½»Ä£Ê½²ÎÊıÓÉÍ¸ÊÓÄ£Ê½²ÎÊıÍÆµ¼
+		EditorCamera(float vFOV, float vAspectRatio, float vNearClip, float vFarClip); // åªå…³æ³¨Perspective mode,æ­£äº¤æ¨¡å¼å‚æ•°ç”±é€è§†æ¨¡å¼å‚æ•°æ¨å¯¼
 
 		void onUpdate(Timestep vTimestep);
 		void onEvent(Event& vEvent);
@@ -29,44 +29,44 @@ namespace Pika {
 		inline glm::mat4 getViewProjectionMatrix() const { return m_ProjectionMatrix * m_ViewMatrix; }
 		inline glm::vec3 getUpDirection() const { return glm::rotate(getOrientation(), glm::vec3(0.0f, 1.0f, 0.0f)); }
 		inline glm::vec3 getRightDirection() const { return glm::rotate(getOrientation(), glm::vec3(1.0f, 0.0f, 0.0f)); }
-		inline glm::vec3 getForwardDirection() const { return glm::rotate(getOrientation(), glm::vec3(0.0f, 0.0f, -1.0f)); } // Âú×ãOpenGLÏ°¹ß£¬Ïà»ú¿´Ïò-z
-		inline glm::quat getOrientation() const { return glm::quat(glm::radians(glm::vec3(-m_Pitch, -m_Yaw, 0.0f))); } // ½«ÊÀ½ç×ø±êÏµ×ª»»µ½Ïà»ú×ø±êÏµµÄËÄÔªÊı
+		inline glm::vec3 getForwardDirection() const { return glm::rotate(getOrientation(), glm::vec3(0.0f, 0.0f, -1.0f)); } // æ»¡è¶³OpenGLä¹ æƒ¯ï¼Œç›¸æœºçœ‹å‘-z
+		inline glm::quat getOrientation() const { return glm::quat(glm::radians(glm::vec3(-m_Pitch, -m_Yaw, 0.0f))); } // å°†ä¸–ç•Œåæ ‡ç³»è½¬æ¢åˆ°ç›¸æœºåæ ‡ç³»çš„å››å…ƒæ•°
 	private:
 		void updateCameraViewMatrix();
 		void updateCameraProjectionMatrix();
 		inline void updatePosition() { m_Position = m_FocalPoint - getForwardDirection() * m_Distance; }
 		inline void updateFocalPoint() { m_FocalPoint = m_Position + getForwardDirection() * m_Distance; }
 
-		void onKeyMove(Timestep vTimestep);                       // w,a,s,dÈÎÒâÒÆ¶¯ 
-		void onMousePan(const glm::vec2& vDelta);                 // ºáÏòÒÆ¶¯
-		void onMouseRotate(const glm::vec2& vDelta);              // Ğı×ª,¸Ä±äm_Yaw,m_Pitch
-		void onMouseZoom(float vDelta);                           // ¸Ä±äDistance
-		bool onMouseScrollZoom(MouseScrolledEvent& vEvent);       // ¸Ä±äFOV
+		void onKeyMove(Timestep vTimestep);                       // w,a,s,dä»»æ„ç§»åŠ¨ 
+		void onMousePan(const glm::vec2& vDelta);                 // æ¨ªå‘ç§»åŠ¨
+		void onMouseRotate(const glm::vec2& vDelta);              // æ—‹è½¬,æ”¹å˜m_Yaw,m_Pitch
+		void onMouseZoom(float vDelta);                           // æ”¹å˜Distance
+		bool onMouseScrollZoom(MouseScrolledEvent& vEvent);       // æ”¹å˜FOV
 
-		std::pair<float, float> getPanSpeed() const;     // ºáÏòÒÆ¶¯ËÙ¶È£¨x·½Ïò£¬y·½Ïò£©
-		float getRotationSpeed() const;                  // Yaw, Pitch µÄËÙ¶È
-		float getMoveSpeed() const;                      // MoveËÙ¶È
-		float getZoomSpeed() const;                      // ZoomËÙ¶È,Ëæ×Åm_DistanceÖµ±ä»¯¶ø±ä»¯(Ïà»úÎ»ÖÃÔ½½Ó½ü¹âĞÄËÙ¶ÈÔ½Ğ¡)
+		std::pair<float, float> getPanSpeed() const;     // æ¨ªå‘ç§»åŠ¨é€Ÿåº¦ï¼ˆxæ–¹å‘ï¼Œyæ–¹å‘ï¼‰
+		float getRotationSpeed() const;                  // Yaw, Pitch çš„é€Ÿåº¦
+		float getMoveSpeed() const;                      // Moveé€Ÿåº¦
+		float getZoomSpeed() const;                      // Zoomé€Ÿåº¦,éšç€m_Distanceå€¼å˜åŒ–è€Œå˜åŒ–(ç›¸æœºä½ç½®è¶Šæ¥è¿‘å…‰å¿ƒé€Ÿåº¦è¶Šå°)
 	private:
-		// MouseÏà¹Ø
-		glm::vec2 m_MousePosition = { 0.0f, 0.0f };      // ¼ÇÂ¼ÉÏÒ»¸öÊ±¿ÌÊó±êÎ»ÖÃ
-		// ViewportÏà¹Ø
+		// Mouseç›¸å…³
+		glm::vec2 m_MousePosition = { 0.0f, 0.0f };      // è®°å½•ä¸Šä¸€ä¸ªæ—¶åˆ»é¼ æ ‡ä½ç½®
+		// Viewportç›¸å…³
 		float m_ViewportWidth = 1000.0f, m_ViewportHeight = 1000.0f;
-		// Íâ²Î
-		glm::vec3 m_Position = { 0.0f, 0.0f, 10.0f };    // ÓÉm_FocalPointºÍm_Distance¼ÆËãµÃ³ö,¿ÉÓÉÍâ²¿¿ØÖÆÆ÷¸Ä±äÎ»ÖÃ
-		glm::vec3 m_FocalPoint = { 0.0f, 0.0f, 0.0f };   // ¹âĞÄ
-		float m_Distance = 10.0f;                        // m_FocalPointÑØForwardDirection·½Ïò¾àÀëm_PositionµÄ¾àÀë,×îĞ¡Îª1.0f
-		float m_Pitch = 0.0f, m_Yaw = 0.0f;              // ½Ç¶ÈÖÆ(ÕâÀïÎÒ¾Í²»ÒªrollÁË¸Ğ¾õÓÃ²»µ½)
+		// å¤–å‚
+		glm::vec3 m_Position = { 0.0f, 0.0f, 10.0f };    // ç”±m_FocalPointå’Œm_Distanceè®¡ç®—å¾—å‡º,å¯ç”±å¤–éƒ¨æ§åˆ¶å™¨æ”¹å˜ä½ç½®
+		glm::vec3 m_FocalPoint = { 0.0f, 0.0f, 0.0f };   // å…‰å¿ƒ
+		float m_Distance = 10.0f;                        // m_FocalPointæ²¿ForwardDirectionæ–¹å‘è·ç¦»m_Positionçš„è·ç¦»,æœ€å°ä¸º1.0f
+		float m_Pitch = 0.0f, m_Yaw = 0.0f;              // è§’åº¦åˆ¶(è¿™é‡Œæˆ‘å°±ä¸è¦rolläº†æ„Ÿè§‰ç”¨ä¸åˆ°)
 		glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
 
-		// ÄÚ²Î
+		// å†…å‚
 		CameraProjectionMode m_ProjectionMode = CameraProjectionMode::Perspective;
 		float m_AspectRatio = 1.0f;
 		// Othographic
-		float m_OthographicSize = 10.0f; // ÊÓ¿Ú Height / 2
+		float m_OthographicSize = 10.0f; // è§†å£ Height / 2
 		float m_OthographicNear = 0.1f, m_OthographicFar = 100.0f;
 		// Perspective
-		float m_PerspectiveFOV = 90.0f;  // ZoomÎÒÃ»ÓĞÍ¨¹ı¸Ä±äFOVÊµÏÖ£¬¶øÊÇ¸Ä±äm_Distance¼ä½Ó¸Ä±äÉãÏñ»úÎ»ÖÃÀ´ÊµÏÖÀàËÆĞ§¹û 
+		float m_PerspectiveFOV = 90.0f;  // Zoomæˆ‘æ²¡æœ‰é€šè¿‡æ”¹å˜FOVå®ç°ï¼Œè€Œæ˜¯æ”¹å˜m_Distanceé—´æ¥æ”¹å˜æ‘„åƒæœºä½ç½®æ¥å®ç°ç±»ä¼¼æ•ˆæœ 
 		float m_PerspectiveNear = 0.1f, m_PerspectiveFar = 100.0f;
 
 	};

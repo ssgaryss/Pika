@@ -26,7 +26,7 @@
 
 //windows api
 #ifdef PK_PLATFORM_WINDOWS
-	#define NOMINMAX //½ûÓÃWindows.hÖĞ¶¨ÒåµÄmin¡¢maxºê
+	#define NOMINMAX //ç¦ç”¨Windows.hä¸­å®šä¹‰çš„minã€maxå®
 	#include <Windows.h>
 #endif
 

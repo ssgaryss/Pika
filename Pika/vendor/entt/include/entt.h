@@ -5604,7 +5604,7 @@ namespace entt {
             const Char* repr;
         };
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str) noexcept {
             base_type base{ str, 0u, traits_type::offset };
 
@@ -5615,7 +5615,7 @@ namespace entt {
             return base;
         }
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str, const std::size_t len) noexcept {
             base_type base{ str, len, traits_type::offset };
 
@@ -8080,7 +8080,7 @@ namespace entt {
             const Char* repr;
         };
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str) noexcept {
             base_type base{ str, 0u, traits_type::offset };
 
@@ -8091,7 +8091,7 @@ namespace entt {
             return base;
         }
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str, const std::size_t len) noexcept {
             base_type base{ str, len, traits_type::offset };
 
@@ -12552,7 +12552,7 @@ namespace entt {
             const Char* repr;
         };
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str) noexcept {
             base_type base{ str, 0u, traits_type::offset };
 
@@ -12563,7 +12563,7 @@ namespace entt {
             return base;
         }
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str, const std::size_t len) noexcept {
             base_type base{ str, len, traits_type::offset };
 
@@ -56827,7 +56827,7 @@ namespace entt {
             const Char* repr;
         };
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str) noexcept {
             base_type base{ str, 0u, traits_type::offset };
 
@@ -56838,7 +56838,7 @@ namespace entt {
             return base;
         }
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str, const std::size_t len) noexcept {
             base_type base{ str, len, traits_type::offset };
 
@@ -68588,7 +68588,7 @@ namespace entt {
             const Char* repr;
         };
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str) noexcept {
             base_type base{ str, 0u, traits_type::offset };
 
@@ -68599,7 +68599,7 @@ namespace entt {
             return base;
         }
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str, const std::size_t len) noexcept {
             base_type base{ str, len, traits_type::offset };
 
@@ -88010,7 +88010,7 @@ namespace entt {
             const Char* repr;
         };
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str) noexcept {
             base_type base{ str, 0u, traits_type::offset };
 
@@ -88021,7 +88021,7 @@ namespace entt {
             return base;
         }
 
-        // Fowler¨CNoll¨CVo hash function v. 1a - the good
+        // Fowlerâ€“Nollâ€“Vo hash function v. 1a - the good
         [[nodiscard]] static constexpr auto helper(const Char* str, const std::size_t len) noexcept {
             base_type base{ str, len, traits_type::offset };
 

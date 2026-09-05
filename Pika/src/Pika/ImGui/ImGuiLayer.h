@@ -23,7 +23,7 @@ namespace Pika {
 
 		inline void setBlockEvents(bool vIsBlock) { m_BlockEvents = vIsBlock; }
 	public:
-		// UI·ç¸ñÉèÖÃ
+		// UIé£Žæ ¼è®¾ç½®
 		void setDarkThemeColors();
 	private:
 		bool m_BlockEvents = true; // if false, can not handle event

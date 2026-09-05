@@ -6,11 +6,11 @@
 
 namespace Pika {
 
-	class WindowsWindow : public Window
+	class GLFWWindow : public Window
 	{
 	public:
-		WindowsWindow(const WindowProps& vWindowProps);
-		~WindowsWindow();
+		GLFWWindow(const WindowProps& vWindowProps);
+		~GLFWWindow();
 		void onUpdate() override;
 
 		inline std::string getTitle() const override { return m_Data.m_Title; }

@@ -31,20 +31,42 @@ namespace Pika {
 		IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		// font
-		IO.FontDefault = IO.Fonts->AddFontFromFileTTF("resources/fonts/Open_Sans/static/OpenSans_Condensed-Bold.ttf", 18.0f);
-		IO.FontDefault = IO.Fonts->AddFontFromFileTTF("resources/fonts/Open_Sans/static/OpenSans-Regular.ttf", 18.0f);
+		// Fonts. Fall back to ImGui's built-in font if the files are missing
+		// (e.g. when launched from the wrong working directory).
+		const char* FontPaths[] = {
+			"resources/fonts/Open_Sans/static/OpenSans_Condensed-Bold.ttf",
+			"resources/fonts/Open_Sans/static/OpenSans-Regular.ttf"
+		};
+		for (const char* FontPath : FontPaths) {
+			if (std::filesystem::exists(FontPath)) {
+				IO.FontDefault = IO.Fonts->AddFontFromFileTTF(FontPath, 18.0f);
+			}
+			else {
+				PK_CORE_WARN("ImGuiLayer : Font file not found, using built-in font: {0}", FontPath);
+			}
+		}
 
 		//UI Theme
 		setDarkThemeColors();
-		//ImGui::StyleColorsDark(); //自带风格
-		//ImGui::StyleColorsClassic(); //自带风格
+		//ImGui::StyleColorsDark(); //鑷甫椋庢牸
+		//ImGui::StyleColorsClassic(); //鑷甫椋庢牸
 
 		Application& App = Application::GetInstance();
 		GLFWwindow* Window = reinterpret_cast<GLFWwindow*>(App.getWindow().getNativeWindow());
 
 		ImGui_ImplGlfw_InitForOpenGL(Window, true);
-		ImGui_ImplOpenGL3_Init("#version 460");
+		ImGui_ImplOpenGL3_Init("#version 410");
+
+		// In headless / display-asleep environments glfwGetMonitors() may return
+		// zero monitors, which trips ImGui's multi-viewport sanity check. Fall
+		// back to a single dummy monitor so the editor still runs.
+		if (ImGui::GetPlatformIO().Monitors.Size == 0) {
+			ImGuiPlatformMonitor Monitor;
+			Monitor.MainSize = ImVec2(static_cast<float>(App.getWindow().getWidth()),
+				static_cast<float>(App.getWindow().getHeight()));
+			Monitor.WorkSize = Monitor.MainSize;
+			ImGui::GetPlatformIO().Monitors.push_back(Monitor);
+		}
 
 	}
 	void ImGuiLayer::onDetach()

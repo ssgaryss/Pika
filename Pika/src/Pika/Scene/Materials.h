@@ -33,7 +33,7 @@ namespace Pika {
 		BlinnPhoneMaterial(BlinnPhoneMaterial&&) = default;
 		BlinnPhoneMaterial& operator=(BlinnPhoneMaterial&&) noexcept = default;
 		inline const std::string& getType() const override { return s_Type; }
-		inline Ref<Material> clone() const override { return CreateRef<BlinnPhoneMaterial>(*this); } // ԭ��ģʽ��
+		inline Ref<Material> clone() const override { return CreateRef<BlinnPhoneMaterial>(*this); } // 原型模式！
 
 		inline const Data& getData() const { return m_Data; }
 		inline Data& getData() { return m_Data; }

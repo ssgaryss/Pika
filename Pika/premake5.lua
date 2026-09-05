@@ -2,13 +2,10 @@ project "Pika"
 	kind "Staticlib"
 	language "C++"
 	cppdialect "C++20"
-	staticruntime "on" -- buildoptions "/MDd" --> [staticruntime("On") == "MD"  staticruntime("Off") == "MT"] + [runtime "Debug/Release"] == "MDd"/"MTd"
+	staticruntime "on"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
-
-	pchheader("pkpch.h")
-	pchsource("src/pkpch.cpp")
 
 	files
 	{
@@ -20,7 +17,15 @@ project "Pika"
 		"vendor/stb_image/**.cpp",
 	}
 
-	includedirs
+	-- Platform-specific backends live under src/Pika/Platform/<OS>/. They are
+	-- excluded from the generic glob above and re-added per-OS below so only the
+	-- matching implementation is compiled.
+	removefiles
+	{
+		"src/Pika/Platform/Windows/**.cpp",
+	}
+
+	sysincludedirs
 	{
 		"vendor/spdlog/include",
 		"src",
@@ -42,7 +47,6 @@ project "Pika"
 		"glad",
 		"ImGui",
 		"yaml-cpp",
-		"opengl32.lib",
 		"ImGuizmo",
 		"Box2D",
 		"assimp"
@@ -50,25 +54,32 @@ project "Pika"
 
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS",  -- _CRT_SECURE_NO_WARNINGS 是一个预处理器定义，用于禁用 Microsoft Visual Studio 编译器对一些标准 C/C++ 函数（如 strcpy、sprintf 等）的安全性警告。
-		"YAML_CPP_STATIC_DEFINE", -- use yaml-cpp as static lib instead of dll
-		"GLM_ENABLE_EXPERIMENTAL" -- 允许使用glm/gtx内容
+		"GLFW_INCLUDE_NONE",        -- stop glfw3.h pulling in gl.h; glad owns GL loading (all platforms)
+		"_CRT_SECURE_NO_WARNINGS",  -- MSVC-only, ignored by other toolchains
+		"YAML_CPP_STATIC_DEFINE",   -- use yaml-cpp as a static library
+		"GLM_ENABLE_EXPERIMENTAL"   -- enable glm/gtx helpers
 	}
 
 	filter "system:windows"
 		systemversion "latest"
+		defines { "PK_PLATFORM_WINDOWS" }
+		buildoptions { "/utf-8" } -- MSVC: read source as UTF-8 (source files are UTF-8)
+		links { "opengl32.lib" }
+		files { "src/Pika/Platform/Windows/**.cpp" }
 
-		defines
+	filter "system:macosx"
+		defines { "PK_PLATFORM_MACOS", "SPDLOG_USE_STD_FORMAT" } -- bundled fmt breaks on clang 16+; std::format works
+		-- GLFW's Cocoa backend needs these frameworks at link time. Premake
+		-- propagates a static library's links to any executable that links it.
+		links
 		{
-			"PK_PLATFORM_WINDOWS",
-			"GLFW_INCLUDE_NONE" --(we don not want GLFW include OpenGL function, glad got all of it!)
-			-- "PK_BUILD_DLL" --(Pika is a static lib instead of dll now)
+			"Cocoa.framework",
+			"IOKit.framework",
+			"CoreVideo.framework",
+			"OpenGL.framework",
+			"QuartzCore.framework"
 		}
-
-		-- postbuildcommands  -- for dll copy !
-		-- {
-		-- 	("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
-		-- }
+		files { "src/Pika/Platform/MacOS/**.mm" }
 
 	filter "configurations:Debug"
 		defines "PIKA_DEBUG"
