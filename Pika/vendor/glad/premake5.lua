@@ -13,7 +13,7 @@ project "glad"
         "include/KHR/khrplatform.h"
     }
 
-    sysincludedirs
+    externalincludedirs
     {
         "include"
     }

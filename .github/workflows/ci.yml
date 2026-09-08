@@ -4,7 +4,7 @@ on:
   push:
   pull_request:
 
-# 同一分支/PR 有新提交时，取消旧的未完成运行，避免堆积
+# 同一分支/PR 有新提交时，取消旧的未完成运行
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -13,7 +13,6 @@ jobs:
   build:
     name: ${{ matrix.os }} / ${{ matrix.configuration }}
     strategy:
-      # 一个平台失败不影响另一个平台继续跑，最终都能看到结果
       fail-fast: false
       matrix:
         os: [macos-latest, windows-latest]
@@ -51,7 +50,6 @@ jobs:
       - name: Generate project (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        # 用仓库内已提交的 premake5.exe，保证版本一致
         run: ./vendor/premake/premake5.exe vs2022
 
       - name: Build (Windows)

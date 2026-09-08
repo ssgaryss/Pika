@@ -13,7 +13,7 @@ project "Pikartisan"
 		"src/**.cpp"
 	}
 
-	sysincludedirs
+	externalincludedirs
 	{
 		"%{wks.location}/Pika/src",
 		"%{wks.location}/Pika/vendor",

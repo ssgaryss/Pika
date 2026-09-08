@@ -19,7 +19,7 @@ project "Sandbox"
 		"src/**.cpp"  -- Sandbox is not needed yet
     }
 
-	sysincludedirs
+	externalincludedirs
 	{
 		"%{wks.location}/Pika/vendor/spdlog/include",
 		"%{wks.location}/Pika/src",

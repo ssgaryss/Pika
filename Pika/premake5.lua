@@ -25,7 +25,7 @@ project "Pika"
 		"src/Pika/Platform/Windows/**.cpp",
 	}
 
-	sysincludedirs
+	externalincludedirs
 	{
 		"vendor/spdlog/include",
 		"src",
